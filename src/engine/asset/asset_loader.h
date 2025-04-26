@@ -3,8 +3,6 @@
 #include "../render/shader.h"
 #include "../render/sprite.h"
 #include "../render/font.h"
-#include <ft2build.h>
-#include FT_FREETYPE_H
 
 
 class AssetLoader

@@ -2,6 +2,9 @@
 #include "../system/file_loader.h"
 #include <GL/glew.h>
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 
 const Shader AssetLoader::LoadShaderFromPath(const std::string &vertexPath, const std::string &fragPath)
 {
@@ -28,7 +31,7 @@ const Font AssetLoader::LoadFontFromPath(const std::string &path)
     }
 
 	// find path to font
-    std::string font_name = FileLoader::LoadFile(path);
+    std::string font_name = (ASSETS_PATH + path).c_str();
 
     Font font;
 
