@@ -54,6 +54,7 @@
         "algorithm": "cpp",
         "fstream": "cpp",
         "typeindex": "cpp",
-        "type_traits": "cpp"
+        "type_traits": "cpp",
+        "map": "cpp"
     }
 }
