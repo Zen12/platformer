@@ -49,7 +49,6 @@ class Camera
                     const float height = ((float) w->GetHeight()) / _aspectPower;
 
                     return glm::ortho(0.0f, width , 0.0f, height, -0.1f, 100.0f);
-                    //return glm::ortho(-width, width , -height, height, -0.1f, 100.0f);
                 }
             }
 

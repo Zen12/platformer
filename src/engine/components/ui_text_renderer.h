@@ -5,6 +5,7 @@
 #include "../render/shader.h"
 #include "../asset/asset_loader.h"
 #include "../components/transform.h"
+#include "../components/rect_transform.h"
 #include "entity.h"
 
 class UiTextRenderer : public Component
@@ -13,6 +14,7 @@ class UiTextRenderer : public Component
         Font _font;
         std::string _text;
         uint32_t VAO, VBO;
+        float _fontSize = 0.1;
 
     public:
         UiTextRenderer(const std::weak_ptr<Entity>& entity);

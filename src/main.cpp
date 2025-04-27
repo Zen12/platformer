@@ -1,5 +1,6 @@
 #include <iostream>
 #include "engine/engine.h"
+#include <chrono>
 
 Font font;
 
@@ -8,6 +9,10 @@ int main() {
     // system init
     auto window = std::make_shared<Window>(800, 600, "Platformer");
     window->WinInit();
+
+    using Clock = std::chrono::high_resolution_clock;
+
+    auto lastTime = Clock::now();
 
     RenderPipeline renderPipeline = {window};
 /*
@@ -33,13 +38,13 @@ int main() {
     std::shared_ptr<Entity> e1 = std::make_shared<Entity>();  
     auto textRedenrer = e1->AddComponent<UiTextRenderer>();
     textRedenrer.lock()->SetText("Hello! Here I am");
-    auto tr1 = e1->AddComponent<Transform>();
-    tr1.lock()->SetPosition(glm::vec3(0.0, 0.004, 0));
+    auto tr1 = e1->AddComponent<RectTransform>();
+    tr1.lock()->SetRect(glm::vec4(0.0, 0.01, 0.0, 0.0));
     renderPipeline.AddRenderer(textRedenrer);
 
     std::shared_ptr<Entity> e2 = std::make_shared<Entity>();  
-    auto tr2 = e2->AddComponent<Transform>();
-    tr2.lock()->SetPosition(glm::vec3(-0.001, 0.0, 0));
+    auto tr2 = e2->AddComponent<RectTransform>();
+    tr2.lock()->SetRect(glm::vec4(0.0, 0.02, 0, 0));
     auto textRedenrer2 = e2->AddComponent<UiTextRenderer>();
     textRedenrer2.lock()->SetText("LA!");
     renderPipeline.AddRenderer(textRedenrer2);
@@ -54,6 +59,15 @@ int main() {
 
 
     while (window->IsOpen()) {
+
+        auto currentTime = Clock::now();
+        std::chrono::duration<float> duration = currentTime - lastTime;
+        lastTime = currentTime;
+        const float deltaTime = duration.count();
+
+        auto rect = tr2.lock()->GetRect();
+       // tr2.lock()->SetRect(glm::vec4(rect.x + deltaTime * 0.1f, rect.y, rect.z, rect.w));
+
         glClear(GL_COLOR_BUFFER_BIT);
         //tr.lock()->SetPosition(glm::vec3(0,0,-10));
         //e1->Update();

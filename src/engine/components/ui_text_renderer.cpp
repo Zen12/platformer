@@ -40,11 +40,12 @@ void UiTextRenderer::Render(const Shader& shader, const uint16_t& width, const u
     glm::vec3 color = glm::vec3(0.5, 0.8f, 0.2f);
 
 
-    const auto position = GetEntity().lock()->GetComponent<Transform>().lock()->GetPosition();
+    const auto position = GetEntity().lock()->GetComponent<RectTransform>().lock()->GetRect();
 
     float x = position.x * width; 
     float y = position.y * height; 
-    const float scale = 0.1f;
+
+    const float scale = _fontSize;
 
 
     glUniform3f(glGetUniformLocation(shader.GetShaderId(), "textColor"), color.x, color.y, color.z);

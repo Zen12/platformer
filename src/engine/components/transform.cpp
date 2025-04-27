@@ -5,7 +5,7 @@ void Transform::Update() const
 {
 }
 
-glm::mat4 Transform::GetModel()
+glm::mat4 Transform::GetModel() const
 {
     glm::mat4 model = glm::mat4(1.0f); 
 

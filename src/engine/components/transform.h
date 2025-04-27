@@ -14,7 +14,7 @@
 
 class Transform : public Component {
 
-    private:
+    protected:
         glm::vec3 _position;
         glm::vec3 _eulerRotation;
         glm::vec3 _scale;
@@ -29,7 +29,7 @@ class Transform : public Component {
 
         void Update() const override;
 
-        glm::mat4 GetModel();
+        virtual glm::mat4 GetModel() const;
 
 
 
