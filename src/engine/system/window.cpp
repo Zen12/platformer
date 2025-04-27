@@ -8,8 +8,26 @@
 
 GLFWwindow* window;
 
+void processInput(GLFWwindow *window)
+{
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+    auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+    if (self) 
+        self->OnResize(width, height);
+}
+
+
 Window::Window(const uint16_t &width, const uint16_t &height, const std::string &windowName)
 {
+    _width = width;
+    _height = height;
+
     if (!glfwInit()) {
         std::cerr << "Failed to init GLFW\n"; 
         return;
@@ -36,6 +54,12 @@ Window::Window(const uint16_t &width, const uint16_t &height, const std::string 
         std::cerr << "Failed to init GLEW\n";
         return;
     }
+}
+
+void Window::WinInit()
+{
+    glfwSetWindowUserPointer(window, this);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 }
 
 bool Window::IsOpen()

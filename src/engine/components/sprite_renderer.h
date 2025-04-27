@@ -25,10 +25,12 @@ class SpriteRenderer : public Component {
         {
         };
 
+        void Update() const override;
+
         void SetSprite(std::weak_ptr<Sprite> sprite);
         void SetCamera(std::weak_ptr<CameraComponent> camera);
 
-        void Update() const override;
+        void Render() const;
 
         uint32_t GetShaderId() const
         {

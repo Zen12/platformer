@@ -9,7 +9,8 @@
 #include <glm/gtx/quaternion.hpp>         
 #include <glm/gtc/type_ptr.hpp>
 
-UiTextRenderer::UiTextRenderer(const std::weak_ptr<Entity> &entity) : Component(entity)
+
+void UiTextRenderer::Bind()
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -20,20 +21,33 @@ UiTextRenderer::UiTextRenderer(const std::weak_ptr<Entity> &entity) : Component(
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+}
 
-    _shader = AssetLoader::LoadShaderFromPath("shaders/text_vert.glsl","shaders/text_frag.glsl");
+UiTextRenderer::UiTextRenderer(const std::weak_ptr<Entity> &entity) : Component(entity)
+{
+    Bind();
+
     _font = AssetLoader::LoadFontFromPath("fonts/Antonio-Bold.ttf");
 }
 
-void UiTextRenderer::Update() const
+void UiTextRenderer::Update() const 
 {
 
-    float x = 25.0f; float y = 25.0f; float scale = 1.0f; glm::vec3 color = glm::vec3(0.5, 0.8f, 0.2f);
+}
 
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(800), 0.0f, static_cast<float>(600));
-    _shader.Use();
-    glUniformMatrix4fv(glGetUniformLocation(_shader.GetShaderId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-    glUniform3f(glGetUniformLocation(_shader.GetShaderId(), "textColor"), color.x, color.y, color.z);
+void UiTextRenderer::Render(const Shader& shader, const uint16_t& width, const uint16_t& height)
+{
+    glm::vec3 color = glm::vec3(0.5, 0.8f, 0.2f);
+
+
+    const auto position = GetEntity().lock()->GetComponent<Transform>().lock()->GetPosition();
+
+    float x = position.x * width; 
+    float y = position.y * height; 
+    const float scale = 0.1f;
+
+
+    glUniform3f(glGetUniformLocation(shader.GetShaderId(), "textColor"), color.x, color.y, color.z);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
     

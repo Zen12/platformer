@@ -6,7 +6,10 @@ Font font;
 int main() {
 
     // system init
-    auto window = Window(800, 600, "Platformer");
+    auto window = std::make_shared<Window>(800, 600, "Platformer");
+    window->WinInit();
+
+    RenderPipeline renderPipeline = {window};
 /*
     auto texture_face = AssetLoader::LoadSpriteFromPath("images/awesomeface.png");
     std::shared_ptr<Sprite> sprite = std::make_shared<Sprite>(texture_face);
@@ -30,6 +33,16 @@ int main() {
     std::shared_ptr<Entity> e1 = std::make_shared<Entity>();  
     auto textRedenrer = e1->AddComponent<UiTextRenderer>();
     textRedenrer.lock()->SetText("Hello! Here I am");
+    auto tr1 = e1->AddComponent<Transform>();
+    tr1.lock()->SetPosition(glm::vec3(0.0, 0.004, 0));
+    renderPipeline.AddRenderer(textRedenrer);
+
+    std::shared_ptr<Entity> e2 = std::make_shared<Entity>();  
+    auto tr2 = e2->AddComponent<Transform>();
+    tr2.lock()->SetPosition(glm::vec3(-0.001, 0.0, 0));
+    auto textRedenrer2 = e2->AddComponent<UiTextRenderer>();
+    textRedenrer2.lock()->SetText("LA!");
+    renderPipeline.AddRenderer(textRedenrer2);
 
 
     glEnable(GL_CULL_FACE);
@@ -40,24 +53,22 @@ int main() {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
 
-    while (window.IsOpen()) {
+    while (window->IsOpen()) {
         glClear(GL_COLOR_BUFFER_BIT);
         //tr.lock()->SetPosition(glm::vec3(0,0,-10));
         //e1->Update();
 
         glClear(GL_COLOR_BUFFER_BIT);
 
-        e1->Update();
+        //e1->Update();
+        renderPipeline.RenderUI();
 
-       // RenderText(shader, "This is sample text", 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
-        //RenderText(shader, "(C) LearnOpenGL.com", 540.0f, 570.0f, 0.5f, glm::vec3(0.3, 0.7f, 0.9f));
-
-        window.SwapBuffers();
+        window->SwapBuffers();
         glfwPollEvents();
     }
 
 
-    window.Destroy();
+    window->Destroy();
     return 0;
 }
 

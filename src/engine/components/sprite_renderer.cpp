@@ -15,6 +15,11 @@ void SpriteRenderer::SetCamera(std::weak_ptr<CameraComponent> camera)
 
 void SpriteRenderer::Update() const 
 {
+
+}
+
+void SpriteRenderer::Render() const 
+{
     
     if (auto sprite = _sprite.lock()) 
     {

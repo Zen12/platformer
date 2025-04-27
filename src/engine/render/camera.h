@@ -1,3 +1,6 @@
+#pragma once
+
+#include "../system/window.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -6,34 +9,51 @@
 class Camera
 {
     private:
-        glm::mat4 _projection;
+        float _aspectPower;
+        std::weak_ptr<Window> _window;
+        bool _isPespective;
 
     public:
         Camera() = default;
 
-        Camera(const glm::mat4& projection)
+        Camera(const float& aspectPower, const bool& isPespective, const std::weak_ptr<Window>& window) :
+            _aspectPower(aspectPower),
+            _isPespective(isPespective),
+            _window(window)
         {
-            _projection = projection;
         }
 
-        static Camera Ortho()
-        {
-            const float orthoPower = 100.0f;
-            const float width = 800.0f / orthoPower; // From window
-            const float height = 600.0f / orthoPower;// From window
 
-            return Camera(glm::ortho(-width, width , -height, height, 0.1f, 100.0f));
+        static Camera Ortho(std::weak_ptr<Window> window)
+        {
+            constexpr float orthoPower = 8.0f;
+            return Camera(orthoPower, false, window);
         }
 
-        static Camera Perspective()
+        static Camera Perspective(std::weak_ptr<Window> window)
         {
-            // get from Window: (float)800/(float)600
-            return Camera(glm::perspective(glm::radians(45.0f), (float)800/(float)600, 0.1f, 100.0f));
+            constexpr float perspectivePower = 45;
+            return Camera(perspectivePower, true, window);
         }
 
-        glm::mat4 GetProjection()
+        const glm::mat4 GetProjection() const
         {
-            return _projection;
+            if (auto w = _window.lock())
+            {
+                if (_isPespective)
+                { 
+                    float ration = (float)w->GetWidth()/(float) w->GetHeight();
+                    return glm::perspective(glm::radians(_aspectPower), ration, 0.1f, 100.0f);
+                } else {
+                    const float width = ((float)w->GetWidth()) / _aspectPower; 
+                    const float height = ((float) w->GetHeight()) / _aspectPower;
+
+                    return glm::ortho(0.0f, width , 0.0f, height, -0.1f, 100.0f);
+                    //return glm::ortho(-width, width , -height, height, -0.1f, 100.0f);
+                }
+            }
+
+            return glm::mat4(1.0);
         }
 
 };

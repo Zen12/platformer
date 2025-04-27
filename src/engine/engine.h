@@ -12,3 +12,4 @@
 #include "components/transform.h"
 #include "components/camera_component.h"
 #include "components/ui_text_renderer.h"
+#include "render_pipeline/render_pipeline.h"
