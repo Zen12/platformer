@@ -11,7 +11,6 @@ class SpriteRenderer : public Component {
 
     private:
         std::weak_ptr<Sprite> _sprite;
-        std::weak_ptr<CameraComponent> _cameraComponent;
         Mesh _mesh;
         Shader _shader;
 
@@ -28,7 +27,6 @@ class SpriteRenderer : public Component {
         void Update() const override;
 
         void SetSprite(std::weak_ptr<Sprite> sprite);
-        void SetCamera(std::weak_ptr<CameraComponent> camera);
 
         void Render() const;
 

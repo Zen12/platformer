@@ -14,40 +14,30 @@ int main() {
 
     auto lastTime = Clock::now();
 
-    RenderPipeline renderPipeline = {window};
-/*
+    std::shared_ptr<Entity> cameraEntity = std::make_shared<Entity>();  
+    const auto cameraTr = cameraEntity->AddComponent<Transform>();
+    cameraTr.lock()->SetPosition(glm::vec3(0, 0, -2));
+    cameraTr.lock()->SetEulerRotation(glm::vec3(0.0f, 0.0f, 0.0f));
+    const auto camera = cameraEntity->AddComponent<CameraComponent>();
+    camera.lock()->SetCamera(Camera::Perspective(window));
+
+    RenderPipeline renderPipeline = {camera, cameraTr, window};
     auto texture_face = AssetLoader::LoadSpriteFromPath("images/awesomeface.png");
     std::shared_ptr<Sprite> sprite = std::make_shared<Sprite>(texture_face);
 
-    std::shared_ptr<Entity> cameraEntity = std::make_shared<Entity>();  
-    auto cameraTr = cameraEntity->AddComponent<Transform>();
-    cameraTr.lock()->SetPosition(glm::vec3(0, 0, 0));
-    cameraTr.lock()->SetEulerRotation(glm::vec3(0.0f, 0.0f, 0.0f));
-    auto camera = cameraEntity->AddComponent<CameraComponent>();
-    camera.lock()->SetCamera(Camera::Ortho());
-
 
     std::shared_ptr<Entity> e1 = std::make_shared<Entity>();  
-    auto renderer = e1->AddComponent<SpriteRenderer>().lock();
+    auto renderer = e1->AddComponent<SpriteRenderer>();
     auto tr = e1->AddComponent<Transform>();
-    renderer->SetSprite(sprite);
-    renderer->SetCamera(camera);
-
-*/
-
-    std::shared_ptr<Entity> e1 = std::make_shared<Entity>();  
-    auto textRedenrer = e1->AddComponent<UiTextRenderer>();
-    textRedenrer.lock()->SetText("Hello! Here I am");
-    auto tr1 = e1->AddComponent<RectTransform>();
-    tr1.lock()->SetRect(glm::vec4(0.0, 0.01, 0.0, 0.0));
-    renderPipeline.AddRenderer(textRedenrer);
+    renderer.lock()->SetSprite(sprite);
+    renderPipeline.AddRenderer(renderer);
 
     std::shared_ptr<Entity> e2 = std::make_shared<Entity>();  
-    auto tr2 = e2->AddComponent<RectTransform>();
-    tr2.lock()->SetRect(glm::vec4(0.0, 0.02, 0, 0));
-    auto textRedenrer2 = e2->AddComponent<UiTextRenderer>();
-    textRedenrer2.lock()->SetText("LA!");
-    renderPipeline.AddRenderer(textRedenrer2);
+    auto textRedenrer = e2->AddComponent<UiTextRenderer>();
+    textRedenrer.lock()->SetText("Hello! Here I am");
+    auto tr1 = e2->AddComponent<RectTransform>();
+    tr1.lock()->SetRect(glm::vec4(0.0, 0.03, 0.0, 0.0));
+    renderPipeline.AddRenderer(textRedenrer);
 
 
     glEnable(GL_CULL_FACE);
@@ -69,9 +59,7 @@ int main() {
 
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        //e1->Update();
+        renderPipeline.RenderSprites();
         renderPipeline.RenderUI();
 
         window->SwapBuffers();
