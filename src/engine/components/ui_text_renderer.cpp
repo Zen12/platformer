@@ -40,7 +40,7 @@ void UiTextRenderer::Render(const Shader& shader, const uint16_t& width, const u
     glm::vec3 color = glm::vec3(0.5, 0.8f, 0.2f);
 
 
-    const auto position = GetEntity().lock()->GetComponent<RectTransform>().lock()->GetRect();
+    const auto position = GetEntity().lock()->GetComponent<RectTransform>().lock()->GetAnchoredPosion(width, height);
 
     float x = position.x * width; 
     float y = position.y * height; 

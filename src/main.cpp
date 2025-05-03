@@ -65,12 +65,9 @@ int main() {
         lastTime = currentTime;
         const float deltaTime = duration.count();
 
-        auto rect = tr2.lock()->GetRect();
-       // tr2.lock()->SetRect(glm::vec4(rect.x + deltaTime * 0.1f, rect.y, rect.z, rect.w));
+        textRedenrer.lock()->SetText(std::to_string(1.0f / deltaTime));
 
         glClear(GL_COLOR_BUFFER_BIT);
-        //tr.lock()->SetPosition(glm::vec3(0,0,-10));
-        //e1->Update();
 
         glClear(GL_COLOR_BUFFER_BIT);
 

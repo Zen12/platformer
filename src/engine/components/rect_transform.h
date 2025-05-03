@@ -18,7 +18,7 @@ class RectTransform : public Transform
         {};
 
         void SetRect(const glm::vec4& rect) {_rect = rect;}
-        const glm::vec4 GetRect() const;
+        const glm::vec3 GetAnchoredPosion(const uint16_t& canvasWidth, const uint16_t& canvasHeight) const;
 
         glm::mat4 GetModel() const;
 };
