@@ -34,9 +34,9 @@ int main() {
 
     std::shared_ptr<Entity> e2 = std::make_shared<Entity>();  
     auto textRedenrer = e2->AddComponent<UiTextRenderer>();
-    textRedenrer.lock()->SetText("Hello! Here I am");
+    textRedenrer.lock()->SetText("+++");
     auto tr1 = e2->AddComponent<RectTransform>();
-    tr1.lock()->SetRect(glm::vec4(0.0, 0.03, 0.0, 0.0));
+    tr1.lock()->SetRect(glm::vec4(0.0, 0.5, 0.5, 0.5));
     renderPipeline.AddRenderer(textRedenrer);
 
 
@@ -55,7 +55,7 @@ int main() {
         lastTime = currentTime;
         const float deltaTime = duration.count();
 
-        textRedenrer.lock()->SetText(std::to_string(1.0f / deltaTime));
+        //textRedenrer.lock()->SetText(std::to_string(1.0f / deltaTime));
 
         glClear(GL_COLOR_BUFFER_BIT);
 

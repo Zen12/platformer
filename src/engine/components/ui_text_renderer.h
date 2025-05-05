@@ -14,7 +14,7 @@ class UiTextRenderer : public Component
         Font _font;
         std::string _text;
         uint32_t VAO, VBO;
-        float _fontSize = 0.1;
+        float _fontSize = 1;
 
     public:
         UiTextRenderer(const std::weak_ptr<Entity>& entity);

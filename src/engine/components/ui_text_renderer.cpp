@@ -37,29 +37,37 @@ void UiTextRenderer::Update() const
 
 void UiTextRenderer::Render(const Shader& shader, const uint16_t& width, const uint16_t& height)
 {
-    glm::vec3 color = glm::vec3(0.5, 0.8f, 0.2f);
+    constexpr glm::vec3 color = glm::vec3(0.5, 0.8f, 0.2f);
 
 
-    const auto position = GetEntity().lock()->GetComponent<RectTransform>().lock()->GetAnchoredPosion(width, height);
+    // inject 
+    const auto position = GetEntity().lock()->GetComponent<RectTransform>().lock()->GetAnchoredPosion();
 
     float x = position.x * width; 
     float y = position.y * height; 
+    float totalWidth = 0;
 
     const float scale = _fontSize;
+
+    for (auto c = _text.begin(); c != _text.end(); c++) 
+    {
+        const Character ch = _font.Characters.at(*c);
+        totalWidth += (ch.Advance >> 6) * scale;
+    }
+
+    x -= totalWidth * position.z;
 
 
     glUniform3f(glGetUniformLocation(shader.GetShaderId(), "textColor"), color.x, color.y, color.z);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
     
-    // iterate through all characters
-    std::string::const_iterator c;
-    for (c = _text.begin(); c != _text.end(); c++) 
+    for (auto c = _text.begin(); c != _text.end(); c++) 
     {
-        Character ch = _font.Characters.at(*c);
+        const Character ch = _font.Characters.at(*c);
     
-        float xpos = x + ch.Bearing.x * scale;
-        float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+        const float xpos = x + ch.Bearing.x * scale;
+        const float ypos = y - (ch.Size.y - ch.Bearing.y * position.w) * scale;
     
         float w = ch.Size.x * scale;
         float h = ch.Size.y * scale;
