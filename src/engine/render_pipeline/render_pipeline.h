@@ -3,6 +3,7 @@
 #include <iostream>
 #include "../components/sprite_renderer.h"
 #include "../components/ui_text_renderer.h"
+#include "../components/ui_image_renderer.h"
 #include "../system/window.h"
 
 
@@ -19,6 +20,7 @@ class RenderPipeline
 
         std::vector<std::weak_ptr<SpriteRenderer>> _sprites;
         std::vector<std::weak_ptr<UiTextRenderer>> _texts;
+        std::vector<std::weak_ptr<UiImageRenderer>> _images;
     
     public:
 
@@ -38,6 +40,7 @@ class RenderPipeline
         void AddRenderer(const std::weak_ptr<SpriteRenderer>& sprite) {_sprites.push_back(sprite);}
 
         void AddRenderer(const std::weak_ptr<UiTextRenderer>& text) {_texts.push_back(text);}
+        void AddRenderer(const std::weak_ptr<UiImageRenderer>& image) {_images.push_back(image);}
 
         void RenderUI() const;
         void RenderSprites() const;

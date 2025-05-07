@@ -55,7 +55,7 @@ void UiTextRenderer::Render(const Shader& shader, const uint16_t& width, const u
         totalWidth += (ch.Advance >> 6) * scale;
     }
 
-    x -= totalWidth * position.z;
+    x -= totalWidth * position.z; // pivot
 
 
     glUniform3f(glGetUniformLocation(shader.GetShaderId(), "textColor"), color.x, color.y, color.z);

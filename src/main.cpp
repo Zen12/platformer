@@ -26,11 +26,11 @@ int main() {
     std::shared_ptr<Sprite> sprite = std::make_shared<Sprite>(texture_face);
 
 
-    std::shared_ptr<Entity> e1 = std::make_shared<Entity>();  
-    auto renderer = e1->AddComponent<SpriteRenderer>();
-    auto tr = e1->AddComponent<Transform>();
-    renderer.lock()->SetSprite(sprite);
-    renderPipeline.AddRenderer(renderer);
+    //std::shared_ptr<Entity> e1 = std::make_shared<Entity>();  
+    //auto renderer = e1->AddComponent<SpriteRenderer>();
+    //auto tr = e1->AddComponent<Transform>();
+    //renderer.lock()->SetSprite(sprite);
+    //renderPipeline.AddRenderer(renderer);
 
     std::shared_ptr<Entity> e2 = std::make_shared<Entity>();  
     auto textRedenrer = e2->AddComponent<UiTextRenderer>();
@@ -38,6 +38,14 @@ int main() {
     auto tr1 = e2->AddComponent<RectTransform>();
     tr1.lock()->SetRect(glm::vec4(0.0, 0.5, 0.5, 0.5));
     renderPipeline.AddRenderer(textRedenrer);
+
+
+    std::shared_ptr<Entity> e3 = std::make_shared<Entity>();  
+    const auto uiImage = e3->AddComponent<UiImageRenderer>();
+    auto tr3 = e3->AddComponent<RectTransform>();
+    tr3.lock()->SetRect(glm::vec4(0.5,0.5,0.05,0.05));
+    uiImage.lock()->SetSprite(sprite);
+    renderPipeline.AddRenderer(uiImage);
 
 
     glEnable(GL_CULL_FACE);

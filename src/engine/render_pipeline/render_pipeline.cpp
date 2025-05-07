@@ -47,6 +47,15 @@ void RenderPipeline::RenderUI() const
             text->Render(_uiShader, width, height);
         }
     }
+
+    for (auto value : _images) {
+        if (auto image = value.lock())
+        {
+            image->Update();
+            glUniformMatrix4fv(glGetUniformLocation(image->GetShaderId(), "projection"), 1, GL_FALSE, projection);
+            image->Render(width, height);
+        }
+    }
 }
 
 
