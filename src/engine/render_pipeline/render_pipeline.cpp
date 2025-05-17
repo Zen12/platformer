@@ -38,8 +38,8 @@ void RenderPipeline::RenderUI() const
     for (auto value : _texts) {
         if (auto text = value.lock())
         {
-            //text->Update();
-            //text->Render(projection);
+            text->Update();
+            text->Render(projection);
         }
     }
 

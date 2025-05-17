@@ -5,8 +5,11 @@
 
 glm::mat4 RectTransform::GetModel() const
 {
-    auto model = Transform::GetModel();
-    model = glm::translate(model, glm::vec3(_rect.x, _rect.y, 0));
-    model = glm::scale(model, glm::vec3(_rect.w, _rect.z, 1));
-    return model;
+    const auto model = Transform::GetModel();
+    const auto parentModel = _parent->GetModel();
+
+    float scaleX = glm::length(glm::vec3(parentModel[0]));
+    float scaleY = glm::length(glm::vec3(parentModel[1]));
+
+    return _constrains->Build(model, scaleX, scaleY);
 }

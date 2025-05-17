@@ -11,6 +11,7 @@
 #include "components/sprite_renderer.h"
 #include "components/transforms/transform.h"
 #include "components/transforms/rect_transform.h"
+#include "components/transforms/rect_transform_root.h"
 #include "components/camera_component.h"
 #include "components/ui_text_renderer.h"
 #include "render_pipeline/render_pipeline.h"

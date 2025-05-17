@@ -51,7 +51,8 @@ void UiTextRenderer::Render(const glm::mat4 &projection)
             material->SetMat4("projection", projection);
 
             // inject
-            const auto position = GetEntity().lock()->GetComponent<RectTransform>().lock()->GetAnchoredPosion();
+            const auto model = GetEntity().lock()->GetComponent<RectTransform>().lock()->GetModel();
+            const auto position =  glm::vec3(model[3]); 
 
             float x = position.x * width;
             float y = position.y * height;
@@ -75,7 +76,7 @@ void UiTextRenderer::Render(const glm::mat4 &projection)
                 const Character ch = font->Characters.at(*c);
 
                 const float xpos = x + ch.Bearing.x * scale;
-                const float ypos = y - (ch.Size.y - ch.Bearing.y * position.w) * scale;
+                const float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
 
                 float w = ch.Size.x * scale;
                 float h = ch.Size.y * scale;

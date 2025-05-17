@@ -4,26 +4,36 @@
 #include "transform.h"
 
 #include <glm/glm.hpp>
-#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>         
-#include <glm/gtx/quaternion.hpp>         
 #include <glm/gtc/type_ptr.hpp>
-
+#include "layout_options.h"
+#include <iostream>
+#include <memory>
 
 
 class RectTransform : public Transform
 {
 
     private:
-        glm::vec4 _rect;
+        std::unique_ptr<LayoutOptions> _constrains;
+        std::shared_ptr<RectTransform> _parent;
 
     public:
         RectTransform(const std::weak_ptr<Entity>& entity) : Transform(entity)
-        {};
+        {
+            _constrains = std::make_unique<LayoutOptions>();
+        };
 
-        void OverrideRect(const glm::vec4& rect) {_rect = rect;}
-        const glm::vec4 GetAnchoredPosion() const {return _rect;}
+        void AddLayoutOption(std::unique_ptr<LayoutOption> layout)
+        {
+            _constrains->AddLayout(std::move(layout));
+        }
 
-        glm::mat4 GetModel() const;
+        void SetParent(const std::shared_ptr<RectTransform> parent)
+        {
+            _parent = parent;
+        }
+
+        glm::mat4 GetModel() const override;
 };

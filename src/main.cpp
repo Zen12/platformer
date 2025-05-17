@@ -22,6 +22,8 @@ int main() {
 
     materialText->SetFont(font);
 
+    const auto rectRoot = std::make_shared<RectTransformRoot>(window);
+
     using Clock = std::chrono::high_resolution_clock;
 
     auto lastTime = Clock::now();
@@ -39,10 +41,13 @@ int main() {
 
     std::shared_ptr<Entity> e2 = std::make_shared<Entity>();  
     auto textRedenrer = e2->AddComponent<UiTextRenderer>();
+
     textRedenrer.lock()->SetMaterial(materialText);
+
     textRedenrer.lock()->SetText("+++++++++12345667790asdfgdkmbkmfv");
     auto tr1 = e2->AddComponent<RectTransform>();
-    tr1.lock()->OverrideRect(glm::vec4(0.0, 0.0, 200, 200));
+    tr1.lock()->SetParent(rectRoot);
+
     renderPipeline.AddRenderer(textRedenrer);
 
 
@@ -50,9 +55,17 @@ int main() {
     std::shared_ptr<Entity> e3 = std::make_shared<Entity>();  
     const auto uiImage = e3->AddComponent<UiImageRenderer>();
     auto tr3 = e3->AddComponent<RectTransform>();
-    tr3.lock()->OverrideRect(glm::vec4(0.0, 0.0, 200, 200));
+
     uiImage.lock()->SetMaterial(materialUI);
     uiImage.lock()->SetSprite(sprite);
+
+    tr3.lock()->SetParent(rectRoot);
+    tr3.lock()->AddLayoutOption(std::make_unique<CenterXLayoutOption>());
+    tr3.lock()->AddLayoutOption(std::make_unique<CenterYLayoutOption>());
+    tr3.lock()->AddLayoutOption(std::make_unique<PixelWidthLayoutOption>(200));
+    tr3.lock()->AddLayoutOption(std::make_unique<PixelHeightLayoutOption>(200));
+
+
     renderPipeline.AddRenderer(uiImage);
 
 
