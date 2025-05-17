@@ -22,8 +22,8 @@ class RectTransform : public Transform
         RectTransform(const std::weak_ptr<Entity>& entity) : Transform(entity)
         {};
 
-        void SetRect(const glm::vec4& rect) {_rect = rect;}
+        void OverrideRect(const glm::vec4& rect) {_rect = rect;}
         const glm::vec4 GetAnchoredPosion() const {return _rect;}
-        
+
         glm::mat4 GetModel() const;
 };

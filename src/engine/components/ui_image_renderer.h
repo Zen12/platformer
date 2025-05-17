@@ -3,8 +3,8 @@
 #include "../render/font.h"
 #include "../render/mesh.h"
 #include "../render/material.h"
-#include "../components/transform.h"
-#include "../components/rect_transform.h"
+#include "transforms/transform.h"
+#include "transforms/rect_transform.h"
 #include "entity.h"
 
 class UiImageRenderer : public Component
