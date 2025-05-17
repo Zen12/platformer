@@ -35,15 +35,11 @@ void RenderPipeline::RenderUI() const
 {
     const auto projection = _uiCamera.GetProjection();
 
-    const auto width = _window.lock()->GetWidth();
-    const auto height = _window.lock()->GetHeight();
-
-
     for (auto value : _texts) {
         if (auto text = value.lock())
         {
             text->Update();
-            text->Render(projection, width, height);
+            text->Render(projection);
         }
     }
 
@@ -51,7 +47,7 @@ void RenderPipeline::RenderUI() const
         if (auto image = value.lock())
         {
             image->Update();
-            image->Render(projection, width, height);
+            image->Render(projection);
         }
     }
 }

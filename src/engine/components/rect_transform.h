@@ -17,7 +17,7 @@ class RectTransform : public Transform
         RectTransform(const std::weak_ptr<Entity>& entity) : Transform(entity)
         {};
 
-        /// @brief xy - position, zw - pivot
+        /// @brief xy - position, zw - delta
         /// @param rect 
         void SetRect(const glm::vec4& rect) {_rect = rect;}
         const glm::vec4 GetAnchoredPosion() const;

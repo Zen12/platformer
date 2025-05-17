@@ -43,7 +43,7 @@ class UiImageRenderer : public Component
                 material->AddSprite(sprite);
             }
         }
-        void Render(const glm::mat4& projection, const uint16_t& width, const uint16_t& height) const;
+        void Render(const glm::mat4& projection) const;
 
         const uint32_t GetShaderId() const
         {

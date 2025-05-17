@@ -3,8 +3,11 @@
 uint32_t VAO, VBO;
 
 
-void UiImageRenderer::Render(const glm::mat4& projection, const uint16_t& width, const uint16_t& height) const
+void UiImageRenderer::Render(const glm::mat4& projection) const
 {
+    const float width = 2.0f / projection[0][0];
+    const float height = 2.0f / projection[1][1];
+
     if (auto material = _material.lock())
     {
         material->SetMat4("projection", projection);

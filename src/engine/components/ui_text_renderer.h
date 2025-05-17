@@ -36,7 +36,7 @@ class UiTextRenderer : public Component
         }
 
         void Update() const override;
-        void Render(const glm::mat4& projection, const uint16_t& width, const uint16_t& height);
+        void Render(const glm::mat4& projection);
 
         int32_t GetShaderId() const { return _material.lock()->GetShaderId();}
 

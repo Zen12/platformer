@@ -29,7 +29,6 @@ class RenderPipeline
             const std::weak_ptr<Window>& window) : 
 
             _uiCamera(Camera(1, false, window)),
-            _window(window),
             _camera3d(camera3d),
             _cameraTransform3d(cameraTransform3d)
         {
