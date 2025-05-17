@@ -30,7 +30,7 @@ void Transform::SetPosition(const glm::vec3 &position)
     _position = position;
 }
 
-glm::vec3 Transform::GetPosition() const
+const glm::vec3 Transform::GetPosition() const
 {
     return _position;
 }
@@ -41,7 +41,7 @@ void Transform::SetEulerRotation(const glm::vec3 &euler)
     _eulerRotation = euler;
 }
 
-glm::vec3 Transform::GetEulerRotation() const
+const glm::vec3 Transform::GetEulerRotation() const
 {
     return _eulerRotation;
 }
@@ -51,7 +51,7 @@ void Transform::SetScale(const glm::vec3 &scale)
     _scale = scale;
 }
 
-glm::vec3 Transform::GetScale() const
+const glm::vec3 Transform::GetScale() const
 {
     return _scale;
 }

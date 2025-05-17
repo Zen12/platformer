@@ -42,7 +42,7 @@ Sprite::Sprite(const std::string &path)
     
 }
 
-void Sprite::Bind()
+void Sprite::Bind() const
 {
     glBindTexture(GL_TEXTURE_2D, _textureId);
 }

@@ -6,7 +6,7 @@ class Sprite
 {
     public:
         Sprite(const std::string& data);
-        void Bind();
+        void Bind() const;
 
     private:
         int32_t _x;

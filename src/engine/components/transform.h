@@ -34,11 +34,11 @@ class Transform : public Component {
 
 
         void SetPosition(const glm::vec3& position);
-        glm::vec3 GetPosition() const;
+        const glm::vec3 GetPosition() const;
 
         void SetEulerRotation(const glm::vec3 &euler);
-        glm::vec3 GetEulerRotation() const;
+        const glm::vec3 GetEulerRotation() const;
 
         void SetScale(const glm::vec3& scale);
-        glm::vec3 GetScale() const;
+        const glm::vec3 GetScale() const;
 };
