@@ -10,7 +10,6 @@
 class RenderPipeline
 {
     private:
-        Shader _uiShader;
         Camera _uiCamera;
         
         std::weak_ptr<Transform> _cameraTransform3d;
@@ -29,7 +28,6 @@ class RenderPipeline
             const std::weak_ptr<Transform>& cameraTransform3d,
             const std::weak_ptr<Window>& window) : 
 
-            _uiShader(AssetLoader::LoadShaderFromPath("shaders/text_vert.glsl","shaders/text_frag.glsl")),
             _uiCamera(Camera(1, false, window)),
             _window(window),
             _camera3d(camera3d),

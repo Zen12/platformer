@@ -7,15 +7,21 @@ int32_t Material::GetLocation(const std::string& key)
             return it->second;
     }
 
-        int location = _shader->GetLocation(key);
+    if (const auto shader = _shader.lock())
+    {
+        int location = shader->GetLocation(key);
         _locationMap[key] = location;
         return location;
+    }
 
+    return -1;
 }
 
 void Material::Bind() const
 {
-        _shader->Use();
+    if (const auto shader = _shader.lock())
+    {
+        shader->Use();
         
         for (const auto value : _sprites) {
             if (const auto sprite = value.lock())
@@ -23,4 +29,5 @@ void Material::Bind() const
                 sprite->Bind();
             }
         }
+    }
 }

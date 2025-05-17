@@ -10,6 +10,18 @@ int main() {
     auto window = std::make_shared<Window>(800, 600, "Platformer");
     window->WinInit();
 
+    std::shared_ptr<Shader> uiShader = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath("shaders/uiImage_vert.glsl", "shaders/uiImage_frag.glsl"));  
+    std::shared_ptr<Shader> uiText = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath("shaders/text_vert.glsl", "shaders/text_frag.glsl"));  
+    auto texture_face = AssetLoader::LoadSpriteFromPath("images/awesomeface.png");
+
+
+    std::shared_ptr<Material> materialUI = std::make_shared<Material>(uiShader);
+    std::shared_ptr<Material> materialText = std::make_shared<Material>(uiText);
+
+    std::shared_ptr<Font> font = std::make_shared<Font>(AssetLoader::LoadFontFromPath("fonts/Antonio-Bold.ttf"));
+
+    materialText->SetFont(font);
+
     using Clock = std::chrono::high_resolution_clock;
 
     auto lastTime = Clock::now();
@@ -22,32 +34,24 @@ int main() {
     camera.lock()->SetCamera(Camera::Perspective(window));
 
     RenderPipeline renderPipeline = {camera, cameraTr, window};
-    auto texture_face = AssetLoader::LoadSpriteFromPath("images/awesomeface.png");
     std::shared_ptr<Sprite> sprite = std::make_shared<Sprite>(texture_face);
 
 
-    //std::shared_ptr<Entity> e1 = std::make_shared<Entity>();  
-    //auto renderer = e1->AddComponent<SpriteRenderer>();
-    //auto tr = e1->AddComponent<Transform>();
-    //renderer.lock()->SetSprite(sprite);
-    //renderPipeline.AddRenderer(renderer);
-
     std::shared_ptr<Entity> e2 = std::make_shared<Entity>();  
     auto textRedenrer = e2->AddComponent<UiTextRenderer>();
-    textRedenrer.lock()->SetText("+++");
+    textRedenrer.lock()->SetMaterial(materialText);
+    textRedenrer.lock()->SetText("+++++++++12345667790asdfgdkmbkmfv");
     auto tr1 = e2->AddComponent<RectTransform>();
     tr1.lock()->SetRect(glm::vec4(0.0, 0.5, 0.5, 0.5));
     renderPipeline.AddRenderer(textRedenrer);
 
-
-    std::shared_ptr<Material> material = std::make_shared<Material>("shaders/uiImage_vert.glsl", "shaders/uiImage_frag.glsl");
 
 
     std::shared_ptr<Entity> e3 = std::make_shared<Entity>();  
     const auto uiImage = e3->AddComponent<UiImageRenderer>();
     auto tr3 = e3->AddComponent<RectTransform>();
     tr3.lock()->SetRect(glm::vec4(0.5,0.5,0.05,0.05));
-    uiImage.lock()->SetMaterial(material);
+    uiImage.lock()->SetMaterial(materialUI);
     uiImage.lock()->SetSprite(sprite);
     renderPipeline.AddRenderer(uiImage);
 

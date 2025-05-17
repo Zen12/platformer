@@ -21,8 +21,6 @@ class UiImageRenderer : public Component
         : Component(entity),
             _mesh(Mesh::GenerateSprite())
         {
-            
-            //_material = Material("shaders/uiImage_vert.glsl", "shaders/uiImage_frag.glsl");
         }
 
         void Update() const override
@@ -45,7 +43,7 @@ class UiImageRenderer : public Component
                 material->AddSprite(sprite);
             }
         }
-        void Render(const uint16_t& width, const uint16_t& height) const;
+        void Render(const glm::mat4& projection, const uint16_t& width, const uint16_t& height) const;
 
         const uint32_t GetShaderId() const
         {
@@ -58,5 +56,5 @@ class UiImageRenderer : public Component
         }
 
     private:
-        void Bind() ;
+        void Bind();
 };

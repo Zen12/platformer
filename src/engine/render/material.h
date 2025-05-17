@@ -1,13 +1,21 @@
+#pragma once
 
 #include "shader.h"
 #include "sprite.h"
 #include "../asset/asset_loader.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>         
+#include <glm/gtx/quaternion.hpp>         
+#include <glm/gtc/type_ptr.hpp>
+
 
 
 class Material
 {
     private:
-        std::unique_ptr<Shader> _shader;
+        std::weak_ptr<Shader> _shader;
+        std::weak_ptr<Font> _font;
         std::unordered_map<std::string, int32_t> _locationMap;
         std::vector<std::weak_ptr<Sprite>> _sprites;
 
@@ -16,9 +24,9 @@ class Material
 
         Material() = delete;
 
-        Material(const std::string& vertexSource, const std::string& fragmentSource)
+        Material(const std::weak_ptr<Shader>& shader)
+            : _shader(shader)
         {
-            _shader = std::make_unique<Shader>(AssetLoader::LoadShaderFromPath(vertexSource, fragmentSource));
         }
 
         int32_t GetLocation(const std::string& key);
@@ -29,14 +37,42 @@ class Material
             _sprites.push_back(sprite);
         }
 
+        const std::weak_ptr<Font> GetFont() const
+        {
+            return _font;
+        }
+
+        void SetFont(const std::weak_ptr<Font> font)
+        {
+            _font = font;
+        }
+
         uint32_t GetShaderId() const
         {
-            return _shader->GetShaderId();
+            if (const auto shader = _shader.lock())
+            {
+                return shader->GetShaderId();
+            }
+            return -1;
+        }
+
+        void SetMat4(const std::string& name, glm::mat4 mat)
+        {
+            if (const auto shader = _shader.lock())
+            {
+                const auto location = shader->GetLocation(name);
+                shader->SetMat4(location, mat);
+            }
         }
 
         void SetVec3(const std::string& name, float x, float y, float z)
         {
-            const auto location = _shader->GetLocation(name);
-            _shader->SetVec3(location, x, y, z);
+            if (const auto shader = _shader.lock())
+            {
+                const auto location = shader->GetLocation(name);
+                shader->SetVec3(location, x, y, z);
+            }
         }
+
+
 };

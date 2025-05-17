@@ -33,9 +33,7 @@ void RenderPipeline::RenderSprites() const
 
 void RenderPipeline::RenderUI() const
 {
-    const auto projection = glm::value_ptr(_uiCamera.GetProjection());
-    _uiShader.Use();
-    glUniformMatrix4fv(glGetUniformLocation(_uiShader.GetShaderId(), "projection"), 1, GL_FALSE, projection);
+    const auto projection = _uiCamera.GetProjection();
 
     const auto width = _window.lock()->GetWidth();
     const auto height = _window.lock()->GetHeight();
@@ -44,7 +42,8 @@ void RenderPipeline::RenderUI() const
     for (auto value : _texts) {
         if (auto text = value.lock())
         {
-            text->Render(_uiShader, width, height);
+            text->Update();
+            text->Render(projection, width, height);
         }
     }
 
@@ -52,8 +51,7 @@ void RenderPipeline::RenderUI() const
         if (auto image = value.lock())
         {
             image->Update();
-            glUniformMatrix4fv(glGetUniformLocation(image->GetShaderId(), "projection"), 1, GL_FALSE, projection);
-            image->Render(width, height);
+            image->Render(projection, width, height);
         }
     }
 }

@@ -3,8 +3,13 @@
 uint32_t VAO, VBO;
 
 
-void UiImageRenderer::Render(const uint16_t& width, const uint16_t& height) const
+void UiImageRenderer::Render(const glm::mat4& projection, const uint16_t& width, const uint16_t& height) const
 {
+    if (auto material = _material.lock())
+    {
+        material->SetMat4("projection", projection);
+    }
+    
     const auto position = GetEntity().lock()->GetComponent<RectTransform>().lock()->GetAnchoredPosion();
 
     const float xpos = position.x * width;

@@ -3,6 +3,10 @@
 #include <string>
 #include <iostream>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 
 class Shader
 {
@@ -26,5 +30,6 @@ public:
     const int32_t GetLocation(const std::string& name) const;
 
     const void SetVec3(const int32_t& location, const float& x, const float& y, const float& z) const;
+    const void SetMat4(const int32_t& location, const glm::mat4& mat) const;
 };
 
