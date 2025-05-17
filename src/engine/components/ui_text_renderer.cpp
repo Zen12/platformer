@@ -57,8 +57,9 @@ void UiTextRenderer::Render(const Shader& shader, const uint16_t& width, const u
 
     x -= totalWidth * position.z; // pivot
 
+    const int location = shader.GetLocation("textColor");
+    shader.SetVec3(location, color.x, color.y, color.z);
 
-    glUniform3f(glGetUniformLocation(shader.GetShaderId(), "textColor"), color.x, color.y, color.z);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(VAO);
     

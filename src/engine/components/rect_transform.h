@@ -21,6 +21,7 @@ class RectTransform : public Transform
         /// @param rect 
         void SetRect(const glm::vec4& rect) {_rect = rect;}
         const glm::vec4 GetAnchoredPosion() const;
+        const std::array<glm::vec2, 4> GetCorners() const;
 
         glm::mat4 GetModel() const;
 };

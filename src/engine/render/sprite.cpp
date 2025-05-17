@@ -7,8 +7,8 @@
 
 Sprite::Sprite(const std::string &path)
 {
-    glGenTextures(1, &textureId);
-    glBindTexture(GL_TEXTURE_2D, textureId); 
+    glGenTextures(1, &_textureId);
+    glBindTexture(GL_TEXTURE_2D, _textureId); 
      // set the texture wrapping parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -17,7 +17,7 @@ Sprite::Sprite(const std::string &path)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     stbi_set_flip_vertically_on_load(true); 
-    unsigned char *data = stbi_load(path.c_str(), &x, &y, &channels, 0);
+    unsigned char *data = stbi_load(path.c_str(), &_x, &_y, &_channels, 0);
 
     if (data == nullptr)
     {
@@ -25,16 +25,16 @@ Sprite::Sprite(const std::string &path)
         return;
     }
 
-    switch (channels)
+    switch (_channels)
     {
         case 3:
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _x, _y, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             break;
         case 4:
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _x, _y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
             break;
         default:
-            std::cerr << "No support for channel: " << channels << std::endl;
+            std::cerr << "No support for channel: " << _channels << std::endl;
             break;
     }
             
@@ -44,5 +44,5 @@ Sprite::Sprite(const std::string &path)
 
 void Sprite::Bind()
 {
-    glBindTexture(GL_TEXTURE_2D, textureId);
+    glBindTexture(GL_TEXTURE_2D, _textureId);
 }

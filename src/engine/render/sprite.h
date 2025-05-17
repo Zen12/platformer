@@ -9,8 +9,8 @@ class Sprite
         void Bind();
 
     private:
-        int32_t x;
-        int32_t y;
-        int32_t channels;
-        uint32_t textureId;
+        int32_t _x;
+        int32_t _y;
+        int32_t _channels;
+        uint32_t _textureId;
 };
