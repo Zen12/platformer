@@ -19,17 +19,11 @@ class UiImageRenderer : public Component
 
         UiImageRenderer(const std::weak_ptr<Entity>& entity)
         : Component(entity),
-            _mesh(Mesh::GenerateSprite())
+            _mesh(Mesh::GenerateUI())
         {
         }
 
-        void Update() const override
-        {
-            if (auto material = _material.lock())
-            {
-                material->Bind();
-            }
-        }
+        void Update() const override;
 
         void SetMaterial(const std::weak_ptr<Material>& material)
         {
@@ -44,16 +38,6 @@ class UiImageRenderer : public Component
             }
         }
         void Render(const glm::mat4& projection) const;
-
-        const uint32_t GetShaderId() const
-        {
-            if (auto material = _material.lock())
-            {
-                return material->GetShaderId();
-            }
-
-            return -1;
-        }
 
     private:
         void Bind();

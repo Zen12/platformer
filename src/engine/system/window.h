@@ -14,7 +14,10 @@ class Window
         bool IsOpen();
         void Destroy();
         void SwapBuffers();
-        const uint16_t GetWidth() {return _width; }
-        const uint16_t GetHeight() {return _height; }
-        void OnResize(uint16_t width, uint16_t height) {_width = width; _height = height;};
+        const uint16_t GetWidth() 
+            {return _width; }
+        const uint16_t GetHeight() 
+            {return _height; }
+        void OnResize(uint16_t width, uint16_t height) 
+            {_width = width; _height = height;};
 };

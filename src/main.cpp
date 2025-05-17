@@ -42,7 +42,7 @@ int main() {
     textRedenrer.lock()->SetMaterial(materialText);
     textRedenrer.lock()->SetText("+++++++++12345667790asdfgdkmbkmfv");
     auto tr1 = e2->AddComponent<RectTransform>();
-    tr1.lock()->SetRect(glm::vec4(0.0, 0.5, 0.5, 0.5));
+    tr1.lock()->SetRect(glm::vec4(0.0, 0.0, 200, 200));
     renderPipeline.AddRenderer(textRedenrer);
 
 
@@ -50,7 +50,7 @@ int main() {
     std::shared_ptr<Entity> e3 = std::make_shared<Entity>();  
     const auto uiImage = e3->AddComponent<UiImageRenderer>();
     auto tr3 = e3->AddComponent<RectTransform>();
-    tr3.lock()->SetRect(glm::vec4(0.5,0.5,0.05,0.05));
+    tr3.lock()->SetRect(glm::vec4(0.0, 0.0, 200, 200));
     uiImage.lock()->SetMaterial(materialUI);
     uiImage.lock()->SetSprite(sprite);
     renderPipeline.AddRenderer(uiImage);

@@ -54,6 +54,13 @@ Window::Window(const uint16_t &width, const uint16_t &height, const std::string 
         std::cerr << "Failed to init GLEW\n";
         return;
     }
+
+    // need this mecause of Mac issue
+    int fbWidth, fbHeight;
+    glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+
+    _width = fbWidth;
+    _height = fbHeight;
 }
 
 void Window::WinInit()

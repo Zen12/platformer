@@ -4,6 +4,11 @@
 #include "transform.h"
 
 #include <glm/glm.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>         
+#include <glm/gtx/quaternion.hpp>         
+#include <glm/gtc/type_ptr.hpp>
 
 
 
@@ -17,11 +22,8 @@ class RectTransform : public Transform
         RectTransform(const std::weak_ptr<Entity>& entity) : Transform(entity)
         {};
 
-        /// @brief xy - position, zw - delta
-        /// @param rect 
         void SetRect(const glm::vec4& rect) {_rect = rect;}
-        const glm::vec4 GetAnchoredPosion() const;
-        const std::array<glm::vec2, 4> GetCorners() const;
-
+        const glm::vec4 GetAnchoredPosion() const {return _rect;}
+        
         glm::mat4 GetModel() const;
 };

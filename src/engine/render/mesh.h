@@ -29,4 +29,5 @@ class Mesh
         uint16_t GetIndicesCount() const;
 
         static Mesh GenerateSprite();
+        static Mesh GenerateUI();
 };

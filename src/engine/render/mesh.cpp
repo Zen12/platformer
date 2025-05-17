@@ -37,7 +37,6 @@ Mesh::Mesh(
 
 Mesh::~Mesh()
 {
-    std::cout << "Deleted Mesh" << std::endl;
     glDeleteVertexArrays(1, &_vao);
     glDeleteBuffers(1, &_vbo);
     glDeleteBuffers(1, &_ebo);
@@ -76,3 +75,21 @@ Mesh Mesh::GenerateSprite()
 
     return Mesh(vertices, indices);;
 }
+
+Mesh Mesh::GenerateUI()
+{
+    std::vector<float> vertices = {
+    // positions                // texture coords
+        1.0f,  1.0f, 0.0f,      1.0f, 1.0f,   // top right
+        1.0f,  0.0f, 0.0f,      1.0f, 0.0f,   // bottom right
+        0.0f,  0.0f, 0.0f,      0.0f, 0.0f,   // bottom left
+        0.0f,  1.0f, 0.0f,      0.0f, 1.0f    // top left 
+    };
+   std::vector<uint32_t> indices = { 
+       0, 3, 1, 
+       1, 3, 2   
+   };
+
+    return Mesh(vertices, indices);;
+}
+
