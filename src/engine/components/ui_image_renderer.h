@@ -2,8 +2,7 @@
 
 #include "../render/font.h"
 #include "../render/mesh.h"
-#include "../render/shader.h"
-#include "../asset/asset_loader.h"
+#include "../render/material.h"
 #include "../components/transform.h"
 #include "../components/rect_transform.h"
 #include "entity.h"
@@ -11,23 +10,51 @@
 class UiImageRenderer : public Component
 {
     private:
-        std::weak_ptr<Sprite> _sprite;
         Mesh _mesh;
-        Shader _shader;
+        std::weak_ptr<Material> _material;
 
     public:
-        UiImageRenderer(const std::weak_ptr<Entity>& entity): Component(entity),
-            _mesh(Mesh::GenerateSprite()),
-            _shader(AssetLoader::LoadShaderFromPath("shaders/uiImage_vert.glsl", "shaders/uiImage_frag.glsl"))
-        {}
 
-        void Update() const override;
-        void SetSprite(std::weak_ptr<Sprite> sprite);
+        UiImageRenderer() = delete;
+
+        UiImageRenderer(const std::weak_ptr<Entity>& entity)
+        : Component(entity),
+            _mesh(Mesh::GenerateSprite())
+        {
+            
+            //_material = Material("shaders/uiImage_vert.glsl", "shaders/uiImage_frag.glsl");
+        }
+
+        void Update() const override
+        {
+            if (auto material = _material.lock())
+            {
+                material->Bind();
+            }
+        }
+
+        void SetMaterial(const std::weak_ptr<Material>& material)
+        {
+            _material = material;
+        }
+
+        void SetSprite(const std::weak_ptr<Sprite>& sprite)
+        {
+            if (auto material = _material.lock())
+            {
+                material->AddSprite(sprite);
+            }
+        }
         void Render(const uint16_t& width, const uint16_t& height) const;
 
-        uint32_t GetShaderId() const
+        const uint32_t GetShaderId() const
         {
-            return _shader.GetShaderId();
+            if (auto material = _material.lock())
+            {
+                return material->GetShaderId();
+            }
+
+            return -1;
         }
 
     private:

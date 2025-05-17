@@ -40,10 +40,14 @@ int main() {
     renderPipeline.AddRenderer(textRedenrer);
 
 
+    std::shared_ptr<Material> material = std::make_shared<Material>("shaders/uiImage_vert.glsl", "shaders/uiImage_frag.glsl");
+
+
     std::shared_ptr<Entity> e3 = std::make_shared<Entity>();  
     const auto uiImage = e3->AddComponent<UiImageRenderer>();
     auto tr3 = e3->AddComponent<RectTransform>();
     tr3.lock()->SetRect(glm::vec4(0.5,0.5,0.05,0.05));
+    uiImage.lock()->SetMaterial(material);
     uiImage.lock()->SetSprite(sprite);
     renderPipeline.AddRenderer(uiImage);
 

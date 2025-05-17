@@ -42,15 +42,4 @@ void UiImageRenderer::Render(const uint16_t& width, const uint16_t& height) cons
 
 }
 
-void UiImageRenderer::SetSprite(std::weak_ptr<Sprite> sprite)
-{
-    _sprite = sprite;
-}
-
-
-void UiImageRenderer::Update() const 
-{
-    _shader.Use();
-    _sprite.lock()->Bind();
-}
 
