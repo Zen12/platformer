@@ -9,8 +9,8 @@ What it does:
 import os
 import uuid
 
-
-directory = '../assets'  """TODO: THIS IS HARDCODED. Make it as param or dynamic from project.yaml"""
+ """TODO: THIS IS HARDCODED. Make it as param or dynamic from project.yaml"""
+directory = '../assets/resources' 
 
 
 for root, dirs, files in os.walk(directory):

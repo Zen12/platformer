@@ -1,6 +1,5 @@
 name: main_screen
 type: scene
-guid: 8ab67868-a7a5-45ac-b19c-f5be48a907c2
 scene:
     ui_room:
         image:

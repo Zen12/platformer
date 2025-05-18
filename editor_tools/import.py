@@ -53,7 +53,7 @@ def ext_check(value_ext):
     return mapping.get(value_ext, "error")
 
 """TODO: THIS IS HARDCODED. Make it as param or dynamic from project.yaml"""
-directory = '../assets'  
+directory = '../assets/resources'  
 
 for root, dirs, files in os.walk(directory):
     # Modify dirs in-place to skip hidden folders and specific names
@@ -66,6 +66,7 @@ for root, dirs, files in os.walk(directory):
         data = {
             'name': base_name,
             'guid': str(uuid.uuid4()),
+            'extention': ext,
             'type': ext_check(ext)
         }
 

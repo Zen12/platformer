@@ -1,3 +1,4 @@
 name: sprite
-guid: 72e03045-8b95-493f-98cb-372917aa69e4
+guid: 79445870-71ce-4f77-aa7f-e8003933421e
+extention: .vert
 type: vertex-shader

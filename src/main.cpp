@@ -3,19 +3,23 @@
 
 int main()
 {
+    AssetManager assetManager(ASSETS_PATH);
+    assetManager.Load();
+    const auto projectMeta = assetManager.GetAssetProjectMeta();
+    const auto projectAsset = AssetLoader::LoadProjectAssetFromPath(projectMeta.Path);
 
     // system init
-    auto window = std::make_shared<Window>(800, 600, "Platformer");
+    auto window = std::make_shared<Window>(800, 600, projectAsset.Name);
     window->WinInit();
 
-    std::shared_ptr<Shader> uiShader = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath("resources/shaders/uiImage.vert", "resources/shaders/uiImage.frag"));
-    std::shared_ptr<Shader> uiText = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath("resources/shaders/text.vert", "resources/shaders/text.frag"));
-    auto texture_face = AssetLoader::LoadSpriteFromPath("resources/images/awesomeface.png");
+    std::shared_ptr<Shader> uiShader = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath(ASSETS_PATH "resources/shaders/uiImage.vert", ASSETS_PATH"resources/shaders/uiImage.frag"));
+    std::shared_ptr<Shader> uiText = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath(ASSETS_PATH"resources/shaders/text.vert", ASSETS_PATH"resources/shaders/text.frag"));
+    auto texture_face = AssetLoader::LoadSpriteFromPath(ASSETS_PATH"resources/images/awesomeface.png");
 
     std::shared_ptr<Material> materialUI = std::make_shared<Material>(uiShader);
     std::shared_ptr<Material> materialText = std::make_shared<Material>(uiText);
 
-    std::shared_ptr<Font> font = std::make_shared<Font>(AssetLoader::LoadFontFromPath("resources/fonts/Antonio-Bold.ttf"));
+    std::shared_ptr<Font> font = std::make_shared<Font>(AssetLoader::LoadFontFromPath(ASSETS_PATH"resources/fonts/Antonio-Bold.ttf"));
 
     materialText->SetFont(font);
 

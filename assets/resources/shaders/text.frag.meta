@@ -1,3 +1,4 @@
 name: text
-guid: d90aa824-e612-4026-9345-73c0472f4869
-type: vertex-shader
+guid: 8b8071de-2bf1-478d-bba4-fdb86174c3ad
+extention: .frag
+type: fragment-shader

@@ -14,3 +14,5 @@
 #include "components/ui_text_renderer.h"
 #include "render_pipeline/render_pipeline.h"
 #include "system/time.h"
+#include "asset/asset_manager.h"
+#include "system/project_asset.h"

@@ -1,5 +1,7 @@
 #include "asset_loader.h"
 #include "../system/file_loader.h"
+#include "../system/project_asset.h"
+
 #include <GL/glew.h>
 
 #include <ft2build.h>
@@ -8,15 +10,36 @@
 
 const Shader AssetLoader::LoadShaderFromPath(const std::string &vertexPath, const std::string &fragPath)
 {
-    std::string vertexShaderSource = FileLoader::LoadFile(vertexPath);
-    std::string fragmentShaderSource = FileLoader::LoadFile(fragPath);
+    const std::string vertexShaderSource = FileLoader::LoadFile(vertexPath);
+    const std::string fragmentShaderSource = FileLoader::LoadFile(fragPath);
 
     return Shader(vertexShaderSource, fragmentShaderSource);
 }
 
 const Sprite AssetLoader::LoadSpriteFromPath(const std::string &path)
 {
-    return Sprite((ASSETS_PATH + path).c_str());
+    return Sprite(path.c_str());
+}
+
+ProjectAsset AssetLoader::LoadProjectAssetFromPath(const std::string &path)
+{
+    const std::string value = FileLoader::LoadFile(path);
+    YAML::Node root = YAML::Load(value);
+    auto project = root["project"];
+    if (project)
+    {
+        std::string name = project["name"] ? project["name"].as<std::string>() : "";
+        YAML::Node scenes = project["scenes"];
+        std::vector<std::string> scenesGuids;
+        if (scenes.IsSequence()) {
+            for (std::size_t i = 0; i < scenes.size(); ++i) {
+                scenesGuids.push_back(scenes[i].as<std::string>());
+            }
+        }
+        std::cout << name << "\n";
+        return ProjectAsset(name, scenesGuids);
+    }
+    return ProjectAsset("ERROR", std::vector<std::string>());
 }
 
 const Font AssetLoader::LoadFontFromPath(const std::string &path)
@@ -31,7 +54,7 @@ const Font AssetLoader::LoadFontFromPath(const std::string &path)
     }
 
 	// find path to font
-    std::string font_name = (ASSETS_PATH + path).c_str();
+    std::string font_name = (path).c_str();
 
     Font font;
 
