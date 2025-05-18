@@ -49,6 +49,7 @@ def ext_check(value_ext):
         ".frag": "fragment-shader",
         ".scene": "scene",
         ".prefab": "prefab",
+        ".mat": "material"
     }
     return mapping.get(value_ext, "error")
 

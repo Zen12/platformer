@@ -8,9 +8,9 @@ scene:
             - center_x
             - center_y
             - pixel_width:
-                value: 200
+                  value: 200
             - pixel_heigh:
-                value: 200
+                  value: 200
             - pivot:
-                x: 0.5
-                y: 0.5
+                  x: 0.5
+                  y: 0.5

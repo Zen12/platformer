@@ -44,13 +44,3 @@ AssetMeta AssetManager::GetAssetMetaByGuid(const std::string guid) const
     return _assetMap.at(guid);
 }
 
-AssetMeta AssetManager::GetAssetProjectMeta() const
-{
-    for (auto const [guid, meta] : _assetMap)
-    {
-        if (meta.Type == "project")
-            return meta;
-    }
-    
-    return AssetMeta();
-}

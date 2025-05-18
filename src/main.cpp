@@ -5,8 +5,7 @@ int main()
 {
     AssetManager assetManager(ASSETS_PATH);
     assetManager.Load();
-    const auto projectMeta = assetManager.GetAssetProjectMeta();
-    const auto projectAsset = AssetLoader::LoadProjectAssetFromPath(projectMeta.Path);
+    const auto projectAsset = AssetLoader::LoadProjectAssetFromPath(ASSETS_PATH "project.yaml");
 
     // system init
     auto window = std::make_shared<Window>(800, 600, projectAsset.Name);
