@@ -5,7 +5,7 @@ std::string FileLoader::LoadFile(const std::string &path)
     std::ifstream file((ASSETS_PATH + path).c_str()); // open the file
 
     if (!file.is_open()) {
-        std::cerr << "Error: Could not open the file.\n";
+        std::cerr << "Error: Could not open the file at: " << path << "\n";
         return std::string();
     }
 

@@ -1,0 +1,8 @@
+project:
+  name: Platformer
+  version: 0.1
+  bundle:
+    ios: com.test.game
+    android: com.test.game
+  scenes:
+    - 1a8e6515-d63b-4470-a46a-e947de376153

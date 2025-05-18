@@ -1,0 +1,17 @@
+name: main_screen
+type: scene
+guid: 8ab67868-a7a5-45ac-b19c-f5be48a907c2
+scene:
+    ui_room:
+        image:
+            sprite: "GUID"
+        layouts:
+            - center_x
+            - center_y
+            - pixel_width:
+                value: 200
+            - pixel_heigh:
+                value: 200
+            - pivot:
+                x: 0.5
+                y: 0.5

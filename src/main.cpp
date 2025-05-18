@@ -1,8 +1,5 @@
 #include <iostream>
 #include "engine/engine.h"
-#include <chrono>
-
-Font font;
 
 int main()
 {
@@ -11,22 +8,18 @@ int main()
     auto window = std::make_shared<Window>(800, 600, "Platformer");
     window->WinInit();
 
-    std::shared_ptr<Shader> uiShader = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath("shaders/uiImage_vert.glsl", "shaders/uiImage_frag.glsl"));
-    std::shared_ptr<Shader> uiText = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath("shaders/text_vert.glsl", "shaders/text_frag.glsl"));
-    auto texture_face = AssetLoader::LoadSpriteFromPath("images/awesomeface.png");
+    std::shared_ptr<Shader> uiShader = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath("resources/shaders/uiImage.vert", "resources/shaders/uiImage.frag"));
+    std::shared_ptr<Shader> uiText = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath("resources/shaders/text.vert", "resources/shaders/text.frag"));
+    auto texture_face = AssetLoader::LoadSpriteFromPath("resources/images/awesomeface.png");
 
     std::shared_ptr<Material> materialUI = std::make_shared<Material>(uiShader);
     std::shared_ptr<Material> materialText = std::make_shared<Material>(uiText);
 
-    std::shared_ptr<Font> font = std::make_shared<Font>(AssetLoader::LoadFontFromPath("fonts/Antonio-Bold.ttf"));
+    std::shared_ptr<Font> font = std::make_shared<Font>(AssetLoader::LoadFontFromPath("resources/fonts/Antonio-Bold.ttf"));
 
     materialText->SetFont(font);
 
     const auto rectRoot = std::make_shared<RectTransformRoot>(window);
-
-    using Clock = std::chrono::high_resolution_clock;
-
-    auto lastTime = Clock::now();
 
     std::shared_ptr<Entity> cameraEntity = std::make_shared<Entity>();
     const auto cameraTr = cameraEntity->AddComponent<Transform>();
@@ -89,6 +82,10 @@ int main()
 
     renderPipeline.AddRenderer(uiImage4);
 
+    Time time;
+
+    time.Start();
+
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -97,11 +94,8 @@ int main()
 
     while (window->IsOpen())
     {
-
-        auto currentTime = Clock::now();
-        std::chrono::duration<float> duration = currentTime - lastTime;
-        lastTime = currentTime;
-        const float deltaTime = duration.count();
+        const float deltaTime = time.GetResetDelta();
+        time.Reset();
 
         // textRedenrer.lock()->SetText(std::to_string(1.0f / deltaTime));
 
