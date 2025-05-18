@@ -60,6 +60,7 @@ class Material
         {
             if (const auto shader = _shader.lock())
             {
+                shader->Use();
                 const auto location = shader->GetLocation(name);
                 shader->SetMat4(location, mat);
             }
@@ -69,8 +70,19 @@ class Material
         {
             if (const auto shader = _shader.lock())
             {
+                shader->Use();
                 const auto location = shader->GetLocation(name);
                 shader->SetVec3(location, x, y, z);
+            }
+        }
+
+        void SetVec2(const std::string& name, float x, float y)
+        {
+            if (const auto shader = _shader.lock())
+            {
+                shader->Use();
+                const auto location = shader->GetLocation(name);
+                shader->SetVec2(location, x, y);
             }
         }
 

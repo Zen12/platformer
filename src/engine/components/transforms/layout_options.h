@@ -3,36 +3,88 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/quaternion.hpp>         
+#include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <memory>
 
+enum AlligmentLayout
+{
+    StartBorder,
+    EndBorder
+};
+
 class LayoutOption
 {
-    public:
-    virtual glm::mat4 UpdateMatrix(const float& width, const float& height, const glm::mat4& mat) const
+public:
+    virtual glm::mat4 UpdateMatrix(const float &width, const float &height, const glm::mat4 &mat) const
     {
         return mat;
     }
 };
 
-
 class CenterXLayoutOption : public LayoutOption
 {
-    public:
-
-    glm::mat4 UpdateMatrix(const float& width, const float& height, const glm::mat4& model) const override
+public:
+    glm::mat4 UpdateMatrix(const float &width, const float &height, const glm::mat4 &model) const override
     {
         return glm::translate(model, glm::vec3(width / 2, 0, 0));
     }
 };
 
+class PixelXLayoutOption : public LayoutOption
+{
+private:
+    float _value;
+    AlligmentLayout _alligment;
+
+public:
+    PixelXLayoutOption(const float &value, const AlligmentLayout &allignment)
+        : _value(value), _alligment(allignment) {};
+    glm::mat4 UpdateMatrix(const float &width, const float &height, const glm::mat4 &model) const override
+    {
+        switch (_alligment)
+        {
+        case AlligmentLayout::StartBorder:
+            return glm::translate(model, glm::vec3(0 + _value, 0, 0));
+
+        case AlligmentLayout::EndBorder:
+            return glm::translate(model, glm::vec3(width - _value, 0, 0));
+        default:
+            break;
+        }
+
+        return model;
+    }
+};
+
+class PivotLayoutOption : public LayoutOption
+{
+private:
+    glm::vec2 _pivot;
+
+public:
+    PivotLayoutOption(const glm::vec2 pivot) : 
+        _pivot(pivot) 
+    {};
+
+    glm::mat4 UpdateMatrix(const float &width, const float &height, const glm::mat4 &model) const override
+    {
+        glm::vec2 size = glm::vec2(width, height);
+        glm::vec2 pivot = glm::vec2(_pivot.x, _pivot.y);  // normalized pivot, e.g. (0.5f, 0.5f)
+
+        glm::vec2 pivotOffset = size * pivot; // size is scale
+
+
+        return glm::translate(model, glm::vec3(pivotOffset, 0.0f));
+    }
+
+};
+
 class CenterYLayoutOption : public LayoutOption
 {
-    public:
-
-    glm::mat4 UpdateMatrix(const float& width, const float& height, const glm::mat4& model) const override
+public:
+    glm::mat4 UpdateMatrix(const float &width, const float &height, const glm::mat4 &model) const override
     {
         return glm::translate(model, glm::vec3(0, height / 2, 0));
     }
@@ -40,62 +92,57 @@ class CenterYLayoutOption : public LayoutOption
 
 class PixelHeightLayoutOption : public LayoutOption
 {
-    private:
-        float _valuePixels;
-    
-    public:
-        PixelHeightLayoutOption(const float& valuePixels) : LayoutOption(),
-             _valuePixels(valuePixels)
-        {}
+private:
+    float _valuePixels;
 
-        glm::mat4 UpdateMatrix(const float& width, const float& height, const glm::mat4& model) const override
-        {
-            return glm::scale(model, glm::vec3(1, _valuePixels, 1));
-        }
+public:
+    PixelHeightLayoutOption(const float &valuePixels) : LayoutOption(),
+                                                        _valuePixels(valuePixels)
+    {
+    }
+
+    glm::mat4 UpdateMatrix(const float &width, const float &height, const glm::mat4 &model) const override
+    {
+        return glm::scale(model, glm::vec3(1, _valuePixels, 1));
+    }
 };
 
 class PixelWidthLayoutOption : public LayoutOption
 {
-    private:
-        float _value;
-    
-    public:
-        PixelWidthLayoutOption(const float& value) : LayoutOption()
-            , _value(value)
-        {} 
+private:
+    float _value;
 
-        glm::mat4 UpdateMatrix(const float& width, const float& height, const glm::mat4& model) const override
-        {
-            return glm::scale(model, glm::vec3(_value, 1, 1));
-        }
+public:
+    PixelWidthLayoutOption(const float &value) : LayoutOption(), _value(value)
+    {
+    }
+
+    glm::mat4 UpdateMatrix(const float &width, const float &height, const glm::mat4 &model) const override
+    {
+        return glm::scale(model, glm::vec3(_value, 1, 1));
+    }
 };
-
-
 
 class LayoutOptions
 {
 
-    private:
-        std::vector<std::unique_ptr<LayoutOption>> layouts;
+private:
+    std::vector<std::unique_ptr<LayoutOption>> layouts;
 
-    public:
+public:
+    void AddLayout(std::unique_ptr<LayoutOption> value)
+    {
+        layouts.push_back(std::move(value));
+    }
 
-        void AddLayout(std::unique_ptr<LayoutOption> value)
+    const glm::mat4 Build(const glm::mat4 &model, const float &width, const float &height) const
+    {
+        glm::mat4 mat = model;
+        for (const auto &layout : layouts)
         {
-            layouts.push_back(std::move(value));
+            mat = layout->UpdateMatrix(width, height, mat);
         }
 
-        const glm::mat4 Build(const glm::mat4& model, const float& width, const float& height) const
-        {
-            glm::mat4 mat = model;
-            for (const auto &layout : layouts)
-            {
-                mat = layout->UpdateMatrix(width, height, mat);
-            }
-
-            return mat;
-        }
-
-    
+        return mat;
+    }
 };
-

@@ -60,13 +60,34 @@ int main() {
     uiImage.lock()->SetSprite(sprite);
 
     tr3.lock()->SetParent(rectRoot);
+    tr3.lock()->AddLayoutOption(std::make_unique<PivotLayoutOption>(glm::vec2(0.5, 0.5)));
+
     tr3.lock()->AddLayoutOption(std::make_unique<CenterXLayoutOption>());
     tr3.lock()->AddLayoutOption(std::make_unique<CenterYLayoutOption>());
+
+
     tr3.lock()->AddLayoutOption(std::make_unique<PixelWidthLayoutOption>(200));
     tr3.lock()->AddLayoutOption(std::make_unique<PixelHeightLayoutOption>(200));
 
-
     renderPipeline.AddRenderer(uiImage);
+
+
+    std::shared_ptr<Entity> e4 = std::make_shared<Entity>();  
+    const auto uiImage2 = e4->AddComponent<UiImageRenderer>();
+    auto tr4 = e4->AddComponent<RectTransform>();
+
+    uiImage2.lock()->SetMaterial(materialUI);
+    uiImage2.lock()->SetSprite(sprite);
+
+    tr4.lock()->SetParent(rectRoot);
+    //tr4.lock()->AddLayoutOption(std::make_unique<PivotLayoutOption>(glm::vec2(0, 0)));
+    tr4.lock()->AddLayoutOption(std::make_unique<PixelXLayoutOption>(100, AlligmentLayout::EndBorder));
+    tr4.lock()->AddLayoutOption(std::make_unique<CenterYLayoutOption>());
+    tr4.lock()->AddLayoutOption(std::make_unique<PixelWidthLayoutOption>(300));
+    tr4.lock()->AddLayoutOption(std::make_unique<PixelHeightLayoutOption>(300));
+
+
+    renderPipeline.AddRenderer(uiImage2);
 
 
     glEnable(GL_CULL_FACE);
@@ -77,12 +98,15 @@ int main() {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
 
+
+
     while (window->IsOpen()) {
 
         auto currentTime = Clock::now();
         std::chrono::duration<float> duration = currentTime - lastTime;
         lastTime = currentTime;
         const float deltaTime = duration.count();
+
 
         //textRedenrer.lock()->SetText(std::to_string(1.0f / deltaTime));
 

@@ -55,6 +55,11 @@ const void Shader::SetVec3(const int32_t& location, const float& x, const float&
     glUniform3f(location, x, y, z);
 }
 
+const void Shader::SetVec2(const int32_t& location, const float& x, const float& y) const
+{
+    glUniform2f(location, x, y);
+}
+
 const void Shader::SetMat4(const int32_t& location, const glm::mat4& mat) const
 {
     glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));

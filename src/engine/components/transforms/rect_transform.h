@@ -17,7 +17,7 @@ class RectTransform : public Transform
 
     private:
         std::unique_ptr<LayoutOptions> _constrains;
-        std::shared_ptr<RectTransform> _parent;
+        std::weak_ptr<RectTransform> _parent;
 
     public:
         RectTransform(const std::weak_ptr<Entity>& entity) : Transform(entity)
@@ -30,7 +30,7 @@ class RectTransform : public Transform
             _constrains->AddLayout(std::move(layout));
         }
 
-        void SetParent(const std::shared_ptr<RectTransform> parent)
+        void SetParent(const std::weak_ptr<RectTransform>& parent)
         {
             _parent = parent;
         }
