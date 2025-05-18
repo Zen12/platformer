@@ -4,16 +4,16 @@
 
 Font font;
 
-int main() {
+int main()
+{
 
     // system init
     auto window = std::make_shared<Window>(800, 600, "Platformer");
     window->WinInit();
 
-    std::shared_ptr<Shader> uiShader = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath("shaders/uiImage_vert.glsl", "shaders/uiImage_frag.glsl"));  
-    std::shared_ptr<Shader> uiText = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath("shaders/text_vert.glsl", "shaders/text_frag.glsl"));  
+    std::shared_ptr<Shader> uiShader = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath("shaders/uiImage_vert.glsl", "shaders/uiImage_frag.glsl"));
+    std::shared_ptr<Shader> uiText = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath("shaders/text_vert.glsl", "shaders/text_frag.glsl"));
     auto texture_face = AssetLoader::LoadSpriteFromPath("images/awesomeface.png");
-
 
     std::shared_ptr<Material> materialUI = std::make_shared<Material>(uiShader);
     std::shared_ptr<Material> materialText = std::make_shared<Material>(uiText);
@@ -28,7 +28,7 @@ int main() {
 
     auto lastTime = Clock::now();
 
-    std::shared_ptr<Entity> cameraEntity = std::make_shared<Entity>();  
+    std::shared_ptr<Entity> cameraEntity = std::make_shared<Entity>();
     const auto cameraTr = cameraEntity->AddComponent<Transform>();
     cameraTr.lock()->SetPosition(glm::vec3(0, 0, -2));
     cameraTr.lock()->SetEulerRotation(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -38,8 +38,7 @@ int main() {
     RenderPipeline renderPipeline = {camera, cameraTr, window};
     std::shared_ptr<Sprite> sprite = std::make_shared<Sprite>(texture_face);
 
-
-    std::shared_ptr<Entity> e2 = std::make_shared<Entity>();  
+    std::shared_ptr<Entity> e2 = std::make_shared<Entity>();
     auto textRedenrer = e2->AddComponent<UiTextRenderer>();
 
     textRedenrer.lock()->SetMaterial(materialText);
@@ -50,9 +49,7 @@ int main() {
 
     renderPipeline.AddRenderer(textRedenrer);
 
-
-
-    std::shared_ptr<Entity> e3 = std::make_shared<Entity>();  
+    std::shared_ptr<Entity> e3 = std::make_shared<Entity>();
     const auto uiImage = e3->AddComponent<UiImageRenderer>();
     auto tr3 = e3->AddComponent<RectTransform>();
 
@@ -60,55 +57,53 @@ int main() {
     uiImage.lock()->SetSprite(sprite);
 
     tr3.lock()->SetParent(rectRoot);
-    tr3.lock()->AddLayoutOption(std::make_unique<PivotLayoutOption>(glm::vec2(0.5, 0.5)));
+
 
     tr3.lock()->AddLayoutOption(std::make_unique<CenterXLayoutOption>());
     tr3.lock()->AddLayoutOption(std::make_unique<CenterYLayoutOption>());
 
-
     tr3.lock()->AddLayoutOption(std::make_unique<PixelWidthLayoutOption>(200));
     tr3.lock()->AddLayoutOption(std::make_unique<PixelHeightLayoutOption>(200));
 
+    tr3.lock()->AddLayoutOption(std::make_unique<PivotLayoutOption>(glm::vec2(0.5f, 0.5f)));
+
     renderPipeline.AddRenderer(uiImage);
 
-
-    std::shared_ptr<Entity> e4 = std::make_shared<Entity>();  
-    const auto uiImage2 = e4->AddComponent<UiImageRenderer>();
+    std::shared_ptr<Entity> e4 = std::make_shared<Entity>();
+    const auto uiImage4 = e4->AddComponent<UiImageRenderer>();
     auto tr4 = e4->AddComponent<RectTransform>();
 
-    uiImage2.lock()->SetMaterial(materialUI);
-    uiImage2.lock()->SetSprite(sprite);
+    uiImage4.lock()->SetMaterial(materialUI);
+    uiImage4.lock()->SetSprite(sprite);
 
     tr4.lock()->SetParent(rectRoot);
-    //tr4.lock()->AddLayoutOption(std::make_unique<PivotLayoutOption>(glm::vec2(0, 0)));
-    tr4.lock()->AddLayoutOption(std::make_unique<PixelXLayoutOption>(100, AlligmentLayout::EndBorder));
+
+    tr4.lock()->AddLayoutOption(std::make_unique<CenterXLayoutOption>());
     tr4.lock()->AddLayoutOption(std::make_unique<CenterYLayoutOption>());
-    tr4.lock()->AddLayoutOption(std::make_unique<PixelWidthLayoutOption>(300));
-    tr4.lock()->AddLayoutOption(std::make_unique<PixelHeightLayoutOption>(300));
+
+    tr4.lock()->AddLayoutOption(std::make_unique<PixelWidthLayoutOption>(200));
+    tr4.lock()->AddLayoutOption(std::make_unique<PixelHeightLayoutOption>(200));
+
+    tr4.lock()->AddLayoutOption(std::make_unique<PivotLayoutOption>(glm::vec2(0.0, 0.0)));
 
 
-    renderPipeline.AddRenderer(uiImage2);
-
+    renderPipeline.AddRenderer(uiImage4);
 
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-
-
-
-    while (window->IsOpen()) {
+    while (window->IsOpen())
+    {
 
         auto currentTime = Clock::now();
         std::chrono::duration<float> duration = currentTime - lastTime;
         lastTime = currentTime;
         const float deltaTime = duration.count();
 
-
-        //textRedenrer.lock()->SetText(std::to_string(1.0f / deltaTime));
+        // textRedenrer.lock()->SetText(std::to_string(1.0f / deltaTime));
 
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -119,8 +114,6 @@ int main() {
         glfwPollEvents();
     }
 
-
     window->Destroy();
     return 0;
 }
-

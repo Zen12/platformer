@@ -7,6 +7,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <memory>
+#include <glm/glm.hpp>
+#include <iostream>
 
 enum AlligmentLayout
 {
@@ -70,13 +72,7 @@ public:
 
     glm::mat4 UpdateMatrix(const float &width, const float &height, const glm::mat4 &model) const override
     {
-        glm::vec2 size = glm::vec2(width, height);
-        glm::vec2 pivot = glm::vec2(_pivot.x, _pivot.y);  // normalized pivot, e.g. (0.5f, 0.5f)
-
-        glm::vec2 pivotOffset = size * pivot; // size is scale
-
-
-        return glm::translate(model, glm::vec3(pivotOffset, 0.0f));
+        return glm::translate(model, glm::vec3(-_pivot.x, -_pivot.y, 0.0));
     }
 
 };
