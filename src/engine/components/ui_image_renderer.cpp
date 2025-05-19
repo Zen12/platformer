@@ -1,4 +1,4 @@
-#include "ui_image_renderer.h"
+#include "ui_image_renderer.hpp"
 
 void UiImageRenderer::Update() const
 {
@@ -14,8 +14,6 @@ void UiImageRenderer::Render(const glm::mat4 &projection) const
     if (auto material = _material.lock())
     {
         auto model = GetEntity().lock()->GetComponent<RectTransform>().lock()->GetModel();
-        //model = glm::translate(model, glm::vec3(0.0f, 0, -1));
-        //model = glm::scale(model, glm::vec3(200.0f));
 
         material->SetMat4("projection", projection);
         material->SetMat4("model", model);

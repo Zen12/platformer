@@ -1,5 +1,5 @@
 #include <iostream>
-#include "engine/engine.h"
+#include "engine/engine.hpp"
 
 int main()
 {
@@ -11,14 +11,14 @@ int main()
     auto window = std::make_shared<Window>(800, 600, projectAsset.Name);
     window->WinInit();
 
-    std::shared_ptr<Shader> uiShader = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath(ASSETS_PATH "resources/shaders/uiImage.vert", ASSETS_PATH"resources/shaders/uiImage.frag"));
-    std::shared_ptr<Shader> uiText = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath(ASSETS_PATH"resources/shaders/text.vert", ASSETS_PATH"resources/shaders/text.frag"));
-    auto texture_face = AssetLoader::LoadSpriteFromPath(ASSETS_PATH"resources/images/awesomeface.png");
+    std::shared_ptr<Shader> uiShader = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath(ASSETS_PATH "resources/shaders/uiImage.vert", ASSETS_PATH "resources/shaders/uiImage.frag"));
+    std::shared_ptr<Shader> uiText = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath(ASSETS_PATH "resources/shaders/text.vert", ASSETS_PATH "resources/shaders/text.frag"));
+    auto texture_face = AssetLoader::LoadSpriteFromPath(ASSETS_PATH "resources/images/awesomeface.png");
 
     std::shared_ptr<Material> materialUI = std::make_shared<Material>(uiShader);
     std::shared_ptr<Material> materialText = std::make_shared<Material>(uiText);
 
-    std::shared_ptr<Font> font = std::make_shared<Font>(AssetLoader::LoadFontFromPath(ASSETS_PATH"resources/fonts/Antonio-Bold.ttf"));
+    std::shared_ptr<Font> font = std::make_shared<Font>(AssetLoader::LoadFontFromPath(ASSETS_PATH "resources/fonts/Antonio-Bold.ttf"));
 
     materialText->SetFont(font);
 
@@ -54,7 +54,6 @@ int main()
 
     tr3.lock()->SetParent(rectRoot);
 
-
     tr3.lock()->AddLayoutOption(std::make_unique<CenterXLayoutOption>());
     tr3.lock()->AddLayoutOption(std::make_unique<CenterYLayoutOption>());
 
@@ -82,7 +81,6 @@ int main()
 
     tr4.lock()->AddLayoutOption(std::make_unique<PivotLayoutOption>(glm::vec2(0.0, 0.0)));
 
-
     renderPipeline.AddRenderer(uiImage4);
 
     Time time;
@@ -97,7 +95,7 @@ int main()
 
     while (window->IsOpen())
     {
-        const float deltaTime = time.GetResetDelta();
+        // const float deltaTime = time.GetResetDelta();
         time.Reset();
 
         // textRedenrer.lock()->SetText(std::to_string(1.0f / deltaTime));

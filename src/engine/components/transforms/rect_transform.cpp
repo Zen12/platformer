@@ -1,7 +1,6 @@
 
 
-#include "rect_transform.h"
-
+#include "rect_transform.hpp"
 
 glm::mat4 RectTransform::GetModel() const
 {

@@ -1,9 +1,8 @@
-#include "asset_manager.h"
+#include "asset_manager.hpp"
 
 namespace fs = std::filesystem;
 
 const std::string metaExt = ".meta";
-
 
 void AssetManager::Load()
 {
@@ -22,8 +21,7 @@ void AssetManager::Load()
                     std::string guid = root["guid"].as<std::string>(); // Already checked
                     std::string extension = root["extention"] ? root["extention"].as<std::string>() : "";
                     std::string type = root["type"] ? root["type"].as<std::string>() : "";
-                    
-                
+
                     auto newPath = entry.path();
                     newPath.replace_extension();
                     AssetMeta meta(name, guid, extension, type, newPath.c_str());
@@ -43,4 +41,3 @@ AssetMeta AssetManager::GetAssetMetaByGuid(const std::string guid) const
 {
     return _assetMap.at(guid);
 }
-

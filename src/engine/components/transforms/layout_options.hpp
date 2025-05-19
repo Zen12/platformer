@@ -19,16 +19,20 @@ enum AlligmentLayout
 class LayoutOption
 {
 public:
-    virtual glm::mat4 UpdateMatrix(const float &width, const float &height, const glm::mat4 &mat) const
-    {
-        return mat;
-    }
+    LayoutOption() = default;
+
+    virtual glm::mat4 UpdateMatrix(const float &width, const float &height, const glm::mat4 &mat) const = 0;
+    virtual ~LayoutOption() = default;
 };
 
 class CenterXLayoutOption : public LayoutOption
 {
 public:
-    glm::mat4 UpdateMatrix(const float &width, const float &height, const glm::mat4 &model) const override
+    [[nodiscard]] glm::mat4 UpdateMatrix(
+        const float &width,
+        [[maybe_unused]] const float &height,
+        [[maybe_unused]] const glm::mat4 &model)
+        const override
     {
         return glm::translate(model, glm::vec3(width / 2, 0, 0));
     }
@@ -37,19 +41,22 @@ public:
 class PixelXLayoutOption : public LayoutOption
 {
 private:
-    float _value;
-    AlligmentLayout _alligment;
+    const float _value;
+    const AlligmentLayout _alligment;
 
 public:
     PixelXLayoutOption(const float &value, const AlligmentLayout &allignment)
         : _value(value), _alligment(allignment) {};
-    glm::mat4 UpdateMatrix(const float &width, const float &height, const glm::mat4 &model) const override
+
+    [[nodiscard]] glm::mat4 UpdateMatrix(
+        const float &width,
+        [[maybe_unused]] const float &height,
+        const glm::mat4 &model) const override
     {
         switch (_alligment)
         {
         case AlligmentLayout::StartBorder:
             return glm::translate(model, glm::vec3(0 + _value, 0, 0));
-
         case AlligmentLayout::EndBorder:
             return glm::translate(model, glm::vec3(width - _value, 0, 0));
         default:
@@ -63,24 +70,28 @@ public:
 class PivotLayoutOption : public LayoutOption
 {
 private:
-    glm::vec2 _pivot;
+    const glm::vec2 _pivot;
 
 public:
-    PivotLayoutOption(const glm::vec2 pivot) : 
-        _pivot(pivot) 
-    {};
+    PivotLayoutOption(const glm::vec2 pivot) : _pivot(pivot) {};
 
-    glm::mat4 UpdateMatrix(const float &width, const float &height, const glm::mat4 &model) const override
+    [[nodiscard]] glm::mat4 UpdateMatrix(
+        [[maybe_unused]] const float &width,
+        [[maybe_unused]] const float &height,
+        const glm::mat4 &model)
+        const override
     {
         return glm::translate(model, glm::vec3(-_pivot.x, -_pivot.y, 0.0));
     }
-
 };
 
 class CenterYLayoutOption : public LayoutOption
 {
 public:
-    glm::mat4 UpdateMatrix(const float &width, const float &height, const glm::mat4 &model) const override
+    [[nodiscard]] glm::mat4 UpdateMatrix(
+        [[maybe_unused]] const float &width,
+        const float &height, const glm::mat4 &model)
+        const override
     {
         return glm::translate(model, glm::vec3(0, height / 2, 0));
     }
@@ -89,7 +100,7 @@ public:
 class PixelHeightLayoutOption : public LayoutOption
 {
 private:
-    float _valuePixels;
+    const float _valuePixels;
 
 public:
     PixelHeightLayoutOption(const float &valuePixels) : LayoutOption(),
@@ -97,7 +108,9 @@ public:
     {
     }
 
-    glm::mat4 UpdateMatrix(const float &width, const float &height, const glm::mat4 &model) const override
+    [[nodiscard]] glm::mat4 UpdateMatrix(
+        [[maybe_unused]] const float &width,
+        [[maybe_unused]] const float &height, const glm::mat4 &model) const override
     {
         return glm::scale(model, glm::vec3(1, _valuePixels, 1));
     }
@@ -106,14 +119,17 @@ public:
 class PixelWidthLayoutOption : public LayoutOption
 {
 private:
-    float _value;
+    const float _value;
 
 public:
     PixelWidthLayoutOption(const float &value) : LayoutOption(), _value(value)
     {
     }
 
-    glm::mat4 UpdateMatrix(const float &width, const float &height, const glm::mat4 &model) const override
+    [[nodiscard]] glm::mat4 UpdateMatrix(
+        [[maybe_unused]] const float &width,
+        [[maybe_unused]] const float &height,
+        const glm::mat4 &model) const override
     {
         return glm::scale(model, glm::vec3(_value, 1, 1));
     }
@@ -123,18 +139,18 @@ class LayoutOptions
 {
 
 private:
-    std::vector<std::unique_ptr<LayoutOption>> layouts;
+    std::vector<std::unique_ptr<LayoutOption>> _layouts;
 
 public:
     void AddLayout(std::unique_ptr<LayoutOption> value)
     {
-        layouts.push_back(std::move(value));
+        _layouts.push_back(std::move(value));
     }
 
-    const glm::mat4 Build(const glm::mat4 &model, const float &width, const float &height) const
+    [[nodiscard]] glm::mat4 Build(const glm::mat4 &model, const float &width, const float &height) const
     {
         glm::mat4 mat = model;
-        for (const auto &layout : layouts)
+        for (const auto &layout : _layouts)
         {
             mat = layout->UpdateMatrix(width, height, mat);
         }

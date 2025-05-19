@@ -3,15 +3,15 @@
 #include <filesystem>
 #include <vector>
 #include <string>
-#include "asset_meta.h"
-#include <fstream> 
+#include "asset_meta.hpp"
+#include <fstream>
 #include <yaml-cpp/yaml.h>
 
 class AssetManager
 {
 private:
     const std::string _assetPath;
-    std::unordered_map <std::string, AssetMeta> _assetMap;
+    std::unordered_map<std::string, AssetMeta> _assetMap;
 
 public:
     AssetManager(const std::string &assetPath)

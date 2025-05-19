@@ -20,13 +20,20 @@ find_package(YAMLCPP REQUIRED)
 
 # Find all header files
 file(GLOB_RECURSE HEADER_FILES
-    "src/*.h"
+    "src/*.hpp"
 )
 
 # Find all source files
 file(GLOB_RECURSE SOURCE_FILES
 	"src/*.cpp"
 )
+
+# Enable warnings as errors
+if(MSVC)
+    add_compile_options(/W4 /WX)  # /WX treats warnings as errors in MSVC
+else()
+    add_compile_options(-Wall -Wextra -Werror)  # -Werror for GCC/Clang
+endif()
 
 # This command adds a build target (executable or library, use add_library for libraries).
 # The first word is the name of the executable and everything after that is the source files you want to include in

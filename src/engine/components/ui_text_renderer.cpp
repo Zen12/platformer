@@ -1,4 +1,4 @@
-#include "ui_text_renderer.h"
+#include "ui_text_renderer.hpp"
 
 #include <GL/glew.h>
 
@@ -52,7 +52,7 @@ void UiTextRenderer::Render(const glm::mat4 &projection)
 
             // inject
             const auto model = GetEntity().lock()->GetComponent<RectTransform>().lock()->GetModel();
-            const auto position =  glm::vec3(model[3]); 
+            const auto position = glm::vec3(model[3]);
 
             float x = position.x * width;
             float y = position.y * height;

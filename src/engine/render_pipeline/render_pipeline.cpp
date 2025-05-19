@@ -1,11 +1,12 @@
-#include "render_pipeline.h"
+#include "render_pipeline.hpp"
 
 void RenderPipeline::RenderSprites() const
 {
     const auto projection = glm::value_ptr(_camera3d.lock()->GetProjection());
     const auto view = glm::value_ptr(_cameraTransform3d.lock()->GetModel());
 
-    for (auto value : _sprites) {
+    for (auto value : _sprites)
+    {
 
         if (auto sprite = value.lock())
         {
@@ -15,10 +16,9 @@ void RenderPipeline::RenderSprites() const
 
             uint32_t shaderId = sprite->GetShaderId();
 
-
             unsigned int modelLock = glGetUniformLocation(shaderId, "model");
             glUniformMatrix4fv(modelLock, 1, GL_FALSE, glm::value_ptr(model->GetModel()));
-    
+
             unsigned int viewLock = glGetUniformLocation(shaderId, "view");
             glUniformMatrix4fv(viewLock, 1, GL_FALSE, view);
 
@@ -30,12 +30,12 @@ void RenderPipeline::RenderSprites() const
     }
 }
 
-
 void RenderPipeline::RenderUI() const
 {
     const auto projection = _uiCamera.GetProjection();
 
-    for (auto value : _texts) {
+    for (auto value : _texts)
+    {
         if (auto text = value.lock())
         {
             text->Update();
@@ -43,7 +43,8 @@ void RenderPipeline::RenderUI() const
         }
     }
 
-    for (auto value : _images) {
+    for (auto value : _images)
+    {
         if (auto image = value.lock())
         {
             image->Update();
@@ -52,8 +53,6 @@ void RenderPipeline::RenderUI() const
     }
 }
 
-
 void RenderPipeline::Cleanup()
 {
-
 }

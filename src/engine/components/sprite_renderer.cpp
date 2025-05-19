@@ -1,16 +1,15 @@
-#include "sprite_renderer.h"
+#include "sprite_renderer.hpp"
 
 #include <GL/glew.h>
-
 
 void SpriteRenderer::SetSprite(std::weak_ptr<Sprite> sprite)
 {
     _sprite = sprite;
 }
 
-void SpriteRenderer::Update() const 
+void SpriteRenderer::Update() const
 {
-    if (auto sprite = _sprite.lock()) 
+    if (auto sprite = _sprite.lock())
     {
         sprite->Bind();
         _shader.Use();
@@ -18,9 +17,9 @@ void SpriteRenderer::Update() const
     }
 }
 
-void SpriteRenderer::Render() const 
+void SpriteRenderer::Render() const
 {
-    if (auto sprite = _sprite.lock()) 
+    if (auto sprite = _sprite.lock())
     {
         glDrawElements(GL_TRIANGLES, _mesh.GetIndicesCount(), GL_UNSIGNED_INT, 0);
     }

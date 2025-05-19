@@ -1,9 +1,9 @@
-## Requirements
+## 📋 Requirements
 - 🧠 ```C++17```
 - 🛠️ ```Cmake``` 3.28 (<4.0)
 - 🛠️ 🚀 ```FetchContent_Declare``` is used as package manager
 - ⚙️ ```[optional]``` Python used for editor tools
-## 👋🤞 Getting started 
+## 👋 Getting started 🤞
 ### 🍎 macOS 
 - 🏃```run.sh``` ⌛```1-2 minutes``` 
 ### 🪟 Windows 
@@ -11,13 +11,13 @@ TODO
 ### 🐧 Linux 
 TODO
 
-## 🏭 Project structure 
+## 🔨 Project structure 
 
 ``` 
 
 ⚙️ .gitignore 
 🗂️ assets
-    ├─ 🎨 resources
+    ├─ 🗂️ resources
     └─ 🗒️ project.yaml
 📦 bin
 📦 build
@@ -53,7 +53,7 @@ TODO
     - 🈸 Font rendering
 - 📀 Asset management 
     - 🖥️ Small Editor
-    - 📚 Support for scene and prefabs
+    - 📚 Scene and prefabs
 - 🔦 2d lightning
 - 🌙 Lua scripting
 

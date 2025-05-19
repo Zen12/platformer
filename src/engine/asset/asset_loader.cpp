@@ -1,6 +1,6 @@
-#include "asset_loader.h"
-#include "../system/file_loader.h"
-#include "../system/project_asset.h"
+#include "asset_loader.hpp"
+#include "../system/file_loader.hpp"
+#include "../system/project_asset.hpp"
 
 #include <GL/glew.h>
 

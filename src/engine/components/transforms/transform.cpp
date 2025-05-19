@@ -1,13 +1,12 @@
-#include "transform.h"
+#include "transform.hpp"
 
-
-void Transform::Update() const 
+void Transform::Update() const
 {
 }
 
 glm::mat4 Transform::GetModel() const
 {
-    glm::mat4 model = glm::mat4(1.0f); 
+    glm::mat4 model = glm::mat4(1.0f);
 
     if (auto entity = _entity.lock())
     {
@@ -21,27 +20,24 @@ glm::mat4 Transform::GetModel() const
     }
 
     return model;
-
 }
-
 
 void Transform::SetPosition(const glm::vec3 &position)
 {
     _position = position;
 }
 
-const glm::vec3 Transform::GetPosition() const
+glm::vec3 Transform::GetPosition() const
 {
     return _position;
 }
-
 
 void Transform::SetEulerRotation(const glm::vec3 &euler)
 {
     _eulerRotation = euler;
 }
 
-const glm::vec3 Transform::GetEulerRotation() const
+glm::vec3 Transform::GetEulerRotation() const
 {
     return _eulerRotation;
 }
@@ -51,7 +47,7 @@ void Transform::SetScale(const glm::vec3 &scale)
     _scale = scale;
 }
 
-const glm::vec3 Transform::GetScale() const
+glm::vec3 Transform::GetScale() const
 {
     return _scale;
 }
