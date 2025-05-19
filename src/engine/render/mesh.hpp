@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 #include <glm/glm.hpp>
 #include <cstdint>
@@ -7,27 +7,26 @@
 
 class Mesh
 {
-    public:
+public:
+private:
+    uint32_t _vbo;
+    uint32_t _vao;
+    uint32_t _ebo;
+    std::vector<float> _vertices;
+    std::vector<uint32_t> _indices;
 
-    private:
-        uint32_t _vbo;
-        uint32_t _vao;
-        uint32_t _ebo;
-        std::vector<float> _vertices;
-        std::vector<uint32_t> _indices;
+public:
+    Mesh() = default;
+    Mesh(
+        const std::vector<float> &vertices,
+        const std::vector<uint32_t> &indices);
 
-    public:
-        Mesh() = default;
-        Mesh(
-            const std::vector<float>& vertices, 
-            const std::vector<uint32_t>& indices);
+    ~Mesh();
 
-        ~Mesh();
+    void Bind() const;
+    size_t GetVertexCount() const;
+    size_t GetIndicesCount() const;
 
-        void Bind() const;
-        uint16_t GetVertexCount() const;
-        uint16_t GetIndicesCount() const;
-
-        static Mesh GenerateSprite();
-        static Mesh GenerateUI();
+    static Mesh GenerateSprite();
+    static Mesh GenerateUI();
 };

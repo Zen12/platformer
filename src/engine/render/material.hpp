@@ -43,11 +43,11 @@ public:
         _font = font;
     }
 
-    uint32_t GetShaderId() const
+    int32_t GetShaderId() const
     {
         if (const auto shader = _shader.lock())
         {
-            return shader->GetShaderId();
+            return (int32_t)shader->GetShaderId();
         }
         return -1;
     }

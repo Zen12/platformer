@@ -19,5 +19,5 @@ void UiImageRenderer::Render(const glm::mat4 &projection) const
         material->SetMat4("model", model);
     }
 
-    glDrawElements(GL_TRIANGLES, _mesh.GetIndicesCount(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, (int32_t)_mesh.GetIndicesCount(), GL_UNSIGNED_INT, 0);
 }

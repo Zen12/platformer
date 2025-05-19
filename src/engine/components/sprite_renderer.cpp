@@ -21,6 +21,6 @@ void SpriteRenderer::Render() const
 {
     if (auto sprite = _sprite.lock())
     {
-        glDrawElements(GL_TRIANGLES, _mesh.GetIndicesCount(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, (int32_t)_mesh.GetIndicesCount(), GL_UNSIGNED_INT, 0);
     }
 }

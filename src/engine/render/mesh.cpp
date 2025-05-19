@@ -15,12 +15,12 @@ Mesh::Mesh(
     glBindVertexArray(_vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, (long)(vertices.size() * sizeof(float)), vertices.data(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, (long)(indices.size() * sizeof(uint32_t)), indices.data(), GL_STATIC_DRAW);
 
-    uint32_t stride = 5 * sizeof(float);
+    int32_t stride = (int32_t)(5 * sizeof(float));
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void *)0);
     glEnableVertexAttribArray(0);
@@ -45,12 +45,12 @@ void Mesh::Bind() const
     glBindVertexArray(_vao);
 }
 
-uint16_t Mesh::GetVertexCount() const
+size_t Mesh::GetVertexCount() const
 {
     return _vertices.size();
 }
 
-uint16_t Mesh::GetIndicesCount() const
+size_t Mesh::GetIndicesCount() const
 {
     return _indices.size();
 }

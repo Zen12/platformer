@@ -10,7 +10,7 @@
 class Shader
 {
 private:
-    uint32_t _shaderProgram;
+    int32_t _shaderProgram;
     uint32_t _fragmentShader;
     uint32_t _vertexShader;
     std::unordered_map<std::string, int32_t> _locationMap;
@@ -21,7 +21,7 @@ public:
     ~Shader();
 
     void Use() const;
-    uint32_t GetShaderId() const
+    int32_t GetShaderId() const
     {
         return _shaderProgram;
     }

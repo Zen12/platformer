@@ -38,8 +38,8 @@ else()
     # removed -Wshadow because of YAML lib
     # removed -fsanitize=leak because Apple doesn't support 
     target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
-        $<$<CONFIG:Debug>:-Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer -g>
-        $<$<CONFIG:Release>:-Wall -Wextra -Wpedantic -Werror  -O3 -DNDEBUG>
+        $<$<CONFIG:Debug>:-Wall -Wextra -Wpedantic -Wnull-dereference -Wuninitialized -Werror -fsanitize=address,undefined -fno-omit-frame-pointer -g>
+        $<$<CONFIG:Release>:-Wall -Wextra -Wpedantic -Wnull-dereference -Wuninitialized -Werror -O3 -DNDEBUG>
     )
 
     # Link sanitizer runtime only for Debug

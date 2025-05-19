@@ -28,7 +28,7 @@ public:
 
     void Render() const;
 
-    uint32_t GetShaderId() const
+    int32_t GetShaderId() const
     {
         return _shader.GetShaderId();
     }
