@@ -36,14 +36,15 @@ if(MSVC)
 else()
     # GCC/Clang flags for warnings/errors and optimization/debug
     # removed -Wshadow because of YAML lib
+    # removed -fsanitize=leak because Apple doesn't support 
     target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
-        $<$<CONFIG:Debug>:-Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined,leak -fno-omit-frame-pointer -g>
+        $<$<CONFIG:Debug>:-Wall -Wextra -Wpedantic -Werror -fsanitize=address,undefined -fno-omit-frame-pointer -g>
         $<$<CONFIG:Release>:-Wall -Wextra -Wpedantic -Werror  -O3 -DNDEBUG>
     )
 
     # Link sanitizer runtime only for Debug
     target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
-        $<$<CONFIG:Debug>:-fsanitize=address,undefined,leak>
+        $<$<CONFIG:Debug>:-fsanitize=address,undefined> 
     )
 endif()
 
