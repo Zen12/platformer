@@ -40,7 +40,7 @@ public:
             if (_isPespective)
             {
                 float ration = (float)w->GetWidth() / (float)w->GetHeight();
-                return glm::perspective(glm::radians(_aspectPower), ration, 0.1f, 100.0f);
+                return glm::perspective(glm::radians(_aspectPower), ration, -0.1f, 100.0f);
             }
             else
             {

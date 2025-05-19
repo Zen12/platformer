@@ -14,14 +14,13 @@ class Transform : public Component
 {
 
 protected:
-    glm::vec3 _position;
-    glm::vec3 _eulerRotation;
-    glm::vec3 _scale;
+    glm::vec3 _position = glm::vec3(0);
+    glm::vec3 _eulerRotation = glm::vec3(0);
+    glm::vec3 _scale = glm::vec3(1);
 
 public:
     Transform() = delete;
-    Transform(const std::weak_ptr<Entity> &entity) : Component(entity),
-                                                     _scale(glm::vec3(1.0))
+    Transform(const std::weak_ptr<Entity> &entity) : Component(entity)
     {
     }
     ~Transform() override = default;

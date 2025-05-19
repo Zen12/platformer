@@ -1,8 +1,11 @@
 #include "asset_loader.hpp"
 #include "../system/file_loader.hpp"
 #include "../system/project_asset.hpp"
+#include "../system/gl.hpp"
 
 #include <GL/glew.h>
+#include <functional>
+#include <iostream>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
