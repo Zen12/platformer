@@ -5,33 +5,38 @@ Shader::Shader(const std::string &vertexSource, const std::string &fragmentSourc
 {
     _vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
-    const char *vertexSourceCstr = vertexSource.c_str();
+    const GLchar *sourceArray[] = {vertexSource.c_str()}; // stack-alloc array, RAII delete
 
-    glShaderSource(_vertexShader, 1, &vertexSourceCstr, NULL);
+    glShaderSource(_vertexShader, 1, sourceArray, NULL);
     glCompileShader(_vertexShader);
 
     int success;
-    char infoLog[512];
     glGetShaderiv(_vertexShader, GL_COMPILE_STATUS, &success);
     if (!success)
     {
+        char infoLog[512];
         glGetShaderInfoLog(_vertexShader, 512, NULL, infoLog);
+#ifndef NDEBUG
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n"
                   << infoLog << std::endl;
+#endif
     }
 
-    const char *fragmentSourceCstr = fragmentSource.c_str();
+    const GLchar *fragmentArray[] = {fragmentSource.c_str()}; // stack-alloc array, RAII delete
 
     _fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(_fragmentShader, 1, &fragmentSourceCstr, NULL);
+    glShaderSource(_fragmentShader, 1, fragmentArray, NULL);
     glCompileShader(_fragmentShader);
 
     glGetShaderiv(_fragmentShader, GL_COMPILE_STATUS, &success);
     if (!success)
     {
+        char infoLog[512];
         glGetShaderInfoLog(_fragmentShader, 512, NULL, infoLog);
+#ifndef NDEBUG
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n"
                   << infoLog << std::endl;
+#endif
     }
 
     _shaderProgram = glCreateProgram();
@@ -41,29 +46,34 @@ Shader::Shader(const std::string &vertexSource, const std::string &fragmentSourc
     glLinkProgram(_shaderProgram);
 }
 
-void Shader::Use() const
+void Shader::Use() const noexcept
 {
     glUseProgram(_shaderProgram);
 }
 
-int32_t Shader::GetLocation(const std::string &name) const
+int32_t Shader::GetLocation(const std::string &name) const noexcept
 {
     return glGetUniformLocation(_shaderProgram, name.c_str());
 }
 
-void Shader::SetVec3(const int32_t &location, const float &x, const float &y, const float &z) const
+void Shader::SetVec3(const int32_t &location, const float &x, const float &y, const float &z) const noexcept
 {
     glUniform3f(location, x, y, z);
 }
 
-void Shader::SetVec2(const int32_t &location, const float &x, const float &y) const
+void Shader::SetVec2(const int32_t &location, const float &x, const float &y) const noexcept
 {
     glUniform2f(location, x, y);
 }
 
-void Shader::SetMat4(const int32_t &location, const glm::mat4 &mat) const
+void Shader::SetMat4(const int32_t &location, const glm::mat4 &mat) const noexcept
 {
     glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
+}
+
+int32_t Shader::GetShaderId() const noexcept
+{
+    return _shaderProgram;
 }
 
 Shader::~Shader()
