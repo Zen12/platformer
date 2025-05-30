@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "asset_meta.hpp"
+#include "asset_deserializer.hpp"
 #include <fstream>
 #include <yaml-cpp/yaml.h>
 

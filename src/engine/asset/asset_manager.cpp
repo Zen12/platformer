@@ -25,7 +25,17 @@ void AssetManager::Init()
 
                     auto newPath = entry.path();
                     newPath.replace_extension();
-                    _assetMap[guid] = AssetMeta(name, guid, extension, type, newPath.c_str());
+
+                    const std::string path = newPath.string();
+
+                    _assetMap.emplace(
+                        std::piecewise_construct,
+                        std::forward_as_tuple(guid),
+                        std::forward_as_tuple(name, guid, extension, type, path));
+                }
+                else
+                {
+                    std::cerr << "NO GUID!\n";
                 }
             }
             catch (const YAML::Exception &e)
@@ -38,7 +48,55 @@ void AssetManager::Init()
 
 void AssetManager::LoadSceneByGuid(const std::string &guid)
 {
-    const auto meta = _assetMap[guid];
+    auto meta = _assetMap.at(guid);
+    YAML::Node root = YAML::LoadFile(meta.Path);
+
+    SceneSerialization scene = root.as<SceneSerialization>();
+
+    try
+    {
+        YAML::Node root = YAML::LoadFile(meta.Path);
+
+        SceneSerialization scene = root.as<SceneSerialization>();
+
+        std::cout << "Scene: " << scene.name << " (" << scene.type << ")\n";
+        std::cout << "Entities size: " << scene.entities.size() << "\n";
+        for (const auto &entity : scene.entities)
+        {
+            std::cout << "- Entity: " << entity.guid << "\n";
+            for (const auto &comp : entity.components)
+            {
+                std::cout << "  * Component: " << comp->getType() << "\n";
+
+                if (comp->getType() == "camera")
+                {
+                    auto *cam = dynamic_cast<CameraComponentSerialization *>(comp.get());
+                    std::cout << "      aspectPower: " << cam->aspectPower
+                              << ", isPerspective: " << cam->isPerspective << "\n";
+                }
+                else if (comp->getType() == "tranform")
+                {
+                    auto *tf = dynamic_cast<TransformComponentSerialization *>(comp.get());
+                    std::cout << "      position: (" << tf->position.x << ", "
+                              << tf->position.y << ", " << tf->position.z << ")\n";
+                }
+            }
+        }
+        std::cout << "Hierarchy size: " << scene.hierarchy.size() << "\n";
+
+        for (const auto &obj : scene.hierarchy)
+        {
+            std::cout << "  * Object: " << obj.guid << "\n";
+            for (const auto &child : obj.children)
+            {
+                std::cout << "      * Child: " << child << "\n";
+            }
+        }
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << "Error: " << e.what() << "\n";
+    }
 }
 
 void AssetManager::UnLoad(const std::string &guid)

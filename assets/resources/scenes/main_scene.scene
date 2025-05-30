@@ -1,16 +1,49 @@
 name: main_screen
 type: scene
-scene:
-    ui_room:
-        image:
-            sprite: "GUID"
-        layouts:
-            - center_x
-            - center_y
-            - pixel_width:
-                  value: 200
-            - pixel_heigh:
-                  value: 200
-            - pivot:
-                  x: 0.5
-                  y: 0.5
+hierarchy:
+    - obj:
+          - guid: OBJ-1-camera
+          - children:
+                - OBJ-2-sprite
+entities:
+    - obj:
+          - guid: OBJ-1-camera
+          - components:
+                - component:
+                      - type: "camera"
+                      - data:
+                            - aspectPower: 7.0
+                            - isPerspective: true
+                - component:
+                      - type: "transform"
+                      - data:
+                            - position:
+                                  - x: 0.0
+                                  - y: 0.0
+                                  - z: 0.0
+                            - rotation:
+                                  - x: 0.0
+                                  - y: 0.0
+                                  - z: 0.0
+                            - scale:
+                                  - x: 1.0
+                                  - y: 1.0
+                                  - z: 1.0
+    - obj:
+          - guid: OBJ-2-sprite
+          - components:
+                - component:
+                      - type: "transform"
+                      - data:
+                            - position:
+                                  - x: 0.0
+                                  - y: 0.0
+                                  - z: 0.0
+                            - rotation:
+                                  - x: 0.0
+                                  - y: 0.0
+                                  - z: 0.0
+                            - scale:
+                                  - x: 1.0
+                                  - y: 1.0
+                                  - z: 1.0

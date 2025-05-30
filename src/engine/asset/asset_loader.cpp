@@ -40,7 +40,6 @@ ProjectAsset AssetLoader::LoadProjectAssetFromPath(const std::string &path)
                 scenesGuids.push_back(scenes[i].as<std::string>());
             }
         }
-        std::cout << name << "\n";
         return ProjectAsset(name, scenesGuids);
     }
     return ProjectAsset("ERROR", std::vector<std::string>());
