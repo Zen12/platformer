@@ -3,16 +3,23 @@
 
 int main()
 {
-    AssetManager assetManager(ASSETS_PATH);
-    assetManager.Load();
-    const auto projectAsset = AssetLoader::LoadProjectAssetFromPath(ASSETS_PATH "project.yaml");
+    const std::string projectRoot = ASSETS_PATH;
+    const ProjectAsset projectAsset = AssetLoader::LoadProjectAssetFromPath(projectRoot + "project.yaml");
+
+    AssetManager assetManager(projectRoot);
+    assetManager.Init();
+
+    assetManager.LoadSceneByGuid(projectAsset.Scenes[0]);
 
     // system init
     auto window = std::make_shared<Window>(800, 600, projectAsset.Name);
     window->WinInit();
 
-    std::shared_ptr<Shader> uiShader = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath(ASSETS_PATH "resources/shaders/uiImage.vert", ASSETS_PATH "resources/shaders/uiImage.frag"));
-    std::shared_ptr<Shader> uiText = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath(ASSETS_PATH "resources/shaders/text.vert", ASSETS_PATH "resources/shaders/text.frag"));
+    const auto sharedVert = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath(ASSETS_PATH "resources/shaders/uiImage.vert", ASSETS_PATH "resources/shaders/uiImage.frag"));
+    const auto sharedFrag = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath(ASSETS_PATH "resources/shaders/text.vert", ASSETS_PATH "resources/shaders/text.frag"));
+
+    std::weak_ptr<Shader> uiShader = sharedVert;
+    std::weak_ptr<Shader> uiText = sharedFrag;
     auto texture_face = AssetLoader::LoadSpriteFromPath(ASSETS_PATH "resources/images/awesomeface.png");
 
     std::shared_ptr<Material> materialUI = std::make_shared<Material>(uiShader);
@@ -110,5 +117,27 @@ int main()
     }
 
     window->Destroy();
-    return 0;
 }
+
+/*
+
+name: main_screen
+type: scene
+scene:
+    ui_room:
+        image:
+            sprite: "GUID"
+        layouts:
+            - center_x
+            - center_y
+            - pixel_width:
+                  value: 200
+            - pixel_heigh:
+                  value: 200
+            - pivot:
+                  x: 0.5
+                  y: 0.5
+
+
+
+*/

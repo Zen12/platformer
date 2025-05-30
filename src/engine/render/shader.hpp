@@ -22,8 +22,8 @@ public:
     Shader(const Shader &other) = default;
     Shader &operator=(const Shader &other) = default;
 
-    Shader(Shader &&other) noexcept = default;
-    Shader &operator=(Shader &&other) noexcept = default;
+    Shader(Shader &&other) noexcept = delete;
+    Shader &operator=(Shader &&other) noexcept = delete;
 
     void Use() const noexcept;
     int32_t GetShaderId() const noexcept;

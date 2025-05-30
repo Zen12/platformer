@@ -19,8 +19,8 @@ public:
     {
     }
 
-    void Load();
+    void Init();
 
-    AssetMeta GetAssetMetaByGuid(const std::string guid) const;
-    AssetMeta GetAssetProjectMeta() const;
+    void LoadSceneByGuid(const std::string &guid);
+    void UnLoad(const std::string &guid);
 };
