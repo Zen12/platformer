@@ -10,24 +10,22 @@ class Entity;
 
 class Component
 {
-    public:
-        Component(const std::weak_ptr<Entity>& entity)
-        {
-            _entity = entity;
-        }
+public:
+    Component(const std::weak_ptr<Entity> &entity)
+    {
+        _entity = entity;
+    }
 
-        std::weak_ptr<Entity> GetEntity() const
-        {
-            return _entity;
-        }
+    std::weak_ptr<Entity> GetEntity() const
+    {
+        return _entity;
+    }
 
-        virtual void Update() const = 0;
-        virtual ~Component() = default;
+    virtual void Update() const = 0;
+    virtual ~Component() = default;
 
-    protected:
-        std::weak_ptr<Entity> _entity;
-
-
+protected:
+    std::weak_ptr<Entity> _entity;
 };
 
 class Entity : public std::enable_shared_from_this<Entity>
@@ -66,7 +64,7 @@ public:
 
     void Update() const
     {
-        for (const auto& [type, component] : _components)
+        for (const auto &[type, component] : _components)
         {
             component->Update();
         }

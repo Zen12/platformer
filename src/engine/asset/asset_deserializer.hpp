@@ -14,6 +14,17 @@ struct Vec3
     float x, y, z;
 };
 
+struct RectLayoutSerialization
+{
+    const std::string Type;
+    const float Value;
+
+    RectLayoutSerialization(const std::string &type, const int &value)
+        : Type(type), Value(value)
+    {
+    }
+};
+
 struct ComponentSerialization
 {
     virtual ~ComponentSerialization() = default;
@@ -28,13 +39,79 @@ struct CameraComponentSerialization : public ComponentSerialization
     std::string getType() const override { return "camera"; }
 };
 
+struct ShaderComponentSerialization : public ComponentSerialization
+{
+    std::string vertexSourceCode;
+    std::string fragmentShourceCode;
+
+    ShaderComponentSerialization(const std::string &vertex, const std::string &fragment)
+        : vertexSourceCode(vertex), fragmentShourceCode(fragment)
+    {
+    }
+
+    std::string getType() const override
+    {
+        return "shader";
+    }
+};
+
+struct SpriteComponentSerialization : public ComponentSerialization
+{
+    std::string Path;
+    SpriteComponentSerialization(const std::string &path)
+        : Path(path)
+    {
+    }
+
+    std::string getType() const override
+    {
+        return "sprite";
+    }
+};
+
+struct MaterialComponentSerialization : public ComponentSerialization
+{
+    ShaderComponentSerialization Shader;
+
+    MaterialComponentSerialization(const ShaderComponentSerialization &shader)
+        : Shader(shader)
+    {
+    }
+
+    std::string getType() const override
+    {
+        return "material";
+    }
+};
+
+struct UiImageComponentSerialization : public ComponentSerialization
+{
+    std::string MaterialGUID;
+    std::string SpriteGUID;
+
+    std::string getType() const override
+    {
+        return "ui_image";
+    }
+};
+
+struct RectTransformComponentSerialization : public ComponentSerialization
+{
+    std::vector<RectLayoutSerialization> Layouts;
+
+    std::string getType() const override
+    {
+        return "rect_transform";
+    }
+};
+
 struct TransformComponentSerialization : public ComponentSerialization
 {
     Vec3 position;
     Vec3 rotation;
     Vec3 scale;
 
-    std::string getType() const override { return "tranform"; }
+    std::string getType() const override { return "transform"; }
 };
 
 struct EntitySerialization
@@ -116,6 +193,89 @@ namespace YAML
 
 // ---------- Component Factory ----------
 
+inline std::unique_ptr<UiImageComponentSerialization> createUiImage(const YAML::Node &map)
+{
+    auto comp = std::make_unique<UiImageComponentSerialization>();
+    comp->MaterialGUID = map["material"].as<std::string>();
+    comp->SpriteGUID = map["image"].as<std::string>();
+    return comp;
+}
+
+inline std::unique_ptr<RectTransformComponentSerialization> createRectTransform(const YAML::Node &map)
+{
+    auto comp = std::make_unique<RectTransformComponentSerialization>();
+
+    if (!map.IsMap())
+    {
+        std::cerr << "Expected a map node.\n";
+        return comp;
+    }
+
+    for (const auto &kv : map)
+    {
+        std::string key = kv.first.as<std::string>();
+        YAML::Node list = kv.second;
+
+        if (list.IsSequence() && list.size() == 1 && list[0]["value"])
+        {
+            float val = list[0]["value"].as<float>();
+            comp->Layouts.push_back({key, val});
+        }
+        else
+        {
+            std::cerr << "Node is not a sequence with one element having 'value' key\n";
+        }
+    }
+
+    return comp;
+}
+
+inline std::unique_ptr<RectTransformComponentSerialization> createMaterial(const YAML::Node &map)
+{
+    auto comp = std::make_unique<RectTransformComponentSerialization>();
+
+    if (!map.IsMap())
+    {
+        std::cerr << "Expected a map node.\n";
+        return comp;
+    }
+
+    for (const auto &kv : map)
+    {
+        std::string key = kv.first.as<std::string>();
+        YAML::Node list = kv.second;
+
+        if (list.IsSequence() && list.size() == 1 && list[0]["value"])
+        {
+            float val = list[0]["value"].as<float>();
+            comp->Layouts.push_back({key, val});
+        }
+        else
+        {
+            std::cerr << "Node is not a sequence with one element having 'value' key\n";
+        }
+    }
+
+    return comp;
+}
+
+inline std::unique_ptr<ComponentSerialization> createTransfrom(const YAML::Node &map)
+{
+    auto comp = std::make_unique<TransformComponentSerialization>();
+    comp->position = map["position"].as<Vec3>();
+    comp->rotation = map["rotation"].as<Vec3>();
+    comp->scale = map["scale"].as<Vec3>();
+    return comp;
+}
+
+inline std::unique_ptr<ComponentSerialization> createCamera(const YAML::Node &map)
+{
+    auto comp = std::make_unique<CameraComponentSerialization>();
+    comp->aspectPower = map["aspectPower"].as<float>();
+    comp->isPerspective = map["isPerspective"].as<bool>();
+    return comp;
+}
+
 inline std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAML::Node &node)
 {
     const auto nodeMap = sequenceToMap(node);
@@ -125,18 +285,19 @@ inline std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAM
 
     if (type == "camera")
     {
-        auto comp = std::make_unique<CameraComponentSerialization>();
-        comp->aspectPower = map["aspectPower"].as<float>();
-        comp->isPerspective = map["isPerspective"].as<bool>();
-        return comp;
+        return createCamera(map);
     }
     else if (type == "transform")
     {
-        auto comp = std::make_unique<TransformComponentSerialization>();
-        comp->position = map["position"].as<Vec3>();
-        comp->rotation = map["rotation"].as<Vec3>();
-        comp->scale = map["scale"].as<Vec3>();
-        return comp;
+        return createTransfrom(map);
+    }
+    else if (type == "rect_transform")
+    {
+        return createRectTransform(map);
+    }
+    else if (type == "ui_image")
+    {
+        return createUiImage(map);
     }
     throw std::runtime_error("Unknown component type: " + type);
 }

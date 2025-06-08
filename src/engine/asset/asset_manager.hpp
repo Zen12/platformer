@@ -7,6 +7,7 @@
 #include "asset_deserializer.hpp"
 #include <fstream>
 #include <yaml-cpp/yaml.h>
+#include "../system/file_loader.hpp"
 
 class AssetManager
 {
@@ -22,6 +23,10 @@ public:
 
     void Init();
 
-    void LoadSceneByGuid(const std::string &guid);
+    [[nodiscard]] SceneSerialization LoadSceneByGuid(const std::string &guid);
+    [[nodiscard]] MaterialComponentSerialization LoadMaterialByGuid(const std::string &guid);
+    [[nodiscard]] ShaderComponentSerialization LoadShaderByGuid(const std::string &vertexGuid, const std::string &framentGuid);
+    [[nodiscard]] SpriteComponentSerialization LoadSpriteByGuid(const std::string &guid);
+
     void UnLoad(const std::string &guid);
 };

@@ -46,57 +46,41 @@ void AssetManager::Init()
     }
 }
 
-void AssetManager::LoadSceneByGuid(const std::string &guid)
+SceneSerialization AssetManager::LoadSceneByGuid(const std::string &guid)
 {
     auto meta = _assetMap.at(guid);
     YAML::Node root = YAML::LoadFile(meta.Path);
 
-    SceneSerialization scene = root.as<SceneSerialization>();
+    return root.as<SceneSerialization>();
+}
 
-    try
-    {
-        YAML::Node root = YAML::LoadFile(meta.Path);
+ShaderComponentSerialization AssetManager::LoadShaderByGuid(const std::string &vertexGuid, const std::string &framentGuid)
+{
+    const auto vertexMeta = _assetMap.at(vertexGuid);
+    const auto fragMeta = _assetMap.at(framentGuid);
 
-        SceneSerialization scene = root.as<SceneSerialization>();
+    const std::string vertexShaderSource = FileLoader::LoadFile(vertexMeta.Path);
+    const std::string fragmentShaderSource = FileLoader::LoadFile(fragMeta.Path);
 
-        std::cout << "Scene: " << scene.name << " (" << scene.type << ")\n";
-        std::cout << "Entities size: " << scene.entities.size() << "\n";
-        for (const auto &entity : scene.entities)
-        {
-            std::cout << "- Entity: " << entity.guid << "\n";
-            for (const auto &comp : entity.components)
-            {
-                std::cout << "  * Component: " << comp->getType() << "\n";
+    return ShaderComponentSerialization(vertexShaderSource, fragmentShaderSource);
+};
 
-                if (comp->getType() == "camera")
-                {
-                    auto *cam = dynamic_cast<CameraComponentSerialization *>(comp.get());
-                    std::cout << "      aspectPower: " << cam->aspectPower
-                              << ", isPerspective: " << cam->isPerspective << "\n";
-                }
-                else if (comp->getType() == "tranform")
-                {
-                    auto *tf = dynamic_cast<TransformComponentSerialization *>(comp.get());
-                    std::cout << "      position: (" << tf->position.x << ", "
-                              << tf->position.y << ", " << tf->position.z << ")\n";
-                }
-            }
-        }
-        std::cout << "Hierarchy size: " << scene.hierarchy.size() << "\n";
+MaterialComponentSerialization AssetManager::LoadMaterialByGuid(const std::string &guid)
+{
+    const auto meta = _assetMap.at(guid);
+    const YAML::Node root = YAML::LoadFile(meta.Path);
+    const YAML::Node shaderNode = root["shader"];
 
-        for (const auto &obj : scene.hierarchy)
-        {
-            std::cout << "  * Object: " << obj.guid << "\n";
-            for (const auto &child : obj.children)
-            {
-                std::cout << "      * Child: " << child << "\n";
-            }
-        }
-    }
-    catch (const std::exception &e)
-    {
-        std::cerr << "Error: " << e.what() << "\n";
-    }
+    const auto shader = LoadShaderByGuid(shaderNode["vertex"].as<std::string>(), shaderNode["fragment"].as<std::string>());
+
+    return MaterialComponentSerialization{shader};
+}
+
+SpriteComponentSerialization AssetManager::LoadSpriteByGuid(const std::string &guid)
+{
+    const auto meta = _assetMap.at(guid);
+
+    return SpriteComponentSerialization(meta.Path);
 }
 
 void AssetManager::UnLoad(const std::string &guid)

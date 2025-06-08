@@ -9,86 +9,99 @@ int main()
     AssetManager assetManager(projectRoot);
     assetManager.Init();
 
-    assetManager.LoadSceneByGuid(projectAsset.Scenes[0]);
-
-    // system init
     auto window = std::make_shared<Window>(800, 600, projectAsset.Name);
     window->WinInit();
 
-    const auto sharedVert = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath(ASSETS_PATH "resources/shaders/uiImage.vert", ASSETS_PATH "resources/shaders/uiImage.frag"));
-    const auto sharedFrag = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath(ASSETS_PATH "resources/shaders/text.vert", ASSETS_PATH "resources/shaders/text.frag"));
+    RenderPipeline renderPipeline = {window};
 
-    std::weak_ptr<Shader> uiShader = sharedVert;
-    std::weak_ptr<Shader> uiText = sharedFrag;
-    auto texture_face = AssetLoader::LoadSpriteFromPath(ASSETS_PATH "resources/images/awesomeface.png");
+    const auto scene = assetManager.LoadSceneByGuid(projectAsset.Scenes[0]);
 
-    std::shared_ptr<Material> materialUI = std::make_shared<Material>(uiShader);
-    std::shared_ptr<Material> materialText = std::make_shared<Material>(uiText);
+    std::vector<std::shared_ptr<Entity>> entities;
+    std::vector<std::shared_ptr<Shader>> shaders;
+    std::vector<std::shared_ptr<Material>> materials;
+    std::vector<std::shared_ptr<Sprite>> sprites;
 
-    std::shared_ptr<Font> font = std::make_shared<Font>(AssetLoader::LoadFontFromPath(ASSETS_PATH "resources/fonts/Antonio-Bold.ttf"));
-
-    materialText->SetFont(font);
+    std::weak_ptr<Entity> sceneCamera;
 
     const auto rectRoot = std::make_shared<RectTransformRoot>(window);
 
-    std::shared_ptr<Entity> cameraEntity = std::make_shared<Entity>();
-    const auto cameraTr = cameraEntity->AddComponent<Transform>();
-    cameraTr.lock()->SetPosition(glm::vec3(0, 0, -2));
-    cameraTr.lock()->SetEulerRotation(glm::vec3(0.0f, 0.0f, 0.0f));
-    const auto camera = cameraEntity->AddComponent<CameraComponent>();
-    camera.lock()->SetCamera(Camera::Perspective(window));
+    for (const auto &entity : scene.entities)
+    {
+        const auto newEntity = std::make_shared<Entity>();
+        entities.push_back(newEntity);
 
-    RenderPipeline renderPipeline = {camera, cameraTr, window};
-    std::shared_ptr<Sprite> sprite = std::make_shared<Sprite>(texture_face);
+        for (const auto &comp : entity.components)
+        {
+            if (comp->getType() == "camera")
+            {
+                auto *cam = dynamic_cast<CameraComponentSerialization *>(comp.get());
+                const auto camera = newEntity->AddComponent<CameraComponent>();
+                camera.lock()->SetCamera(Camera{cam->aspectPower, cam->isPerspective, window});
+                sceneCamera = newEntity;
+            }
+            else if (comp->getType() == "transform")
+            {
+                const auto cameraTr = newEntity->AddComponent<Transform>();
 
-    std::shared_ptr<Entity> e2 = std::make_shared<Entity>();
-    auto textRedenrer = e2->AddComponent<UiTextRenderer>();
+                auto *tf = dynamic_cast<TransformComponentSerialization *>(comp.get());
+                const auto position = glm::vec3(tf->position.x, tf->position.y, tf->position.z);
+                const auto rotation = glm::vec3(tf->rotation.x, tf->rotation.y, tf->rotation.z);
+                const auto scale = glm::vec3(tf->scale.x, tf->scale.y, tf->scale.z);
+                cameraTr.lock()->SetPosition(position);
+                cameraTr.lock()->SetEulerRotation(rotation);
+                cameraTr.lock()->SetScale(scale);
+            }
+            else if (comp->getType() == "rect_transform")
+            {
 
-    textRedenrer.lock()->SetMaterial(materialText);
+                const auto rect = newEntity->AddComponent<RectTransform>();
+                rect.lock()->SetParent(rectRoot);
 
-    textRedenrer.lock()->SetText("+++++++++12345667790asdfgdkmbkmfv");
-    auto tr1 = e2->AddComponent<RectTransform>();
-    tr1.lock()->SetParent(rectRoot);
+                const auto *tf = dynamic_cast<RectTransformComponentSerialization *>(comp.get());
 
-    renderPipeline.AddRenderer(textRedenrer);
+                for (const auto &layout : tf->Layouts)
+                {
+                    if (layout.Type == "center_x")
+                        rect.lock()->AddLayoutOption(std::make_unique<CenterXLayoutOption>());
+                    else if (layout.Type == "center_y")
+                        rect.lock()->AddLayoutOption(std::make_unique<CenterYLayoutOption>());
+                    else if (layout.Type == "pixel_width")
+                        rect.lock()->AddLayoutOption(std::make_unique<PixelWidthLayoutOption>(layout.Value));
+                    else if (layout.Type == "pixel_height")
+                        rect.lock()->AddLayoutOption(std::make_unique<PixelHeightLayoutOption>(layout.Value));
+                }
+            }
+            else if (comp->getType() == "ui_image")
+            {
+                const auto uiImage = newEntity->AddComponent<UiImageRenderer>();
 
-    std::shared_ptr<Entity> e3 = std::make_shared<Entity>();
-    const auto uiImage = e3->AddComponent<UiImageRenderer>();
-    auto tr3 = e3->AddComponent<RectTransform>();
+                const auto *serialization = dynamic_cast<UiImageComponentSerialization *>(comp.get());
 
-    uiImage.lock()->SetMaterial(materialUI);
-    uiImage.lock()->SetSprite(sprite);
+                const auto materialSerialization = assetManager.LoadMaterialByGuid(serialization->MaterialGUID);
 
-    tr3.lock()->SetParent(rectRoot);
+                const auto shader = std::make_shared<Shader>(materialSerialization.Shader.vertexSourceCode, materialSerialization.Shader.fragmentShourceCode);
+                shaders.push_back(shader);
 
-    tr3.lock()->AddLayoutOption(std::make_unique<CenterXLayoutOption>());
-    tr3.lock()->AddLayoutOption(std::make_unique<CenterYLayoutOption>());
+                const auto material = std::make_shared<Material>(shader);
+                materials.push_back(material);
 
-    tr3.lock()->AddLayoutOption(std::make_unique<PixelWidthLayoutOption>(200));
-    tr3.lock()->AddLayoutOption(std::make_unique<PixelHeightLayoutOption>(200));
+                uiImage.lock()->SetMaterial(material);
 
-    tr3.lock()->AddLayoutOption(std::make_unique<PivotLayoutOption>(glm::vec2(0.5f, 0.5f)));
+                const auto spriteSerialization = assetManager.LoadSpriteByGuid(serialization->SpriteGUID);
 
-    renderPipeline.AddRenderer(uiImage);
+                const auto sprite = std::make_shared<Sprite>(spriteSerialization.Path);
+                sprites.push_back(sprite);
 
-    std::shared_ptr<Entity> e4 = std::make_shared<Entity>();
-    const auto uiImage4 = e4->AddComponent<UiImageRenderer>();
-    auto tr4 = e4->AddComponent<RectTransform>();
+                uiImage.lock()->SetSprite(sprite);
 
-    uiImage4.lock()->SetMaterial(materialUI);
-    uiImage4.lock()->SetSprite(sprite);
+                renderPipeline.AddRenderer(uiImage);
+            }
+        }
+    }
 
-    tr4.lock()->SetParent(rectRoot);
-
-    tr4.lock()->AddLayoutOption(std::make_unique<CenterXLayoutOption>());
-    tr4.lock()->AddLayoutOption(std::make_unique<CenterYLayoutOption>());
-
-    tr4.lock()->AddLayoutOption(std::make_unique<PixelWidthLayoutOption>(200));
-    tr4.lock()->AddLayoutOption(std::make_unique<PixelHeightLayoutOption>(200));
-
-    tr4.lock()->AddLayoutOption(std::make_unique<PivotLayoutOption>(glm::vec2(0.0, 0.0)));
-
-    renderPipeline.AddRenderer(uiImage4);
+    renderPipeline.UpdateCamera(
+        sceneCamera.lock()->GetComponent<CameraComponent>(),
+        sceneCamera.lock()->GetComponent<Transform>());
 
     Time time;
 
@@ -102,10 +115,7 @@ int main()
 
     while (window->IsOpen())
     {
-        // const float deltaTime = time.GetResetDelta();
         time.Reset();
-
-        // textRedenrer.lock()->SetText(std::to_string(1.0f / deltaTime));
 
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -118,26 +128,3 @@ int main()
 
     window->Destroy();
 }
-
-/*
-
-name: main_screen
-type: scene
-scene:
-    ui_room:
-        image:
-            sprite: "GUID"
-        layouts:
-            - center_x
-            - center_y
-            - pixel_width:
-                  value: 200
-            - pixel_heigh:
-                  value: 200
-            - pivot:
-                  x: 0.5
-                  y: 0.5
-
-
-
-*/

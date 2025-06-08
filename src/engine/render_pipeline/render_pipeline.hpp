@@ -20,6 +20,10 @@ private:
     std::vector<std::weak_ptr<UiImageRenderer>> _images;
 
 public:
+    RenderPipeline(const std::weak_ptr<Window> &window) : _window(window)
+    {
+    }
+
     RenderPipeline(
         const std::weak_ptr<CameraComponent> &camera3d,
         const std::weak_ptr<Transform> &cameraTransform3d,
@@ -29,6 +33,13 @@ public:
                                                _cameraTransform3d(cameraTransform3d),
                                                _uiCamera(Camera(1, false, window)) {
                                                };
+
+    void UpdateCamera(const std::weak_ptr<CameraComponent> &camera3d,
+                      const std::weak_ptr<Transform> &cameraTransform3d)
+    {
+        _camera3d = camera3d;
+        _cameraTransform3d = cameraTransform3d;
+    }
 
     void AddRenderer(const std::weak_ptr<SpriteRenderer> &sprite) { _sprites.push_back(sprite); }
 
