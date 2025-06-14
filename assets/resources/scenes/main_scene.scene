@@ -36,14 +36,14 @@ entities:
                             - component:
                                       - type: "rect_transform"
                                       - data:
-                                                - center_x_f:
+                                                - center_x:
                                                           - value: 0
                                                 - center_y_f:
                                                           - value: 0
                                                 - pixel_width:
-                                                          - value: 2
+                                                          - value: 1
                                                 - pixel_height:
-                                                          - value: 2
+                                                          - value: 1
                             - component:
                                       - type: "ui_image"
                                       - data:

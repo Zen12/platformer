@@ -43,7 +43,7 @@ void UiTextRenderer::Render(const glm::mat4 &projection)
     const float width = 2.0f / projection[0][0];
     const float height = 2.0f / projection[1][1];
 
-    if (auto material = _material.lock())
+    if (const auto material = _material.lock())
     {
         if (const auto font = material->GetFont().lock())
         {

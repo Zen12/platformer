@@ -25,6 +25,32 @@ int main()
 
     const auto rectRoot = std::make_shared<RectTransformRoot>(window);
 
+    std::shared_ptr<Shader> uiShader = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath(ASSETS_PATH "resources/shaders/uiImage.vert", ASSETS_PATH "resources/shaders/uiImage.frag"));
+    std::shared_ptr<Shader> uiText = std::make_shared<Shader>(AssetLoader::LoadShaderFromPath(ASSETS_PATH "resources/shaders/text.vert", ASSETS_PATH "resources/shaders/text.frag"));
+    auto texture_face = AssetLoader::LoadSpriteFromPath(ASSETS_PATH "resources/images/awesomeface.png");
+
+    std::shared_ptr<Material> materialUI = std::make_shared<Material>(uiShader);
+
+    std::shared_ptr<Entity> e3 = std::make_shared<Entity>();
+    const auto uiImage = e3->AddComponent<UiImageRenderer>();
+    auto tr3 = e3->AddComponent<RectTransform>();
+
+    uiImage.lock()->SetMaterial(materialUI);
+    std::shared_ptr<Sprite> sprite = std::make_shared<Sprite>(texture_face);
+    uiImage.lock()->SetSprite(sprite);
+
+    tr3.lock()->SetParent(rectRoot);
+
+    //tr3.lock()->AddLayoutOption(std::make_unique<CenterXLayoutOption>());
+    //tr3.lock()->AddLayoutOption(std::make_unique<CenterYLayoutOption>());
+
+    tr3.lock()->AddLayoutOption(std::make_unique<PixelWidthLayoutOption>(1));
+    tr3.lock()->AddLayoutOption(std::make_unique<PixelHeightLayoutOption>(1));
+
+    tr3.lock()->AddLayoutOption(std::make_unique<PivotLayoutOption>(glm::vec2(0.5f, 0.5f)));
+
+    renderPipeline.AddRenderer(uiImage);
+
     for (const auto &entity : scene.entities)
     {
         const auto newEntity = std::make_shared<Entity>();
@@ -57,22 +83,24 @@ int main()
                 const auto rect = newEntity->AddComponent<RectTransform>();
                 rect.lock()->SetParent(rectRoot);
 
-                const auto *tf = dynamic_cast<RectTransformComponentSerialization *>(comp.get());
-
-                for (const auto &layout : tf->Layouts)
-                {
-                    if (layout.Type == "center_x")
-                        rect.lock()->AddLayoutOption(std::make_unique<CenterXLayoutOption>());
-                    else if (layout.Type == "center_y")
-                        rect.lock()->AddLayoutOption(std::make_unique<CenterYLayoutOption>());
-                    else if (layout.Type == "pixel_width")
-                        rect.lock()->AddLayoutOption(std::make_unique<PixelWidthLayoutOption>(layout.Value));
-                    else if (layout.Type == "pixel_height")
-                        rect.lock()->AddLayoutOption(std::make_unique<PixelHeightLayoutOption>(layout.Value));
-                }
+                // const auto *tf = dynamic_cast<RectTransformComponentSerialization *>(comp.get());
+                /*
+                                for (const auto &layout : tf->Layouts)
+                                {
+                                    if (layout.Type == "center_x")
+                                        rect.lock()->AddLayoutOption(std::make_unique<CenterXLayoutOption>());
+                                    else if (layout.Type == "center_y")
+                                        rect.lock()->AddLayoutOption(std::make_unique<CenterYLayoutOption>());
+                                    else if (layout.Type == "pixel_width")
+                                        rect.lock()->AddLayoutOption(std::make_unique<PixelWidthLayoutOption>(layout.Value));
+                                    else if (layout.Type == "pixel_height")
+                                        rect.lock()->AddLayoutOption(std::make_unique<PixelHeightLayoutOption>(layout.Value));
+                                }
+                                        */
             }
             else if (comp->getType() == "ui_image")
             {
+                continue;
                 const auto uiImage = newEntity->AddComponent<UiImageRenderer>();
 
                 const auto *serialization = dynamic_cast<UiImageComponentSerialization *>(comp.get());

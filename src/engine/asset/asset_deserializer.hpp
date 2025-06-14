@@ -19,7 +19,7 @@ struct RectLayoutSerialization
     const std::string Type;
     const float Value;
 
-    RectLayoutSerialization(const std::string &type, const int &value)
+    RectLayoutSerialization(const std::string &type, const float &value)
         : Type(type), Value(value)
     {
     }

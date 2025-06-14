@@ -11,12 +11,12 @@ private:
     std::weak_ptr<Window> _window;
 
 public:
-    RectTransformRoot(const std::weak_ptr<Window> &window) : RectTransform(std::weak_ptr<Entity>()),
+    explicit RectTransformRoot(const std::weak_ptr<Window> &window) : RectTransform(std::weak_ptr<Entity>()),
                                                              _window(window) {
 
                                                              };
 
-    glm::mat4 GetModel() const override
+    [[nodiscard]] glm::mat4 GetModel() const override
     {
         glm::mat4 model = glm::mat4(1.0);
 

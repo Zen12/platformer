@@ -15,13 +15,11 @@ public:
     void Destroy();
     void SwapBuffers();
 
-    uint16_t GetWidth()
-    {
+    uint16_t GetWidth() const {
         return _width;
     }
 
-    uint16_t GetHeight()
-    {
+    uint16_t GetHeight() const {
         return _height;
     }
 
