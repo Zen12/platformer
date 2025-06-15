@@ -1,54 +1,54 @@
 name: main_screen
 type: scene
 hierarchy:
-        - obj:
-                  - guid: OBJ-1-camera
-                  - children:
-                            - OBJ-2-sprite
+  - obj:
+      - guid: OBJ-1-camera
+      - children:
+          - OBJ-2-sprite
 entities:
-        - obj:
-                  - guid: OBJ-1-camera
-                  - components:
-                            - component:
-                                      - type: "transform"
-                                      - data:
-                                                - position:
-                                                          - x: 0.0
-                                                          - y: 0.0
-                                                          - z: 0.0
-                                                - rotation:
-                                                          - x: 0.0
-                                                          - y: 0.0
-                                                          - z: 0.0
-                                                - scale:
-                                                          - x: 1.0
-                                                          - y: 1.0
-                                                          - z: 1.0
-                            - component:
-                                      - type: "camera"
-                                      - data:
-                                                - aspectPower: 7.0
-                                                - isPerspective: true
+  - obj:
+      - guid: OBJ-1-camera
+      - components:
+          - component:
+              - type: "transform"
+              - data:
+                  - position:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+          - component:
+              - type: "camera"
+              - data:
+                  - aspectPower: 7.0
+                  - isPerspective: true
 
-        - obj:
-                  - guid: OBJ-2-ui-rect
-                  - components:
-                            - component:
-                                      - type: "rect_transform"
-                                      - data:
-                                                - center_x:
-                                                          - value: 0
-                                                - center_y:
-                                                          - value: 0
-                                                - pixel_width:
-                                                          - value: 200
-                                                - pixel_height:
-                                                          - value: 200
-                                                - pivot:
-                                                           - x: 0.5
-                                                           - y: 0.5
-                            - component:
-                                      - type: "ui_image"
-                                      - data:
-                                                - material: f22681f4-45d1-4542-a838-99f854890c28
-                                                - image: 126fb991-fe1c-45e0-ae0c-1649a2c65ae3
+  - obj:
+      - guid: OBJ-2-ui-rect
+      - components:
+          - component:
+              - type: "rect_transform"
+              - data:
+                  - center_x:
+                      - value: 0
+                  - center_y:
+                      - value: 0
+                  - pixel_width:
+                      - value: 200
+                  - pixel_height:
+                      - value: 200
+                  - pivot:
+                      - x: 0.5
+                      - y: 0.5
+          - component:
+              - type: "ui_image"
+              - data:
+                  - material: f22681f4-45d1-4542-a838-99f854890c28
+                  - image: 126fb991-fe1c-45e0-ae0c-1649a2c65ae3
