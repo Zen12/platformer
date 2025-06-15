@@ -32,28 +32,27 @@ int main()
 
         for (const auto &comp : entity.components)
         {
-            if (comp->getType() == "camera")
-            {
-                auto *cam = dynamic_cast<CameraComponentSerialization *>(comp.get());
-                const auto camera = newEntity->AddComponent<CameraComponent>();
-                camera.lock()->SetCamera(Camera{cam->aspectPower, cam->isPerspective, window});
-                sceneCamera = newEntity;
+            if (comp->getType() == "camera") {
+                const auto *cam = dynamic_cast<CameraComponentSerialization *>(comp.get());
+                if (const auto camera = newEntity->AddComponent<CameraComponent>().lock()) {
+                    camera->SetCamera(Camera{cam->aspectPower, cam->isPerspective, window});
+                    sceneCamera = newEntity;
+                }
             }
             else if (comp->getType() == "transform")
             {
-                const auto cameraTr = newEntity->AddComponent<Transform>();
-
-                auto *tf = dynamic_cast<TransformComponentSerialization *>(comp.get());
-                const auto position = glm::vec3(tf->position.x, tf->position.y, tf->position.z);
-                const auto rotation = glm::vec3(tf->rotation.x, tf->rotation.y, tf->rotation.z);
-                const auto scale = glm::vec3(tf->scale.x, tf->scale.y, tf->scale.z);
-                cameraTr.lock()->SetPosition(position);
-                cameraTr.lock()->SetEulerRotation(rotation);
-                cameraTr.lock()->SetScale(scale);
+                if (const auto cameraTr = newEntity->AddComponent<Transform>().lock()) {
+                    auto *tf = dynamic_cast<TransformComponentSerialization *>(comp.get());
+                    const auto position = glm::vec3(tf->position.x, tf->position.y, tf->position.z);
+                    const auto rotation = glm::vec3(tf->rotation.x, tf->rotation.y, tf->rotation.z);
+                    const auto scale = glm::vec3(tf->scale.x, tf->scale.y, tf->scale.z);
+                    cameraTr->SetPosition(position);
+                    cameraTr->SetEulerRotation(rotation);
+                    cameraTr->SetScale(scale);
+                }
             }
             else if (comp->getType() == "rect_transform") {
-                const auto rectPtr = newEntity->AddComponent<RectTransform>();
-                if (const auto rect = rectPtr.lock()) {
+                if (const auto rect = newEntity->AddComponent<RectTransform>().lock()) {
                     rect->SetParent(rectRoot);
                     const auto *tf = dynamic_cast<RectTransformComponentSerialization *>(comp.get());
 
@@ -80,28 +79,28 @@ int main()
             }
             else if (comp->getType() == "ui_image")
             {
-                const auto uiImage = newEntity->AddComponent<UiImageRenderer>();
+                if (const auto uiImage = newEntity->AddComponent<UiImageRenderer>().lock()) {
 
-                const auto *serialization = dynamic_cast<UiImageComponentSerialization *>(comp.get());
+                    const auto *serialization = dynamic_cast<UiImageComponentSerialization *>(comp.get());
+                    const auto materialSerialization = assetManager.LoadMaterialByGuid(serialization->MaterialGUID);
 
-                const auto materialSerialization = assetManager.LoadMaterialByGuid(serialization->MaterialGUID);
+                    const auto shader = std::make_shared<Shader>(materialSerialization.Shader.vertexSourceCode, materialSerialization.Shader.fragmentShourceCode);
+                    shaders.push_back(shader);
 
-                const auto shader = std::make_shared<Shader>(materialSerialization.Shader.vertexSourceCode, materialSerialization.Shader.fragmentShourceCode);
-                shaders.push_back(shader);
+                    const auto material = std::make_shared<Material>(shader);
+                    materials.push_back(material);
 
-                const auto material = std::make_shared<Material>(shader);
-                materials.push_back(material);
+                    uiImage->SetMaterial(material);
 
-                uiImage.lock()->SetMaterial(material);
+                    const auto spriteSerialization = assetManager.LoadSpriteByGuid(serialization->SpriteGUID);
 
-                const auto spriteSerialization = assetManager.LoadSpriteByGuid(serialization->SpriteGUID);
+                    const auto sprite = std::make_shared<Sprite>(spriteSerialization.Path);
+                    sprites.push_back(sprite);
 
-                const auto sprite = std::make_shared<Sprite>(spriteSerialization.Path);
-                sprites.push_back(sprite);
+                    uiImage->SetSprite(sprite);
 
-                uiImage.lock()->SetSprite(sprite);
-
-                renderPipeline.AddRenderer(uiImage);
+                    renderPipeline.AddRenderer(uiImage);
+                }
             }
         }
     }
