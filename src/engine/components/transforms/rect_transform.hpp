@@ -24,8 +24,7 @@ public:
         _constrains = std::make_unique<LayoutOptions>();
     };
 
-    void AddLayoutOption(std::unique_ptr<LayoutOption> layout)
-    {
+    void AddLayoutOption(std::unique_ptr<LayoutOption> layout) const {
         _constrains->AddLayout(std::move(layout));
     }
 

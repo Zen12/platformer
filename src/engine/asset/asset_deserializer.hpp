@@ -2,6 +2,7 @@
 
 #include <string>
 #include <yaml-cpp/yaml.h>
+#include <utility>
 #include <vector>
 #include <iostream>
 #include <memory>
@@ -17,10 +18,17 @@ struct Vec3
 struct RectLayoutSerialization
 {
     const std::string Type;
-    const float Value;
+    const float Value = 0;
+    const float X = 0;
+    const float Y = 0;
 
-    RectLayoutSerialization(const std::string &type, const float &value)
-        : Type(type), Value(value)
+    RectLayoutSerialization(std::string type, const float &value)
+        : Type(std::move(type)), Value(value)
+    {
+    }
+
+    RectLayoutSerialization(std::string type, const float &x, const float &y)
+    : Type(std::move(type)), X(x), Y(y)
     {
     }
 };
@@ -213,17 +221,21 @@ inline std::unique_ptr<RectTransformComponentSerialization> createRectTransform(
 
     for (const auto &kv : map)
     {
-        std::string key = kv.first.as<std::string>();
+        const auto key = kv.first.as<std::string>();
         YAML::Node list = kv.second;
 
         if (list.IsSequence() && list.size() == 1 && list[0]["value"])
         {
-            float val = list[0]["value"].as<float>();
-            comp->Layouts.push_back({key, val});
+            const auto val = list[0]["value"].as<float>();
+            comp->Layouts.emplace_back(key, val);
         }
-        else
+
+        if (list.IsSequence() && list.size() == 2 && list[0]["x"] && list[1]["y"])
         {
-            std::cerr << "Node is not a sequence with one element having 'value' key\n";
+            const auto x = list[0]["x"].as<float>();
+            const auto y = list[1]["y"].as<float>();
+
+            comp->Layouts.emplace_back(key, x, y);
         }
     }
 

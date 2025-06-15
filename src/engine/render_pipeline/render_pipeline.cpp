@@ -5,10 +5,10 @@ void RenderPipeline::RenderSprites() const
     const auto projection = glm::value_ptr(_camera3d.lock()->GetProjection());
     const auto view = glm::value_ptr(_cameraTransform3d.lock()->GetModel());
 
-    for (auto value : _sprites)
+    for (const auto& value : _sprites)
     {
 
-        if (auto sprite = value.lock())
+        if (const auto& sprite = value.lock())
         {
             sprite->Update(); // move to material
 
@@ -34,18 +34,18 @@ void RenderPipeline::RenderUI() const
 {
     const auto projection = _uiCamera.GetProjection();
 
-    for (auto value : _texts)
+    for (const auto& value : _texts)
     {
-        if (auto text = value.lock())
+        if (const auto& text = value.lock())
         {
             text->Update();
             text->Render(projection);
         }
     }
 
-    for (auto value : _images)
+    for (const auto& value : _images)
     {
-        if (auto image = value.lock())
+        if (const auto& image = value.lock())
         {
             image->Update();
             image->Render(projection);

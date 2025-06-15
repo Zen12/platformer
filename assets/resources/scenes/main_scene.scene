@@ -38,12 +38,15 @@ entities:
                                       - data:
                                                 - center_x:
                                                           - value: 0
-                                                - center_y_f:
+                                                - center_y:
                                                           - value: 0
                                                 - pixel_width:
-                                                          - value: 1
+                                                          - value: 200
                                                 - pixel_height:
-                                                          - value: 1
+                                                          - value: 200
+                                                - pivot:
+                                                           - x: 0.5
+                                                           - y: 0.5
                             - component:
                                       - type: "ui_image"
                                       - data:
