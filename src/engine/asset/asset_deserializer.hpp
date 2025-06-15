@@ -92,6 +92,16 @@ struct MaterialComponentSerialization : public ComponentSerialization
     }
 };
 
+struct UiTextComponentSerialization : public ComponentSerialization {
+    std::string MaterialGUID;
+    std::string Text;
+
+    std::string getType() const override
+    {
+        return "ui_text";
+    }
+};
+
 struct UiImageComponentSerialization : public ComponentSerialization
 {
     std::string MaterialGUID;
@@ -200,6 +210,13 @@ namespace YAML
 } // namespace YAML
 
 // ---------- Component Factory ----------
+
+inline std::unique_ptr<UiTextComponentSerialization> createUiText(const YAML::Node &map) {
+    auto comp = std::make_unique<UiTextComponentSerialization>();
+    comp->MaterialGUID = map["material"].as<std::string>();
+    comp->Text = map["text"].as<std::string>();
+    return comp;
+}
 
 inline std::unique_ptr<UiImageComponentSerialization> createUiImage(const YAML::Node &map)
 {
@@ -310,7 +327,8 @@ inline std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAM
     else if (type == "ui_image")
     {
         return createUiImage(map);
-    }
+    } if (type == "ui_text")
+        return createUiText(map);
     throw std::runtime_error("Unknown component type: " + type);
 }
 

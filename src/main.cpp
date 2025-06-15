@@ -20,9 +20,9 @@ int main()
     std::vector<std::shared_ptr<Shader>> shaders;
     std::vector<std::shared_ptr<Material>> materials;
     std::vector<std::shared_ptr<Sprite>> sprites;
+    std::vector<std::shared_ptr<Font>> fonts;
 
     std::weak_ptr<Entity> sceneCamera;
-
     const auto rectRoot = std::make_shared<RectTransformRoot>(window);
 
     for (const auto &entity : scene.entities)
@@ -101,6 +101,31 @@ int main()
 
                     renderPipeline.AddRenderer(uiImage);
                 }
+            }
+            else if (comp->getType() == "ui_text") {
+
+                if (const auto uiText = newEntity->AddComponent<UiTextRenderer>().lock()) {
+
+                    const auto *serialization = dynamic_cast<UiTextComponentSerialization *>(comp.get());
+                    const auto materialSerialization = assetManager.LoadMaterialByGuid(serialization->MaterialGUID);
+
+                    const auto shader = std::make_shared<Shader>(materialSerialization.Shader.vertexSourceCode, materialSerialization.Shader.fragmentShourceCode);
+                    shaders.push_back(shader);
+
+                    const auto material = std::make_shared<Material>(shader);
+                    materials.push_back(material);
+
+                    std::shared_ptr<Font> font = std::make_shared<Font>(AssetLoader::LoadFontFromPath(ASSETS_PATH "resources/fonts/Antonio-Bold.ttf"));
+                    fonts.push_back(font);
+
+                    material->SetFont(font);
+                    uiText->SetMaterial(material);
+                    uiText->SetText(serialization->Text);
+
+
+                    renderPipeline.AddRenderer(uiText);
+                }
+
             }
         }
     }

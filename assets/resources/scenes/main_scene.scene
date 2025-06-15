@@ -55,24 +55,24 @@ entities:
                   - material: f22681f4-45d1-4542-a838-99f854890c28
                   - image: 126fb991-fe1c-45e0-ae0c-1649a2c65ae3
   - obj:
-        - guid: OBJ-3-ui-rect
-        - components:
-              - component:
-                    - type: "rect_transform"
-                    - data:
-                          - center_x:
-                                - value: 0
-                          - center_y:
-                                - value: 0
-                          - pixel_width:
-                                - value: 100
-                          - pixel_height:
-                                - value: 100
-                          - pivot:
-                                - x: 0.5
-                                - y: 0.5
-              - component:
-                    - type: "ui_image"
-                    - data:
-                          - material: f22681f4-45d1-4542-a838-99f854890c28
-                          - image: 126fb991-fe1c-45e0-ae0c-1649a2c65ae3
+      - guid: OBJ-4-ui-rect
+      - components:
+          - component:
+              - type: "rect_transform"
+              - data:
+                  - center_x_f:
+                      - value: 0
+                  - center_y_f:
+                      - value: 0
+                  - pixel_width_f:
+                      - value: 200
+                  - pixel_height_f:
+                      - value: 200
+                  - pivot_f:
+                      - x: 0.5
+                      - y: 0.5
+          - component:
+              - type: "ui_text"
+              - data:
+                  - material: f22681f4-45d1-4542-a838-99f854890c28
+                  - text: "Hello Text"
