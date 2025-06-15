@@ -10,8 +10,8 @@
 
 enum AlignmentLayout
 {
-    StartBorder,
-    EndBorder
+    StartBorder = 0,
+    EndBorder = 1
 };
 
 class LayoutOption
@@ -129,6 +129,35 @@ public:
         const glm::mat4 &model) const override
     {
         return glm::scale(model, glm::vec3(_value, 1, 1));
+    }
+};
+
+class PixelYLayoutOption final : public LayoutOption
+{
+private:
+    const float _value;
+    const AlignmentLayout _alignment;
+
+public:
+    PixelYLayoutOption(const float &value, const AlignmentLayout &alignment)
+        : _value(value), _alignment(alignment) {};
+
+    [[nodiscard]] glm::mat4 UpdateMatrix(
+        [[maybe_unused]] const float &width,
+        const float &height,
+        const glm::mat4 &model) const override
+    {
+        switch (_alignment)
+        {
+            case AlignmentLayout::StartBorder:
+                return glm::translate(model, glm::vec3(0, 0 + _value, 0));
+            case AlignmentLayout::EndBorder:
+                return glm::translate(model, glm::vec3(0, height - _value, 0));
+            default:
+                break;
+        }
+
+        return model;
     }
 };
 

@@ -36,17 +36,19 @@ entities:
           - component:
               - type: "rect_transform"
               - data:
-                  - center_x:
+                  - pixel_x:
                       - value: 0
-                  - center_y:
-                      - value: 0
+                      - x: 20
+                  - pixel_y:
+                        - value: 0
+                        - y: 20
                   - pixel_width:
                       - value: 200
                   - pixel_height:
                       - value: 200
                   - pivot:
-                      - x: 0.5
-                      - y: 0.5
+                      - x: 0.0
+                      - y: 0.0
           - component:
               - type: "ui_image"
               - data:

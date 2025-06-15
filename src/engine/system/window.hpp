@@ -11,19 +11,19 @@ public:
     Window(const uint16_t &width, const uint16_t &height, const std::string &windowName);
     void WinInit();
 
-    bool IsOpen();
-    void Destroy();
-    void SwapBuffers();
+    [[nodiscard]] bool IsOpen() const;
+    void Destroy() const;
+    void SwapBuffers() const;
 
-    uint16_t GetWidth() const {
+    [[nodiscard]] uint16_t GetWidth() const {
         return _width;
     }
 
-    uint16_t GetHeight() const {
+    [[nodiscard]] uint16_t GetHeight() const {
         return _height;
     }
 
-    void OnResize(uint16_t width, uint16_t height)
+    void OnResize(const uint16_t& width,const uint16_t& height)
     {
         _width = width;
         _height = height;

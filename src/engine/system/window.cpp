@@ -6,17 +6,18 @@
 
 GLFWwindow *window;
 
-void processInput(GLFWwindow *window)
+// c-like callback from GLFW for input
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 }
 
-void framebuffer_size_callback(GLFWwindow *window, int width, int height)
+// c-like callback from GLFW to resize window
+void framebuffer_size_callback(GLFWwindow *window, const int width, const int height)
 {
     glViewport(0, 0, width, height);
-    auto *self = static_cast<Window *>(glfwGetWindowUserPointer(window));
-    if (self)
+    if (auto *self = static_cast<Window *>(glfwGetWindowUserPointer(window)))
         self->OnResize(width, height);
 }
 
@@ -55,12 +56,14 @@ Window::Window(const uint16_t &width, const uint16_t &height, const std::string 
         return;
     }
 
-    // need this mecause of Mac issue
+    // need this because of Mac issue
     int fbWidth, fbHeight;
     glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
-
     _width = fbWidth;
     _height = fbHeight;
+
+    // input
+    glfwSetKeyCallback(window, key_callback);
 }
 
 void Window::WinInit()
@@ -69,18 +72,18 @@ void Window::WinInit()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 }
 
-bool Window::IsOpen()
+bool Window::IsOpen() const
 {
     return !glfwWindowShouldClose(window);
 }
 
-void Window::Destroy()
+void Window::Destroy() const
 {
     glfwDestroyWindow(window);
     glfwTerminate();
 }
 
-void Window::SwapBuffers()
+void Window::SwapBuffers() const
 {
     glfwSwapBuffers(window);
 }

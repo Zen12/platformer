@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <utility>
 
 class ProjectAsset
 {
@@ -8,7 +9,7 @@ class ProjectAsset
         std::string Name;
         std::vector<std::string> Scenes;
 
-        ProjectAsset(const std::string& name, const std::vector<std::string>& scenes)
-            : Name(name), Scenes(scenes)
+        ProjectAsset(std::string  name, const std::vector<std::string>& scenes)
+            : Name(std::move(name)), Scenes(scenes)
         {}
 };

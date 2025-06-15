@@ -52,25 +52,29 @@ int main()
                 cameraTr.lock()->SetScale(scale);
             }
             else if (comp->getType() == "rect_transform") {
-                const auto rect = newEntity->AddComponent<RectTransform>();
-                rect.lock()->SetParent(rectRoot);
+                const auto rectPtr = newEntity->AddComponent<RectTransform>();
+                if (const auto rect = rectPtr.lock()) {
+                    rect->SetParent(rectRoot);
+                    const auto *tf = dynamic_cast<RectTransformComponentSerialization *>(comp.get());
 
-                const auto *tf = dynamic_cast<RectTransformComponentSerialization *>(comp.get());
-                for (const auto &layout : tf->Layouts)
-                {
-                    std::cout << layout.Type << " " << layout.Value << " " << layout.X << " " << layout.Y << std::endl;
-                    if (layout.Type == "center_x")
-                        rect.lock()->AddLayoutOption(std::make_unique<CenterXLayoutOption>());
-                    else if (layout.Type == "center_y")
-                        rect.lock()->AddLayoutOption(std::make_unique<CenterYLayoutOption>());
-                    else if (layout.Type == "pixel_width")
-                        rect.lock()->AddLayoutOption(std::make_unique<PixelWidthLayoutOption>(layout.Value));
-                    else if (layout.Type == "pixel_height")
-                        rect.lock()->AddLayoutOption(std::make_unique<PixelHeightLayoutOption>(layout.Value));
-                    else if (layout.Type == "pivot") {
-                        rect.lock()->AddLayoutOption(std::make_unique<PivotLayoutOption>(glm::vec2(layout.X, layout.Y)));
-                    } else {
-                        std::cerr << "Unknown layout type: " << layout.Type << std::endl;
+                    for (const auto &layout : tf->Layouts)
+                    {
+                        if (layout.Type == "center_x")
+                            rect->AddLayoutOption(std::make_unique<CenterXLayoutOption>());
+                        else if (layout.Type == "center_y")
+                            rect->AddLayoutOption(std::make_unique<CenterYLayoutOption>());
+                        else if (layout.Type == "pixel_width")
+                            rect->AddLayoutOption(std::make_unique<PixelWidthLayoutOption>(layout.Value));
+                        else if (layout.Type == "pixel_height")
+                            rect->AddLayoutOption(std::make_unique<PixelHeightLayoutOption>(layout.Value));
+                        else if (layout.Type == "pivot")
+                            rect->AddLayoutOption(std::make_unique<PivotLayoutOption>(glm::vec2(layout.X, layout.Y)));
+                        else if (layout.Type == "pixel_x")
+                            rect->AddLayoutOption(std::make_unique<PixelXLayoutOption>(layout.X, static_cast<AlignmentLayout>(layout.Value)));
+                        else if (layout.Type == "pixel_y")
+                            rect->AddLayoutOption(std::make_unique<PixelYLayoutOption>(layout.Y, static_cast<AlignmentLayout>(layout.Value)));
+                        else
+                            std::cerr << "Unknown layout type: " << layout.Type << std::endl;
                     }
                 }
             }
