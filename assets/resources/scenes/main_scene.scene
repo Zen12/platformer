@@ -4,7 +4,8 @@ hierarchy:
   - obj:
       - guid: OBJ-1-camera
       - children:
-          - OBJ-2-sprite
+            - OBJ-2-sprite
+            - OBJ-2-ui-rect
 entities:
   - obj:
       - guid: OBJ-1-camera
@@ -36,23 +37,21 @@ entities:
           - component:
               - type: "rect_transform"
               - data:
-                  - pixel_x:
+                  - center_x:
                       - value: 0
-                      - x: 20
-                  - pixel_y:
+                  - center_y:
                         - value: 0
-                        - y: 20
                   - pixel_width:
                       - value: 200
                   - pixel_height:
                       - value: 200
                   - pivot:
-                      - x: 0.0
-                      - y: 0.0
+                      - x: 0.5
+                      - y: 0.5
           - component:
               - type: "ui_image"
               - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c28
+                  - material: f22681f4-45d1-4542-a838-99f854890a28
                   - image: 126fb991-fe1c-45e0-ae0c-1649a2c65ae3
   - obj:
       - guid: OBJ-4-ui-rect
@@ -60,9 +59,9 @@ entities:
           - component:
               - type: "rect_transform"
               - data:
-                    - center_x:
+                    - pixel_x:
                           - value: 0
-                    - center_y:
+                    - pixel_y:
                           - value: 0
                     - pixel_width:
                           - value: 1
