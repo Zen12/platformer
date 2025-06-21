@@ -14,6 +14,8 @@ public:
     [[nodiscard]] bool IsOpen() const;
     void Destroy() const;
     void SwapBuffers() const;
+    void PullEvent() const;
+
 
     [[nodiscard]] uint16_t GetWidth() const {
         return _width;

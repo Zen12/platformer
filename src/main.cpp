@@ -39,7 +39,7 @@ int main()
         renderPipeline->RenderUI();
 
         window->SwapBuffers();
-        glfwPollEvents();
+        window->PullEvent();
     }
 
     sceneManager.UnLoadAll();

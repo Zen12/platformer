@@ -66,24 +66,24 @@ Window::Window(const uint16_t &width, const uint16_t &height, const std::string 
     glfwSetKeyCallback(window, key_callback);
 }
 
-void Window::WinInit()
-{
+void Window::WinInit() {
     glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 }
 
-bool Window::IsOpen() const
-{
+bool Window::IsOpen() const {
     return !glfwWindowShouldClose(window);
 }
 
-void Window::Destroy() const
-{
+void Window::Destroy() const {
     glfwDestroyWindow(window);
     glfwTerminate();
 }
 
-void Window::SwapBuffers() const
-{
+void Window::SwapBuffers() const {
     glfwSwapBuffers(window);
+}
+
+void Window::PullEvent() const {
+    glfwPollEvents();
 }
