@@ -1,4 +1,5 @@
 
+#pragma once
 #include "rect_transform.hpp"
 #include "../../system/window.hpp"
 

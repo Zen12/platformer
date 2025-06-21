@@ -1,4 +1,5 @@
 #include <iostream>
+#include <utility>
 #include <yaml-cpp/yaml.h>
 
 class AssetMeta
@@ -6,20 +7,20 @@ class AssetMeta
 public:
     std::string Name;
     std::string Guid;
-    std::string Extention;
+    std::string Extension;
     std::string Type;
     std::string Path;
 
     AssetMeta(
-        const std::string &name,
-        const std::string &guid,
-        const std::string &extention,
-        const std::string &type,
-        const std::string &path) : Name(name),
-                                   Guid(guid),
-                                   Extention(extention),
-                                   Type(type),
-                                   Path(path) {};
+        std::string name,
+        std::string guid,
+        std::string extension,
+        std::string type,
+        std::string path) : Name(std::move(name)),
+                                   Guid(std::move(guid)),
+                                   Extension(std::move(extension)),
+                                   Type(std::move(type)),
+                                   Path(std::move(path)) {}
 
     AssetMeta() = delete;
     AssetMeta(const AssetMeta &) = default;                // copy constructor

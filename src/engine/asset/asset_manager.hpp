@@ -1,6 +1,8 @@
+#pragma once
 #include <iostream>
 #include <memory>
 #include <filesystem>
+#include <utility>
 #include <vector>
 #include <string>
 #include "asset_meta.hpp"
@@ -16,8 +18,8 @@ private:
     std::unordered_map<std::string, AssetMeta> _assetMap;
 
 public:
-    AssetManager(const std::string &assetPath)
-        : _assetPath(assetPath)
+    AssetManager(std::string assetPath)
+        : _assetPath(std::move(assetPath))
     {
     }
 
