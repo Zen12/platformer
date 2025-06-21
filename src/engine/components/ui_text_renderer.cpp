@@ -40,40 +40,27 @@ void UiTextRenderer::Update() const
 
 void UiTextRenderer::Render(const glm::mat4 &projection)
 {
-    const float width = 2.0f / projection[0][0];
-    const float height = 2.0f / projection[1][1];
-
     if (const auto material = _material.lock())
     {
         if (const auto font = material->GetFont().lock())
         {
+            const auto model = GetEntity().lock()->GetComponent<RectTransform>().lock()->GetModel();
 
             material->SetMat4("projection", projection);
+            material->SetMat4("model", model);
 
             // inject
-            const auto model = GetEntity().lock()->GetComponent<RectTransform>().lock()->GetModel();
-            const auto position = glm::vec3(model[3]);
-
-            float x = position.x * width;
-            float y = position.y * height;
-            float totalWidth = 0;
+            float x = 0.0f;
+            float y = 0.0f;
 
             const float scale = _fontSize;
-
-            for (auto c = _text.begin(); c != _text.end(); c++)
-            {
-                const Character ch = font->Characters.at(*c);
-                totalWidth += (ch.Advance >> 6) * scale;
-            }
-
-            x -= totalWidth * position.z; // pivot
 
             glActiveTexture(GL_TEXTURE0);
             glBindVertexArray(VAO);
 
-            for (auto c = _text.begin(); c != _text.end(); c++)
+            for (char & c : _text)
             {
-                const Character ch = font->Characters.at(*c);
+                const Character ch = font->Characters.at(c);
 
                 const float xpos = x + ch.Bearing.x * scale;
                 const float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
