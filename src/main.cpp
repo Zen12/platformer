@@ -23,18 +23,13 @@ int main()
 
     time.Start();
 
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    renderPipeline->Init();
 
     while (window->IsOpen())
     {
         time.Reset();
 
-        glClear(GL_COLOR_BUFFER_BIT);
-
+        renderPipeline->ClearFrame();
         renderPipeline->RenderSprites();
         renderPipeline->RenderUI();
 

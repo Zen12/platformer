@@ -30,6 +30,18 @@ void RenderPipeline::RenderSprites() const
     }
 }
 
+void RenderPipeline::Init() const {
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+}
+
+void RenderPipeline::ClearFrame() const {
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
 void RenderPipeline::RenderUI() const
 {
     const auto projection = _uiCamera.GetProjection();

@@ -20,7 +20,7 @@ private:
     std::vector<std::weak_ptr<UiImageRenderer>> _images;
 
 public:
-    RenderPipeline(const std::weak_ptr<Window> &window)
+    explicit RenderPipeline(const std::weak_ptr<Window> &window)
     : _uiCamera(Camera(1, false, window)), _window(window)
     {
     }
@@ -46,6 +46,8 @@ public:
     void AddRenderer(const std::weak_ptr<UiTextRenderer> &text) { _texts.push_back(text); }
     void AddRenderer(const std::weak_ptr<UiImageRenderer> &image) { _images.push_back(image); }
 
+    void Init() const;
+    void ClearFrame() const;
     void RenderUI() const;
     void RenderSprites() const;
     void Cleanup();
