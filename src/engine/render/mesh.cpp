@@ -40,17 +40,17 @@ Mesh::~Mesh()
     glDeleteBuffers(1, &_ebo);
 }
 
-void Mesh::Bind() const
+void Mesh::Bind() const noexcept
 {
     glBindVertexArray(_vao);
 }
 
-size_t Mesh::GetVertexCount() const
+size_t Mesh::GetVertexCount() const noexcept
 {
     return _vertices.size();
 }
 
-size_t Mesh::GetIndicesCount() const
+size_t Mesh::GetIndicesCount() const noexcept
 {
     return _indices.size();
 }
@@ -70,8 +70,7 @@ Mesh Mesh::GenerateSprite()
         0, 3, 1,
         1, 3, 2};
 
-    return Mesh(vertices, indices);
-    ;
+    return {vertices, indices};
 }
 
 Mesh Mesh::GenerateUI()
@@ -87,6 +86,5 @@ Mesh Mesh::GenerateUI()
         0, 3, 1,
         1, 3, 2};
 
-    return Mesh(vertices, indices);
-    ;
+    return {vertices, indices};
 }

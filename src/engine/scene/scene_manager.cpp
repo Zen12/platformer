@@ -63,7 +63,7 @@ void SceneManager::LoadScene(const SceneSerialization &scene) {
                     const auto *serialization = dynamic_cast<UiImageComponentSerialization *>(comp.get());
                     const auto materialSerialization = _assetManager.lock()->LoadMaterialByGuid(serialization->MaterialGUID);
 
-                    const auto shader = std::make_shared<Shader>(materialSerialization.Shader.vertexSourceCode, materialSerialization.Shader.fragmentShourceCode);
+                    const auto shader = std::make_shared<Shader>(materialSerialization.Shader.vertexSourceCode, materialSerialization.Shader.fragmentSourceCode);
                     _shaders.push_back(shader);
 
                     const auto material = std::make_shared<Material>(shader);
@@ -88,7 +88,7 @@ void SceneManager::LoadScene(const SceneSerialization &scene) {
                     const auto *serialization = dynamic_cast<UiTextComponentSerialization *>(comp.get());
                     const auto materialSerialization = _assetManager.lock()->LoadMaterialByGuid(serialization->MaterialGUID);
 
-                    const auto shader = std::make_shared<Shader>(materialSerialization.Shader.vertexSourceCode, materialSerialization.Shader.fragmentShourceCode);
+                    const auto shader = std::make_shared<Shader>(materialSerialization.Shader.vertexSourceCode, materialSerialization.Shader.fragmentSourceCode);
                     _shaders.push_back(shader);
 
                     const auto material = std::make_shared<Material>(shader);

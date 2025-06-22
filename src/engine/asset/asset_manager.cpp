@@ -19,7 +19,7 @@ void AssetManager::Init()
                 {
                     // Extract values safely with .as<>()
                     const std::string name = root["name"] ? root["name"].as<std::string>() : "";
-                    const std::string guid = root["guid"].as<std::string>(); // Already checked
+                    const auto guid = root["guid"].as<std::string>(); // Already checked
                     const std::string extension = root["extention"] ? root["extention"].as<std::string>() : "";
                     const std::string type = root["type"] ? root["type"].as<std::string>() : "";
 
@@ -46,27 +46,24 @@ void AssetManager::Init()
     }
 }
 
-SceneSerialization AssetManager::LoadSceneByGuid(const std::string &guid)
-{
-    auto meta = _assetMap.at(guid);
-    YAML::Node root = YAML::LoadFile(meta.Path);
+SceneSerialization AssetManager::LoadSceneByGuid(const std::string &guid) const {
+    const auto meta = _assetMap.at(guid);
+    const YAML::Node root = YAML::LoadFile(meta.Path);
 
     return root.as<SceneSerialization>();
 }
 
-ShaderComponentSerialization AssetManager::LoadShaderByGuid(const std::string &vertexGuid, const std::string &framentGuid)
-{
+ShaderComponentSerialization AssetManager::LoadShaderByGuid(const std::string &vertexGuid, const std::string &fragmentGuid) const {
     const auto vertexMeta = _assetMap.at(vertexGuid);
-    const auto fragMeta = _assetMap.at(framentGuid);
+    const auto fragMeta = _assetMap.at(fragmentGuid);
 
     const std::string vertexShaderSource = FileLoader::LoadFile(vertexMeta.Path);
     const std::string fragmentShaderSource = FileLoader::LoadFile(fragMeta.Path);
 
-    return ShaderComponentSerialization(vertexShaderSource, fragmentShaderSource);
+    return {vertexShaderSource, fragmentShaderSource};
 };
 
-MaterialComponentSerialization AssetManager::LoadMaterialByGuid(const std::string &guid)
-{
+MaterialComponentSerialization AssetManager::LoadMaterialByGuid(const std::string &guid) const {
     const auto meta = _assetMap.at(guid);
     const YAML::Node root = YAML::LoadFile(meta.Path);
     const YAML::Node shaderNode = root["shader"];
@@ -76,14 +73,12 @@ MaterialComponentSerialization AssetManager::LoadMaterialByGuid(const std::strin
     return MaterialComponentSerialization{shader};
 }
 
-SpriteComponentSerialization AssetManager::LoadSpriteByGuid(const std::string &guid)
-{
+SpriteComponentSerialization AssetManager::LoadSpriteByGuid(const std::string &guid) const {
     const auto meta = _assetMap.at(guid);
 
     return SpriteComponentSerialization(meta.Path);
 }
 
-void AssetManager::UnLoad(const std::string &guid)
-{
+void AssetManager::UnLoad(const std::string &guid) const {
     std::cout << guid << "\n";
 }

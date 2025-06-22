@@ -18,21 +18,21 @@ public:
         _lastReset = std::chrono::high_resolution_clock::now();
     }
 
-    float GetTimeAlived() const
+    [[nodiscard]] float GetTimeAlive() const noexcept
     {
         const auto currentTime = std::chrono::high_resolution_clock::now();
         const std::chrono::duration<float> duration = currentTime - _start;
         return duration.count();
     }
 
-    float GetResetDelta() const
+    [[nodiscard]] float GetResetDelta() const noexcept
     {
         const auto currentTime = std::chrono::high_resolution_clock::now();
         const std::chrono::duration<float> duration = currentTime - _lastReset;
         return duration.count();
     }
 
-    float GetResetDeltaFps() const
+    [[nodiscard]] float GetResetDeltaFps() const
     {
         const auto delta = GetResetDelta();
         return 1 / delta;

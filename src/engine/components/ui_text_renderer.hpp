@@ -17,13 +17,13 @@
 class UiTextRenderer : public Component
 {
 private:
-    std::string _text;
-    uint32_t VAO, VBO;
+    std::string _text{};
+    uint32_t VAO{}, VBO{};
     float _fontSize = 1;
-    std::weak_ptr<Material> _material;
+    std::weak_ptr<Material> _material{};
 
 public:
-    UiTextRenderer(const std::weak_ptr<Entity> &entity);
+    explicit UiTextRenderer(const std::weak_ptr<Entity> &entity);
 
     void SetText(const std::string &text)
     {
@@ -37,7 +37,7 @@ public:
     void Update() const override;
     void Render(const glm::mat4 &projection);
 
-    int32_t GetShaderId() const { return _material.lock()->GetShaderId(); }
+    [[nodiscard]] int32_t GetShaderId() const { return _material.lock()->GetShaderId(); }
 
 private:
     void Bind();

@@ -71,19 +71,19 @@ void Window::WinInit() {
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 }
 
-bool Window::IsOpen() const {
+bool Window::IsOpen() const noexcept {
     return !glfwWindowShouldClose(window);
 }
 
-void Window::Destroy() const {
+void Window::Destroy() const noexcept {
     glfwDestroyWindow(window);
     glfwTerminate();
 }
 
-void Window::SwapBuffers() const {
+void Window::SwapBuffers() const noexcept {
     glfwSwapBuffers(window);
 }
 
-void Window::PullEvent() const {
+void Window::PullEvent() const noexcept {
     glfwPollEvents();
 }

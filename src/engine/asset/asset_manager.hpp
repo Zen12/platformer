@@ -25,10 +25,10 @@ public:
 
     void Init();
 
-    [[nodiscard]] SceneSerialization LoadSceneByGuid(const std::string &guid);
-    [[nodiscard]] MaterialComponentSerialization LoadMaterialByGuid(const std::string &guid);
-    [[nodiscard]] ShaderComponentSerialization LoadShaderByGuid(const std::string &vertexGuid, const std::string &framentGuid);
-    [[nodiscard]] SpriteComponentSerialization LoadSpriteByGuid(const std::string &guid);
+    [[nodiscard]] SceneSerialization LoadSceneByGuid(const std::string &guid) const;
+    [[nodiscard]] MaterialComponentSerialization LoadMaterialByGuid(const std::string &guid) const;
+    [[nodiscard]] ShaderComponentSerialization LoadShaderByGuid(const std::string &vertexGuid, const std::string &fragmentGuid) const;
+    [[nodiscard]] SpriteComponentSerialization LoadSpriteByGuid(const std::string &guid) const;
 
-    void UnLoad(const std::string &guid);
+    void UnLoad(const std::string &guid) const;
 };

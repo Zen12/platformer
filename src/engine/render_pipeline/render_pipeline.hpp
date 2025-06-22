@@ -5,6 +5,7 @@
 #include "../components/ui_text_renderer.hpp"
 #include "../components/ui_image_renderer.hpp"
 #include "../system/window.hpp"
+#include  "../components/camera_component.hpp"
 
 class RenderPipeline
 {
@@ -46,8 +47,8 @@ public:
     void AddRenderer(const std::weak_ptr<UiTextRenderer> &text) { _texts.push_back(text); }
     void AddRenderer(const std::weak_ptr<UiImageRenderer> &image) { _images.push_back(image); }
 
-    void Init() const;
-    void ClearFrame() const;
+    void Init() const noexcept;
+    void ClearFrame() const noexcept;
     void RenderUI() const;
     void RenderSprites() const;
     void Cleanup();

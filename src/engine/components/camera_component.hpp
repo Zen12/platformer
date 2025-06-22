@@ -4,23 +4,22 @@
 #include "entity.hpp"
 #include <glm/glm.hpp>
 
-class CameraComponent : public Component
+class CameraComponent final : public Component
 {
 private:
-    Camera _camera;
+    Camera _camera{};
 
 public:
-    CameraComponent(const std::weak_ptr<Entity> &entity) : Component(entity)
+    explicit CameraComponent(const std::weak_ptr<Entity> &entity) : Component(entity)
     {
     }
 
-    void SetCamera(Camera camera)
+    void SetCamera(const Camera &camera)
     {
         _camera = camera;
     }
 
-    glm::mat4 GetProjection()
-    {
+    [[nodiscard]] glm::mat4 GetProjection() const {
         return _camera.GetProjection();
     }
 

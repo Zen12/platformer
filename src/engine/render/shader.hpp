@@ -26,8 +26,8 @@ public:
     Shader &operator=(Shader &&other) noexcept = delete;
 
     void Use() const noexcept;
-    int32_t GetShaderId() const noexcept;
-    int32_t GetLocation(const std::string &name) const noexcept;
+    [[nodiscard]] int32_t GetShaderId() const noexcept;
+    [[nodiscard]] int32_t GetLocation(const std::string &name) const noexcept;
 
     void SetVec2(const int32_t &location, const float &x, const float &y) const noexcept;
     void SetVec3(const int32_t &location, const float &x, const float &y, const float &z) const noexcept;

@@ -19,7 +19,7 @@ private:
     std::weak_ptr<RectTransform> _parent;
 
 public:
-    RectTransform(const std::weak_ptr<Entity> &entity) : Transform(entity)
+    explicit RectTransform(const std::weak_ptr<Entity> &entity) : Transform(entity)
     {
         _constrains = std::make_unique<LayoutOptions>();
     };

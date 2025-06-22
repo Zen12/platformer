@@ -6,9 +6,6 @@
 #include <vector>
 #include <iostream>
 #include <memory>
-#include <string>
-
-// ---------- Data Structures ----------
 
 struct Vec3
 {
@@ -39,97 +36,97 @@ struct ComponentSerialization
     virtual std::string getType() const = 0;
 };
 
-struct CameraComponentSerialization : public ComponentSerialization
+struct CameraComponentSerialization final : public ComponentSerialization
 {
-    float aspectPower;
-    bool isPerspective;
+    float aspectPower{};
+    bool isPerspective{};
 
-    std::string getType() const override { return "camera"; }
+    [[nodiscard]] std::string getType() const override { return "camera"; }
 };
 
-struct ShaderComponentSerialization : public ComponentSerialization
+struct ShaderComponentSerialization final : public ComponentSerialization
 {
     std::string vertexSourceCode;
-    std::string fragmentShourceCode;
+    std::string fragmentSourceCode;
 
-    ShaderComponentSerialization(const std::string &vertex, const std::string &fragment)
-        : vertexSourceCode(vertex), fragmentShourceCode(fragment)
+    ShaderComponentSerialization(std::string vertex, std::string fragment)
+        : vertexSourceCode(std::move(vertex)), fragmentSourceCode(std::move(fragment))
     {
     }
 
-    std::string getType() const override
+    [[nodiscard]] std::string getType() const override
     {
         return "shader";
     }
 };
 
-struct SpriteComponentSerialization : public ComponentSerialization
+struct SpriteComponentSerialization final : public ComponentSerialization
 {
     std::string Path;
-    SpriteComponentSerialization(const std::string &path)
-        : Path(path)
+    explicit SpriteComponentSerialization(std::string path)
+        : Path(std::move(path))
     {
     }
 
-    std::string getType() const override
+    [[nodiscard]] std::string getType() const override
     {
         return "sprite";
     }
 };
 
-struct MaterialComponentSerialization : public ComponentSerialization
+struct MaterialComponentSerialization final : public ComponentSerialization
 {
     ShaderComponentSerialization Shader;
 
-    MaterialComponentSerialization(const ShaderComponentSerialization &shader)
-        : Shader(shader)
+    explicit MaterialComponentSerialization(ShaderComponentSerialization shader)
+        : Shader(std::move(shader))
     {
     }
 
-    std::string getType() const override
+    [[nodiscard]] std::string getType() const override
     {
         return "material";
     }
 };
 
-struct UiTextComponentSerialization : public ComponentSerialization {
+struct UiTextComponentSerialization final : public ComponentSerialization {
     std::string MaterialGUID;
     std::string Text;
 
-    std::string getType() const override
+    [[nodiscard]] std::string getType() const override
     {
         return "ui_text";
     }
 };
 
-struct UiImageComponentSerialization : public ComponentSerialization
+struct UiImageComponentSerialization final : public ComponentSerialization
 {
     std::string MaterialGUID;
     std::string SpriteGUID;
 
-    std::string getType() const override
+    [[nodiscard]] std::string getType() const override
     {
         return "ui_image";
     }
 };
 
-struct RectTransformComponentSerialization : public ComponentSerialization
+struct RectTransformComponentSerialization final : public ComponentSerialization
 {
     std::vector<RectLayoutSerialization> Layouts;
 
-    std::string getType() const override
+    [[nodiscard]] std::string getType() const override
     {
         return "rect_transform";
     }
 };
 
-struct TransformComponentSerialization : public ComponentSerialization
+struct TransformComponentSerialization final : public ComponentSerialization
 {
-    Vec3 position;
-    Vec3 rotation;
-    Vec3 scale;
+    Vec3 position{};
+    Vec3 rotation{};
+    Vec3 scale{};
 
-    std::string getType() const override { return "transform"; }
+    [[nodiscard]] std::string getType() const override { return "transform"; }
 };
 
 struct EntitySerialization
@@ -271,13 +268,12 @@ inline std::unique_ptr<RectTransformComponentSerialization> createMaterial(const
 
     for (const auto &kv : map)
     {
-        std::string key = kv.first.as<std::string>();
-        YAML::Node list = kv.second;
+        const auto key = kv.first.as<std::string>();
 
-        if (list.IsSequence() && list.size() == 1 && list[0]["value"])
+        if (const YAML::Node list = kv.second; list.IsSequence() && list.size() == 1 && list[0]["value"])
         {
-            float val = list[0]["value"].as<float>();
-            comp->Layouts.push_back({key, val});
+            auto val = list[0]["value"].as<float>();
+            comp->Layouts.emplace_back(key, val);
         }
         else
         {
@@ -288,7 +284,7 @@ inline std::unique_ptr<RectTransformComponentSerialization> createMaterial(const
     return comp;
 }
 
-inline std::unique_ptr<ComponentSerialization> createTransfrom(const YAML::Node &map)
+inline std::unique_ptr<ComponentSerialization> createTransform(const YAML::Node &map)
 {
     auto comp = std::make_unique<TransformComponentSerialization>();
     comp->position = map["position"].as<Vec3>();
@@ -308,7 +304,7 @@ inline std::unique_ptr<ComponentSerialization> createCamera(const YAML::Node &ma
 inline std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAML::Node &node)
 {
     const auto nodeMap = sequenceToMap(node);
-    const std::string type = nodeMap["type"].as<std::string>();
+    const auto type = nodeMap["type"].as<std::string>();
     const YAML::Node &data = nodeMap["data"];
     const auto map = sequenceToMap(data);
 
@@ -318,7 +314,7 @@ inline std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAM
     }
     else if (type == "transform")
     {
-        return createTransfrom(map);
+        return createTransform(map);
     }
     else if (type == "rect_transform")
     {

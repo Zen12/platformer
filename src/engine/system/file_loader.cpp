@@ -7,7 +7,7 @@ std::string FileLoader::LoadFile(const std::string &path)
     if (!file.is_open())
     {
         std::cerr << "Error: Could not open the file at: " << path << "\n";
-        return std::string();
+        return {};
     }
 
     std::stringstream buffer;

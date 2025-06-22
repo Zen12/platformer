@@ -3,8 +3,6 @@
 #include "entity.hpp"
 #include "../asset/asset_loader.hpp"
 #include "../render/mesh.hpp"
-#include "transforms/transform.hpp"
-#include "camera_component.hpp"
 
 class SpriteRenderer : public Component
 {
@@ -16,11 +14,11 @@ private:
 
 public:
     SpriteRenderer() = delete;
-    SpriteRenderer(const std::weak_ptr<Entity> &entity) : Component(entity),
-
-                                                          _mesh(Mesh::GenerateSprite()),
-                                                          _shader(AssetLoader::LoadShaderFromPath("shaders/sprite_vert.glsl", "shaders/sprite_frag.glsl")) {
-                                                          };
+    explicit SpriteRenderer(const std::weak_ptr<Entity> &entity)
+    : Component(entity),
+      _mesh(Mesh::GenerateSprite()),
+       _shader(AssetLoader::LoadShaderFromPath("shaders/sprite_vert.glsl", "shaders/sprite_frag.glsl"))
+    {}
 
     void Update() const override;
 
@@ -28,7 +26,7 @@ public:
 
     void Render() const;
 
-    int32_t GetShaderId() const
+    [[nodiscard]] int32_t GetShaderId() const
     {
         return _shader.GetShaderId();
     }

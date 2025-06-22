@@ -14,15 +14,15 @@ void RenderPipeline::RenderSprites() const
 
             const auto model = sprite->GetEntity().lock()->GetComponent<Transform>().lock();
 
-            uint32_t shaderId = sprite->GetShaderId();
+            const auto shaderId = sprite->GetShaderId();
 
-            unsigned int modelLock = glGetUniformLocation(shaderId, "model");
+            const auto modelLock = glGetUniformLocation(shaderId, "model");
             glUniformMatrix4fv(modelLock, 1, GL_FALSE, glm::value_ptr(model->GetModel()));
 
-            unsigned int viewLock = glGetUniformLocation(shaderId, "view");
+            const auto viewLock = glGetUniformLocation(shaderId, "view");
             glUniformMatrix4fv(viewLock, 1, GL_FALSE, view);
 
-            unsigned int projLock = glGetUniformLocation(shaderId, "projection");
+            const auto projLock = glGetUniformLocation(shaderId, "projection");
             glUniformMatrix4fv(projLock, 1, GL_FALSE, projection);
 
             sprite->Render();
@@ -30,7 +30,7 @@ void RenderPipeline::RenderSprites() const
     }
 }
 
-void RenderPipeline::Init() const {
+void RenderPipeline::Init() const noexcept {
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -38,7 +38,7 @@ void RenderPipeline::Init() const {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 }
 
-void RenderPipeline::ClearFrame() const {
+void RenderPipeline::ClearFrame() const noexcept {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 

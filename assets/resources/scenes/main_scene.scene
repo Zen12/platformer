@@ -8,6 +8,29 @@ hierarchy:
             - OBJ-2-ui-rect
 entities:
   - obj:
+      - guid: sprite-1
+      - components:
+          - component:
+              - type: "transform"
+              - data:
+                  - position:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+          - component:
+              - type: "camera"
+              - data:
+                  - aspectPower: 7.0
+                  - isPerspective: true
+  - obj:
       - guid: OBJ-1-camera
       - components:
           - component:

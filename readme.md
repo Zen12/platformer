@@ -39,6 +39,7 @@ TODO
         ├─ 📁 render_pipiline
         └─ 📁 system
 🚀 run.sh
+🚀 run_debug.sh
 ⚙️ CMakeLists.txt
 📘 readme.md
  ``` 

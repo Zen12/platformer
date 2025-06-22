@@ -11,12 +11,12 @@ class Entity;
 class Component
 {
 public:
-    Component(const std::weak_ptr<Entity> &entity)
+    explicit Component(const std::weak_ptr<Entity> &entity)
     {
         _entity = entity;
     }
 
-    std::weak_ptr<Entity> GetEntity() const
+    [[nodiscard]] std::weak_ptr<Entity> GetEntity() const
     {
         return _entity;
     }

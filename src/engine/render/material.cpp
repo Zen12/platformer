@@ -1,16 +1,15 @@
 #include "material.hpp"
 
-int32_t Material::GetLocation(const std::string &key)
+int32_t Material::GetLocation(const std::string &key)  noexcept
 {
-    auto it = _locationMap.find(key);
-    if (it != _locationMap.end())
+    if (const auto it = _locationMap.find(key); it != _locationMap.end())
     {
         return it->second;
     }
 
     if (const auto shader = _shader.lock())
     {
-        int location = shader->GetLocation(key);
+        const auto location = shader->GetLocation(key);
         _locationMap[key] = location;
         return location;
     }

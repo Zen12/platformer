@@ -20,40 +20,38 @@ private:
 public:
     Material() = delete;
 
-    Material(const std::weak_ptr<Shader> &shader)
+    explicit Material(const std::weak_ptr<Shader> &shader)
         : _shader(shader)
     {
     }
 
-    int32_t GetLocation(const std::string &key);
+    int32_t GetLocation(const std::string &key) noexcept;
     void Bind() const;
 
-    void AddSprite(const std::weak_ptr<Sprite> &sprite)
+    void AddSprite(const std::weak_ptr<Sprite> &sprite) noexcept
     {
         _sprites.push_back(sprite);
     }
 
-    const std::weak_ptr<Font> GetFont() const
-    {
+    [[nodiscard]] std::weak_ptr<Font> GetFont() const noexcept {
         return _font;
     }
 
-    void SetFont(const std::weak_ptr<Font> font)
+    void SetFont(const std::weak_ptr<Font> &font) noexcept
     {
         _font = font;
     }
 
-    int32_t GetShaderId() const
+    [[nodiscard]] int32_t GetShaderId() const noexcept
     {
         if (const auto shader = _shader.lock())
         {
-            return (int32_t)shader->GetShaderId();
+            return shader->GetShaderId();
         }
         return -1;
     }
 
-    void SetMat4(const std::string &name, glm::mat4 mat)
-    {
+    void SetMat4(const std::string &name, const glm::mat4 &mat) const noexcept  {
         if (const auto shader = _shader.lock())
         {
             shader->Use();
@@ -62,8 +60,7 @@ public:
         }
     }
 
-    void SetVec3(const std::string &name, float x, float y, float z)
-    {
+    void SetVec3(const std::string &name, const float x, const float y, const float z) const noexcept {
         if (const auto shader = _shader.lock())
         {
             shader->Use();
@@ -72,8 +69,7 @@ public:
         }
     }
 
-    void SetVec2(const std::string &name, float x, float y)
-    {
+    void SetVec2(const std::string &name, const float x, const float y) const noexcept {
         if (const auto shader = _shader.lock())
         {
             shader->Use();

@@ -9,9 +9,9 @@ class Mesh
 {
 public:
 private:
-    uint32_t _vbo;
-    uint32_t _vao;
-    uint32_t _ebo;
+    uint32_t _vbo{};
+    uint32_t _vao{};
+    uint32_t _ebo{};
     std::vector<float> _vertices;
     std::vector<uint32_t> _indices;
 
@@ -23,9 +23,9 @@ public:
 
     ~Mesh();
 
-    void Bind() const;
-    size_t GetVertexCount() const;
-    size_t GetIndicesCount() const;
+    void Bind() const noexcept;
+    [[nodiscard]] size_t GetVertexCount() const noexcept;
+    [[nodiscard]] size_t GetIndicesCount() const noexcept;
 
     static Mesh GenerateSprite();
     static Mesh GenerateUI();

@@ -2,22 +2,30 @@
 
 void UiImageRenderer::Update() const
 {
-    if (auto material = _material.lock())
+    if (const auto material = _material.lock())
     {
         material->Bind();
         _mesh.Bind();
     }
 }
 
-void UiImageRenderer::Render(const glm::mat4 &projection) const
-{
+void UiImageRenderer::SetSprite(const std::weak_ptr<Sprite> &sprite) const {
     if (auto material = _material.lock())
     {
-        auto model = GetEntity().lock()->GetComponent<RectTransform>().lock()->GetModel();
+        material->AddSprite(sprite);
+    }
+}
+
+void UiImageRenderer::Render(const glm::mat4 &projection) const
+{
+    if (const auto material = _material.lock())
+    {
+        // ???
+        const auto model = GetEntity().lock()->GetComponent<RectTransform>().lock()->GetModel();
 
         material->SetMat4("projection", projection);
         material->SetMat4("model", model);
     }
 
-    glDrawElements(GL_TRIANGLES, (int32_t)_mesh.GetIndicesCount(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, static_cast<int32_t>(_mesh.GetIndicesCount()), GL_UNSIGNED_INT, nullptr);
 }

@@ -20,14 +20,14 @@ protected:
 
 public:
     Transform() = delete;
-    Transform(const std::weak_ptr<Entity> &entity) : Component(entity)
+    explicit Transform(const std::weak_ptr<Entity> &entity) : Component(entity)
     {
     }
     ~Transform() override = default;
 
     void Update() const override;
 
-    virtual glm::mat4 GetModel() const;
+    [[nodiscard]] virtual glm::mat4 GetModel() const;
 
     void SetPosition(const glm::vec3 &position);
     [[nodiscard]] glm::vec3 GetPosition() const;

@@ -7,7 +7,7 @@
 #include "transforms/rect_transform.hpp"
 #include "entity.hpp"
 
-class UiImageRenderer : public Component
+class UiImageRenderer final : public Component
 {
 private:
     Mesh _mesh;
@@ -16,7 +16,7 @@ private:
 public:
     UiImageRenderer() = delete;
 
-    UiImageRenderer(const std::weak_ptr<Entity> &entity)
+    explicit UiImageRenderer(const std::weak_ptr<Entity> &entity)
         : Component(entity),
           _mesh(Mesh::GenerateUI())
     {
@@ -29,15 +29,6 @@ public:
         _material = material;
     }
 
-    void SetSprite(const std::weak_ptr<Sprite> &sprite)
-    {
-        if (auto material = _material.lock())
-        {
-            material->AddSprite(sprite);
-        }
-    }
+    void SetSprite(const std::weak_ptr<Sprite> &sprite) const;
     void Render(const glm::mat4 &projection) const;
-
-private:
-    void Bind();
 };

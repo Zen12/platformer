@@ -9,8 +9,8 @@
 class AssetLoader
 {
 public:
-    static const Shader LoadShaderFromPath(const std::string &vertexPath, const std::string &fragPath);
-    static const Sprite LoadSpriteFromPath(const std::string &path);
-    static const Font LoadFontFromPath(const std::string &path);
+    static Shader LoadShaderFromPath(const std::string &vertexPath, const std::string &fragPath);
+    static Sprite LoadSpriteFromPath(const std::string &path);
+    static Font LoadFontFromPath(const std::string &path);
     static ProjectAsset LoadProjectAssetFromPath(const std::string &path);
 };

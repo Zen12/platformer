@@ -8,38 +8,38 @@
 class Camera
 {
 private:
-    float _aspectPower;
-    std::weak_ptr<Window> _window;
-    bool _isPespective;
+    float _aspectPower{};
+    std::weak_ptr<Window> _window{};
+    bool _isPerspective{};
 
 public:
     Camera() = default;
 
     Camera(const float &aspectPower, const bool &isPespective, const std::weak_ptr<Window> &window) : _aspectPower(aspectPower),
                                                                                                       _window(window),
-                                                                                                      _isPespective(isPespective)
+                                                                                                      _isPerspective(isPespective)
     {
     }
 
-    static Camera Ortho(std::weak_ptr<Window> window)
+    static Camera Ortho(const std::weak_ptr<Window> &window)
     {
         constexpr float orthoPower = 8.0f;
-        return Camera(orthoPower, false, window);
+        return {orthoPower, false, window};
     }
 
-    static Camera Perspective(std::weak_ptr<Window> window)
+    static Camera Perspective(const std::weak_ptr<Window> &window)
     {
         constexpr float perspectivePower = 45;
-        return Camera(perspectivePower, true, window);
+        return {perspectivePower, true, window};
     }
 
-    glm::mat4 GetProjection() const
+    [[nodiscard]] glm::mat4 GetProjection() const
     {
         if (auto w = _window.lock())
         {
-            if (_isPespective)
+            if (_isPerspective)
             {
-                float ration = (float)w->GetWidth() / (float)w->GetHeight();
+                const float ration = static_cast<float>(w->GetWidth()) / static_cast<float>(w->GetHeight());
                 return glm::perspective(glm::radians(_aspectPower), ration, -0.1f, 100.0f);
             }
             else
