@@ -5,30 +5,53 @@
 #include <utility>
 #include <vector>
 #include <string>
-#include "asset_meta.hpp"
+#include "asset_files.hpp"
 #include "asset_deserializer.hpp"
 #include <fstream>
 #include <yaml-cpp/yaml.h>
-#include "../system/file_loader.hpp"
 
-class AssetManager
-{
+#include "asset_loader.hpp"
+
+class AssetManager {
 private:
     const std::string _assetPath;
-    std::unordered_map<std::string, AssetMeta> _assetMap;
+    std::unordered_map<std::string, MetaAsset> _assetMap;
 
 public:
-    AssetManager(std::string assetPath)
+    explicit AssetManager(std::string assetPath)
         : _assetPath(std::move(assetPath))
     {
     }
 
     void Init();
 
-    [[nodiscard]] SceneSerialization LoadSceneByGuid(const std::string &guid) const;
-    [[nodiscard]] MaterialComponentSerialization LoadMaterialByGuid(const std::string &guid) const;
-    [[nodiscard]] ShaderComponentSerialization LoadShaderByGuid(const std::string &vertexGuid, const std::string &fragmentGuid) const;
-    [[nodiscard]] SpriteComponentSerialization LoadSpriteByGuid(const std::string &guid) const;
+    template <typename T, std::enable_if_t<std::is_base_of_v<Asset, T>, int> = 0>
+    [[nodiscard]] T LoadAssetByGuid(const std::string& guid) const {
+#ifndef NDEBUG
 
-    void UnLoad(const std::string &guid) const;
+        if (_assetMap.find(guid) == _assetMap.end()) {
+            std::cerr << "Asset " << guid << " not found" << std::endl;
+        }
+#endif
+
+
+        const auto& meta = _assetMap.at(guid);
+        return YAML::LoadFile(meta.Path).as<T>();
+    }
+
+    template<typename T>
+    [[nodiscard]] T LoadSourceByGuid(const std::string& guid) const {
+#ifndef NDEBUG
+
+        if (_assetMap.find(guid) == _assetMap.end()) {
+            std::cerr << "Asset " << guid << " not found" << std::endl;
+        }
+#endif
+        const auto& meta = _assetMap.at(guid);
+        return AssetLoader::LoadFromPath<T>(meta.Path);
+    }
+
+    void UnLoadAll() {
+        _assetMap.clear();
+    }
 };

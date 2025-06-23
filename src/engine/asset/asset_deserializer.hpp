@@ -151,13 +151,6 @@ struct EntitySerialization
     std::vector<std::unique_ptr<ComponentSerialization>> components;
 };
 
-struct SceneSerialization
-{
-    std::string name;
-    std::string type;
-    std::vector<EntitySerialization> entities;
-};
-
 // Helper to extract a map from a YAML node that is a sequence of single-key maps
 inline YAML::Node sequenceToMap(const YAML::Node &seq)
 {
@@ -332,7 +325,6 @@ inline std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAM
 
 namespace YAML
 {
-
     template <>
     struct convert<EntitySerialization>
     {
@@ -355,17 +347,4 @@ namespace YAML
             return true;
         }
     };
-
-    template <>
-    struct convert<SceneSerialization>
-    {
-        static bool decode(const Node &node, SceneSerialization &rhs)
-        {
-            rhs.name = node["name"].as<std::string>();
-            rhs.type = node["type"].as<std::string>();
-            rhs.entities = node["entities"].as<std::vector<EntitySerialization>>();
-            return true;
-        }
-    };
-
 } // namespace YAML

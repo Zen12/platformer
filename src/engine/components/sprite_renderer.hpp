@@ -11,14 +11,14 @@ class SpriteRenderer : public Component
 private:
     std::weak_ptr<Sprite> _sprite;
     Mesh _mesh;
-    Shader _shader;
+    std::weak_ptr<Shader> _shader;
+    std::weak_ptr<Material> _material;
 
 public:
     SpriteRenderer() = delete;
     explicit SpriteRenderer(const std::weak_ptr<Entity> &entity)
     : Component(entity),
-      _mesh(Mesh::GenerateSprite()),
-       _shader(AssetLoader::LoadShaderFromPath(ASSETS_PATH"resources/shaders/sprite.vert",ASSETS_PATH "resources/shaders/sprite.frag"))
+      _mesh(Mesh::GenerateSprite())
     {}
 
     void Update() const override;
@@ -27,11 +27,17 @@ public:
 
     void SetMaterial(std::weak_ptr<Material> material) noexcept;
 
+    void SetShader(std::weak_ptr<Shader> shader) noexcept;
+
+
     void Render() const noexcept;
 
     [[nodiscard]] int32_t GetShaderId() const noexcept
     {
-        return _shader.GetShaderId();
+        if (const auto shader = _shader.lock()) {
+            return shader->GetShaderId();
+        }
+        return -1;
     }
 
     ~SpriteRenderer() override = default;

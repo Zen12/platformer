@@ -10,7 +10,11 @@ void SpriteRenderer::SetSprite(std::weak_ptr<Sprite> sprite) noexcept
 }
 
 void SpriteRenderer::SetMaterial(std::weak_ptr<Material> material) noexcept {
-    //_material = std::move(material);
+    _material = std::move(material);
+}
+
+void SpriteRenderer::SetShader(std::weak_ptr<Shader> shader) noexcept {
+    _shader = std::move(shader);
 }
 
 void SpriteRenderer::Update() const
@@ -18,7 +22,9 @@ void SpriteRenderer::Update() const
     if ( const auto sprite = _sprite.lock())
     {
         sprite->Bind();
-        _shader.Use();
+        if (const auto shader = _shader.lock()) {
+            shader->Use();
+        }
         _mesh.Bind();
     }
 }

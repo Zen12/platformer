@@ -29,10 +29,10 @@ private:
         const std::weak_ptr<RenderPipeline> &render,
         const std::weak_ptr<Window> &window,
         const std::weak_ptr<AssetManager> &assetManager)
-        : _renderPipeline(render), _assetManager(assetManager), _window(window) {
+        : _renderPipeline(render), _window(window), _assetManager(assetManager) {
         _root = std::make_shared<RectTransformRoot>(window);
     }
 
-    void LoadScene(const SceneSerialization& serialization);
+    void LoadScene(const SceneAsset& serialization);
     void UnLoadAll();
 };

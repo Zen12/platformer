@@ -20,8 +20,8 @@ private:
 public:
     Material() = delete;
 
-    explicit Material(const std::weak_ptr<Shader> &shader)
-        : _shader(shader)
+    explicit Material(std::weak_ptr<Shader> shader)
+        : _shader(std::move(shader))
     {
     }
 

@@ -4,7 +4,7 @@
 int main()
 {
     std::string projectRoot = ASSETS_PATH;
-    const ProjectAsset projectAsset = AssetLoader::LoadProjectAssetFromPath(projectRoot + "project.yaml");
+    const ProjectAsset projectAsset = AssetLoader::LoadFromPath<ProjectAsset>(projectRoot + "project.yaml");
 
     auto assetManager = std::make_shared<AssetManager>(projectRoot);
     assetManager->Init();
@@ -12,7 +12,7 @@ int main()
     auto window = std::make_shared<Window>(800, 600, projectAsset.Name);
     window->WinInit();
 
-    const auto scene = assetManager->LoadSceneByGuid(projectAsset.Scenes[0]);
+    const auto scene = assetManager->LoadAssetByGuid<SceneAsset>(projectAsset.Scenes[0]);
 
     const auto renderPipeline = std::make_shared<RenderPipeline>(window);
     auto sceneManager = SceneManager(renderPipeline, window,assetManager);
