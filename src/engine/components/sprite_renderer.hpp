@@ -11,7 +11,6 @@ class SpriteRenderer : public Component
 private:
     std::weak_ptr<Sprite> _sprite;
     Mesh _mesh;
-    std::weak_ptr<Shader> _shader;
     std::weak_ptr<Material> _material;
 
 public:
@@ -27,18 +26,10 @@ public:
 
     void SetMaterial(std::weak_ptr<Material> material) noexcept;
 
-    void SetShader(std::weak_ptr<Shader> shader) noexcept;
-
 
     void Render() const noexcept;
 
-    [[nodiscard]] int32_t GetShaderId() const noexcept
-    {
-        if (const auto shader = _shader.lock()) {
-            return shader->GetShaderId();
-        }
-        return -1;
-    }
+    [[nodiscard]] int32_t GetShaderId() const noexcept;
 
     ~SpriteRenderer() override = default;
 };
