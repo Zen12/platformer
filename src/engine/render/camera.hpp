@@ -57,7 +57,7 @@ public:
                 const float width = static_cast<float>(w->GetWidth()) / _aspectPower;
                 const float height = static_cast<float>(w->GetHeight()) / _aspectPower;
 
-                return glm::ortho(0.0f, width, 0.0f, height, -0.1f, 100.0f);
+                return glm::ortho(0.0f, width, 0.0f, height, -1.0f, 100.0f);
             } else {
                 const float width = static_cast<float>(w->GetWidth()) / _aspectPower;
                 const float height = static_cast<float>(w->GetHeight()) / _aspectPower;

@@ -110,9 +110,9 @@ entities:
                   - center_y:
                       - value: 0
                   - pixel_width:
-                      - value: 100
+                      - value: 1
                   - pixel_height:
-                      - value: 100
+                      - value: 1
                   - pivot:
                       - x: 0.5
                       - y: 0.5
@@ -143,5 +143,5 @@ entities:
           - component:
               - type: "ui_image"
               - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c28
+                  - material: f22681f4-45d1-4542-a838-99f854890a28
                   - image: 126fb991-fe1c-45e0-ae0c-1649a2c65ae3

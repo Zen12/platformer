@@ -10,7 +10,7 @@ void UiImageRenderer::Update() const
 }
 
 void UiImageRenderer::SetSprite(const std::weak_ptr<Sprite> &sprite) const {
-    if (auto material = _material.lock())
+    if (const auto material = _material.lock())
     {
         material->AddSprite(sprite);
     }
