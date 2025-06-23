@@ -2,8 +2,11 @@
 
 void RenderPipeline::RenderSprites() const
 {
-    const auto projection = glm::value_ptr(_camera3d.lock()->GetProjection());
-    const auto view = glm::value_ptr(_cameraTransform3d.lock()->GetModel());
+    const auto projectionMat = _camera3d.lock()->GetProjection();
+    const auto viewMat = _cameraTransform3d.lock()->GetModel();
+
+    const auto projection = glm::value_ptr(projectionMat);
+    const auto view = glm::value_ptr(viewMat);
 
     for (const auto& value : _sprites)
     {

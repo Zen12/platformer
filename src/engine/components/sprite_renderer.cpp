@@ -4,14 +4,18 @@
 
 #include <utility>
 
-void SpriteRenderer::SetSprite(std::weak_ptr<Sprite> sprite)
+void SpriteRenderer::SetSprite(std::weak_ptr<Sprite> sprite) noexcept
 {
     _sprite = std::move(sprite);
 }
 
+void SpriteRenderer::SetMaterial(std::weak_ptr<Material> material) noexcept {
+    //_material = std::move(material);
+}
+
 void SpriteRenderer::Update() const
 {
-    if (auto sprite = _sprite.lock())
+    if ( const auto sprite = _sprite.lock())
     {
         sprite->Bind();
         _shader.Use();
@@ -19,7 +23,7 @@ void SpriteRenderer::Update() const
     }
 }
 
-void SpriteRenderer::Render() const
+void SpriteRenderer::Render() const noexcept
 {
     if (auto sprite = _sprite.lock())
     {

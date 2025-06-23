@@ -60,6 +60,22 @@ struct ShaderComponentSerialization final : public ComponentSerialization
     }
 };
 
+struct SpriteRenderComponentSerialization final : public ComponentSerialization
+{
+    std::string MaterialGuid;
+    std::string SpriteGuid;
+
+    explicit SpriteRenderComponentSerialization(std::string materialGuid, std::string spriteGuid)
+        : MaterialGuid(std::move(materialGuid)), SpriteGuid(std::move(spriteGuid))
+    {
+    }
+
+    [[nodiscard]] std::string getType() const override
+    {
+        return "sprite_renderer";
+    }
+};
+
 struct SpriteComponentSerialization final : public ComponentSerialization
 {
     std::string Path;
@@ -215,6 +231,13 @@ inline std::unique_ptr<UiTextComponentSerialization> createUiText(const YAML::No
     return comp;
 }
 
+inline std::unique_ptr<SpriteRenderComponentSerialization> createSpriteRenderer(const YAML::Node &map)
+{
+    auto comp = std::make_unique<SpriteRenderComponentSerialization>(
+        map["material"].as<std::string>(), map["image"].as<std::string>());
+    return comp;
+}
+
 inline std::unique_ptr<UiImageComponentSerialization> createUiImage(const YAML::Node &map)
 {
     auto comp = std::make_unique<UiImageComponentSerialization>();
@@ -323,8 +346,11 @@ inline std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAM
     else if (type == "ui_image")
     {
         return createUiImage(map);
-    } if (type == "ui_text")
+    } if (type == "ui_text") {
         return createUiText(map);
+    } else if (type == "sprite_renderer") {
+        return createSpriteRenderer(map);
+    }
     throw std::runtime_error("Unknown component type: " + type);
 }
 

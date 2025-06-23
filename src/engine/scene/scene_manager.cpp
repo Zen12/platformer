@@ -14,7 +14,7 @@ void SceneManager::LoadScene(const SceneSerialization &scene) {
             if (comp->getType() == "camera") {
                 const auto *cam = dynamic_cast<CameraComponentSerialization *>(comp.get());
                 if (const auto camera = newEntity->AddComponent<CameraComponent>().lock()) {
-                    camera->SetCamera(Camera{cam->aspectPower, cam->isPerspective, _window});
+                    camera->SetCamera(Camera{cam->aspectPower, false, cam->isPerspective, _window});
                     sceneCamera = newEntity;
                 }
             }
@@ -103,6 +103,31 @@ void SceneManager::LoadScene(const SceneSerialization &scene) {
 
 
                     _renderPipeline.lock()->AddRenderer(uiText);
+                }
+
+            }else if (comp->getType() == "sprite_renderer") {
+
+                if (const auto spriteRenderer = newEntity->AddComponent<SpriteRenderer>().lock()) {
+
+                    const auto *serialization = dynamic_cast<SpriteRenderComponentSerialization *>(comp.get());
+                    const auto materialSerialization = _assetManager.lock()->LoadMaterialByGuid(serialization->MaterialGuid);
+
+                    const auto shader = std::make_shared<Shader>(materialSerialization.Shader.vertexSourceCode, materialSerialization.Shader.fragmentSourceCode);
+                    _shaders.push_back(shader);
+
+                    const auto material = std::make_shared<Material>(shader);
+                    _materials.push_back(material);
+
+                    spriteRenderer->SetMaterial(material);
+
+                    const auto spriteSerialization = _assetManager.lock()->LoadSpriteByGuid(serialization->SpriteGuid);
+
+                    const auto sprite = std::make_shared<Sprite>(spriteSerialization.Path);
+                    spriteRenderer->SetSprite(sprite);
+
+                    _sprites.push_back(sprite);
+
+                    _renderPipeline.lock()->AddRenderer(spriteRenderer);
                 }
 
             }

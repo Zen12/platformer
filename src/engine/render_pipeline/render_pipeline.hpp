@@ -22,7 +22,7 @@ private:
 
 public:
     explicit RenderPipeline(const std::weak_ptr<Window> &window)
-    : _uiCamera(Camera(1, false, window)), _window(window)
+    : _uiCamera(Camera(1, false, false, window)), _window(window)
     {
     }
 
@@ -32,7 +32,7 @@ public:
         const std::weak_ptr<Window> &window) :
                                                _camera3d(camera3d),
                                                _cameraTransform3d(cameraTransform3d),
-                                               _uiCamera(Camera(1, false, window)) {
+                                               _uiCamera(Camera(1, true, false, window)) {
                                                };
 
     void UpdateCamera(const std::weak_ptr<CameraComponent> &camera3d,
