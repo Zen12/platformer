@@ -33,7 +33,7 @@ struct RectLayoutSerialization
 struct ComponentSerialization
 {
     virtual ~ComponentSerialization() = default;
-    virtual std::string getType() const = 0;
+    [[nodiscard]] virtual std::string getType() const = 0;
 };
 
 struct CameraComponentSerialization final : public ComponentSerialization
@@ -151,17 +151,10 @@ struct EntitySerialization
     std::vector<std::unique_ptr<ComponentSerialization>> components;
 };
 
-struct HierarchyNodeSerialization
-{
-    std::string guid;
-    std::vector<std::string> children;
-};
-
 struct SceneSerialization
 {
     std::string name;
     std::string type;
-    std::vector<HierarchyNodeSerialization> hierarchy;
     std::vector<EntitySerialization> entities;
 };
 
@@ -198,25 +191,6 @@ namespace YAML
             rhs.y = map["y"].as<float>();
             rhs.z = map["z"].as<float>();
             return true;
-        }
-    };
-
-    // HierarchyNode
-    template <>
-    struct convert<HierarchyNodeSerialization>
-    {
-        static bool decode(const Node &node, HierarchyNodeSerialization &rhs)
-        {
-            if (const auto objNode = node["obj"])
-            {
-                const auto sequance = sequenceToMap(objNode);
-                rhs.guid = sequance["guid"].as<std::string>();
-
-                for (const auto &child_guid_node : sequance["children"])
-                    rhs.children.push_back(child_guid_node.as<std::string>());
-                return true;
-            }
-            return false;
         }
     };
 
@@ -389,7 +363,6 @@ namespace YAML
         {
             rhs.name = node["name"].as<std::string>();
             rhs.type = node["type"].as<std::string>();
-            rhs.hierarchy = node["hierarchy"].as<std::vector<HierarchyNodeSerialization>>();
             rhs.entities = node["entities"].as<std::vector<EntitySerialization>>();
             return true;
         }

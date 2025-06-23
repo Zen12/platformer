@@ -1,11 +1,5 @@
 name: main_screen
 type: scene
-hierarchy:
-  - obj:
-      - guid: OBJ-1-camera
-      - children:
-            - sprite-1
-            - OBJ-2-ui-rect
 entities:
   - obj:
       - guid: OBJ-1-camera
