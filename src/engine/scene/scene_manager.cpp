@@ -99,12 +99,12 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                         const auto material = std::make_shared<Material>(shader);
                         _materials.push_back(material);
 
-                        //const auto fontFile = assetManager->LoadSourceByGuid<Font>(ASSETS_PATH "resources/fonts/Antonio-Bold.ttf");
+                        const auto fontFile = assetManager->LoadSourceByGuid<Font>(materialAsset.Font);
 
-                        //std::shared_ptr<Font> font = std::make_shared<Font>(fontFile);
-                        //_fonts.push_back(font);
+                        std::shared_ptr<Font> font = std::make_shared<Font>(fontFile);
+                        _fonts.push_back(font);
 
-                        //material->SetFont(font);
+                        material->SetFont(font);
                         uiText->SetMaterial(material);
                         uiText->SetText(serialization->Text);
 

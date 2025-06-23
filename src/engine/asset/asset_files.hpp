@@ -54,6 +54,7 @@ struct MaterialAsset : Asset
 {
     std::string VertexShaderGuid{};
     std::string FragmentShaderGuid{};
+    std::string Font{};
 };
 
 template <>
@@ -65,6 +66,10 @@ struct YAML::convert<MaterialAsset>
         if (const auto shaderNode = node["shader"]) {
             rhs.VertexShaderGuid = shaderNode["vertex"].as<std::string>();
             rhs.FragmentShaderGuid = shaderNode["fragment"].as<std::string>();
+        }
+
+        if (node["font"] && node["font"].IsScalar()) {
+            rhs.Font = node["font"].as<std::string>();
         }
 
         return true;
