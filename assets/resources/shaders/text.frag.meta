@@ -1,4 +1,4 @@
 name: text
 guid: 8b8071de-2bf1-478d-bba4-fdb86174c3ad
-extention: .frag
+extension: .frag
 type: fragment-shader

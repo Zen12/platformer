@@ -1,4 +1,4 @@
 name: sprite
 guid: 81c8f433-60ca-4485-9664-3ec62b0bebe0
-extention: .frag
+extension: .frag
 type: fragment-shader

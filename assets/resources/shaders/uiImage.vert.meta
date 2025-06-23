@@ -1,4 +1,4 @@
 name: uiImage
 guid: b8a2c2ee-50d7-4b8a-9516-9f06aa2318df
-extention: .vert
+extension: .vert
 type: vertex-shader

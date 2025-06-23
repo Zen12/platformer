@@ -45,6 +45,7 @@ def ext_check(value_ext):
     mapping = {
         ".ttf": "font",
         ".png": "image",
+        ".jpg": "image",
         ".vert": "vertex-shader",
         ".frag": "fragment-shader",
         ".scene": "scene",
@@ -67,7 +68,7 @@ for root, dirs, files in os.walk(directory):
         data = {
             'name': base_name,
             'guid': str(uuid.uuid4()),
-            'extention': ext,
+            'extension': ext,
             'type': ext_check(ext)
         }
 

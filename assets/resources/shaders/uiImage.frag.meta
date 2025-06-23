@@ -1,4 +1,4 @@
 name: uiImage
 guid: 51152adc-9630-4fd1-8c97-4dbd88b0017a
-extention: .frag
+extension: .frag
 type: fragment-shader
