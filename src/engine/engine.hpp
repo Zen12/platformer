@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 
 #include "render/mesh.hpp"
+#include "system/input_system.hpp"
 #include "system/window.hpp"
 #include "asset/asset_loader.hpp"
 #include "components/entity.hpp"

@@ -9,8 +9,9 @@ GLFWwindow *window;
 // c-like callback from GLFW for input
 void key_callback(GLFWwindow* window, int key, [[maybe_unused]] int scancode, int action, [[maybe_unused]]  int mods)
 {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
+    if (auto *self = static_cast<Window *>(glfwGetWindowUserPointer(window))) {
+        self->OnKeyCode(key, action);
+    }
 }
 
 // c-like callback from GLFW to resize window
@@ -19,6 +20,12 @@ void framebuffer_size_callback(GLFWwindow *window, const int width, const int he
     glViewport(0, 0, width, height);
     if (auto *self = static_cast<Window *>(glfwGetWindowUserPointer(window)))
         self->OnResize(width, height);
+}
+
+void mouse_button_callback(GLFWwindow * window, int button, int action, int mods) {
+    if (auto *self = static_cast<Window *>(glfwGetWindowUserPointer(window))) {
+        self->OnMouse(button, action);
+    }
 }
 
 Window::Window(const uint16_t &width, const uint16_t &height, const std::string &windowName)
@@ -64,6 +71,7 @@ Window::Window(const uint16_t &width, const uint16_t &height, const std::string 
 
     // input
     glfwSetKeyCallback(window, key_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
 }
 
 void Window::WinInit() {
@@ -72,12 +80,13 @@ void Window::WinInit() {
 }
 
 bool Window::IsOpen() const noexcept {
-    return !glfwWindowShouldClose(window);
+    return window && !glfwWindowShouldClose(window);
 }
 
 void Window::Destroy() const noexcept {
     glfwDestroyWindow(window);
     glfwTerminate();
+    window = nullptr;
 }
 
 void Window::SwapBuffers() const noexcept {

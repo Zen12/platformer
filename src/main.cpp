@@ -12,6 +12,8 @@ int main()
     auto window = std::make_shared<Window>(projectAsset.Resolution[0], projectAsset.Resolution[1], projectAsset.Name);
     window->WinInit();
 
+    const auto input = std::make_shared<InputSystem>(window);
+
     const auto scene = assetManager->LoadAssetByGuid<SceneAsset>(projectAsset.Scenes[0]);
 
     const auto renderPipeline = std::make_shared<RenderPipeline>(window);
@@ -34,7 +36,16 @@ int main()
         renderPipeline->RenderUI();
 
         window->SwapBuffers();
+
+        window->ClearInputState();
         window->PullEvent();
+        input->Update();
+
+#ifndef NDEBUG
+        if (input->IsKeyUp(InputKey::Escape)) {
+            window->Destroy();
+        }
+#endif
     }
 
     sceneManager.UnLoadAll();

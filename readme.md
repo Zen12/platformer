@@ -57,23 +57,19 @@ TODO
 - 🔦 2d lightning
 - 🌙 Lua scripting
 
-# Roadmap 
-
-## 0.1
-- Input system
-- Collider component
-- Rigidbody component
-- Light2d
-- 2d Character controller
-- Script component (Lua)
-- Webgl build 
-
-## 0.2
-- UI buttons
-- Post-processing components
-- Tests
-- Editor 
-- FSM/Behaviour-tree
+## TODO
+- [x] Input system
+- [ ] Collider component
+- [ ] Rigidbody component
+- [ ] Light2d
+- [ ] 2d Character controller
+- [ ] Script component (Lua)
+- [ ] Webgl build 
+- [ ] UI buttons
+- [ ] Post-processing components
+- [ ] Tests
+- [ ] Editor 
+- [ ] FSM/Behaviour-tree
 
 
 🇲🇩
