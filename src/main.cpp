@@ -9,7 +9,7 @@ int main()
     auto assetManager = std::make_shared<AssetManager>(projectRoot);
     assetManager->Init();
 
-    auto window = std::make_shared<Window>(800, 600, projectAsset.Name);
+    auto window = std::make_shared<Window>(projectAsset.Resolution[0], projectAsset.Resolution[1], projectAsset.Name);
     window->WinInit();
 
     const auto scene = assetManager->LoadAssetByGuid<SceneAsset>(projectAsset.Scenes[0]);

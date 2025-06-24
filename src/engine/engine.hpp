@@ -15,6 +15,4 @@
 #include "render_pipeline/render_pipeline.hpp"
 #include "system/time.hpp"
 #include "asset/asset_manager.hpp"
-#include "system/project_asset.hpp"
-#include "system/gl.hpp"
 #include "scene/scene_manager.hpp"

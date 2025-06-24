@@ -14,7 +14,6 @@ TODO
 ## 🔨 Project structure 
 
 ``` 
-
 ⚙️ .gitignore 
 🗂️ assets
     ├─ 🗂️ resources
@@ -54,8 +53,27 @@ TODO
     - 🈸 Font rendering
 - 📀 Asset management 
     - 🖥️ Small Editor
-    - 📚 Scene and prefabs
+    - 📚 Scene
 - 🔦 2d lightning
 - 🌙 Lua scripting
+
+# Roadmap 
+
+## 0.1
+- Input system
+- Collider component
+- Rigidbody component
+- Light2d
+- 2d Character controller
+- Script component (Lua)
+- Webgl build 
+
+## 0.2
+- UI buttons
+- Post-processing components
+- Tests
+- Editor 
+- FSM/Behaviour-tree
+
 
 🇲🇩

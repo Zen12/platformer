@@ -1,8 +1,6 @@
-project:
-  name: Platformer
-  version: 0.1
-  bundle:
-    ios: com.test.game
-    android: com.test.game
-  scenes:
-    - d0677c93-a26f-4793-9eb7-5232d99378d1
+name: Platformer
+resolution:
+  - 800
+  - 600
+scenes:
+  - d0677c93-a26f-4793-9eb7-5232d99378d1

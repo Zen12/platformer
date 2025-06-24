@@ -5,15 +5,15 @@
 #include "../render/shader.hpp"
 #include "../render/sprite.hpp"
 #include "../render/font.hpp"
-#include "../system/project_asset.hpp"
 #include <yaml-cpp/yaml.h>
-#include "../system/project_asset.hpp"
 
-#include "../system/gl.hpp"
 #include <GL/glew.h>
 #include <iostream>
 
 #include <ft2build.h>
+
+#include "asset_files.hpp"
+
 #include FT_FREETYPE_H
 
 
@@ -133,17 +133,6 @@ public:
     ProjectAsset LoadFromPath<ProjectAsset>(const std::string &path) {
         const std::string value = LoadFromPath<std::string>(path);
         YAML::Node root = YAML::Load(value);
-        if (auto project = root["project"]) {
-            std::string name = project["name"] ? project["name"].as<std::string>() : "";
-            YAML::Node scenes = project["scenes"];
-            std::vector<std::string> scenesGuids;
-            if (scenes.IsSequence()) {
-                for (std::size_t i = 0; i < scenes.size(); ++i) {
-                    scenesGuids.push_back(scenes[i].as<std::string>());
-                }
-            }
-            return {name, scenesGuids};
-        }
-        return {"ERROR", std::vector<std::string>()};
+        return root.as<ProjectAsset>();
     }
 };
