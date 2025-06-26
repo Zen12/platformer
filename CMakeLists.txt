@@ -15,6 +15,7 @@ find_package(GLM REQUIRED)
 find_package(GLFW3 3.3 REQUIRED)
 find_package(FREETYPE REQUIRED)
 find_package(YAMLCPP REQUIRED)
+find_package(Box2D REQUIRED)
 
 # Find all header files
 file(GLOB_RECURSE HEADER_FILES "src/*.hpp")
@@ -49,7 +50,7 @@ else()
 endif()
 
 # Link libraries to your target
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw GLM::GLM freetype yaml-cpp)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw GLM::GLM freetype yaml-cpp box2d)
 
 # Include directories (example: external stb lib, adjust as needed)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR})
