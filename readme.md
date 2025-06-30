@@ -55,6 +55,7 @@ TODO
     - 🖥️ Small Editor
     - 📚 Scene
 - 🔦 2d lightning
+- 🎳 2d physics
 - 🌙 Lua scripting
 
 ## TODO
