@@ -27,6 +27,12 @@ void Transform::SetPosition(const glm::vec3 &position)
     _position = position;
 }
 
+void Transform::SetPosition(const float& x, const float& y)
+{
+    _position.x = x;
+    _position.y = y;
+}
+
 glm::vec3 Transform::GetPosition() const
 {
     return _position;

@@ -32,6 +32,8 @@ public:
     void SetPosition(const glm::vec3 &position);
     [[nodiscard]] glm::vec3 GetPosition() const;
 
+    void SetPosition(const float& x, const float& y);
+
     void SetEulerRotation(const glm::vec3 &euler);
     [[nodiscard]] glm::vec3 GetEulerRotation() const;
 

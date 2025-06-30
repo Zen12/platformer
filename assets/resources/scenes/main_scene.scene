@@ -32,7 +32,7 @@ entities:
                     - data:
                           - position:
                                 - x: 1.0
-                                - y: 4.0
+                                - y: 200.0
                                 - z: 0.0
                           - rotation:
                                 - x: 0.0
@@ -47,16 +47,25 @@ entities:
                     - data:
                           - material: f22681f4-45d1-4542-a838-99f854890c18
                           - image: 126fb991-fe1c-45e0-ae0c-1649a2c65ae3
+              - component:
+                  - type: "box_collider"
+                  - data:
+                      - size:
+                          - x: 1.0
+                          - y: 1.0
+                          - z: 0.0
+                      - isDynamic: true
+
   - obj:
-      - guid: sprite-2
+      - guid: sprite-test
       - components:
           - component:
               - type: "transform"
               - data:
                   - position:
-                      - x: 0.0
-                      - y: 4.0
-                      - z: 1.0
+                      - x: 0.1
+                      - y: 10.0
+                      - z: 0.0
                   - rotation:
                       - x: 0.0
                       - y: 0.0
@@ -70,29 +79,45 @@ entities:
               - data:
                   - material: f22681f4-45d1-4542-a838-99f854890c18
                   - image: 126fb991-fe1c-45e0-ae0c-1649a2c65ae3
-  - obj:
-      - guid: sprite-3
-      - components:
           - component:
-              - type: "transform"
+              - type: "box_collider"
               - data:
-                  - position:
-                      - x: -1.0
-                      - y: 4.0
-                      - z: -10.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
+                  - size:
                       - x: 1.0
                       - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: "sprite_renderer"
-              - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c18
-                  - image: 126fb991-fe1c-45e0-ae0c-1649a2c65ae3
+                      - z: 0.0
+                  - isDynamic: true
+  - obj:
+        - guid: sprite-ground
+        - components:
+              - component:
+                    - type: "transform"
+                    - data:
+                          - position:
+                                - x: 0.0
+                                - y: -4.0
+                                - z: 0.0
+                          - rotation:
+                                - x: 0.0
+                                - y: 0.0
+                                - z: 0.0
+                          - scale:
+                                - x: 20.0
+                                - y: 1.0
+                                - z: 1.0
+              - component:
+                    - type: "sprite_renderer"
+                    - data:
+                          - material: f22681f4-45d1-4542-a838-99f854890c18
+                          - image: 126fb991-fe1c-45e0-ae0c-1649a2c65ae3
+              - component:
+                    - type: "box_collider"
+                    - data:
+                          - size:
+                                - x: 20.0
+                                - y: 1.0
+                                - z: 0.0
+                          - isDynamic: false
   - obj:
       - guid: OBJ-4-ui-rect
       - components:

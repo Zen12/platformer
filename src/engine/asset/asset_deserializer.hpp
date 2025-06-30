@@ -36,6 +36,14 @@ struct ComponentSerialization
     [[nodiscard]] virtual std::string getType() const = 0;
 };
 
+struct Box2dColliderSerialization final : public ComponentSerialization
+{
+    Vec3 scale{};
+    bool isDynamic = false;
+
+    [[nodiscard]] std::string getType() const override { return "box_collider"; }
+};
+
 struct CameraComponentSerialization final : public ComponentSerialization
 {
     float aspectPower{};
@@ -291,6 +299,14 @@ inline std::unique_ptr<ComponentSerialization> createCamera(const YAML::Node &ma
     return comp;
 }
 
+inline std::unique_ptr<Box2dColliderSerialization> createBoxCollider(const YAML::Node &map)
+{
+    auto comp = std::make_unique<Box2dColliderSerialization>();
+    comp->scale = map["size"].as<Vec3>();
+    comp->isDynamic = map["isDynamic"].as<bool>();
+    return comp;
+}
+
 inline std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAML::Node &node)
 {
     const auto nodeMap = sequenceToMap(node);
@@ -317,7 +333,10 @@ inline std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAM
         return createUiText(map);
     } else if (type == "sprite_renderer") {
         return createSpriteRenderer(map);
+    } else if (type == "box_collider") {
+        return createBoxCollider(map);
     }
+
     throw std::runtime_error("Unknown component type: " + type);
 }
 

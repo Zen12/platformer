@@ -30,6 +30,10 @@ protected:
 
 class Entity : public std::enable_shared_from_this<Entity>
 {
+private:
+    std::unordered_map<std::type_index, std::shared_ptr<Component>> _components{};
+    std::string _id{};
+
 public:
     Entity() = default;
 
@@ -70,6 +74,10 @@ public:
         }
     }
 
-private:
-    std::unordered_map<std::type_index, std::shared_ptr<Component>> _components;
+    void SetId(const std::string& id) {
+        _id = id;
+    }
+
+    [[nodiscard]] const std::string& GetId() const { return _id;}
+
 };

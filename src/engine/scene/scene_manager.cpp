@@ -1,13 +1,13 @@
 #include "scene_manager.hpp"
 
 void SceneManager::LoadScene(const SceneAsset &scene) {
-
-    std::weak_ptr<Entity> sceneCamera;
-
     if (const auto assetManager = _assetManager.lock()) {
+        std::weak_ptr<Entity> sceneCamera;
         for (const auto &entity : scene.Entities)
         {
             const auto newEntity = std::make_shared<Entity>();
+            newEntity->SetId(entity.guid);
+
             _entities.push_back(newEntity);
 
             for (const auto &comp : entity.components)
@@ -137,6 +137,13 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                         _sprites.push_back(sprite);
 
                         _renderPipeline.lock()->AddRenderer(spriteRenderer);
+                    }
+
+                }else if (comp->getType() == "box_collider") {
+                    if (const auto boxCollider = newEntity->AddComponent<BoxCollider2DComponent>().lock()) {
+                        const auto *serialization = dynamic_cast<Box2dColliderSerialization *>(comp.get());
+                        boxCollider->SetWorld(_physicsWorld);
+                        boxCollider->InitWithSize(glm::vec2(serialization->scale.x, serialization->scale.y), serialization->isDynamic);
                     }
 
                 }

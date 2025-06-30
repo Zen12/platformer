@@ -1,4 +1,6 @@
 #include <iostream>
+#include <thread>
+
 #include "engine/engine.hpp"
 
 int main()
@@ -17,9 +19,14 @@ int main()
     const auto scene = assetManager->LoadAssetByGuid<SceneAsset>(projectAsset.Scenes[0]);
 
     const auto renderPipeline = std::make_shared<RenderPipeline>(window);
+
     auto sceneManager = SceneManager(renderPipeline, window,assetManager);
 
     sceneManager.LoadScene(scene);
+
+    auto physicsWorld = sceneManager.GetPhysicsWorld();
+
+    auto testEntity = sceneManager.GetEntityById("sprite-test");
 
     Time time;
 
@@ -27,9 +34,31 @@ int main()
 
     renderPipeline->Init();
 
+    float accumulator = 0.0f;
+
+    constexpr float targetFPS = 60.0f;
+    constexpr float targetFrameTime = 1.0f / targetFPS;  // ~0.01666s
+
     while (window->IsOpen())
     {
+        const float deltaTime = time.GetTimeAlive();
+        if (deltaTime <= targetFrameTime) {
+            std::this_thread::sleep_for(std::chrono::duration<float>(0.01f));
+            continue;
+        }
+
         time.Reset();
+
+        constexpr float fixedTimeStep = 1.0f / 60.0f;
+
+        accumulator += deltaTime;
+        while (accumulator >= fixedTimeStep) {
+            physicsWorld->Simulate(fixedTimeStep);
+            physicsWorld->UpdateColliders();
+            accumulator -= fixedTimeStep;
+        }
+
+        sceneManager.Update();
 
         renderPipeline->ClearFrame();
         renderPipeline->RenderSprites();
@@ -40,6 +69,22 @@ int main()
         window->ClearInputState();
         window->PullEvent();
         input->Update();
+
+        if (input->IsKeyPressing(InputKey::D)) {
+            testEntity.lock()->GetComponent<BoxCollider2DComponent>().lock()
+            ->AddForce(glm::vec2(300, 0));
+        }
+
+        if (input->IsKeyPressing(InputKey::A)) {
+            testEntity.lock()->GetComponent<BoxCollider2DComponent>().lock()
+            ->AddForce(glm::vec2(-300, 0));
+        }
+
+
+        if (input->IsKeyPressing(InputKey::W)) {
+            testEntity.lock()->GetComponent<BoxCollider2DComponent>().lock()
+            ->AddForce(glm::vec2(0, 1000000));
+        }
 
 #ifndef NDEBUG
         if (input->IsKeyUp(InputKey::Escape)) {
