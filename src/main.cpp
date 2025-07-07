@@ -71,18 +71,18 @@ int main()
         input->Update();
 
         if (input->IsKeyPressing(InputKey::D)) {
-            testEntity.lock()->GetComponent<BoxCollider2DComponent>().lock()
+            testEntity.lock()->GetComponent<Rigidbody2dComponent>().lock()
             ->AddForce(glm::vec2(300, 0));
         }
 
         if (input->IsKeyPressing(InputKey::A)) {
-            testEntity.lock()->GetComponent<BoxCollider2DComponent>().lock()
+            testEntity.lock()->GetComponent<Rigidbody2dComponent>().lock()
             ->AddForce(glm::vec2(-300, 0));
         }
 
 
         if (input->IsKeyPressing(InputKey::W)) {
-            testEntity.lock()->GetComponent<BoxCollider2DComponent>().lock()
+            testEntity.lock()->GetComponent<Rigidbody2dComponent>().lock()
             ->AddForce(glm::vec2(0, 1000000));
         }
 

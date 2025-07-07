@@ -7,7 +7,7 @@
 #include "../render_pipeline/render_pipeline.hpp"
 #include "../asset/asset_deserializer.hpp"
 #include "../asset/asset_manager.hpp"
-#include "../components/collders/box_collider2d_component.hpp"
+#include "../components/physics/box_collider2d_component.hpp"
 #include "../physics/physics_world.hpp"
 
 

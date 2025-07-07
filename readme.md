@@ -60,8 +60,9 @@ TODO
 
 ## TODO
 - [x] Input system
-- [ ] Collider component
-- [ ] Rigidbody component
+- [x] Collider component
+- [x] Rigidbody component
+- [ ] Raycast debug line
 - [ ] Light2d
 - [ ] 2d Character controller
 - [ ] Script component (Lua)

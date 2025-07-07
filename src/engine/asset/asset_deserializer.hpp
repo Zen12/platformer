@@ -39,10 +39,17 @@ struct ComponentSerialization
 struct Box2dColliderSerialization final : public ComponentSerialization
 {
     Vec3 scale{};
-    bool isDynamic = false;
 
     [[nodiscard]] std::string getType() const override { return "box_collider"; }
 };
+
+struct Rigidbody2dSerialization final : public ComponentSerialization
+{
+    bool isDynamic = false;
+
+    [[nodiscard]] std::string getType() const override { return "rigidbody2d"; }
+};
+
 
 struct CameraComponentSerialization final : public ComponentSerialization
 {
@@ -299,11 +306,18 @@ inline std::unique_ptr<ComponentSerialization> createCamera(const YAML::Node &ma
     return comp;
 }
 
+
+inline std::unique_ptr<Rigidbody2dSerialization> createRigidBody(const YAML::Node &map)
+{
+    auto comp = std::make_unique<Rigidbody2dSerialization>();
+    comp->isDynamic = map["isDynamic"].as<bool>();
+    return comp;
+}
+
 inline std::unique_ptr<Box2dColliderSerialization> createBoxCollider(const YAML::Node &map)
 {
     auto comp = std::make_unique<Box2dColliderSerialization>();
     comp->scale = map["size"].as<Vec3>();
-    comp->isDynamic = map["isDynamic"].as<bool>();
     return comp;
 }
 
@@ -335,6 +349,8 @@ inline std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAM
         return createSpriteRenderer(map);
     } else if (type == "box_collider") {
         return createBoxCollider(map);
+    }else if (type == "rigidbody2d") {
+        return createRigidBody(map);
     }
 
     throw std::runtime_error("Unknown component type: " + type);

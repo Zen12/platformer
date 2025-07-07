@@ -140,12 +140,16 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                     }
 
                 }else if (comp->getType() == "box_collider") {
-                    if (const auto boxCollider = newEntity->AddComponent<BoxCollider2DComponent>().lock()) {
+                    if (auto boxCollider = newEntity->AddComponent<BoxCollider2DComponent>().lock()) {
                         const auto *serialization = dynamic_cast<Box2dColliderSerialization *>(comp.get());
-                        boxCollider->SetWorld(_physicsWorld);
-                        boxCollider->InitWithSize(glm::vec2(serialization->scale.x, serialization->scale.y), serialization->isDynamic);
+                        boxCollider->Init(glm::vec2(serialization->scale.x, serialization->scale.y));
                     }
-
+                }else if (comp->getType() == "rigidbody2d") {
+                    if (auto rigidBody = newEntity->AddComponent<Rigidbody2dComponent>().lock()) {
+                        const auto *serialization = dynamic_cast<Rigidbody2dSerialization *>(comp.get());
+                        rigidBody->SetWorld(_physicsWorld);
+                        rigidBody->Init(serialization->isDynamic);
+                    }
                 }
             }
         }

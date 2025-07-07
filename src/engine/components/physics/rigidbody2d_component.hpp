@@ -3,20 +3,21 @@
 #include "../../physics/physics_world.hpp"
 #include "box2d/b2_body.h"
 #include "box2d/b2_world.h"
+#include "glm/vec2.hpp"
 
 
-class BoxCollider2DComponent final : public Component
-{
+
+class Rigidbody2dComponent final : public Component {
     std::shared_ptr<b2Body> _body;
     std::weak_ptr<PhysicsWorld> _world;
 
 public:
-    explicit BoxCollider2DComponent(const std::weak_ptr<Entity> &entity) : Component(entity)
+    explicit Rigidbody2dComponent(const std::weak_ptr<Entity> &entity) : Component(entity)
     {
 
     }
 
-public:
+    [[nodiscard]] std::weak_ptr<b2Body> GetBody() const { return _body; }
 
     void SetWorld(const std::weak_ptr<PhysicsWorld> &world) {
         _world = world;
@@ -29,8 +30,7 @@ public:
         _body->ApplyForce(force, point, true);
     }
 
-    void InitWithSize(const glm::vec2 &size, const bool& isDynamic) {
-
+    void Init(const bool& isDynamic) {
         if (const auto& world = _world.lock()) {
 
             auto def = b2BodyDef();
@@ -49,19 +49,6 @@ public:
                 // no delete, Box2D owns body lifetime
             });
 
-
-            b2PolygonShape dynamicBox;
-            dynamicBox.SetAsBox(size.x / 2, size.y / 2);  // 2x2 box
-
-
-            // 5. Define fixture with shape and density
-            b2FixtureDef fixtureDef;
-            fixtureDef.shape = &dynamicBox;
-            fixtureDef.density = 1.0f;
-            fixtureDef.friction = 0.3f;
-
-            _body->CreateFixture(&fixtureDef);
-
             b2MassData massData;
             massData.mass = 5.0f;
             massData.center = body->GetLocalCenter();  // usually (0,0)
@@ -69,7 +56,6 @@ public:
             _body->SetMassData(&massData);
 
             body->SetLinearDamping(1.0f);
-
         }
     }
 
@@ -79,6 +65,4 @@ public:
         _entity.lock()->GetComponent<Transform>().lock()->SetPosition(
             position.x, position.y);
     }
-
-
 };
