@@ -1,10 +1,10 @@
 """
-This code is write by chatGTP, this is not expected to be mantaine
+This code is write by chatGTP, this is not expected to be maintained
 It is only to automate manual work
 
 What it does:
- - Finds all files that doesn't have assotiated .meta files (similar as in unity engine)
- - create a tempated version of it with custome GUID
+ - Finds all files that doesn't have associated .meta files (similar as in unity engine)
+ - create a templated version of it with custom GUID
 """
 
 import os
