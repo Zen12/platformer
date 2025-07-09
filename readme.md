@@ -65,13 +65,9 @@ TODO
 - [ ] Raycast debug line
 - [ ] Light2d
 - [ ] 2d Character controller
-- [ ] Script component (Lua)
 - [ ] Webgl build 
 - [ ] UI buttons
 - [ ] Post-processing components
-- [ ] Tests
-- [ ] Editor 
-- [ ] FSM/Behaviour-tree
 
 
 🇲🇩
