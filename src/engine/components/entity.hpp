@@ -40,7 +40,7 @@ public:
     template <typename T>
     std::weak_ptr<T> AddComponent()
     {
-        static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
+        static_assert(std::is_base_of_v<Component, T>, "T must derive from Component");
 
         auto sharedThis = std::weak_ptr<Entity>(shared_from_this());
 
@@ -52,7 +52,7 @@ public:
     template <typename T>
     std::weak_ptr<T> GetComponent() const
     {
-        static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
+        static_assert(std::is_base_of_v<Component, T>, "T must derive from Component");
 
         auto it = _components.find(typeid(T));
         return std::dynamic_pointer_cast<T>(it->second);
@@ -61,7 +61,7 @@ public:
     template <typename T>
     void RemoveComponent()
     {
-        static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
+        static_assert(std::is_base_of_v<Component, T>, "T must derive from Component");
 
         _components.erase(typeid(T));
     }
