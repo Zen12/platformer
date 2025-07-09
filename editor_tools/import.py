@@ -63,8 +63,14 @@ for root, dirs, files in os.walk(directory):
 
     for file in files:
         base_name, ext = os.path.splitext(file)
-        if file.startswith('.') or file.endswith('.meta') or os.path.isfile(base_name + '.meta'):
+        if file.startswith('.') or file.endswith('.meta'):
             continue
+
+        yaml_path = os.path.join(root, base_name + ext + '.meta')
+        if (os.path.isfile(yaml_path)):
+            continue
+
+        print(yaml_path);
         data = {
             'name': base_name,
             'guid': str(uuid.uuid4()),
@@ -73,7 +79,6 @@ for root, dirs, files in os.walk(directory):
         }
 
 
-        yaml_path = os.path.join(root, base_name + ext + '.meta')
         with open(yaml_path, 'w') as f:
             f.write(dict_to_yaml(data))
 
