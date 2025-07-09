@@ -22,7 +22,7 @@ void framebuffer_size_callback(GLFWwindow *window, const int width, const int he
         self->OnResize(width, height);
 }
 
-void mouse_button_callback(GLFWwindow * window, int button, int action, int mods) {
+void mouse_button_callback(GLFWwindow * window, int button, int action, [[maybe_unused]]  int mods) {
     if (auto *self = static_cast<Window *>(glfwGetWindowUserPointer(window))) {
         self->OnMouse(button, action);
     }
