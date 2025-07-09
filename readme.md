@@ -64,6 +64,7 @@ TODO
 - [x] Rigidbody component
 - [ ] Raycast debug line
 - [ ] Light2d
+- [ ] Spine runtime
 - [ ] 2d Character controller
 - [ ] Webgl build 
 - [ ] UI buttons
