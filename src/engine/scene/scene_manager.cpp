@@ -1,6 +1,8 @@
 #include "scene_manager.hpp"
 
 void SceneManager::LoadScene(const SceneAsset &scene) {
+    PROFILE_SCOPE("Loading of scene " + scene.Name);
+
     if (const auto assetManager = _assetManager.lock()) {
         std::weak_ptr<Entity> sceneCamera;
         for (const auto &entity : scene.Entities)
@@ -63,22 +65,10 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
 
                         const auto *serialization = dynamic_cast<UiImageComponentSerialization *>(comp.get());
 
-                        const auto materialAsset = assetManager->LoadAssetByGuid<MaterialAsset>(serialization->MaterialGUID);
-                        const auto vertexSource = assetManager->LoadSourceByGuid<std::string>(materialAsset.VertexShaderGuid);
-                        const auto fragmentSource = assetManager->LoadSourceByGuid<std::string>(materialAsset.FragmentShaderGuid);
-                        const auto shader = std::make_shared<Shader>(vertexSource, fragmentSource);
-                        _shaders.push_back(shader);
-
-
-                        const auto material = std::make_shared<Material>(shader);
-                        _materials.push_back(material);
+                        const auto material = GetMaterial(serialization->MaterialGUID);
+                        const auto sprite = GetSprite(serialization->SpriteGUID);
 
                         uiImage->SetMaterial(material);
-
-                        const auto spriteLoaded = assetManager->LoadSourceByGuid<Sprite>(serialization->SpriteGUID);
-                        const auto sprite = std::make_shared<Sprite>(spriteLoaded);
-                        _sprites.push_back(sprite);
-
                         uiImage->SetSprite(sprite);
 
                         _renderPipeline.lock()->AddRenderer(uiImage);
@@ -90,21 +80,8 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
 
                         const auto *serialization = dynamic_cast<UiTextComponentSerialization *>(comp.get());
 
-                        const auto materialAsset = assetManager->LoadAssetByGuid<MaterialAsset>(serialization->MaterialGUID);
-                        const auto vertexSource = assetManager->LoadSourceByGuid<std::string>(materialAsset.VertexShaderGuid);
-                        const auto fragmentSource = assetManager->LoadSourceByGuid<std::string>(materialAsset.FragmentShaderGuid);
-                        const auto shader = std::make_shared<Shader>(vertexSource, fragmentSource);
-                        _shaders.push_back(shader);
+                        const auto material = GetMaterial(serialization->MaterialGUID);
 
-                        const auto material = std::make_shared<Material>(shader);
-                        _materials.push_back(material);
-
-                        const auto fontFile = assetManager->LoadSourceByGuid<Font>(materialAsset.Font);
-
-                        std::shared_ptr<Font> font = std::make_shared<Font>(fontFile);
-                        _fonts.push_back(font);
-
-                        material->SetFont(font);
                         uiText->SetMaterial(material);
                         uiText->SetText(serialization->Text);
 
@@ -117,24 +94,11 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                     if (const auto spriteRenderer = newEntity->AddComponent<SpriteRenderer>().lock()) {
 
                         const auto *serialization = dynamic_cast<SpriteRenderComponentSerialization *>(comp.get());
-
-                        const auto materialAsset = assetManager->LoadAssetByGuid<MaterialAsset>(serialization->MaterialGuid);
-                        const auto vertexSource = assetManager->LoadSourceByGuid<std::string>(materialAsset.VertexShaderGuid);
-                        const auto fragmentSource = assetManager->LoadSourceByGuid<std::string>(materialAsset.FragmentShaderGuid);
-                        const auto shader = std::make_shared<Shader>(vertexSource, fragmentSource);
-                        _shaders.push_back(shader);
-
-                        const auto material = std::make_shared<Material>(shader);
-                        _materials.push_back(material);
+                        const auto material = GetMaterial(serialization->MaterialGuid);
+                        const auto sprite = GetSprite(serialization->SpriteGuid);
 
                         spriteRenderer->SetMaterial(material);
-
-                        const auto spriteSerialization = assetManager->LoadSourceByGuid<Sprite>(serialization->SpriteGuid);
-
-                        const auto sprite = std::make_shared<Sprite>(spriteSerialization);
                         spriteRenderer->SetSprite(sprite);
-
-                        _sprites.push_back(sprite);
 
                         _renderPipeline.lock()->AddRenderer(spriteRenderer);
                     }
@@ -166,4 +130,70 @@ void SceneManager::UnLoadAll() {
     _materials.clear();
     _sprites.clear();
     _fonts.clear();
+}
+
+std::shared_ptr<Shader> SceneManager::GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) {
+    if (const auto assetManager = _assetManager.lock()) {
+
+        if (_shaders.find(vertexGuid + fragmentGuid) == _shaders.end()) {
+            const auto vertexSource = assetManager->LoadSourceByGuid<std::string>(vertexGuid);
+            const auto fragmentSource = assetManager->LoadSourceByGuid<std::string>(fragmentGuid);
+            const auto shader = std::make_shared<Shader>(vertexSource, fragmentSource);
+            _shaders[vertexGuid + fragmentGuid] = shader;
+            return shader;
+        }
+
+        return _shaders[vertexGuid + fragmentGuid];
+    }
+
+    return {};
+}
+
+std::shared_ptr<Material> SceneManager::GetMaterial(const std::string &guid) {
+    if (const auto assetManager = _assetManager.lock()) {
+        if (_materials.find(guid) == _materials.end()) {
+            const auto materialAsset = assetManager->LoadAssetByGuid<MaterialAsset>(guid);
+            const auto shader = GetShader(materialAsset.VertexShaderGuid, materialAsset.FragmentShaderGuid);
+            const auto material = std::make_shared<Material>(shader);
+
+            const auto font = GetFont(materialAsset.Font);
+            material->SetFont(font);
+
+            _materials[guid] = material;
+            return material;
+        }
+        return _materials[guid];
+    }
+
+    return {};
+}
+
+std::shared_ptr<Sprite> SceneManager::GetSprite(const std::string &guid) {
+    if (const auto assetManager = _assetManager.lock()) {
+        if (_sprites.find(guid) == _sprites.end()) {
+            const auto spriteSerialization = assetManager->LoadSourceByGuid<Sprite>(guid);
+
+            const auto sprite = std::make_shared<Sprite>(spriteSerialization);
+            _sprites[guid] = sprite;
+            return sprite;
+        }
+        return _sprites[guid];
+    }
+    return {};
+}
+
+std::shared_ptr<Font> SceneManager::GetFont(const std::string &guid) {
+    if (guid.empty())
+        return {};
+
+    if (const auto assetManager = _assetManager.lock()) {
+        if (_fonts.find(guid) == _fonts.end()) {
+            const auto fontFile = assetManager->LoadSourceByGuid<Font>(guid);
+            std::shared_ptr<Font> font = std::make_shared<Font>(fontFile);
+            _fonts[guid] = font;
+            return font;
+        }
+        return _fonts[guid];
+    }
+    return {};
 }

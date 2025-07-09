@@ -26,8 +26,6 @@ int main()
 
     auto physicsWorld = sceneManager.GetPhysicsWorld();
 
-    auto testEntity = sceneManager.GetEntityById("sprite-test");
-
     Time time;
 
     time.Start();
@@ -70,21 +68,6 @@ int main()
         window->PullEvent();
         input->Update();
 
-        if (input->IsKeyPressing(InputKey::D)) {
-            testEntity.lock()->GetComponent<Rigidbody2dComponent>().lock()
-            ->AddForce(glm::vec2(300, 0));
-        }
-
-        if (input->IsKeyPressing(InputKey::A)) {
-            testEntity.lock()->GetComponent<Rigidbody2dComponent>().lock()
-            ->AddForce(glm::vec2(-300, 0));
-        }
-
-
-        if (input->IsKeyPressing(InputKey::W)) {
-            testEntity.lock()->GetComponent<Rigidbody2dComponent>().lock()
-            ->AddForce(glm::vec2(0, 1000000));
-        }
 
 #ifndef NDEBUG
         if (input->IsKeyUp(InputKey::Escape)) {

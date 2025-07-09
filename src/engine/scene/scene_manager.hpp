@@ -9,6 +9,7 @@
 #include "../asset/asset_manager.hpp"
 #include "../components/physics/box_collider2d_component.hpp"
 #include "../physics/physics_world.hpp"
+#include "../debug/debug.hpp"
 
 
 
@@ -16,10 +17,10 @@ class SceneManager {
 
 private:
     std::vector<std::shared_ptr<Entity>> _entities;
-    std::vector<std::shared_ptr<Shader>> _shaders;
-    std::vector<std::shared_ptr<Material>> _materials;
-    std::vector<std::shared_ptr<Sprite>> _sprites;
-    std::vector<std::shared_ptr<Font>> _fonts;
+    std::unordered_map<std::string, std::shared_ptr<Shader>> _shaders;
+    std::unordered_map<std::string, std::shared_ptr<Material>> _materials;
+    std::unordered_map<std::string, std::shared_ptr<Sprite>> _sprites;
+    std::unordered_map<std::string, std::shared_ptr<Font>> _fonts;
 
     std::weak_ptr<RenderPipeline> _renderPipeline;
     std::weak_ptr<Window> _window;
@@ -60,4 +61,13 @@ private:
             entity->Update();
         }
     }
+
+private:
+    std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) ;
+
+    std::shared_ptr<Material> GetMaterial(const std::string& guid);
+
+    std::shared_ptr<Sprite> GetSprite(const std::string& guid);
+
+    std::shared_ptr<Font> GetFont(const std::string& guid);
 };
