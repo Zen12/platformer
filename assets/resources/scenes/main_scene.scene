@@ -46,3 +46,2102 @@ entities:
               - data:
                   - aspectPower: 100.0
                   - isPerspective: false
+  - obj:
+    - guid: sprite-tile-d3916759
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -8.0
+            - y: -7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-bab9a5ac
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -8.0
+            - y: -6.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-32480083
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -8.0
+            - y: -5.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-74ca8609
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -8.0
+            - y: -4.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-3a7b0925
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -8.0
+            - y: -3.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-dd288083
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -8.0
+            - y: -2.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-87dbc942
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -8.0
+            - y: -1.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-93055293
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -8.0
+            - y: 0.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-27033374
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -8.0
+            - y: 1.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-0cd300c6
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -8.0
+            - y: 2.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-6237be65
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -8.0
+            - y: 3.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-4c69fb88
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -8.0
+            - y: 4.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-2e5f2286
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -8.0
+            - y: 5.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-c66eabb9
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -8.0
+            - y: 6.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-9ffc0bc8
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -8.0
+            - y: 7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-6da1e081
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 8.0
+            - y: -7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-e697c5a5
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 8.0
+            - y: -6.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-44c3de0d
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 8.0
+            - y: -5.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-6919a190
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 8.0
+            - y: -4.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-e4a70bc5
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 8.0
+            - y: -3.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-a7edde56
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 8.0
+            - y: -2.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-7ebfc6c2
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 8.0
+            - y: -1.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-f3f6eec0
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 8.0
+            - y: 0.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-f0cf9d15
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 8.0
+            - y: 1.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-204a3733
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 8.0
+            - y: 2.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-6325c3e4
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 8.0
+            - y: 3.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-441e5a54
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 8.0
+            - y: 4.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-f75656db
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 8.0
+            - y: 5.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-25ba60d1
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 8.0
+            - y: 6.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-b34a3338
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 8.0
+            - y: 7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-d281a720
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -7.0
+            - y: -7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-af3937ed
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -6.0
+            - y: -7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-c80e037e
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -5.0
+            - y: -7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-2afabff8
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -4.0
+            - y: -7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-1b610309
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -3.0
+            - y: -7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-7d884afd
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -2.0
+            - y: -7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-5dd08d9b
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -1.0
+            - y: -7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-13af1ea7
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 0.0
+            - y: -7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-5cdfb8b3
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 1.0
+            - y: -7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-f01708f9
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 2.0
+            - y: -7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-e7ea3de9
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 3.0
+            - y: -7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-4867fd2d
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 4.0
+            - y: -7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-91544653
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 5.0
+            - y: -7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-9930183a
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 6.0
+            - y: -7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-06857003
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 7.0
+            - y: -7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-3cad0f39
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -7.0
+            - y: 7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-3c7e13f3
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -6.0
+            - y: 7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-638883cf
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -5.0
+            - y: 7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-43713fdd
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -4.0
+            - y: 7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-c4930a22
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -3.0
+            - y: 7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-d5545127
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -2.0
+            - y: 7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-6b5f9427
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: -1.0
+            - y: 7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-a3808036
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 0.0
+            - y: 7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-4283aa22
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 1.0
+            - y: 7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-18c91533
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 2.0
+            - y: 7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-810fce79
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 3.0
+            - y: 7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-fe2b61a2
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 4.0
+            - y: 7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-60bdaea9
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 5.0
+            - y: 7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-3ad46454
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 6.0
+            - y: 7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
+
+  - obj:
+    - guid: sprite-tile-32c2e59d
+    - components:
+      - component:
+        - type: transform
+        - data:
+          - position:
+            - x: 7.0
+            - y: 7.0
+            - z: 0.0
+          - rotation:
+            - x: 0.0
+            - y: 0.0
+            - z: 0.0
+          - scale:
+            - x: 1.0
+            - y: 1.0
+            - z: 1.0
+      - component:
+        - type: sprite_renderer
+        - data:
+          - material: f22681f4-45d1-4542-a838-99f854890c18
+          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+      - component:
+        - type: rigidbody2d
+        - data:
+          - isDynamic: false
+      - component:
+        - type: box_collider
+        - data:
+          - size:
+            - x: 1.0
+            - y: 1.0
+            - z: 0.0
