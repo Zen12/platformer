@@ -22,8 +22,8 @@ public:
 
         b2FixtureDef fixtureDef;
         fixtureDef.shape = &dynamicBox;
-        fixtureDef.density = 1.0f;
-        fixtureDef.friction = 0.3f;
+        fixtureDef.density = 1.0f; // TODO move to serialization
+        fixtureDef.friction = 0.3f;  // TODO move to serialization
 
         const auto rigidBody = _entity.lock()->GetComponent<Rigidbody2dComponent>();
 

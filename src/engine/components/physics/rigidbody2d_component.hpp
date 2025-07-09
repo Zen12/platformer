@@ -50,7 +50,7 @@ public:
             });
 
             b2MassData massData;
-            massData.mass = 5.0f;
+            massData.mass = 5.0f;  // TODO move to serialization
             massData.center = body->GetLocalCenter();  // usually (0,0)
             massData.I = 1.0f;  // moment of inertia, set appropriately
             _body->SetMassData(&massData);
