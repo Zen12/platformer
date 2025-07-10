@@ -19,13 +19,8 @@ struct RectLayoutSerialization
     const float X = 0;
     const float Y = 0;
 
-    RectLayoutSerialization(std::string type, const float &value)
-        : Type(std::move(type)), Value(value)
-    {
-    }
-
-    RectLayoutSerialization(std::string type, const float &x, const float &y)
-    : Type(std::move(type)), X(x), Y(y)
+    RectLayoutSerialization(std::string type, const float value, const float &x, const float &y)
+    : Type(std::move(type)), Value(value), X(x), Y(y)
     {
     }
 };
@@ -243,19 +238,18 @@ inline std::unique_ptr<RectTransformComponentSerialization> createRectTransform(
         const auto key = kv.first.as<std::string>();
         YAML::Node list = kv.second;
 
-        if (list.IsSequence() && list.size() == 1 && list[0]["value"])
-        {
-            const auto val = list[0]["value"].as<float>();
-            comp->Layouts.emplace_back(key, val);
+        auto x = 0.0f;
+        auto y = 0.0f;
+        auto value =  0.0f;
+
+        for (const auto &item : list) {
+            x = item["x"] ? item["x"].as<float>() : x;
+            y = item["y"] ? item["y"].as<float>() : y;
+            value = item["value"] ? item["value"].as<float>() : value;
         }
 
-        if (list.IsSequence() && list.size() == 2 && list[0]["x"] && list[1]["y"])
-        {
-            const auto x = list[0]["x"].as<float>();
-            const auto y = list[1]["y"].as<float>();
 
-            comp->Layouts.emplace_back(key, x, y);
-        }
+        comp->Layouts.emplace_back(key, value, x, y);
     }
 
     return comp;
@@ -278,7 +272,7 @@ inline std::unique_ptr<RectTransformComponentSerialization> createMaterial(const
         if (const YAML::Node list = kv.second; list.IsSequence() && list.size() == 1 && list[0]["value"])
         {
             auto val = list[0]["value"].as<float>();
-            comp->Layouts.emplace_back(key, val);
+            comp->Layouts.emplace_back(key, val, 0.0f, 0.0f);
         }
         else
         {

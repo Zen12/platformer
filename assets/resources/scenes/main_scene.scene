@@ -9,20 +9,22 @@ entities:
               - data:
                   - pixel_x:
                       - value: 0
+                      - x: 20
                   - pixel_y:
-                      - value: 0
+                      - value: 1
+                      - y: 60
                   - pixel_width:
                       - value: 1
                   - pixel_height:
                       - value: 1
                   - pivot:
-                      - x: 1.0
+                      - x: 0.0
                       - y: 1.0
           - component:
               - type: "ui_text"
               - data:
                   - material: f22681f4-45d1-4542-a838-99f854890c28
-                  - text: "Hello Text!"
+                  - text: "FPS text"
   - obj:
       - guid: main-camera
       - components:

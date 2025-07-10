@@ -40,6 +40,8 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
 
                         for (const auto &layout : tf->Layouts)
                         {
+                            std::cout<< layout.Type << std::endl;
+
                             if (layout.Type == "center_x")
                                 rect->AddLayoutOption(std::make_unique<CenterXLayoutOption>());
                             else if (layout.Type == "center_y")

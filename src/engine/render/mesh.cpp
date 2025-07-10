@@ -55,18 +55,17 @@ size_t Mesh::GetIndicesCount() const noexcept
     return _indices.size();
 }
 
-Mesh Mesh::GenerateSprite()
-{
+Mesh Mesh::GenerateSprite() {
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    std::vector<float> vertices = {
+    const std::vector<float> vertices = {
         // positions                // texture coords
         0.5f, 0.5f, 0.0f, 1.0f, 1.0f,   // top right
         0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  // bottom right
         -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
         -0.5f, 0.5f, 0.0f, 0.0f, 1.0f   // top left
     };
-    std::vector<uint32_t> indices = {
+    const std::vector<uint32_t> indices = {
         0, 3, 1,
         1, 3, 2};
 
@@ -75,14 +74,14 @@ Mesh Mesh::GenerateSprite()
 
 Mesh Mesh::GenerateUI()
 {
-    std::vector<float> vertices = {
+    const std::vector<float> vertices = {
         // positions                // texture coords
         1.0f, 1.0f, 0.0f, 1.0f, 1.0f, // top right
         1.0f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom right
         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, // bottom left
         0.0f, 1.0f, 0.0f, 0.0f, 1.0f  // top left
     };
-    std::vector<uint32_t> indices = {
+    const std::vector<uint32_t> indices = {
         0, 3, 1,
         1, 3, 2};
 
