@@ -48,7 +48,40 @@ entities:
               - data:
                   - aspectPower: 100.0
                   - isPerspective: false
-
+  - obj:
+      - guid: main-character
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+          - component:
+              - type: sprite_renderer
+              - data:
+                  - material: f22681f4-45d1-4542-a838-99f854890c18
+                  - image: 126fb991-fe1c-45e0-ae0c-1649a2c65ae3
+          - component:
+              - type: rigidbody2d
+              - data:
+                  - isDynamic: true
+          - component:
+              - type: box_collider
+              - data:
+                  - size:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 0.0
   - obj:
     - guid: sprite-tile-bfad823e
     - components:
