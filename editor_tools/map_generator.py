@@ -51,15 +51,20 @@ def generate_sprite_tiles_yaml(x_min, x_max, y_min, y_max):
 if __name__ == "__main__":
     #box
     max_x = 8;
+    center_x =0;
     min_x = -8;
 
     max_y = 7;
+    center_y = 0;
     min_y = -7;
 
     tiles = generate_sprite_tiles_yaml(min_x, min_x, min_y, max_y)
     tiles += generate_sprite_tiles_yaml(max_x, max_x, min_y, max_y)
     tiles += generate_sprite_tiles_yaml(min_x+1, max_x - 1, min_y, min_y)
     tiles += generate_sprite_tiles_yaml(min_x+1, max_x -1, max_y, max_y)
+    tiles += generate_sprite_tiles_yaml(min_x+1, center_x - 2, center_y, center_y)
+    tiles += generate_sprite_tiles_yaml(center_x, max_x - 1, center_y + 3, center_y + 3)
+    tiles += generate_sprite_tiles_yaml(center_x, max_x - 1, center_y - 3, center_y - 3)
 
     with open("assets/resources/scenes/main_scene.scene", "a") as f:
         for tile in tiles:
