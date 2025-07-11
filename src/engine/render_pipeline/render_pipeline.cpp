@@ -33,6 +33,40 @@ void RenderPipeline::RenderSprites() const
     }
 }
 
+void RenderPipeline::RenderLines() const {
+
+    const auto projectionMat = _camera3d.lock()->GetProjection();
+    const auto viewMat = _cameraTransform3d.lock()->GetModel();
+
+    const auto projection = glm::value_ptr(projectionMat);
+    const auto view = glm::value_ptr(viewMat);
+
+    for (const auto& value : _lines)
+    {
+
+        if (const auto& line = value.lock())
+        {
+            line->Update(); // move to material
+
+            const auto model = line->GetEntity().lock()->GetComponent<Transform>().lock();
+
+            const auto shaderId = line->GetShaderId();
+
+            const auto modelLock = glGetUniformLocation(shaderId, "model");
+            glUniformMatrix4fv(modelLock, 1, GL_FALSE, glm::value_ptr(model->GetModel()));
+
+            const auto viewLock = glGetUniformLocation(shaderId, "view");
+            glUniformMatrix4fv(viewLock, 1, GL_FALSE, view);
+
+            const auto projLock = glGetUniformLocation(shaderId, "projection");
+            glUniformMatrix4fv(projLock, 1, GL_FALSE, projection);
+
+            line->Render();
+        }
+    }
+
+}
+
 void RenderPipeline::Init() const noexcept {
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);

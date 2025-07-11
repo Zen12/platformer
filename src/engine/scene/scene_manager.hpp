@@ -9,6 +9,7 @@
 #include "../asset/asset_manager.hpp"
 #include "../components/physics/box_collider2d_component.hpp"
 #include "../physics/physics_world.hpp"
+#include "../components/line_renderer.hpp"
 #include "../debug/debug.hpp"
 
 

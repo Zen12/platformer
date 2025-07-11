@@ -72,8 +72,8 @@ struct ShaderComponentSerialization final : public ComponentSerialization
 
 struct SpriteRenderComponentSerialization final : public ComponentSerialization
 {
-    std::string MaterialGuid;
-    std::string SpriteGuid;
+    const std::string MaterialGuid;
+    const std::string SpriteGuid;
 
     explicit SpriteRenderComponentSerialization(std::string materialGuid, std::string spriteGuid)
         : MaterialGuid(std::move(materialGuid)), SpriteGuid(std::move(spriteGuid))
@@ -85,6 +85,22 @@ struct SpriteRenderComponentSerialization final : public ComponentSerialization
         return "sprite_renderer";
     }
 };
+
+struct LineRenderComponentSerialization final : public ComponentSerialization
+{
+    const std::string MaterialGuid;
+
+    explicit LineRenderComponentSerialization(std::string materialGuid)
+        : MaterialGuid(std::move(materialGuid))
+    {
+    }
+
+    [[nodiscard]] std::string getType() const override
+    {
+        return "line_renderer";
+    }
+};
+
 
 struct SpriteComponentSerialization final : public ComponentSerialization
 {
@@ -208,11 +224,16 @@ inline std::unique_ptr<UiTextComponentSerialization> createUiText(const YAML::No
     return comp;
 }
 
+inline std::unique_ptr<LineRenderComponentSerialization> createLineRenderer(const YAML::Node &map)
+{
+    return std::make_unique<LineRenderComponentSerialization>(
+        map["material"].as<std::string>());
+}
+
 inline std::unique_ptr<SpriteRenderComponentSerialization> createSpriteRenderer(const YAML::Node &map)
 {
-    auto comp = std::make_unique<SpriteRenderComponentSerialization>(
+    return std::make_unique<SpriteRenderComponentSerialization>(
         map["material"].as<std::string>(), map["image"].as<std::string>());
-    return comp;
 }
 
 inline std::unique_ptr<UiImageComponentSerialization> createUiImage(const YAML::Node &map)
@@ -345,6 +366,8 @@ inline std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAM
         return createBoxCollider(map);
     }else if (type == "rigidbody2d") {
         return createRigidBody(map);
+    } else if (type == "line_renderer") {
+        return createLineRenderer(map);
     }
 
     throw std::runtime_error("Unknown component type: " + type);

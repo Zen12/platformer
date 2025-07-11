@@ -83,6 +83,28 @@ entities:
                       - y: 1.0
                       - z: 0.0
   - obj:
+      - guid: line-render
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+          - component:
+              - type: line_renderer
+              - data:
+                  - material: 76aada18-be63-49a8-a353-b63a8a5e82b5
+  - obj:
     - guid: sprite-tile-bfad823e
     - components:
       - component:

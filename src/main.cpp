@@ -60,6 +60,9 @@ int main()
 
         renderPipeline->ClearFrame();
         renderPipeline->RenderSprites();
+#ifndef NDEBUG
+        renderPipeline->RenderLines();
+#endif
         renderPipeline->RenderUI();
 
         window->SwapBuffers();

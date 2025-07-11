@@ -114,6 +114,12 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                         rigidBody->SetWorld(_physicsWorld);
                         rigidBody->Init(serialization->isDynamic);
                     }
+                }else if (comp->getType() == "line_renderer") {
+                    if (auto lineRenderer = newEntity->AddComponent<LineRenderer>().lock()) {
+                        const auto *serialization = dynamic_cast<LineRenderComponentSerialization *>(comp.get());
+                        lineRenderer->SetMaterial(GetMaterial(serialization->MaterialGuid));
+                        _renderPipeline.lock()->AddRenderer(lineRenderer);
+                    }
                 }
             }
         }
