@@ -3,6 +3,23 @@
 
 #include "engine/engine.hpp"
 
+class RayCastClosestCallback : public b2RayCastCallback {
+public:
+    b2Vec2 point;
+    b2Vec2 normal;
+    float fraction = 1.0f;
+    bool hit = false;
+
+    float ReportFixture(b2Fixture* fixture, const b2Vec2& p,
+                        const b2Vec2& n, float f) override {
+        hit = true;
+        point = p;
+        normal = n;
+        fraction = f;
+        return f; // return the fraction to clip the ray and get closest hit
+    }
+};
+
 int main()
 {
     std::string projectRoot = ASSETS_PATH;
@@ -49,11 +66,46 @@ int main()
 
         constexpr float fixedTimeStep = 1.0f / 60.0f;
 
-        accumulator += deltaTime;
-        while (accumulator >= fixedTimeStep) {
-            physicsWorld->Simulate(fixedTimeStep);
-            physicsWorld->UpdateColliders();
-            accumulator -= fixedTimeStep;
+        physicsWorld->Simulate(fixedTimeStep);
+        physicsWorld->UpdateColliders();
+
+        const auto line = sceneManager.GetEntityById("line-render").lock()->GetComponent<LineRenderer>().lock();
+        const auto character = sceneManager.GetEntityById("main-character").lock()->GetComponent<Transform>().lock();
+        const auto world =  physicsWorld->GetWorld().lock();
+
+
+        auto position = character->GetPosition();
+
+        window->ClearInputState();
+        window->PullEvent();
+        input->Update();
+
+        const auto speed = 0.01f;
+
+        if (input->IsKeyPressing(InputKey::W)) {
+            position.y += speed * deltaTime;
+        }
+
+        if (input->IsKeyPressing(InputKey::S)) {
+            position.y -= speed* deltaTime;
+        }
+        if (input->IsKeyPressing(InputKey::A)) {
+            position.x -= speed * deltaTime;
+        }
+        if (input->IsKeyPressing(InputKey::D)) {
+            position.x += speed * deltaTime;
+        }
+
+        character->SetPosition(position);
+
+        b2Vec2 pointA(position.x, position.y);    // Start of ray
+        b2Vec2 pointB(position.x + 3, position.y + 3);   // End of ray
+
+        RayCastClosestCallback callback;
+        world->RayCast(&callback, pointA, pointB);
+
+        if (callback.hit) {
+            line->SetPosition(glm::vec3(position.x,position.y,0), glm::vec3(callback.point.x, callback.point.y, 0.0f));
         }
 
         sceneManager.Update();
@@ -67,9 +119,7 @@ int main()
 
         window->SwapBuffers();
 
-        window->ClearInputState();
-        window->PullEvent();
-        input->Update();
+
 
 
 #ifndef NDEBUG

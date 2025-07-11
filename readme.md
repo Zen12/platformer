@@ -62,7 +62,7 @@ TODO
 - [x] Input system
 - [x] Collider component
 - [x] Rigidbody component
-- [ ] Raycast debug line
+- [x] Raycast debug line
 - [ ] Light2d
 - [ ] Spine runtime
 - [ ] 2d Character controller
