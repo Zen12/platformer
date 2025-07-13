@@ -72,7 +72,7 @@ entities:
                   - material: f22681f4-45d1-4542-a838-99f854890c18
                   - image: 126fb991-fe1c-45e0-ae0c-1649a2c65ae3
   - obj:
-      - guid: line-render
+      - guid: light_2d
       - components:
           - component:
               - type: transform
@@ -90,9 +90,10 @@ entities:
                       - y: 1.0
                       - z: 1.0
           - component:
-              - type: line_renderer
+              - type: light_2d
               - data:
                   - material: 76aada18-be63-49a8-a353-b63a8a5e82b5
+                  - center: main-character
   - obj:
     - guid: sprite-tile-bfad823e
     - components:

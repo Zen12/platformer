@@ -86,6 +86,22 @@ struct SpriteRenderComponentSerialization final : public ComponentSerialization
     }
 };
 
+struct Light2dComponentSerialization final : public ComponentSerialization
+{
+    const std::string MaterialGuid;
+    const std::string CenterTransform;
+
+    explicit Light2dComponentSerialization(std::string materialGuid, std::string centerTransform)
+        : MaterialGuid(std::move(materialGuid)), CenterTransform(std::move(centerTransform))
+    {
+    }
+
+    [[nodiscard]] std::string getType() const override
+    {
+        return "light_2d";
+    }
+};
+
 struct LineRenderComponentSerialization final : public ComponentSerialization
 {
     const std::string MaterialGuid;
@@ -222,6 +238,13 @@ inline std::unique_ptr<UiTextComponentSerialization> createUiText(const YAML::No
     comp->MaterialGUID = map["material"].as<std::string>();
     comp->Text = map["text"].as<std::string>();
     return comp;
+}
+
+inline std::unique_ptr<Light2dComponentSerialization> createLight2dRenderer(const YAML::Node &map)
+{
+    return std::make_unique<Light2dComponentSerialization>(
+        map["material"].as<std::string>(),
+        map["center"].as<std::string>());
 }
 
 inline std::unique_ptr<LineRenderComponentSerialization> createLineRenderer(const YAML::Node &map)
@@ -368,6 +391,8 @@ inline std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAM
         return createRigidBody(map);
     } else if (type == "line_renderer") {
         return createLineRenderer(map);
+    } else if (type == "light_2d") {
+        return createLight2dRenderer(map);
     }
 
     throw std::runtime_error("Unknown component type: " + type);

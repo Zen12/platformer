@@ -4,6 +4,7 @@
 #include "../components/ui_text_renderer.hpp"
 #include "../components/ui_image_renderer.hpp"
 #include "../components/line_renderer.hpp"
+#include "../components/light_2d.hpp"
 #include "../system/window.hpp"
 #include  "../components/camera_component.hpp"
 
@@ -18,6 +19,7 @@ private:
     std::weak_ptr<Window> _window;
 
     std::vector<std::weak_ptr<SpriteRenderer>> _sprites;
+    std::vector<std::weak_ptr<Light2dComponent>> _lights2d;
     std::vector<std::weak_ptr<LineRenderer>> _lines;
     std::vector<std::weak_ptr<UiTextRenderer>> _texts;
     std::vector<std::weak_ptr<UiImageRenderer>> _images;
@@ -45,6 +47,7 @@ public:
     }
 
     void AddRenderer(const std::weak_ptr<SpriteRenderer> &sprite) { _sprites.push_back(sprite); }
+    void AddRenderer(const std::weak_ptr<Light2dComponent> &light) { _lights2d.push_back(light); }
     void AddRenderer(const std::weak_ptr<LineRenderer> &line) { _lines.push_back(line); }
 
     void AddRenderer(const std::weak_ptr<UiTextRenderer> &text) { _texts.push_back(text); }
@@ -55,5 +58,6 @@ public:
     void RenderUI() const;
     void RenderSprites() const;
     void RenderLines() const;
+    void RenderLights() const;
     void Cleanup();
 };

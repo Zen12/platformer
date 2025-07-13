@@ -64,11 +64,13 @@ private:
     }
 
 private:
-    std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) ;
+    [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid);
 
-    std::shared_ptr<Material> GetMaterial(const std::string& guid);
+    [[nodiscard]] std::shared_ptr<Material> GetMaterial(const std::string& guid);
 
-    std::shared_ptr<Sprite> GetSprite(const std::string& guid);
+    [[nodiscard]] std::shared_ptr<Sprite> GetSprite(const std::string& guid);
 
-    std::shared_ptr<Font> GetFont(const std::string& guid);
+    [[nodiscard]] std::shared_ptr<Font> GetFont(const std::string& guid);
+
+    [[nodiscard]] std::shared_ptr<Entity> GetEntity(const std::string& id) const;
 };

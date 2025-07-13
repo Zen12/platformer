@@ -37,7 +37,7 @@ public:
         _material = std::move(material);
     }
 
-    void SetPosition(const glm::vec3& a, const glm::vec3& b) const {
+    void SetPosition(const glm::vec3& a, const glm::vec3& b) {
         _line.UpdateVertices(std::vector<float>{a.x, a.y, a.z, b.x, b.y, b.z});
     }
 

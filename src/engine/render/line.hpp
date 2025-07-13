@@ -14,7 +14,14 @@ private:
 
 public:
     Line() = default;
-    Line(const std::vector<float> &vertices);
+
+    explicit Line(const std::vector<float> &vertices);
+
+    Line(const Line&) = delete;
+    Line& operator=(const Line&) = delete;
+
+    Line(Line&&) = delete;
+    Line& operator=(Line&&) = delete;
 
     ~Line();
 
@@ -22,7 +29,7 @@ public:
     [[nodiscard]] size_t GetVertexCount() const noexcept;
     [[nodiscard]] size_t GetIndicesCount() const noexcept;
 
-    void UpdateVertices(const std::vector<float> &vertices) const;
+    void UpdateVertices(const std::vector<float> &vertices);
 
     static Line Generate();
 };

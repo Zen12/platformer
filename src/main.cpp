@@ -69,7 +69,6 @@ int main()
         physicsWorld->Simulate(fixedTimeStep);
         physicsWorld->UpdateColliders();
 
-        const auto line = sceneManager.GetEntityById("line-render").lock()->GetComponent<LineRenderer>().lock();
         const auto character = sceneManager.GetEntityById("main-character").lock()->GetComponent<Transform>().lock();
         const auto world =  physicsWorld->GetWorld().lock();
 
@@ -97,7 +96,7 @@ int main()
         }
 
         character->SetPosition(position);
-
+/*
         b2Vec2 pointA(position.x, position.y);    // Start of ray
         b2Vec2 pointB(position.x + 3, position.y + 3);   // End of ray
 
@@ -107,11 +106,13 @@ int main()
         if (callback.hit) {
             line->SetPosition(glm::vec3(position.x,position.y,0), glm::vec3(callback.point.x, callback.point.y, 0.0f));
         }
-
+*/
         sceneManager.Update();
 
         renderPipeline->ClearFrame();
         renderPipeline->RenderSprites();
+        renderPipeline->RenderLights();
+
 #ifndef NDEBUG
         renderPipeline->RenderLines();
 #endif

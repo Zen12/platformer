@@ -1,5 +1,7 @@
 #include "scene_manager.hpp"
 
+#include "../components/light_2d.hpp"
+
 void SceneManager::LoadScene(const SceneAsset &scene) {
     PROFILE_SCOPE("Loading of scene " + scene.Name);
 
@@ -120,6 +122,16 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                         lineRenderer->SetMaterial(GetMaterial(serialization->MaterialGuid));
                         _renderPipeline.lock()->AddRenderer(lineRenderer);
                     }
+                }else if (comp->getType() == "light_2d") {
+                    if (const auto light2d = newEntity->AddComponent<Light2dComponent>().lock()) {
+                        const auto *serialization = dynamic_cast<Light2dComponentSerialization *>(comp.get());
+                        light2d->SetMaterial(GetMaterial(serialization->MaterialGuid));
+                        const auto ref = GetEntity(serialization->CenterTransform);
+                        if (const auto transform = ref->GetComponent<Transform>().lock()) {
+                            light2d->SetCenterTransform(transform);
+                        }
+                        _renderPipeline.lock()->AddRenderer(light2d);
+                    }
                 }
             }
         }
@@ -200,6 +212,14 @@ std::shared_ptr<Font> SceneManager::GetFont(const std::string &guid) {
             return font;
         }
         return _fonts[guid];
+    }
+    return {};
+}
+
+std::shared_ptr<Entity> SceneManager::GetEntity(const std::string &id) const {
+    for (const auto & entity: _entities) {
+        if (entity->GetId() == id)
+            return entity;
     }
     return {};
 }

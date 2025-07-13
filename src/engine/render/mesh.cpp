@@ -35,6 +35,11 @@ Mesh::Mesh(
 
 Mesh::~Mesh()
 {
+#ifndef NDEBUG
+    std::cout << "Mesh Destroyed " << std::endl;
+    std::cout << "VAO: " << _vao << " VBO: " << _vbo << std::endl;
+    std::cout << "\n";
+#endif
     glDeleteVertexArrays(1, &_vao);
     glDeleteBuffers(1, &_vbo);
     glDeleteBuffers(1, &_ebo);
