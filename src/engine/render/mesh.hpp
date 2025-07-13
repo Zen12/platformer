@@ -16,10 +16,16 @@ private:
     std::vector<uint32_t> _indices;
 
 public:
-    Mesh() = default;
+    Mesh() = delete;
     Mesh(
         const std::vector<float> &vertices,
         const std::vector<uint32_t> &indices);
+
+    Mesh(const Mesh&) = delete;
+    Mesh& operator=(const Mesh&) = delete;
+
+    Mesh(Mesh&&) noexcept = delete;
+    Mesh& operator=(Mesh&&) noexcept = delete;
 
     ~Mesh();
 

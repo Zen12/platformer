@@ -13,7 +13,7 @@ private:
     std::vector<uint32_t> _indices;
 
 public:
-    Line() = default;
+    Line() = delete;
 
     explicit Line(const std::vector<float> &vertices);
 
