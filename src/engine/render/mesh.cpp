@@ -1,6 +1,8 @@
 #include "mesh.hpp"
 #include <GL/glew.h>
 
+#define DEBUG_ENGINE_MESH 0
+
 Mesh::Mesh(
     const std::vector<float> &vertices,
     const std::vector<uint32_t> &indices)
@@ -36,9 +38,11 @@ Mesh::Mesh(
 Mesh::~Mesh()
 {
 #ifndef NDEBUG
+#if DEBUG_ENGINE_MESH
     std::cout << "Mesh Destroyed " << std::endl;
     std::cout << "VAO: " << _vao << " VBO: " << _vbo << std::endl;
     std::cout << "\n";
+#endif
 #endif
     glDeleteVertexArrays(1, &_vao);
     glDeleteBuffers(1, &_vbo);
