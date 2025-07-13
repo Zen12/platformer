@@ -46,11 +46,11 @@ public:
     }
 
     void OnKeyCode(const int &code, const int &mode) noexcept {
-        _keyboardCodes.push_back(std::make_tuple(code, mode));
+        _keyboardCodes.emplace_back(code, mode);
     }
 
     void OnMouse(const int &code, const int &mode) noexcept {
-        _mouseCodes.push_back(std::make_tuple(code, mode));
+        _mouseCodes.emplace_back(code, mode);
     }
 
 };

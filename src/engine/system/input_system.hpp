@@ -153,7 +153,7 @@ public:
     bool IsKeyPressing(const InputKey &key) {
         const auto value = InputKeyMapToGLFW.at(key);
         for (const auto &[code, state] : _keyCodes) {
-            if (code == value && state == INPUT_REPEAT || state == INPUT_PRESS) {
+            if (code == value && state == INPUT_REPEAT) {
                 return true;
             }
         }

@@ -130,6 +130,7 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                         if (const auto transform = ref->GetComponent<Transform>().lock()) {
                             light2d->SetCenterTransform(transform);
                         }
+                        light2d->SetPhysicsWorld(_physicsWorld);
                         _renderPipeline.lock()->AddRenderer(light2d);
                     }
                 }

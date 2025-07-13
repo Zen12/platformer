@@ -1,6 +1,10 @@
 #pragma once
+#include <utility>
+
 #include "entity.hpp"
 #include "../render/material.hpp"
+#include "../physics/physics_world.hpp"
+#include "../physics/raycast.hpp"
 #include "../render/line.hpp"
 #include "transforms/transform.hpp"
 
@@ -9,9 +13,10 @@ class Light2dComponent final : public Component {
     std::weak_ptr<Transform> _center;
     std::weak_ptr<Material> _material;
     std::vector<std::unique_ptr<Line>> _lines;
+    std::weak_ptr<PhysicsWorld> _physicsWorld;
 
-    const float radius = 1.0f;
-    const int segments = 10;
+    const float radius = 20.0f;
+    const int segments = 50;
 
 
 
@@ -37,24 +42,37 @@ public:
 
     void Render() noexcept {
 
-        if (const auto center = _center.lock()) {
-            const auto centerPosition = center->GetPosition();
+        if (const auto world = _physicsWorld.lock()->GetWorld().lock()) {
+            if (const auto center = _center.lock()) {
+                const auto centerPosition = center->GetPosition();
 
-            const float step = 360.0f / static_cast<float>(segments);
+                const float step = 360.0f / static_cast<float>(segments);
 
-            for (int i = 0; i < segments; i++) {
-                const float angle = static_cast<float>(i) * step;
+                for (int i = 0; i < segments; i++) {
+                    const float angle = static_cast<float>(i) * step;
 
-                const float angleRad = DegToRad(angle);
-                const float x = radius * std::cos(angleRad);
-                const float y = radius * std::sin(angleRad);
+                    const float angleRad = DegToRad(angle);
+                    float x = centerPosition.x + radius * std::cos(angleRad);
+                    float y = centerPosition.y + radius * std::sin(angleRad);
 
-                const auto vertex = std::vector<float>{
-                    centerPosition.x, centerPosition.y, 0.0f,
-                    centerPosition.x + x,centerPosition.y + y, 0.0f};
+                    b2Vec2 pointA(centerPosition.x, centerPosition.y);    // Start of ray
+                    b2Vec2 pointB(x, y);   // End of ray
 
-                _lines[i]->UpdateVertices(vertex);
-                _lines[i]->Bind();
+                    RayCastClosestCallback callback;
+                    world->RayCast(&callback, pointA, pointB);
+
+                    if (callback.hit) {
+                        x = callback.point.x;
+                        y = callback.point.y;
+                    }
+
+                    const auto vertex = std::vector<float>{
+                        centerPosition.x, centerPosition.y, 0.0f,
+                        x,y, 0.0f};
+
+                    _lines[i]->UpdateVertices(vertex);
+                    _lines[i]->Bind();
+                }
             }
         }
     }
@@ -71,8 +89,12 @@ public:
         _material = std::move(material);
     }
 
-    void SetCenterTransform(std::weak_ptr<Transform> center) {
+    void SetCenterTransform(std::weak_ptr<Transform> center) noexcept {
         _center = std::move(center);
+    }
+
+    void SetPhysicsWorld(std::weak_ptr<PhysicsWorld> physicsWorld) noexcept {
+        _physicsWorld = std::move(physicsWorld);
     }
 
 };

@@ -3,22 +3,7 @@
 
 #include "engine/engine.hpp"
 
-class RayCastClosestCallback : public b2RayCastCallback {
-public:
-    b2Vec2 point;
-    b2Vec2 normal;
-    float fraction = 1.0f;
-    bool hit = false;
 
-    float ReportFixture(b2Fixture* fixture, const b2Vec2& p,
-                        const b2Vec2& n, float f) override {
-        hit = true;
-        point = p;
-        normal = n;
-        fraction = f;
-        return f; // return the fraction to clip the ray and get closest hit
-    }
-};
 
 int main()
 {
@@ -49,25 +34,16 @@ int main()
 
     renderPipeline->Init();
 
-    float accumulator = 0.0f;
+    const auto fpsText = sceneManager.GetEntityById("text-fps").lock()->GetComponent<UiTextRenderer>().lock();
 
-    constexpr float targetFPS = 60.0f;
-    constexpr float targetFrameTime = 1.0f / targetFPS;  // ~0.01666s
 
     while (window->IsOpen())
     {
-        const float deltaTime = time.GetTimeAlive();
-        if (deltaTime <= targetFrameTime) {
-            std::this_thread::sleep_for(std::chrono::duration<float>(0.01f));
-            continue;
-        }
-
+        const float deltaTime = time.GetResetDelta();
         time.Reset();
 
-        constexpr float fixedTimeStep = 1.0f / 60.0f;
-
-        physicsWorld->Simulate(fixedTimeStep);
-        physicsWorld->UpdateColliders();
+        const float fps = 1.0f / deltaTime;
+        fpsText->SetText(std::to_string(fps));
 
         const auto character = sceneManager.GetEntityById("main-character").lock()->GetComponent<Transform>().lock();
         const auto world =  physicsWorld->GetWorld().lock();
@@ -79,7 +55,7 @@ int main()
         window->PullEvent();
         input->Update();
 
-        const auto speed = 0.01f;
+        const auto speed = 10.0f;
 
         if (input->IsKeyPressing(InputKey::W)) {
             position.y += speed * deltaTime;
@@ -96,17 +72,7 @@ int main()
         }
 
         character->SetPosition(position);
-/*
-        b2Vec2 pointA(position.x, position.y);    // Start of ray
-        b2Vec2 pointB(position.x + 3, position.y + 3);   // End of ray
 
-        RayCastClosestCallback callback;
-        world->RayCast(&callback, pointA, pointB);
-
-        if (callback.hit) {
-            line->SetPosition(glm::vec3(position.x,position.y,0), glm::vec3(callback.point.x, callback.point.y, 0.0f));
-        }
-*/
         sceneManager.Update();
 
         renderPipeline->ClearFrame();
