@@ -130,8 +130,19 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                         if (const auto transform = ref->GetComponent<Transform>().lock()) {
                             light2d->SetCenterTransform(transform);
                         }
+
                         light2d->SetPhysicsWorld(_physicsWorld);
                         _renderPipeline.lock()->AddRenderer(light2d);
+
+                        if (const auto meshRenderer = newEntity->GetComponent<MeshRenderer>().lock()) {
+                            light2d->SetMeshRenderer(meshRenderer);
+                        }
+                    }
+                }else if (comp->getType() == "mesh_renderer") {
+                    if (const auto mesh_renderer = newEntity->AddComponent<MeshRenderer>().lock()) {
+                        const auto *serialization = dynamic_cast<MeshRendererComponentSerialization *>(comp.get());
+                        mesh_renderer->SetMaterial(GetMaterial(serialization->MaterialGuid));
+                        _renderPipeline.lock()->AddRenderer(mesh_renderer);
                     }
                 }
             }
@@ -149,6 +160,7 @@ void SceneManager::UnLoadAll() {
     _materials.clear();
     _sprites.clear();
     _fonts.clear();
+    _meshes.clear();
 }
 
 std::shared_ptr<Shader> SceneManager::GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) {

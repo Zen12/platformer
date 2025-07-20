@@ -67,6 +67,38 @@ void RenderPipeline::RenderLines() const {
 
 }
 
+void RenderPipeline::RenderMeshes() const {
+    const auto projectionMat = _camera3d.lock()->GetProjection();
+    const auto viewMat = _cameraTransform3d.lock()->GetModel();
+
+    const auto projection = glm::value_ptr(projectionMat);
+    const auto view = glm::value_ptr(viewMat);
+
+    for (const auto& value : _meshRenderers)
+    {
+
+        if (const auto& meshRenderer = value.lock())
+        {
+            meshRenderer->Update(); // move to material
+
+            const auto model = meshRenderer->GetEntity().lock()->GetComponent<Transform>().lock();
+
+            const auto shaderId = meshRenderer->GetShaderId();
+
+            const auto modelLock = glGetUniformLocation(shaderId, "model");
+            glUniformMatrix4fv(modelLock, 1, GL_FALSE, glm::value_ptr(model->GetModel()));
+
+            const auto viewLock = glGetUniformLocation(shaderId, "view");
+            glUniformMatrix4fv(viewLock, 1, GL_FALSE, view);
+
+            const auto projLock = glGetUniformLocation(shaderId, "projection");
+            glUniformMatrix4fv(projLock, 1, GL_FALSE, projection);
+
+            meshRenderer->Render();
+        }
+    }
+}
+
 void RenderPipeline::RenderLights() const {
     const auto projectionMat = _camera3d.lock()->GetProjection();
     const auto viewMat = _cameraTransform3d.lock()->GetModel();

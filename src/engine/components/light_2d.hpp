@@ -2,6 +2,7 @@
 #include <utility>
 
 #include "entity.hpp"
+#include "mesh_renderer.hpp"
 #include "../render/material.hpp"
 #include "../physics/physics_world.hpp"
 #include "../physics/raycast.hpp"
@@ -14,6 +15,7 @@ class Light2dComponent final : public Component {
     std::weak_ptr<Material> _material;
     std::vector<std::unique_ptr<Line>> _lines;
     std::weak_ptr<PhysicsWorld> _physicsWorld;
+    std::weak_ptr<MeshRenderer> _meshRenderer;
 
     const float radius = 20.0f;
     const int segments = 50;
@@ -44,7 +46,14 @@ public:
 
         if (const auto world = _physicsWorld.lock()->GetWorld().lock()) {
             if (const auto center = _center.lock()) {
+                std::vector<float> meshVert{};
+                std::vector<unsigned int> meshIndex{};
+
                 const auto centerPosition = center->GetPosition();
+
+                meshVert.emplace_back(centerPosition.x);
+                meshVert.emplace_back(centerPosition.y);
+                meshVert.emplace_back(0);
 
                 const float step = 360.0f / static_cast<float>(segments);
 
@@ -61,18 +70,35 @@ public:
                     RayCastClosestCallback callback;
                     world->RayCast(&callback, pointA, pointB);
 
-                    if (callback.hit) {
-                        x = callback.point.x;
-                        y = callback.point.y;
+                    if (callback.Hit) {
+                        x = callback.Point.x;
+                        y = callback.Point.y;
                     }
 
                     const auto vertex = std::vector<float>{
                         centerPosition.x, centerPosition.y, 0.0f,
                         x,y, 0.0f};
 
+                    meshVert.emplace_back(x);
+                    meshVert.emplace_back(y);
+                    meshVert.emplace_back(0);
+
                     _lines[i]->UpdateVertices(vertex);
                     _lines[i]->Bind();
                 }
+
+                for (int j = 1; j < segments - 1; j++) {
+                    meshIndex.emplace_back(0);
+                    meshIndex.emplace_back(j);
+                    meshIndex.emplace_back(j+1);
+
+                    meshIndex.emplace_back(j+1);
+                    meshIndex.emplace_back(0);
+                    meshIndex.emplace_back(j);
+                }
+
+
+                _meshRenderer.lock()->UpdateMesh(meshVert, meshIndex);
             }
         }
     }
@@ -87,6 +113,10 @@ public:
 
     void SetMaterial(std::weak_ptr<Material> material) noexcept {
         _material = std::move(material);
+    }
+
+    void SetMeshRenderer(std::weak_ptr<MeshRenderer> meshRenderer) noexcept {
+        _meshRenderer = std::move(meshRenderer);
     }
 
     void SetCenterTransform(std::weak_ptr<Transform> center) noexcept {

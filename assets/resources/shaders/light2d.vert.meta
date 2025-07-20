@@ -1,0 +1,4 @@
+name: light2d
+guid: 2393a055-6180-48bd-86b4-b55e9dd71399
+extension: .vert
+type: vertex-shader

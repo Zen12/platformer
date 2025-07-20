@@ -22,6 +22,7 @@ private:
     std::unordered_map<std::string, std::shared_ptr<Material>> _materials;
     std::unordered_map<std::string, std::shared_ptr<Sprite>> _sprites;
     std::unordered_map<std::string, std::shared_ptr<Font>> _fonts;
+    std::unordered_map<std::string, std::shared_ptr<Mesh>> _meshes;
 
     std::weak_ptr<RenderPipeline> _renderPipeline;
     std::weak_ptr<Window> _window;
@@ -65,6 +66,8 @@ private:
 
 private:
     [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid);
+
+    std::shared_ptr<Mesh> GetMesh(const std::string &guid);
 
     [[nodiscard]] std::shared_ptr<Material> GetMaterial(const std::string& guid);
 

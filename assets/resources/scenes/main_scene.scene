@@ -90,6 +90,10 @@ entities:
                       - y: 1.0
                       - z: 1.0
           - component:
+              - type: mesh_renderer
+              - data:
+                  - material: b1604380-8385-4912-9f2b-178103120328
+          - component:
               - type: light_2d
               - data:
                   - material: 76aada18-be63-49a8-a353-b63a8a5e82b5

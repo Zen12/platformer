@@ -86,6 +86,21 @@ struct SpriteRenderComponentSerialization final : public ComponentSerialization
     }
 };
 
+struct MeshRendererComponentSerialization final : public ComponentSerialization
+{
+    const std::string MaterialGuid;
+
+    explicit MeshRendererComponentSerialization(std::string materialGuid)
+        : MaterialGuid(std::move(materialGuid))
+    {
+    }
+
+    [[nodiscard]] std::string getType() const override
+    {
+        return "mesh_renderer";
+    }
+};
+
 struct Light2dComponentSerialization final : public ComponentSerialization
 {
     const std::string MaterialGuid;
@@ -238,6 +253,12 @@ inline std::unique_ptr<UiTextComponentSerialization> createUiText(const YAML::No
     comp->MaterialGUID = map["material"].as<std::string>();
     comp->Text = map["text"].as<std::string>();
     return comp;
+}
+
+inline std::unique_ptr<MeshRendererComponentSerialization> createMeshRenderer(const YAML::Node &map)
+{
+    return std::make_unique<MeshRendererComponentSerialization>(
+        map["material"].as<std::string>());
 }
 
 inline std::unique_ptr<Light2dComponentSerialization> createLight2dRenderer(const YAML::Node &map)
@@ -393,6 +414,8 @@ inline std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAM
         return createLineRenderer(map);
     } else if (type == "light_2d") {
         return createLight2dRenderer(map);
+    } if (type == "mesh_renderer") {
+        return createMeshRenderer(map);
     }
 
     throw std::runtime_error("Unknown component type: " + type);

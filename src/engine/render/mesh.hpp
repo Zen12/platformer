@@ -19,7 +19,8 @@ public:
     Mesh() = delete;
     Mesh(
         const std::vector<float> &vertices,
-        const std::vector<uint32_t> &indices);
+        const std::vector<uint32_t> &indices,
+        const bool& useTexture);
 
     Mesh(const Mesh&) = delete;
     Mesh& operator=(const Mesh&) = delete;
@@ -27,11 +28,15 @@ public:
     Mesh(Mesh&&) noexcept = delete;
     Mesh& operator=(Mesh&&) noexcept = delete;
 
+    void UpdateData(const std::vector<float> &vertices, const std::vector<uint32_t> &indices) noexcept;
+
     ~Mesh();
 
     void Bind() const noexcept;
     [[nodiscard]] size_t GetVertexCount() const noexcept;
     [[nodiscard]] size_t GetIndicesCount() const noexcept;
+
+    static Mesh GenerateSquare();
 
     static Mesh GenerateSprite();
     static Mesh GenerateUI();
