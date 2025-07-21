@@ -31,4 +31,8 @@ void Material::Bind() const
             }
         }
     }
+
+    for (const auto &[id, value]: _vec3Uniforms) {
+        SetVec3(id, value.x, value.y, value.z);
+    }
 }

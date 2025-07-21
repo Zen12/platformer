@@ -12,10 +12,12 @@
 class Material
 {
 private:
-    std::weak_ptr<Shader> _shader;
-    std::weak_ptr<Font> _font;
-    std::unordered_map<std::string, int32_t> _locationMap;
-    std::vector<std::weak_ptr<Sprite>> _sprites;
+    std::weak_ptr<Shader> _shader{};
+    std::weak_ptr<Font> _font{};
+    std::vector<std::weak_ptr<Sprite>> _sprites{};
+    std::unordered_map<std::string, glm::vec3> _vec3Uniforms{};
+
+    std::unordered_map<std::string, int32_t> _locationMap{};
 
 public:
     Material() = delete;
@@ -31,6 +33,10 @@ public:
     void AddSprite(const std::weak_ptr<Sprite> &sprite) noexcept
     {
         _sprites.push_back(sprite);
+    }
+
+    void SetVec3Uniform(const std::string &key, const glm::vec3 &value) noexcept {
+        _vec3Uniforms[key] = value;
     }
 
     [[nodiscard]] std::weak_ptr<Font> GetFont() const noexcept {

@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 
+#define DEBUG_ENGINE_WINDOW 0
+
 class Window
 {
 private:
@@ -61,7 +63,9 @@ public:
 
     void OnKeyCode(const int &code, const int &mode) noexcept {
 #ifndef NDEBUG
+#if DEBUG_ENGINE_WINDOW
         std::cout << code << " " << mode << std::endl;
+#endif
 #endif
         _keyboardCodes[code] = mode;
     }

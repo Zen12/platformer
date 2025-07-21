@@ -43,7 +43,9 @@ int main()
         time.Reset();
 
         const float fps = 1.0f / deltaTime;
-        fpsText->SetText(std::to_string(fps));
+        std::stringstream ss;
+        ss << std::fixed << std::setprecision(0) << fps;
+        fpsText->SetText(ss.str());
 
         const auto character = sceneManager.GetEntityById("main-character").lock()->GetComponent<Transform>().lock();
         const auto world =  physicsWorld->GetWorld().lock();
@@ -74,9 +76,9 @@ int main()
         sceneManager.Update();
 
         renderPipeline->ClearFrame();
-        renderPipeline->RenderSprites();
         renderPipeline->RenderLights();
         renderPipeline->RenderMeshes();
+        renderPipeline->RenderSprites();
 
 #ifndef NDEBUG
         renderPipeline->RenderLines();

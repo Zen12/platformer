@@ -97,8 +97,10 @@ public:
                     meshIndex.emplace_back(j);
                 }
 
-
-                _meshRenderer.lock()->UpdateMesh(meshVert, meshIndex);
+                if (const auto &meshRenderer = _meshRenderer.lock()) {
+                    meshRenderer->SetUniformVec3("center", centerPosition);
+                    meshRenderer->UpdateMesh(meshVert, meshIndex);
+                }
             }
         }
     }
