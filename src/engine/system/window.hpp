@@ -7,8 +7,8 @@ private:
     uint16_t _width;
     uint16_t _height;
 
-    std::vector<std::tuple<int, int>> _keyboardCodes;
-    std::vector<std::tuple<int, int>> _mouseCodes;
+    std::unordered_map<int, int> _keyboardCodes;
+    std::unordered_map<int, int> _mouseCodes;
 
 public:
     Window(const uint16_t &width, const uint16_t &height, const std::string &windowName);
@@ -19,9 +19,23 @@ public:
     void SwapBuffers() const noexcept;
     void PullEvent() const noexcept;
 
-    void ClearInputState() noexcept {
-        _keyboardCodes.clear();
-        _mouseCodes.clear();
+    void ClearWithValue(const int &value) noexcept {
+
+        for (auto it = _keyboardCodes.begin(); it != _keyboardCodes.end(); ) {
+            if (it->second == value) {
+                it = _keyboardCodes.erase(it);
+            } else {
+                ++it;
+            }
+        }
+
+        for (auto it = _mouseCodes.begin(); it != _mouseCodes.end(); ) {
+            if (it->second == value) {
+                it = _mouseCodes.erase(it);
+            } else {
+                ++it;
+            }
+        }
     }
 
     [[nodiscard]] uint16_t GetWidth() const noexcept {
@@ -32,11 +46,11 @@ public:
         return _height;
     }
 
-    [[nodiscard]] const std::vector<std::tuple<int, int>> &GetKeyboardCodes() const noexcept {
+    [[nodiscard]] const std::unordered_map<int, int> &GetKeyboardCodes() const noexcept {
         return _keyboardCodes;
     }
 
-    [[nodiscard]] const std::vector<std::tuple<int, int>> &GetMouseCodes() const noexcept {
+    [[nodiscard]] const std::unordered_map<int, int> &GetMouseCodes() const noexcept {
         return _mouseCodes;
     }
 
@@ -46,11 +60,14 @@ public:
     }
 
     void OnKeyCode(const int &code, const int &mode) noexcept {
-        _keyboardCodes.emplace_back(code, mode);
+#ifndef NDEBUG
+        std::cout << code << " " << mode << std::endl;
+#endif
+        _keyboardCodes[code] = mode;
     }
 
     void OnMouse(const int &code, const int &mode) noexcept {
-        _mouseCodes.emplace_back(code, mode);
+        _mouseCodes[code] =  mode;
     }
 
 };

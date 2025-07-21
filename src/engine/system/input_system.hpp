@@ -120,8 +120,8 @@ const std::unordered_map<InputKey, int> InputKeyMapToGLFW = {
 class InputSystem {
 private:
     std::weak_ptr<Window> _window;
-    std::vector<std::tuple<int, int>> _keyCodes;
-    std::vector<std::tuple<int, int>> _mouseCodes;
+    std::unordered_map<int, int> _keyCodes;
+    std::unordered_map<int, int> _mouseCodes;
 
     // Copy GLFW. When support multiple windows, this should be refactored
     const int INPUT_PRESS    = 1;
@@ -135,6 +135,8 @@ public:
 
     void Update() {
         if (const auto window = _window.lock()) {
+            window->ClearWithValue(INPUT_RELEASE);
+            window->PullEvent();
             _keyCodes = window->GetKeyboardCodes();
             _mouseCodes = window->GetMouseCodes();
         }
@@ -183,7 +185,7 @@ public:
     bool IsMousePressing(const MouseButton &button) {
         const auto value = MouseButtonMapToGLFW.at(button);
         for (const auto &[code, state] : _mouseCodes) {
-            if (code == value && state == INPUT_REPEAT) {
+            if (code == value && (state == INPUT_REPEAT || state == INPUT_PRESS)) {
                 return true;
             }
         }

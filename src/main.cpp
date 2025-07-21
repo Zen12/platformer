@@ -51,23 +51,21 @@ int main()
 
         auto position = character->GetPosition();
 
-        window->ClearInputState();
-        window->PullEvent();
         input->Update();
 
-        const auto speed = 10.0f;
+        const auto speed = 2.0f;
 
-        if (input->IsKeyPressing(InputKey::W)) {
+        if (input->IsKeyPressing(InputKey::W) || input->IsKeyPress(InputKey::W)) {
             position.y += speed * deltaTime;
         }
 
-        if (input->IsKeyPressing(InputKey::S)) {
+        if (input->IsKeyPressing(InputKey::S)|| input->IsKeyPress(InputKey::S)) {
             position.y -= speed* deltaTime;
         }
-        if (input->IsKeyPressing(InputKey::A)) {
+        if (input->IsKeyPressing(InputKey::A) || input->IsKeyPress(InputKey::A)) {
             position.x -= speed * deltaTime;
         }
-        if (input->IsKeyPressing(InputKey::D)) {
+        if (input->IsKeyPressing(InputKey::D) || input->IsKeyPress(InputKey::D)) {
             position.x += speed * deltaTime;
         }
 
