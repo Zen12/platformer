@@ -7,7 +7,7 @@ uniform vec3 center;
 void main()
 {
     float dist = distance(localPosition, center);
-    float transperent = 1.0 - (dist * 0.1);
-    transperent = clamp(transperent, 0.01, 0.99) + 0.01; // a bit of light for far-far distance
+    float transperent = 1.0 - (dist * 0.09);
+    transperent = clamp(transperent, 0.01, 0.30) + 0.01; // a bit of light for far-far distance
     FragColor = vec4(1, 1, 0, transperent);
 }

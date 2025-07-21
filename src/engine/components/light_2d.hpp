@@ -82,20 +82,22 @@ public:
                     meshVert.emplace_back(x);
                     meshVert.emplace_back(y);
                     meshVert.emplace_back(0);
-
+#ifndef NDEBUG
                     _lines[i]->UpdateVertices(vertex);
                     _lines[i]->Bind();
+#endif
+
                 }
 
-                for (int j = 1; j < segments - 1; j++) {
+                for (int j = 1; j < segments; j++) {
                     meshIndex.emplace_back(0);
                     meshIndex.emplace_back(j);
                     meshIndex.emplace_back(j+1);
-
-                    meshIndex.emplace_back(j+1);
-                    meshIndex.emplace_back(0);
-                    meshIndex.emplace_back(j);
                 }
+
+                meshIndex.emplace_back(0);
+                meshIndex.emplace_back(segments);
+                meshIndex.emplace_back(1);
 
                 if (const auto &meshRenderer = _meshRenderer.lock()) {
                     meshRenderer->SetUniformVec3("center", centerPosition);
