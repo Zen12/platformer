@@ -13,6 +13,12 @@
 #include <ft2build.h>
 
 #include "asset_files.hpp"
+#include "../render/spine/spine_data.hpp"
+#include "../render/spine/spine-glfw.h"
+#include "spine/Atlas.h"
+#include "spine/Bone.h"
+#include "spine/Skeleton.h"
+#include "spine/SkeletonBinary.h"
 
 #include FT_FREETYPE_H
 
@@ -134,5 +140,37 @@ public:
         const std::string value = LoadFromPath<std::string>(path);
         YAML::Node root = YAML::Load(value);
         return root.as<ProjectAsset>();
+    }
+
+    template<>
+    SpineAsset LoadFromPath<SpineAsset>(const std::string &path) {
+        const std::string value = LoadFromPath<std::string>(path);
+        YAML::Node root = YAML::Load(value);
+        return root.as<SpineAsset>();
+    }
+
+    template<>
+    SpineData LoadFromPath<SpineData>(const std::string &path) {
+
+        auto newPath = std::filesystem::path(path);
+        newPath.replace_extension();
+
+        // We use a y-down coordinate system, see renderer_set_viewport_size()
+        spine::Bone::setYDown(true);
+
+        // Load the atlas and the skeleton data
+        GlTextureLoader textureLoader;
+        spine::Atlas *atlas = new spine::Atlas( (newPath.string() + ".atlas-spine").c_str(), &textureLoader);
+        spine::SkeletonBinary binary(atlas);
+        spine::SkeletonData *skeletonData = binary.readSkeletonDataFile((newPath.string() + ".skel-spine").c_str());
+
+        // Create a skeleton from the data, set the skeleton's position to the bottom center of
+        // the screen and scale it to make it smaller.
+        spine::Skeleton* skeleton = new spine::Skeleton(skeletonData);
+        skeleton->setPosition(200 / 2, 200 - 100);
+        skeleton->setScaleX(0.3);
+        skeleton->setScaleY(0.3);
+
+        return {atlas, skeleton};
     }
 };

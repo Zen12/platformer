@@ -16,6 +16,7 @@ find_package(GLFW3 3.3 REQUIRED)
 find_package(FREETYPE REQUIRED)
 find_package(YAMLCPP REQUIRED)
 find_package(Box2D REQUIRED)
+find_package(Spine REQUIRED)
 
 # Find all header files
 file(GLOB_RECURSE HEADER_FILES "src/*.hpp")
@@ -24,10 +25,10 @@ file(GLOB_RECURSE HEADER_FILES "src/*.hpp")
 file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
 
 # Create executable target
-add_executable(${CMAKE_PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
+add_executable(${CMAKE_PROJECT_NAME} ${USE_MACOSX_BUNDLE}
+        ${HEADER_FILES} ${SOURCE_FILES} ${SPINE_CPP_SOURCES})
 
 # Compiler warnings and errors per compiler and configuration
-
 if(MSVC)
     # MSVC flags for warnings and optimization/debug
     target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
@@ -49,11 +50,6 @@ else()
     )
 endif()
 
-# Link libraries to your target
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw GLM::GLM freetype yaml-cpp box2d)
-
-# Include directories (example: external stb lib, adjust as needed)
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR})
-
-# Define macro with asset path
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw GLM::GLM freetype yaml-cpp box2d spine-cpp)
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR} ${SPINE_CPP_SOURCES})
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/")

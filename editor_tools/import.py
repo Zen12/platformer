@@ -50,7 +50,12 @@ def ext_check(value_ext):
         ".frag": "fragment-shader",
         ".scene": "scene",
         ".prefab": "prefab",
-        ".mat": "material"
+        ".mat": "material",
+        ".atlas-spine": "atlas-spine",
+        ".png-spine": "image-spine",
+        ".json-spine": "json-spine",
+        ".skel-spine": "skel-spine",
+        ".engine-spine": "engine-spine"
     }
     return mapping.get(value_ext, "error")
 

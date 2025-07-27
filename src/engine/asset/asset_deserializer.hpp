@@ -69,6 +69,21 @@ struct ShaderComponentSerialization final : public ComponentSerialization
         return "shader";
     }
 };
+struct SpineRenderComponentSerialization final : public ComponentSerialization
+{
+    const std::string MaterialGuid;
+    const std::string SpineGuid;
+
+    explicit SpineRenderComponentSerialization(std::string materialGuid, std::string spineGuid)
+        : MaterialGuid(std::move(materialGuid)), SpineGuid(std::move(spineGuid))
+    {
+    }
+
+    [[nodiscard]] std::string getType() const override
+    {
+        return "spine_renderer";
+    }
+};
 
 struct SpriteRenderComponentSerialization final : public ComponentSerialization
 {
@@ -255,6 +270,13 @@ inline std::unique_ptr<UiTextComponentSerialization> createUiText(const YAML::No
     return comp;
 }
 
+
+inline std::unique_ptr<SpineRenderComponentSerialization> createSpineRenderer(const YAML::Node &map)
+{
+    return std::make_unique<SpineRenderComponentSerialization>(
+        map["material"].as<std::string>(), map["spine_data"].as<std::string>());
+}
+
 inline std::unique_ptr<MeshRendererComponentSerialization> createMeshRenderer(const YAML::Node &map)
 {
     return std::make_unique<MeshRendererComponentSerialization>(
@@ -416,6 +438,8 @@ inline std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAM
         return createLight2dRenderer(map);
     } if (type == "mesh_renderer") {
         return createMeshRenderer(map);
+    }if (type == "spine_renderer") {
+        return createSpineRenderer(map);
     }
 
     throw std::runtime_error("Unknown component type: " + type);

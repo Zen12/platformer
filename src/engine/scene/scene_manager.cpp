@@ -1,6 +1,5 @@
 #include "scene_manager.hpp"
 
-#include "../components/light_2d.hpp"
 
 void SceneManager::LoadScene(const SceneAsset &scene) {
     PROFILE_SCOPE("Loading of scene " + scene.Name);
@@ -105,6 +104,24 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                         _renderPipeline.lock()->AddRenderer(spriteRenderer);
                     }
 
+                }else if (comp->getType() == "spine_renderer") {
+
+                    if (const auto spineRenderer = newEntity->AddComponent<SpineRenderer>().lock()) {
+
+                        const auto *serialization = dynamic_cast<SpineRenderComponentSerialization *>(comp.get());
+                        const auto material = GetMaterial(serialization->MaterialGuid);
+                        const auto spineAsset = assetManager->LoadAssetByGuid<SpineAsset>(serialization->SpineGuid);
+
+                        const auto sprite = GetSprite(spineAsset.image);
+
+                        const auto spineData = GetSpineData(serialization->SpineGuid);
+
+                        spineRenderer->SetMaterial(material);
+                        spineRenderer->SetSpine(spineData);
+
+                        _renderPipeline.lock()->AddRenderer(spineRenderer);
+                    }
+
                 }else if (comp->getType() == "box_collider") {
                     if (auto boxCollider = newEntity->AddComponent<BoxCollider2DComponent>().lock()) {
                         const auto *serialization = dynamic_cast<Box2dColliderSerialization *>(comp.get());
@@ -159,6 +176,7 @@ void SceneManager::UnLoadAll() {
     _shaders.clear();
     _materials.clear();
     _sprites.clear();
+    _spineDatas.clear();
     _fonts.clear();
     _meshes.clear();
 }
@@ -199,12 +217,22 @@ std::shared_ptr<Material> SceneManager::GetMaterial(const std::string &guid) {
     return {};
 }
 
+std::shared_ptr<SpineData> SceneManager::GetSpineData(const std::string &guid) {
+    if (const auto assetManager = _assetManager.lock()) {
+        if (_spineDatas.find(guid) == _spineDatas.end()) {
+            const auto spineData = std::make_shared<SpineData>(assetManager->LoadSourceByGuid<SpineData>(guid));
+            _spineDatas[guid] = spineData;
+            return spineData;
+        }
+        return _spineDatas[guid];
+    }
+    return {};
+}
+
 std::shared_ptr<Sprite> SceneManager::GetSprite(const std::string &guid) {
     if (const auto assetManager = _assetManager.lock()) {
         if (_sprites.find(guid) == _sprites.end()) {
-            const auto spriteSerialization = assetManager->LoadSourceByGuid<Sprite>(guid);
-
-            const auto sprite = std::make_shared<Sprite>(spriteSerialization);
+            const auto sprite = std::make_shared<Sprite>(assetManager->LoadSourceByGuid<Sprite>(guid));
             _sprites[guid] = sprite;
             return sprite;
         }

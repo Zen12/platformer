@@ -7,6 +7,7 @@
 #include "../components/light_2d.hpp"
 #include "../system/window.hpp"
 #include  "../components/camera_component.hpp"
+#include "../components/spine_renderer.hpp"
 
 
 class RenderPipeline
@@ -22,6 +23,7 @@ private:
     std::vector<std::weak_ptr<MeshRenderer>> _meshRenderers;
     std::vector<std::weak_ptr<Light2dComponent>> _lights2d;
     std::vector<std::weak_ptr<LineRenderer>> _lines;
+    std::vector<std::weak_ptr<SpineRenderer>> _spines;
     std::vector<std::weak_ptr<UiTextRenderer>> _texts;
     std::vector<std::weak_ptr<UiImageRenderer>> _images;
 
@@ -51,6 +53,7 @@ public:
     void AddRenderer(const std::weak_ptr<SpriteRenderer> &sprite) { _sprites.push_back(sprite); }
     void AddRenderer(const std::weak_ptr<Light2dComponent> &light) { _lights2d.push_back(light); }
     void AddRenderer(const std::weak_ptr<LineRenderer> &line) { _lines.push_back(line); }
+    void AddRenderer(const std::weak_ptr<SpineRenderer> &spine) { _spines.push_back(spine); }
 
     void AddRenderer(const std::weak_ptr<UiTextRenderer> &text) { _texts.push_back(text); }
     void AddRenderer(const std::weak_ptr<UiImageRenderer> &image) { _images.push_back(image); }
@@ -62,5 +65,6 @@ public:
     void RenderLines() const;
     void RenderMeshes() const;
     void RenderLights() const;
+    void RenderSpine() const;
     void Cleanup();
 };

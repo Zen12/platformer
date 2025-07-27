@@ -59,14 +59,10 @@ TODO
 - 🌙 Lua scripting
 
 ## TODO
-- [x] Input system
-- [x] Collider component
-- [x] Rigidbody component
-- [x] Raycast debug line
-- [ ] Light2d
 - [ ] Spine runtime
 - [ ] 2d Character controller
 - [ ] Webgl build 
+- [ ] Light2d better ray-detection
 - [ ] UI buttons
 - [ ] Post-processing components
 

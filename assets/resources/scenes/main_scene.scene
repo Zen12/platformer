@@ -67,10 +67,10 @@ entities:
                       - y: 1.0
                       - z: 1.0
           - component:
-              - type: sprite_renderer
+              - type: spine_renderer
               - data:
                   - material: f22681f4-45d1-4542-a838-99f854890c18
-                  - image: 126fb991-fe1c-45e0-ae0c-1649a2c65ae3
+                  - spine_data: 6c51e080-77d1-440c-bdc0-47169c111e20
   - obj:
       - guid: light_2d
       - components:

@@ -76,7 +76,7 @@ struct YAML::convert<MaterialAsset>
     }
 };
 
-struct  ProjectAsset
+struct ProjectAsset
 {
     std::string Name{};
     std::vector<std::string> Scenes{};
@@ -91,6 +91,27 @@ struct YAML::convert<ProjectAsset>
         rhs.Name = node["name"].as<std::string>();
         rhs.Scenes = node["scenes"].as<std::vector<std::string>>();
         rhs.Resolution = node["resolution"].as<std::vector<int>>();
+        return true;
+    }
+};
+
+struct SpineAsset : Asset {
+    std::string skeleton{};
+    std::string atlas{};
+    std::string image{};
+    std::string json{};
+};
+
+template <>
+struct YAML::convert<SpineAsset>
+{
+    static bool decode(const Node &node, SpineAsset &rhs)
+    {
+        rhs.Name = node["name"].as<std::string>();
+        rhs.skeleton = node["skeleton"].as<std::string>();
+        rhs.atlas = node["atlas"].as<std::string>();
+        rhs.image = node["image"].as<std::string>();
+        rhs.json = node["json"].as<std::string>();
         return true;
     }
 };
