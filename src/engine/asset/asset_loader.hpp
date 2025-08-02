@@ -14,7 +14,6 @@
 
 #include "asset_files.hpp"
 #include "../render/spine/spine_data.hpp"
-#include "../render/spine/spine-glfw.h"
 #include "spine/Atlas.h"
 #include "spine/Bone.h"
 #include "spine/Skeleton.h"
@@ -150,8 +149,10 @@ public:
     }
 
     template<>
-    SpineData LoadFromPath<SpineData>(const std::string &path) {
+    SpineData LoadFromPath<SpineData>([[maybe_unused]] const std::string &path) {
+        return {};
 
+/*
         auto newPath = std::filesystem::path(path);
         newPath.replace_extension();
 
@@ -163,14 +164,6 @@ public:
         spine::Atlas *atlas = new spine::Atlas( (newPath.string() + ".atlas-spine").c_str(), &textureLoader);
         spine::SkeletonBinary binary(atlas);
         spine::SkeletonData *skeletonData = binary.readSkeletonDataFile((newPath.string() + ".skel-spine").c_str());
-
-        // Create a skeleton from the data, set the skeleton's position to the bottom center of
-        // the screen and scale it to make it smaller.
-        spine::Skeleton* skeleton = new spine::Skeleton(skeletonData);
-        skeleton->setPosition(200 / 2, 200 - 100);
-        skeleton->setScaleX(0.3);
-        skeleton->setScaleY(0.3);
-
-        return {atlas, skeleton};
+*/
     }
 };

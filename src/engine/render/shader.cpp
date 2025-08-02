@@ -66,6 +66,11 @@ void Shader::SetVec2(const int32_t &location, const float &x, const float &y) co
     glUniform2f(location, x, y);
 }
 
+void Shader::SetInt(const int32_t &location, const int &x) const noexcept
+{
+    glUniform1i(location, x);
+}
+
 void Shader::SetMat4(const int32_t &location, const glm::mat4 &mat) const noexcept
 {
     glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));

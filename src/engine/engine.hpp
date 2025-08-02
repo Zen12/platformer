@@ -1,3 +1,5 @@
+#define STB_IMAGE_IMPLEMENTATION
+
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <box2d/box2d.h>

@@ -27,10 +27,11 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#include "spine-glfw.h"
+#include "spine-glfw.h-temp"
 #include <cstdio>
 #include <string>
 
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
 using namespace spine;
