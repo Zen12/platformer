@@ -12,6 +12,7 @@ class MeshRenderer final : public Component {
 private:
     Mesh _mesh;
     std::weak_ptr<Material> _material{};
+    std::weak_ptr<Sprite> _sprite{};
 #ifndef NDEBUG
     std::vector<std::unique_ptr<Line>> _lines{};
 #endif
@@ -22,6 +23,9 @@ public:
     {
     }
 
+    void SetSprite(const std::weak_ptr<Sprite> &sprite) {
+        _sprite = sprite;
+    }
 
     void UpdateMesh(const std::vector<float> &vertices, const std::vector<unsigned int> &indices) {
         _mesh.UpdateData(vertices, indices);
@@ -40,6 +44,9 @@ public:
 
     void Update() const override {
         if (const auto material = _material.lock()) {
+            if (const auto sprite = _sprite.lock()) {
+                sprite->Bind();
+            }
             material->Bind();
             _mesh.Bind();
         }

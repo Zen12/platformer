@@ -39,15 +39,15 @@ public:
                     std::vector<float> vertices{};
                     std::vector<uint32_t> index{};
 
-                    float *positions = command->positions;
-                    float *uvs = command->uvs;
+                    const float *positions = command->positions;
+                    const float *uvs = command->uvs;
                     for (int i = 0, j = 0; i < num_command_vertices; i++, j += 2) {
-                        vertices.push_back(positions[j + 0]);
-                        vertices.push_back(positions[j + 1]);
+                        vertices.push_back(positions[j + 0] / -800.0f); // because of cull need to flip
+                        vertices.push_back(positions[j + 1] / 800.0f);
                         vertices.push_back(0); //z
 
                         vertices.push_back(uvs[j + 0]);
-                        vertices.push_back(uvs[j + 1]);
+                        vertices.push_back(1 - uvs[j + 1]); // flip y-uv
                     }
 
                     for (int i = 0; i < command->numIndices; i++) {

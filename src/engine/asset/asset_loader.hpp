@@ -153,9 +153,6 @@ public:
         auto newPath = std::filesystem::path(path);
         newPath.replace_extension();
 
-        // We use a y-down coordinate system, see renderer_set_viewport_size()
-        spine::Bone::setYDown(true);
-
         // Load the atlas and the skeleton data
         GlTextureLoader textureLoader;
         const auto path2 = ASSETS_PATH"resources/spines/spineboy-pro.atlas-spine";
@@ -166,10 +163,7 @@ public:
         std::shared_ptr<spine::Skeleton> skeleton = std::make_shared<spine::Skeleton>(skeletonData);
 
         spine::AnimationStateData animationStateData(skeletonData);
-        animationStateData.setDefaultMix(0.2f);
 
-        constexpr float scaleFactor = 0.0004f;
-
-        return {skeleton, std::make_shared<spine::AnimationState>(&animationStateData), scaleFactor};
+        return {skeleton, std::make_shared<spine::AnimationState>(&animationStateData)};
     }
 };

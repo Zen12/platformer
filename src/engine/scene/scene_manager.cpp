@@ -115,6 +115,7 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
 
                         const auto spineData = GetSpineData(serialization->SpineGuid);
                         const auto meshRenderer = newEntity->GetComponent<MeshRenderer>();
+                        meshRenderer.lock()->SetSprite(sprite);
                         spineRenderer->SetSpine(spineData);
                         spineRenderer->SetMeshRenderer(meshRenderer);
                     }
