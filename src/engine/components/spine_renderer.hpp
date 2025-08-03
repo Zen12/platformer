@@ -1,5 +1,6 @@
 #pragma once
 #include "entity.hpp"
+#include "mesh_renderer.hpp"
 #include "../render/material.hpp"
 #include "../render/spine/spine_data.hpp"
 
@@ -7,32 +8,60 @@
 class SpineRenderer final : public Component {
 private:
     std::weak_ptr<SpineData> _spine{};
-    std::weak_ptr<Material> _material{};
+    std::weak_ptr<MeshRenderer> _meshRenderer{};
     std::unique_ptr<spine::SkeletonRenderer> _skeletonRenderer{};
-    Mesh _mesh;
 
 public:
     explicit SpineRenderer(const std::weak_ptr<Entity> &entity)
-        : Component(entity), _mesh(Mesh::GenerateSprite()) {
+        : Component(entity) {
 
         _skeletonRenderer = std::make_unique<spine::SkeletonRenderer>();
     }
 
-    void Update() const override;
+    void Update() const override {
+        if (const auto spine = _spine.lock()) {
+            if (const auto skeleton = spine->GetSkeleton().lock()) {
+                const float deltaTime = 0.01f;
+                skeleton->update(deltaTime);
+                spine->GetAnimationState().lock()->update(deltaTime);
+                spine->GetAnimationState().lock()->apply(*skeleton);
 
-    void SetSpine(const std::weak_ptr<SpineData> &spine) {
-        _spine = spine;
+                // Update the skeleton time (used for physics)
+                skeleton->update(deltaTime);
+
+                // Calculate the new pose
+                skeleton->updateWorldTransform(spine::Physics_Update);
+
+                spine::RenderCommand *command = _skeletonRenderer->render(*skeleton);
+                if (command) {
+                    const int num_command_vertices = command->numVertices;
+
+                    std::vector<float> vertices{};
+                    std::vector<uint32_t> index{};
+
+                    float *positions = command->positions;
+                    const float scale = 300.0f;
+                    for (int i = 0, j = 0; i < num_command_vertices; i++, j += 2) {
+                        vertices.push_back(positions[j + 0] /scale);
+                        vertices.push_back(positions[j + 1] / scale);
+                        vertices.push_back(0); //z
+                    }
+
+                    for (int i = 0; i < command->numIndices; i++) {
+                        index.push_back(command->indices[i]);
+                    }
+
+                    _meshRenderer.lock()->UpdateMesh(vertices, index);
+                }
+            }
+        }
     }
 
-    void SetMaterial(const std::weak_ptr<Material> &material) noexcept;
-
-    [[nodiscard]] int32_t GetShaderId() const noexcept {
-        if (auto material = _material.lock())
-            return material->GetShaderId();
-
-        return -1;
+    void SetSpine(std::weak_ptr<SpineData> spine) {
+        _spine = std::move(spine);
     }
 
-
-    void Render() noexcept;
+    void SetMeshRenderer(std::weak_ptr<MeshRenderer> material) noexcept {
+        _meshRenderer = std::move(material);
+    }
 };

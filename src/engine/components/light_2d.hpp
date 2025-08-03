@@ -13,7 +13,7 @@
 class Light2dComponent final : public Component {
     std::weak_ptr<Transform> _center;
     std::weak_ptr<Material> _material;
-    std::vector<std::unique_ptr<Line>> _lines;
+
     std::weak_ptr<PhysicsWorld> _physicsWorld;
     std::weak_ptr<MeshRenderer> _meshRenderer;
 
@@ -27,9 +27,6 @@ public:
     Light2dComponent() = delete;
     explicit Light2dComponent(const std::weak_ptr<Entity> &entity)
     : Component(entity) {
-        for (int i = 0;i < segments; i++) {
-            _lines.emplace_back(std::make_unique<Line>(std::vector<float>{0,200,0,0,200,0}));
-        }
     }
 
     void Update() const override {
@@ -82,10 +79,6 @@ public:
                     meshVert.emplace_back(x);
                     meshVert.emplace_back(y);
                     meshVert.emplace_back(0);
-#ifndef NDEBUG
-                    _lines[i]->UpdateVertices(vertex);
-                    _lines[i]->Bind();
-#endif
 
                 }
 

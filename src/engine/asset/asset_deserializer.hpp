@@ -71,11 +71,10 @@ struct ShaderComponentSerialization final : public ComponentSerialization
 };
 struct SpineRenderComponentSerialization final : public ComponentSerialization
 {
-    const std::string MaterialGuid;
     const std::string SpineGuid;
 
-    explicit SpineRenderComponentSerialization(std::string materialGuid, std::string spineGuid)
-        : MaterialGuid(std::move(materialGuid)), SpineGuid(std::move(spineGuid))
+    explicit SpineRenderComponentSerialization(std::string spineGuid)
+        : SpineGuid(std::move(spineGuid))
     {
     }
 
@@ -274,7 +273,7 @@ inline std::unique_ptr<UiTextComponentSerialization> createUiText(const YAML::No
 inline std::unique_ptr<SpineRenderComponentSerialization> createSpineRenderer(const YAML::Node &map)
 {
     return std::make_unique<SpineRenderComponentSerialization>(
-        map["material"].as<std::string>(), map["spine_data"].as<std::string>());
+         map["spine_data"].as<std::string>());
 }
 
 inline std::unique_ptr<MeshRendererComponentSerialization> createMeshRenderer(const YAML::Node &map)

@@ -2,6 +2,7 @@
 #include "entity.hpp"
 #include "../render/material.hpp"
 #include "../render/mesh.hpp"
+#include "../render/line.hpp"
 
 
 class MeshRenderer final : public Component {
@@ -9,6 +10,9 @@ class MeshRenderer final : public Component {
 private:
     Mesh _mesh;
     std::weak_ptr<Material> _material{};
+#ifndef NDEBUG
+    std::vector<std::unique_ptr<Line>> _lines{};
+#endif
 
 public:
     explicit MeshRenderer(const std::weak_ptr<Entity> &entity)
@@ -39,10 +43,27 @@ public:
         }
     }
 
-    void Render() const noexcept {
+    void Render() noexcept {
         if (const auto material = _material.lock()) {
             glDrawElements(GL_TRIANGLES, static_cast<int32_t>(_mesh.GetIndicesCount()), GL_UNSIGNED_INT, nullptr);
         }
+
+#ifndef NDEBUG
+        const auto verts = _mesh.GetVertices();
+        int lineIndex = 0;
+        for (int i=0; i< verts.size(); i+=3) {
+            std::vector<float> arr = {verts[i], verts[i+1], verts[i+2], 0, 0, 0};
+            if (lineIndex >= _lines.size()) {
+                _lines.emplace_back(std::make_unique<Line>(arr));
+            } else {
+                _lines[lineIndex]->UpdateVertices(arr);
+            }
+
+            _lines[lineIndex]->Bind();
+            lineIndex++;
+        }
+
+#endif
     }
 
     [[nodiscard]] int32_t GetShaderId() const noexcept {

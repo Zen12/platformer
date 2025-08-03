@@ -36,6 +36,10 @@ public:
     [[nodiscard]] size_t GetVertexCount() const noexcept;
     [[nodiscard]] size_t GetIndicesCount() const noexcept;
 
+    [[nodiscard]] const std::vector<float> &GetVertices() const noexcept {
+        return _vertices;
+    }
+
     static Mesh GenerateSquare();
 
     static Mesh GenerateSprite();

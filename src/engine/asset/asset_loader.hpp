@@ -2,7 +2,6 @@
 
 #include <fstream>
 
-#include "../render/shader.hpp"
 #include "../render/sprite.hpp"
 #include "../render/font.hpp"
 #include <yaml-cpp/yaml.h>

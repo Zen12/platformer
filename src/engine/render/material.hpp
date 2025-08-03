@@ -84,7 +84,7 @@ public:
         }
     }
 
-    void SetInt(const std::string &name, const int& value) {
+    void SetInt(const std::string &name, const int& value) const {
 
         if (const auto shader = _shader.lock())
         {

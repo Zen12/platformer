@@ -1,7 +1,7 @@
 #include "mesh.hpp"
 #include <GL/glew.h>
 
-#define DEBUG_ENGINE_MESH 0
+#define DEBUG_ENGINE_MESH 1
 
 Mesh::Mesh(
     const std::vector<float> &vertices,
@@ -38,6 +38,23 @@ Mesh::Mesh(
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glBindVertexArray(0);
+
+#ifndef NDEBUG
+#if DEBUG_ENGINE_MESH
+    std::cout << "Create Mesh \n";
+    std::cout << "VAO: " << _vao << " VBO: " << _vbo << "EBO: " << _ebo << "\n";
+    std::cout << "\nSize Vertex: " << vertices.size() << "\n";
+    for (const float vertice : vertices) {
+        std::cout << vertice << " ";
+    }
+
+    std::cout << "\nSize Index: " << indices.size() << "\n";
+    for (const auto index : indices) {
+        std::cout << index << " ";
+    }
+    std::cout << "\n";
+#endif
+#endif
 }
 
 void Mesh::UpdateData(const std::vector<float> &vertices, const std::vector<uint32_t> &indices) noexcept {

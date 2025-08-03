@@ -53,7 +53,6 @@ public:
     void AddRenderer(const std::weak_ptr<SpriteRenderer> &sprite) { _sprites.push_back(sprite); }
     void AddRenderer(const std::weak_ptr<Light2dComponent> &light) { _lights2d.push_back(light); }
     void AddRenderer(const std::weak_ptr<LineRenderer> &line) { _lines.push_back(line); }
-    void AddRenderer(const std::weak_ptr<SpineRenderer> &spine) { _spines.push_back(spine); }
 
     void AddRenderer(const std::weak_ptr<UiTextRenderer> &text) { _texts.push_back(text); }
     void AddRenderer(const std::weak_ptr<UiImageRenderer> &image) { _images.push_back(image); }
@@ -65,6 +64,5 @@ public:
     void RenderLines() const;
     void RenderMeshes() const;
     void RenderLights() const;
-    void RenderSpine() const;
     void Cleanup();
 };

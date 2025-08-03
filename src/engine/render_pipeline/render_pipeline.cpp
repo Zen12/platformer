@@ -131,39 +131,8 @@ void RenderPipeline::RenderLights() const {
     }
 }
 
-void RenderPipeline::RenderSpine() const {
-    const auto projectionMat = _camera3d.lock()->GetProjection();
-    const auto viewMat = _cameraTransform3d.lock()->GetModel();
-
-    const auto projection = glm::value_ptr(projectionMat);
-    const auto view = glm::value_ptr(viewMat);
-
-    for (const auto& value : _spines)
-    {
-        if (const auto& spine = value.lock())
-        {
-            spine->Update(); // move to material
-
-            const auto model = spine->GetEntity().lock()->GetComponent<Transform>().lock();
-
-            const auto shaderId = spine->GetShaderId();
-
-            const auto modelLock = glGetUniformLocation(shaderId, "model");
-            glUniformMatrix4fv(modelLock, 1, GL_FALSE, glm::value_ptr(model->GetModel()));
-
-            const auto viewLock = glGetUniformLocation(shaderId, "view");
-            glUniformMatrix4fv(viewLock, 1, GL_FALSE, view);
-
-            const auto projLock = glGetUniformLocation(shaderId, "projection");
-            glUniformMatrix4fv(projLock, 1, GL_FALSE, projection);
-
-            spine->Render();
-        }
-    }
-}
-
 void RenderPipeline::Init() const noexcept {
-    glEnable(GL_CULL_FACE);
+    //glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 

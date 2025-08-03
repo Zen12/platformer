@@ -40,80 +40,26 @@ public:
         _animationState(animationState)
     {
         // We use a y-down coordinate system, see renderer_set_viewport_size()
-        spine::Bone::setYDown(true);
-
-        int width = 800, height = 600;
-
-        // Create a skeleton from the data, set the skeleton's position to the bottom center of
-        // the screen and scale it to make it smaller.
-        _skeleton->setPosition(width / 2, height - 100);
+        //_skeleton->setPosition(0, 0);
         _skeleton->setScaleX(0.3);
-        _skeleton->setScaleY(0.3);
+        _skeleton->setScaleY(-0.3);
 
-        // Create an AnimationState to drive animations on the skeleton. Set the "portal" animation
-        // on track with index 0.
-        //spine::AnimationStateData animationStateData(skeletonData);
-        //animationStateData.setDefaultMix(0.2f);
-        //spine::AnimationState animationState(&animationStateData);
         _animationState->setAnimation(0, "portal", true);
         _animationState->addAnimation(0, "run", true, 0);
 
-/*
-
-        renderer = new spine::SkeletonRenderer();
-        shader = std::make_shared<Shader>(vert, frag);
-        vertex_buffer = std::vector<float>();
-        */
     }
 
     [[nodiscard]] std::weak_ptr<spine::Skeleton> GetSkeleton() const { return _skeleton; }
-/*
-    void Render() {
 
-        shader->Use();
-        const auto location = shader->GetLocation("uTexture");
-        shader->SetInt(location, 0);
-        glEnable(GL_BLEND);
+    [[nodiscard]] std::weak_ptr<spine::AnimationState> GetAnimationState() const { return _animationState; }
 
-        spine::RenderCommand *command = renderer->render(*skeleton);
-        while (command) {
-            int num_command_vertices = command->numVertices;
-            vertex_buffer.clear();
-            index_buffer.clear();
-
-            float *positions = command->positions;
-            float *uvs = command->uvs;
-            uint32_t *colors = command->colors;
-            uint32_t *darkColors = command->darkColors;
-            for (int i = 0, j = 0; i < num_command_vertices; i++, j += 2) {
-                vertex_buffer.push_back(positions[j]);
-                vertex_buffer.push_back(positions[j + 1]);
-                vertex_buffer.push_back(uvs[j]);
-                vertex_buffer.push_back(uvs[j + 1]);
-                uint32_t color = colors[i];
-                //vertex->color = (color & 0xFF00FF00) | ((color & 0x00FF0000) >> 16) | ((color & 0x000000FF) << 16);
-                //uint32_t darkColor = darkColors[i];
-                //vertex->darkColor = (darkColor & 0xFF00FF00) | ((darkColor & 0x00FF0000) >> 16) | ((darkColor & 0x000000FF) << 16);
-            }
-
-            for (int i = 0; i < command->numIndices; i++) {
-                index_buffer.push_back(command->indices[i]);
-            }
-
-            //mesh.UpdateData(vertex_buffer, index_buffer);
-
-            GLuint texture = (unsigned int) (uintptr_t)  command->texture;
-            glActiveTexture(GL_TEXTURE0);// Set active texture unit to 0
-            glBindTexture(GL_TEXTURE_2D, texture);
-
-            //mesh.Bind();
-            //glDrawElements(GL_TRIANGLES, mesh.GetIndicesCount(), GL_UNSIGNED_SHORT, nullptr);
-            glDrawElements(GL_TRIANGLES, 4, GL_UNSIGNED_SHORT, nullptr);
-            glBindVertexArray(0);
-
-            command = command->next;
-        }
+    void SetScale(const glm::vec2 &scale) const noexcept{
+        _skeleton->setScaleX(scale.x);
+        _skeleton->setScaleY(scale.y);
     }
 
-*/
+    void SetScale(const float &scale) const noexcept {
+        _skeleton->setScaleX(scale);
+        _skeleton->setScaleY(scale);
+    }
 };

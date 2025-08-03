@@ -67,9 +67,12 @@ entities:
                       - y: 1.0
                       - z: 1.0
           - component:
+                - type: mesh_renderer
+                - data:
+                      - material: 5faecd48-398f-46db-889f-ba4199c2636f
+          - component:
               - type: spine_renderer
               - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c18
                   - spine_data: 6c51e080-77d1-440c-bdc0-47169c111e20
   - obj:
       - guid: light_2d

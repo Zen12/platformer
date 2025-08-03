@@ -109,17 +109,14 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                     if (const auto spineRenderer = newEntity->AddComponent<SpineRenderer>().lock()) {
 
                         const auto *serialization = dynamic_cast<SpineRenderComponentSerialization *>(comp.get());
-                        const auto material = GetMaterial(serialization->MaterialGuid);
                         const auto spineAsset = assetManager->LoadAssetByGuid<SpineAsset>(serialization->SpineGuid);
 
                         const auto sprite = GetSprite(spineAsset.image);
 
                         const auto spineData = GetSpineData(serialization->SpineGuid);
-
-                        spineRenderer->SetMaterial(material);
+                        const auto meshRenderer = newEntity->GetComponent<MeshRenderer>();
                         spineRenderer->SetSpine(spineData);
-
-                        _renderPipeline.lock()->AddRenderer(spineRenderer);
+                        spineRenderer->SetMeshRenderer(meshRenderer);
                     }
 
                 }else if (comp->getType() == "box_collider") {
