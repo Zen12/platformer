@@ -29,6 +29,7 @@ public:
     Mesh& operator=(Mesh&&) noexcept = delete;
 
     void UpdateData(const std::vector<float> &vertices, const std::vector<uint32_t> &indices) noexcept;
+    void EnableTexture() noexcept;
 
     ~Mesh();
 

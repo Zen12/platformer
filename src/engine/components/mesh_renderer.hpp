@@ -4,6 +4,8 @@
 #include "../render/mesh.hpp"
 #include "../render/line.hpp"
 
+#define DEBUG_ENGINE_MESH_RENDERER 0
+
 
 class MeshRenderer final : public Component {
 
@@ -16,7 +18,7 @@ private:
 
 public:
     explicit MeshRenderer(const std::weak_ptr<Entity> &entity)
-        : Component(entity), _mesh(Mesh::GenerateSquare())
+        : Component(entity), _mesh(Mesh::GenerateSprite())
     {
     }
 
@@ -49,6 +51,7 @@ public:
         }
 
 #ifndef NDEBUG
+#if DEBUG_ENGINE_MESH_RENDERER
         const auto verts = _mesh.GetVertices();
         int lineIndex = 0;
         for (int i=0; i< verts.size(); i+=3) {
@@ -63,6 +66,7 @@ public:
             lineIndex++;
         }
 
+#endif
 #endif
     }
 

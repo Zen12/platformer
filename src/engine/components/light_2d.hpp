@@ -52,6 +52,10 @@ public:
                 meshVert.emplace_back(centerPosition.y);
                 meshVert.emplace_back(0);
 
+                // uv
+                meshVert.emplace_back(0);
+                meshVert.emplace_back(0);
+
                 const float step = 360.0f / static_cast<float>(segments);
 
                 for (int i = 0; i < segments; i++) {
@@ -78,6 +82,9 @@ public:
 
                     meshVert.emplace_back(x);
                     meshVert.emplace_back(y);
+                    meshVert.emplace_back(0);
+                    // uv
+                    meshVert.emplace_back(0);
                     meshVert.emplace_back(0);
 
                 }

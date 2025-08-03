@@ -1,7 +1,7 @@
 #include "mesh.hpp"
 #include <GL/glew.h>
 
-#define DEBUG_ENGINE_MESH 1
+#define DEBUG_ENGINE_MESH 0
 
 Mesh::Mesh(
     const std::vector<float> &vertices,

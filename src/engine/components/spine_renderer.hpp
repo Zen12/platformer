@@ -40,10 +40,14 @@ public:
                     std::vector<uint32_t> index{};
 
                     float *positions = command->positions;
+                    float *uvs = command->uvs;
                     for (int i = 0, j = 0; i < num_command_vertices; i++, j += 2) {
                         vertices.push_back(positions[j + 0]);
                         vertices.push_back(positions[j + 1]);
                         vertices.push_back(0); //z
+
+                        vertices.push_back(uvs[j + 0]);
+                        vertices.push_back(uvs[j + 1]);
                     }
 
                     for (int i = 0; i < command->numIndices; i++) {
