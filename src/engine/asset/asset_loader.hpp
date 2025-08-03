@@ -150,9 +150,7 @@ public:
 
     template<>
     SpineData LoadFromPath<SpineData>([[maybe_unused]] const std::string &path) {
-        return {};
 
-/*
         auto newPath = std::filesystem::path(path);
         newPath.replace_extension();
 
@@ -161,9 +159,16 @@ public:
 
         // Load the atlas and the skeleton data
         GlTextureLoader textureLoader;
-        spine::Atlas *atlas = new spine::Atlas( (newPath.string() + ".atlas-spine").c_str(), &textureLoader);
+        const auto path2 = ASSETS_PATH"resources/spines/spineboy-pro.atlas-spine";
+        spine::Atlas *atlas = new spine::Atlas(path2, &textureLoader);
         spine::SkeletonBinary binary(atlas);
-        spine::SkeletonData *skeletonData = binary.readSkeletonDataFile((newPath.string() + ".skel-spine").c_str());
-*/
+        spine::SkeletonData *skeletonData = binary.readSkeletonDataFile(ASSETS_PATH"resources/spines/spineboy-pro.skel-spine");
+
+        std::shared_ptr<spine::Skeleton> skeleton = std::make_shared<spine::Skeleton>(skeletonData);
+
+        spine::AnimationStateData animationStateData(skeletonData);
+        animationStateData.setDefaultMix(0.2f);
+
+        return {skeleton, std::make_shared<spine::AnimationState>(&animationStateData)};
     }
 };

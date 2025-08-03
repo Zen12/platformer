@@ -6,12 +6,16 @@
 
 class SpineRenderer final : public Component {
 private:
-    std::weak_ptr<SpineData> _spine;
+    std::weak_ptr<SpineData> _spine{};
     std::weak_ptr<Material> _material{};
+    std::unique_ptr<spine::SkeletonRenderer> _skeletonRenderer{};
+    Mesh _mesh;
 
 public:
     explicit SpineRenderer(const std::weak_ptr<Entity> &entity)
-        : Component(entity) {
+        : Component(entity), _mesh(Mesh::GenerateSprite()) {
+
+        _skeletonRenderer = std::make_unique<spine::SkeletonRenderer>();
     }
 
     void Update() const override;
@@ -30,5 +34,5 @@ public:
     }
 
 
-    void Render() const noexcept;
+    void Render() noexcept;
 };

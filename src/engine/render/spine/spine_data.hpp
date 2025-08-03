@@ -29,85 +29,45 @@ public:
 class SpineData
 {
 private:
-    std::shared_ptr<Shader> shader;
-    std::vector<float> vertex_buffer;
-    std::vector<uint32_t> index_buffer;
-    spine::SkeletonRenderer *renderer;
-
-    spine::Skeleton* skeleton;
+    std::shared_ptr<spine::Skeleton> _skeleton;
+    std::shared_ptr<spine::AnimationState> _animationState;
 
 public:
-    SpineData() {
+    SpineData(
+        const std::shared_ptr<spine::Skeleton> &skeleton,
+        const std::shared_ptr<spine::AnimationState> &animationState):
+        _skeleton(skeleton),
+        _animationState(animationState)
+    {
         // We use a y-down coordinate system, see renderer_set_viewport_size()
         spine::Bone::setYDown(true);
 
         int width = 800, height = 600;
 
-        // Load the atlas and the skeleton data
-        GlTextureLoader textureLoader;
-        const auto path = ASSETS_PATH"resources/spines/spineboy-pro.atlas-spine";
-        spine::Atlas *atlas = new spine::Atlas(path, &textureLoader);
-        spine::SkeletonBinary binary(atlas);
-        spine::SkeletonData *skeletonData = binary.readSkeletonDataFile(ASSETS_PATH"resources/spines/spineboy-pro.skel-spine");
-
         // Create a skeleton from the data, set the skeleton's position to the bottom center of
         // the screen and scale it to make it smaller.
-        skeleton = new spine::Skeleton(skeletonData);
-        skeleton->setPosition(width / 2, height - 100);
-        skeleton->setScaleX(0.3);
-        skeleton->setScaleY(0.3);
+        _skeleton->setPosition(width / 2, height - 100);
+        _skeleton->setScaleX(0.3);
+        _skeleton->setScaleY(0.3);
 
         // Create an AnimationState to drive animations on the skeleton. Set the "portal" animation
         // on track with index 0.
-        spine::AnimationStateData animationStateData(skeletonData);
-        animationStateData.setDefaultMix(0.2f);
-        spine::AnimationState animationState(&animationStateData);
-        animationState.setAnimation(0, "portal", true);
-        animationState.addAnimation(0, "run", true, 0);
+        //spine::AnimationStateData animationStateData(skeletonData);
+        //animationStateData.setDefaultMix(0.2f);
+        //spine::AnimationState animationState(&animationStateData);
+        _animationState->setAnimation(0, "portal", true);
+        _animationState->addAnimation(0, "run", true, 0);
 
-
-        const auto vert = R"(
-        #version 330 core
-        layout (location = 0) in vec2 aPos;
-        layout (location = 1) in vec4 aLightColor;
-        layout (location = 2) in vec2 aTexCoord;
-        layout (location = 3) in vec4 aDarkColor;
-
-        uniform mat4 uMatrix;
-
-        out vec4 lightColor;
-        out vec4 darkColor;
-        out vec2 texCoord;
-
-        void main() {
-            lightColor = aLightColor;
-            darkColor = aDarkColor;
-            texCoord = aTexCoord;
-            gl_Position = uMatrix * vec4(aPos, 0.0, 1.0);
-        }
-        )";
-        const auto frag =
-                                R"(
-        #version 330 core
-        in vec4 lightColor;
-        in vec4 darkColor;
-        in vec2 texCoord;
-        out vec4 fragColor;
-
-        uniform sampler2D uTexture;
-        void main() {
-            vec4 texColor = texture(uTexture, texCoord);
-            float alpha = texColor.a * lightColor.a;
-            fragColor.a = alpha;
-            fragColor.rgb = ((texColor.a - 1.0) * darkColor.a + 1.0 - texColor.rgb) * darkColor.rgb + texColor.rgb * lightColor.rgb;
-        }
-        )";
+/*
 
         renderer = new spine::SkeletonRenderer();
         shader = std::make_shared<Shader>(vert, frag);
         vertex_buffer = std::vector<float>();
+        */
     }
 
+    [[nodiscard]] std::weak_ptr<spine::Skeleton> GetSkeleton() const { return _skeleton; }
+/*
     void Render() {
 
         shader->Use();
@@ -155,14 +115,5 @@ public:
         }
     }
 
-
-
-    void Bind() {
-        //_mesh->Bind();
-    }
-
-    [[nodiscard]] size_t GetIndicesCount() const {
-        return 0;
-        //return _mesh->GetIndicesCount();
-    }
+*/
 };

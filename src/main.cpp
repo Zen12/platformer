@@ -78,6 +78,7 @@ int main()
         renderPipeline->RenderLights();
         renderPipeline->RenderMeshes();
         renderPipeline->RenderSprites();
+        renderPipeline->RenderSpine();
 
 #ifndef NDEBUG
         renderPipeline->RenderLines();

@@ -83,4 +83,14 @@ public:
             shader->SetVec2(location, x, y);
         }
     }
+
+    void SetInt(const std::string &name, const int& value) {
+
+        if (const auto shader = _shader.lock())
+        {
+            shader->Use();
+            const auto location = shader->GetLocation(name);
+            shader->SetInt(location, value);
+        }
+    }
 };
