@@ -35,16 +35,17 @@ private:
 public:
     SpineData(
         const std::shared_ptr<spine::Skeleton> &skeleton,
-        const std::shared_ptr<spine::AnimationState> &animationState):
+        const std::shared_ptr<spine::AnimationState> &animationState,
+        const float& scaleFactor):
         _skeleton(skeleton),
         _animationState(animationState)
     {
         // We use a y-down coordinate system, see renderer_set_viewport_size()
         //_skeleton->setPosition(0, 0);
-        _skeleton->setScaleX(0.3);
-        _skeleton->setScaleY(-0.3);
+        _skeleton->setScaleX(scaleFactor);
+        _skeleton->setScaleY(-scaleFactor);
 
-        _animationState->setAnimation(0, "portal", true);
+        //_animationState->setAnimation(0, "portal", true);
         _animationState->addAnimation(0, "run", true, 0);
 
     }

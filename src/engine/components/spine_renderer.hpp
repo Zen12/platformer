@@ -40,10 +40,9 @@ public:
                     std::vector<uint32_t> index{};
 
                     float *positions = command->positions;
-                    const float scale = 300.0f;
                     for (int i = 0, j = 0; i < num_command_vertices; i++, j += 2) {
-                        vertices.push_back(positions[j + 0] /scale);
-                        vertices.push_back(positions[j + 1] / scale);
+                        vertices.push_back(positions[j + 0]);
+                        vertices.push_back(positions[j + 1]);
                         vertices.push_back(0); //z
                     }
 

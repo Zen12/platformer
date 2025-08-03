@@ -168,6 +168,8 @@ public:
         spine::AnimationStateData animationStateData(skeletonData);
         animationStateData.setDefaultMix(0.2f);
 
-        return {skeleton, std::make_shared<spine::AnimationState>(&animationStateData)};
+        constexpr float scaleFactor = 0.0004f;
+
+        return {skeleton, std::make_shared<spine::AnimationState>(&animationStateData), scaleFactor};
     }
 };
