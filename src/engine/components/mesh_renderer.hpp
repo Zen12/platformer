@@ -3,6 +3,7 @@
 #include "../render/material.hpp"
 #include "../render/mesh.hpp"
 #include "../render/line.hpp"
+#include "transforms/transform.hpp"
 
 #define DEBUG_ENGINE_MESH_RENDERER 0
 
@@ -13,6 +14,7 @@ private:
     Mesh _mesh;
     std::weak_ptr<Material> _material{};
     std::weak_ptr<Sprite> _sprite{};
+    std::weak_ptr<Transform> _transform{};
 #ifndef NDEBUG
     std::vector<std::unique_ptr<Line>> _lines{};
 #endif
@@ -21,6 +23,7 @@ public:
     explicit MeshRenderer(const std::weak_ptr<Entity> &entity)
         : Component(entity), _mesh(Mesh::GenerateSprite())
     {
+        _transform = _entity.lock()->GetComponent<Transform>();
     }
 
     void SetSprite(const std::weak_ptr<Sprite> &sprite) {
@@ -52,7 +55,7 @@ public:
         }
     }
 
-    void Render() noexcept {
+    void Render() const noexcept {
         if (const auto material = _material.lock()) {
             glDrawElements(GL_TRIANGLES, static_cast<int32_t>(_mesh.GetIndicesCount()), GL_UNSIGNED_INT, nullptr);
         }
@@ -83,5 +86,13 @@ public:
         }
 
         return -1;
+    }
+
+    [[nodiscard]] float GetZOrder() const noexcept {
+        if (const auto transform = _transform.lock()) {
+            return transform->GetPosition().z;
+        }
+
+        return 0;
     }
 };

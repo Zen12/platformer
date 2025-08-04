@@ -18,12 +18,12 @@ Mesh::Mesh(
     glBindVertexArray(_vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-    glBufferData(GL_ARRAY_BUFFER, (long)(vertices.size() * sizeof(float)), vertices.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, static_cast<long>(vertices.size() * sizeof(float)), vertices.data(), GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, (long)(indices.size() * sizeof(uint32_t)), indices.data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<long>(indices.size() * sizeof(uint32_t)), indices.data(), GL_DYNAMIC_DRAW);
 
-    int32_t stride = useTexture ? (int32_t)(5 * sizeof(float)) : (int32_t)(3 * sizeof(float));
+    int32_t stride = useTexture ? static_cast<int32_t>(5 * sizeof(float)) : static_cast<int32_t>(3 * sizeof(float));
 
 
     // position attribute
@@ -37,7 +37,6 @@ Mesh::Mesh(
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    glBindVertexArray(0);
 
 #ifndef NDEBUG
 #if DEBUG_ENGINE_MESH
@@ -78,18 +77,19 @@ void Mesh::UpdateData(const std::vector<float> &vertices, const std::vector<uint
 #endif
 #endif
 
+    glBindVertexArray(_vao);
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
     if (vertices.size() <= _vertices.size()) {
-        glBufferSubData(GL_ARRAY_BUFFER, 0,  static_cast<long>(_vertices.size() * sizeof(float)), _vertices.data());
+        glBufferSubData(GL_ARRAY_BUFFER, 0,  static_cast<long>(vertices.size() * sizeof(float)), vertices.data());
     } else {
-        glBufferData(GL_ARRAY_BUFFER, (long)(vertices.size() * sizeof(float)), vertices.data(), GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, static_cast<long>(vertices.size() * sizeof(float)), vertices.data(), GL_DYNAMIC_DRAW);
     }
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
     if (indices.size() <= _indices.size()) {
-        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0,  static_cast<long>(_indices.size() * sizeof(float)), _indices.data());
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, static_cast<long>(indices.size() * sizeof(uint32_t)), indices.data());
     } else {
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, (long)(indices.size() * sizeof(uint32_t)), indices.data(), GL_DYNAMIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<long>(indices.size() * sizeof(uint32_t)), indices.data(), GL_DYNAMIC_DRAW);
     }
 
 

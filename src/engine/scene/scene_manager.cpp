@@ -141,18 +141,13 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                 }else if (comp->getType() == "light_2d") {
                     if (const auto light2d = newEntity->AddComponent<Light2dComponent>().lock()) {
                         const auto *serialization = dynamic_cast<Light2dComponentSerialization *>(comp.get());
-                        light2d->SetMaterial(GetMaterial(serialization->MaterialGuid));
                         const auto ref = GetEntity(serialization->CenterTransform);
                         if (const auto transform = ref->GetComponent<Transform>().lock()) {
                             light2d->SetCenterTransform(transform);
                         }
 
                         light2d->SetPhysicsWorld(_physicsWorld);
-                        _renderPipeline.lock()->AddRenderer(light2d);
-
-                        if (const auto meshRenderer = newEntity->GetComponent<MeshRenderer>().lock()) {
-                            light2d->SetMeshRenderer(meshRenderer);
-                        }
+                        light2d->SetMeshRenderer(newEntity->GetComponent<MeshRenderer>());
                     }
                 }else if (comp->getType() == "mesh_renderer") {
                     if (const auto mesh_renderer = newEntity->AddComponent<MeshRenderer>().lock()) {

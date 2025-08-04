@@ -75,7 +75,6 @@ int main()
         sceneManager.Update();
 
         renderPipeline->ClearFrame();
-        renderPipeline->RenderLights();
         renderPipeline->RenderMeshes();
         renderPipeline->RenderSprites();
 
@@ -85,9 +84,6 @@ int main()
         renderPipeline->RenderUI();
 
         window->SwapBuffers();
-
-
-
 
 #ifndef NDEBUG
         if (input->IsKeyUp(InputKey::Escape)) {

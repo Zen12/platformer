@@ -9,6 +9,8 @@ spine::SpineExtension *spine::getDefaultExtension() {
 
 unsigned int texture_load(const char *file_path) {
     int width, height, nrChannels;
+
+    stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load(file_path, &width, &height, &nrChannels, 0);
     if (!data) {
         printf("Failed to load texture\n");

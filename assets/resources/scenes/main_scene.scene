@@ -83,7 +83,7 @@ entities:
                   - position:
                       - x: 0.0
                       - y: 0.0
-                      - z: 0.0
+                      - z: -10.0
                   - rotation:
                       - x: 0.0
                       - y: 0.0
@@ -99,7 +99,6 @@ entities:
           - component:
               - type: light_2d
               - data:
-                  - material: 76aada18-be63-49a8-a353-b63a8a5e82b5
                   - center: main-character
   - obj:
     - guid: sprite-tile-bfad823e

@@ -44,7 +44,7 @@ public:
                     const float *positions = command->positions;
                     const float *uvs = command->uvs;
                     for (int i = 0, j = 0; i < num_command_vertices; i++, j += 2) {
-                        vertices.push_back(positions[j + 0] * -_spineScale); // because of cull need to flip
+                        vertices.push_back(positions[j + 0] * (-_spineScale)); // because of cull need to flip
                         vertices.push_back(positions[j + 1] * _spineScale);
                         vertices.push_back(0); //z
 

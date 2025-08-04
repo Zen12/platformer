@@ -117,11 +117,10 @@ struct MeshRendererComponentSerialization final : public ComponentSerialization
 
 struct Light2dComponentSerialization final : public ComponentSerialization
 {
-    const std::string MaterialGuid;
     const std::string CenterTransform;
 
-    explicit Light2dComponentSerialization(std::string materialGuid, std::string centerTransform)
-        : MaterialGuid(std::move(materialGuid)), CenterTransform(std::move(centerTransform))
+    explicit Light2dComponentSerialization(std::string centerTransform)
+        : CenterTransform(std::move(centerTransform))
     {
     }
 
@@ -285,7 +284,6 @@ inline std::unique_ptr<MeshRendererComponentSerialization> createMeshRenderer(co
 inline std::unique_ptr<Light2dComponentSerialization> createLight2dRenderer(const YAML::Node &map)
 {
     return std::make_unique<Light2dComponentSerialization>(
-        map["material"].as<std::string>(),
         map["center"].as<std::string>());
 }
 
