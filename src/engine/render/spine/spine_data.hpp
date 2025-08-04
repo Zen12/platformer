@@ -40,14 +40,4 @@ public:
     [[nodiscard]] std::weak_ptr<spine::Skeleton> GetSkeleton() const noexcept { return _skeleton; }
 
     [[nodiscard]] std::weak_ptr<spine::AnimationState> GetAnimationState() const noexcept { return _animationState; }
-
-    void SetScale(const glm::vec2 &scale) const noexcept {
-        _skeleton->setScaleX(scale.x);
-        _skeleton->setScaleY(scale.y);
-    }
-
-    void SetScale(const float &scale) const noexcept {
-        _skeleton->setScaleX(scale);
-        _skeleton->setScaleY(scale);
-    }
 };

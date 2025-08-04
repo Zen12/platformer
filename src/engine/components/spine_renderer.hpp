@@ -11,6 +11,8 @@ private:
     std::weak_ptr<MeshRenderer> _meshRenderer{};
     std::unique_ptr<spine::SkeletonRenderer> _skeletonRenderer{};
 
+    float _spineScale = 0.01f;
+
 public:
     explicit SpineRenderer(const std::weak_ptr<Entity> &entity)
         : Component(entity) {
@@ -42,8 +44,8 @@ public:
                     const float *positions = command->positions;
                     const float *uvs = command->uvs;
                     for (int i = 0, j = 0; i < num_command_vertices; i++, j += 2) {
-                        vertices.push_back(positions[j + 0] / -800.0f); // because of cull need to flip
-                        vertices.push_back(positions[j + 1] / 800.0f);
+                        vertices.push_back(positions[j + 0] * -_spineScale); // because of cull need to flip
+                        vertices.push_back(positions[j + 1] * _spineScale);
                         vertices.push_back(0); //z
 
                         vertices.push_back(uvs[j + 0]);
@@ -62,6 +64,10 @@ public:
 
     void SetSpine(std::weak_ptr<SpineData> spine) {
         _spine = std::move(spine);
+    }
+
+    void SetSpineScale(const float& scale) noexcept{
+        _spineScale = scale;
     }
 
     void SetMeshRenderer(std::weak_ptr<MeshRenderer> material) noexcept {

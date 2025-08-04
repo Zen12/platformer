@@ -117,6 +117,7 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                         const auto meshRenderer = newEntity->GetComponent<MeshRenderer>();
                         meshRenderer.lock()->SetSprite(sprite);
                         spineRenderer->SetSpine(spineData);
+                        spineRenderer->SetSpineScale(spineAsset.spineScale);
                         spineRenderer->SetMeshRenderer(meshRenderer);
                     }
 

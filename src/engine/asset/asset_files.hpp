@@ -96,10 +96,11 @@ struct YAML::convert<ProjectAsset>
 };
 
 struct SpineAsset : Asset {
-    std::string skeleton{};
-    std::string atlas{};
-    std::string image{};
-    std::string json{};
+    std::string skeleton;
+    std::string atlas;
+    std::string image;
+    std::string json;
+    float spineScale;
 };
 
 template <>
@@ -112,6 +113,7 @@ struct YAML::convert<SpineAsset>
         rhs.atlas = node["atlas"].as<std::string>();
         rhs.image = node["image"].as<std::string>();
         rhs.json = node["json"].as<std::string>();
+        rhs.spineScale = node["spine_scale"].as<float>();
         return true;
     }
 };
