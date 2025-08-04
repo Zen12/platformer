@@ -1,6 +1,6 @@
 #include "spine_data.hpp"
 
-#include "GL/glew.h"
+
 
 /// Set the default extension used for memory allocations and file I/O
 spine::SpineExtension *spine::getDefaultExtension() {

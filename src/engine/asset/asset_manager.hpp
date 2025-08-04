@@ -26,29 +26,27 @@ public:
     void Init();
 
     template <typename T, std::enable_if_t<std::is_base_of_v<Asset, T>, int> = 0>
-    [[nodiscard]] T LoadAssetByGuid(const std::string& guid) const {
-#ifndef NDEBUG
+    [[nodiscard]] T LoadAssetByGuid(const std::string& guid) const noexcept {
+        const auto path = GetPathFromGuid(guid);
+        return YAML::LoadFile(path).as<T>();
+    }
 
+
+    [[nodiscard]] std::string GetPathFromGuid(const std::string& guid) const noexcept {
+#ifndef NDEBUG
         if (_assetMap.find(guid) == _assetMap.end()) {
             std::cerr << "Asset " << guid << " not found" << std::endl;
         }
 #endif
 
-
         const auto& meta = _assetMap.at(guid);
-        return YAML::LoadFile(meta.Path).as<T>();
+        return meta.Path;
     }
 
     template<typename T>
-    [[nodiscard]] T LoadSourceByGuid(const std::string& guid) const {
-#ifndef NDEBUG
-
-        if (_assetMap.find(guid) == _assetMap.end()) {
-            std::cerr << "Asset " << guid << " not found" << std::endl;
-        }
-#endif
-        const auto& meta = _assetMap.at(guid);
-        return AssetLoader::LoadFromPath<T>(meta.Path);
+    [[nodiscard]] T LoadSourceByGuid(const std::string& guid) const noexcept {
+        const auto path = GetPathFromGuid(guid);
+        return AssetLoader::LoadFromPath<T>(path);
     }
 
     void UnLoadAll() {

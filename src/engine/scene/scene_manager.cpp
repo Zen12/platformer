@@ -113,7 +113,7 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
 
                         const auto sprite = GetSprite(spineAsset.image);
 
-                        const auto spineData = GetSpineData(serialization->SpineGuid);
+                        const auto spineData = GetSpineData(serialization->SpineGuid, spineAsset);
                         const auto meshRenderer = newEntity->GetComponent<MeshRenderer>();
                         meshRenderer.lock()->SetSprite(sprite);
                         spineRenderer->SetSpine(spineData);
@@ -215,10 +215,31 @@ std::shared_ptr<Material> SceneManager::GetMaterial(const std::string &guid) {
     return {};
 }
 
-std::shared_ptr<SpineData> SceneManager::GetSpineData(const std::string &guid) {
+std::shared_ptr<SpineData> SceneManager::LoadSpineData( const SpineAsset& asset) const {
+    if (const auto assetManager = _assetManager.lock()) {
+        // Load the atlas and the skeleton data
+        const auto atlas = assetManager->LoadSourceByGuid<spine::Atlas*>(asset.atlas);
+        spine::SkeletonBinary binary(atlas);
+
+        const auto skeletonPath = assetManager->GetPathFromGuid(asset.skeleton);
+        spine::SkeletonData *skeletonData = binary.readSkeletonDataFile(skeletonPath.c_str());
+
+        std::shared_ptr<spine::Skeleton> skeleton = std::make_shared<spine::Skeleton>(skeletonData);
+
+        spine::AnimationStateData animationStateData(skeletonData);
+
+        return std::make_shared<SpineData>(skeleton, std::make_shared<spine::AnimationState>(&animationStateData));
+    }
+
+    return {};
+}
+
+
+std::shared_ptr<SpineData> SceneManager::GetSpineData(const std::string &guid, const SpineAsset& asset) {
+
     if (const auto assetManager = _assetManager.lock()) {
         if (_spineDatas.find(guid) == _spineDatas.end()) {
-            const auto spineData = std::make_shared<SpineData>(assetManager->LoadSourceByGuid<SpineData>(guid));
+            const auto spineData = LoadSpineData(asset);
             _spineDatas[guid] = spineData;
             return spineData;
         }

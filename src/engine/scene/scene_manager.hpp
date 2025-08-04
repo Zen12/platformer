@@ -71,13 +71,15 @@ private:
 
     [[nodiscard]] std::shared_ptr<Material> GetMaterial(const std::string& guid);
 
+    std::shared_ptr<SpineData> LoadSpineData(const SpineAsset &asset) const;
+
     [[nodiscard]] std::shared_ptr<Sprite> GetSprite(const std::string& guid);
 
     [[nodiscard]] std::shared_ptr<Font> GetFont(const std::string& guid);
 
     [[nodiscard]] std::shared_ptr<Entity> GetEntity(const std::string& id) const;
 
-    [[nodiscard]] std::shared_ptr<SpineData> GetSpineData(const std::string &guid);
+    [[nodiscard]] std::shared_ptr<SpineData> GetSpineData(const std::string &guid, const SpineAsset& asset);
 
 
 

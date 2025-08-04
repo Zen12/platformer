@@ -3,20 +3,10 @@
 #include "spine/Atlas.h"
 #include "spine/Skeleton.h"
 #include <spine/spine.h>
-
 #include "stb_image.h"
-#include "../mesh.hpp"
-#include "../shader.hpp"
 #include "GL/glew.h"
 
-
-/// A vertex of a mesh generated from a Spine skeleton
-struct vertex_t {
-    float x, y;
-    uint32_t color;
-    float u, v;
-    uint32_t darkColor;
-};
+#include "../shader.hpp"
 
 
 class GlTextureLoader : public spine::TextureLoader {
@@ -29,8 +19,8 @@ public:
 class SpineData
 {
 private:
-    std::shared_ptr<spine::Skeleton> _skeleton;
-    std::shared_ptr<spine::AnimationState> _animationState;
+    const std::shared_ptr<spine::Skeleton> _skeleton;
+    const std::shared_ptr<spine::AnimationState> _animationState;
 
 public:
     SpineData(
@@ -47,11 +37,11 @@ public:
         _animationState->addAnimation(0, name.c_str(), true, 0);
     }
 
-    [[nodiscard]] std::weak_ptr<spine::Skeleton> GetSkeleton() const { return _skeleton; }
+    [[nodiscard]] std::weak_ptr<spine::Skeleton> GetSkeleton() const noexcept { return _skeleton; }
 
-    [[nodiscard]] std::weak_ptr<spine::AnimationState> GetAnimationState() const { return _animationState; }
+    [[nodiscard]] std::weak_ptr<spine::AnimationState> GetAnimationState() const noexcept { return _animationState; }
 
-    void SetScale(const glm::vec2 &scale) const noexcept{
+    void SetScale(const glm::vec2 &scale) const noexcept {
         _skeleton->setScaleX(scale.x);
         _skeleton->setScaleY(scale.y);
     }

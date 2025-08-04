@@ -148,22 +148,9 @@ public:
     }
 
     template<>
-    SpineData LoadFromPath<SpineData>([[maybe_unused]] const std::string &path) {
-
-        auto newPath = std::filesystem::path(path);
-        newPath.replace_extension();
-
-        // Load the atlas and the skeleton data
+    spine::Atlas* LoadFromPath<spine::Atlas*>(const std::string &path) {
         GlTextureLoader textureLoader;
-        const auto path2 = ASSETS_PATH"resources/spines/spineboy-pro.atlas-spine";
-        spine::Atlas *atlas = new spine::Atlas(path2, &textureLoader);
-        spine::SkeletonBinary binary(atlas);
-        spine::SkeletonData *skeletonData = binary.readSkeletonDataFile(ASSETS_PATH"resources/spines/spineboy-pro.skel-spine");
-
-        std::shared_ptr<spine::Skeleton> skeleton = std::make_shared<spine::Skeleton>(skeletonData);
-
-        spine::AnimationStateData animationStateData(skeletonData);
-
-        return {skeleton, std::make_shared<spine::AnimationState>(&animationStateData)};
+        return new spine::Atlas(path.c_str(), &textureLoader);
     }
+
 };
