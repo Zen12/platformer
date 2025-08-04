@@ -1,4 +1,5 @@
-#define STB_IMAGE_IMPLEMENTATION
+#pragma once
+
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
@@ -27,3 +28,30 @@
 #include "scene/scene_manager.hpp"
 
 #include "physics/physics_world.hpp"
+
+class Engine {
+
+private:
+    std::shared_ptr<InputSystem> _inputSystem;
+    std::shared_ptr<AssetManager> _assetManager;
+    std::shared_ptr<SceneManager> _sceneManager;
+    std::shared_ptr<Window> _window;
+    std::shared_ptr<RenderPipeline> _renderPipeline;
+    std::shared_ptr<PhysicsWorld> _physicsWorld;
+
+    std::string _projectPath;
+    ProjectAsset _projectAsset;
+
+    std::weak_ptr<UiTextRenderer> _fpsText;
+    Time _timer;
+
+public:
+    explicit Engine(const std::string &projectPath);
+
+    void LoadFirstScene();
+
+    ~Engine();
+
+    void Tick();
+    [[nodiscard]] bool IsTickable() const;
+};

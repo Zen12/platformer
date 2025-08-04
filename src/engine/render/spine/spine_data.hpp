@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "spine/Atlas.h"
 #include "spine/Skeleton.h"
 #include <spine/spine.h>
@@ -7,13 +8,6 @@
 #include "GL/glew.h"
 
 #include "../shader.hpp"
-
-
-class GlTextureLoader : public spine::TextureLoader {
-public:
-    void load(spine::AtlasPage &page, const spine::String &path);
-    void unload(void *texture);
-};
 
 
 class SpineData

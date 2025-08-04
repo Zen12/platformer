@@ -17,12 +17,16 @@
 #include "spine/Bone.h"
 #include "spine/Skeleton.h"
 #include "spine/SkeletonBinary.h"
+#include "asset_texture_loader.h"
 
 #include FT_FREETYPE_H
 
 
 
 class AssetLoader {
+private:
+    static std::function<std::shared_ptr<AssetTextureLoader>()> _textureLoader;
+
 public:
 
     template <typename T>
@@ -32,10 +36,21 @@ public:
         return nullptr;
     }
 
+    static void Init() {
+        AssetLoader::_textureLoader = []() {
+            return std::make_shared<AssetTextureLoader>();
+        };
+    }
+
+    static void DeInit() {
+       // _textureLoader = nullptr;
+    }
+
 
     template<>
     Sprite LoadFromPath<Sprite>(const std::string &path) {
-        return Sprite(path);
+        auto loader = _textureLoader();
+        return Sprite(loader->load_sprite(path));
     }
 
     template<>
@@ -136,21 +151,20 @@ public:
     template<>
     ProjectAsset LoadFromPath<ProjectAsset>(const std::string &path) {
         const std::string value = LoadFromPath<std::string>(path);
-        YAML::Node root = YAML::Load(value);
+        const YAML::Node root = YAML::Load(value);
         return root.as<ProjectAsset>();
     }
 
     template<>
     SpineAsset LoadFromPath<SpineAsset>(const std::string &path) {
         const std::string value = LoadFromPath<std::string>(path);
-        YAML::Node root = YAML::Load(value);
+        const YAML::Node root = YAML::Load(value);
         return root.as<SpineAsset>();
     }
 
     template<>
     spine::Atlas* LoadFromPath<spine::Atlas*>(const std::string &path) {
-        GlTextureLoader textureLoader;
-        return new spine::Atlas(path.c_str(), &textureLoader);
+        auto loader = _textureLoader();
+        return new spine::Atlas(path.c_str(), loader.get());
     }
-
 };

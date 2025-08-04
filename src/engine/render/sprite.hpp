@@ -1,18 +1,15 @@
 #pragma once
 
-#include <string>
-#include <iostream>
+#include <GL/glew.h>
 
 
 class Sprite
 {
     public:
-        explicit Sprite(const std::string& data);
+        explicit Sprite(const uint32_t &textureId);
+
         void Bind() const noexcept;
 
     private:
-        int32_t _x{};
-        int32_t _y{};
-        int32_t _channels{};
         uint32_t _textureId{};
 };
