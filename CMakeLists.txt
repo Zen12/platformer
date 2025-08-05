@@ -52,4 +52,16 @@ endif()
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw GLM::GLM freetype yaml-cpp box2d spine-cpp)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR} ${SPINE_CPP_SOURCES})
-target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC ASSETS_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/")
+
+set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output"
+)
+
+file(COPY "${CMAKE_SOURCE_DIR}/assets"
+        DESTINATION "${CMAKE_BINARY_DIR}/output")
+
+add_custom_target(run
+        COMMAND "${CMAKE_BINARY_DIR}/output/${CMAKE_PROJECT_NAME}"
+        DEPENDS ${CMAKE_PROJECT_NAME}
+        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/output"
+)

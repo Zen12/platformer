@@ -5,7 +5,7 @@
 - ⚙️ ```[optional]``` Python used for editor tools
 ## 👋 Getting started 🤞
 ### 🍎 macOS 
-- 🏃```run.sh``` ⌛```1-2 minutes``` 
+- 🏃```run.sh``` 
 ### 🪟 Windows 
 TODO
 ### 🐧 Linux 

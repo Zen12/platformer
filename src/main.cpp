@@ -1,10 +1,11 @@
 #include "engine/engine.hpp"
 
-int main()
-{
-    std::string projectRoot = ASSETS_PATH;
 
-    Engine engine(projectRoot);
+int main() {
+    std::filesystem::path path = std::filesystem::current_path();
+    path.append("assets/");
+
+    Engine engine(path);
 
     engine.LoadFirstScene();
 
