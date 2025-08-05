@@ -57,6 +57,8 @@ set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output"
 )
 
+file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/output/assets")
+
 file(COPY "${CMAKE_SOURCE_DIR}/assets"
         DESTINATION "${CMAKE_BINARY_DIR}/output")
 
