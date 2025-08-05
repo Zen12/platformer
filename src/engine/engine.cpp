@@ -92,8 +92,18 @@ void Engine::Tick() {
         _window->Destroy();
     }
 #endif
+
+    if (_inputSystem->IsKeyUp(InputKey::R)) {
+        _isReloadRequested = true;
+        _window->Destroy();
+    }
 }
 
 bool Engine::IsTickable() const {
     return _window->IsOpen();
 }
+
+bool Engine::IsReloadRequested() const {
+    return _isReloadRequested;
+}
+

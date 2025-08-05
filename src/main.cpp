@@ -1,7 +1,7 @@
 #include "engine/engine.hpp"
 
 
-int main() {
+void RunEngine() {
     std::filesystem::path path = std::filesystem::current_path();
     path.append("assets/");
 
@@ -13,4 +13,13 @@ int main() {
     {
         engine.Tick();
     }
+
+    if (engine.IsReloadRequested()) {
+        RunEngine();
+    }
+}
+
+int main() {
+
+    RunEngine();
 }

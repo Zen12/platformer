@@ -45,6 +45,8 @@ private:
     std::weak_ptr<UiTextRenderer> _fpsText;
     Time _timer;
 
+    bool _isReloadRequested = false;
+
 public:
     explicit Engine(const std::string &projectPath);
 
@@ -54,4 +56,6 @@ public:
 
     void Tick();
     [[nodiscard]] bool IsTickable() const;
+
+    [[nodiscard]] bool IsReloadRequested() const;
 };

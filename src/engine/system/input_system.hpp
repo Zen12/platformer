@@ -13,7 +13,8 @@ enum class InputKey {
     PageUp, PageDown, Home, End,
     CapsLock, ScrollLock, NumLock,
     LeftShift, RightShift, LeftCtrl, RightCtrl,
-    LeftAlt, RightAlt, Space
+    LeftAlt, RightAlt, Space,
+    F1, F2, F3, F4, F5, F6, F7, F8, F9
     // Add more as needed
 };
 
@@ -82,7 +83,16 @@ const std::unordered_map<int, InputKey> GLFWToInputKeyMap = {
     {GLFW_KEY_LEFT, InputKey::Left},
     {GLFW_KEY_RIGHT, InputKey::Right},
     {GLFW_KEY_UP, InputKey::Up},
-    {GLFW_KEY_DOWN, InputKey::Down}
+    {GLFW_KEY_DOWN, InputKey::Down},
+    {GLFW_KEY_F1, InputKey::F1},
+    {GLFW_KEY_F2, InputKey::F2},
+    {GLFW_KEY_F3, InputKey::F3},
+    {GLFW_KEY_F4, InputKey::F4},
+    {GLFW_KEY_F5, InputKey::F5},
+    {GLFW_KEY_F6, InputKey::F6},
+    {GLFW_KEY_F7, InputKey::F7},
+    {GLFW_KEY_F8, InputKey::F8},
+    {GLFW_KEY_F9, InputKey::F9},
 };
 
 const std::unordered_map<InputKey, int> InputKeyMapToGLFW = {
@@ -112,7 +122,17 @@ const std::unordered_map<InputKey, int> InputKeyMapToGLFW = {
     {InputKey::Left, GLFW_KEY_LEFT},
     {InputKey::Right, GLFW_KEY_RIGHT},
     {InputKey::Up, GLFW_KEY_UP},
-    {InputKey::Down, GLFW_KEY_DOWN}
+    {InputKey::Down, GLFW_KEY_DOWN},
+
+    {InputKey::F1, GLFW_KEY_F1},
+    {InputKey::F2, GLFW_KEY_F2},
+    {InputKey::F3, GLFW_KEY_F3},
+    {InputKey::F4, GLFW_KEY_F4},
+    {InputKey::F5, GLFW_KEY_F5},
+    {InputKey::F6, GLFW_KEY_F6},
+    {InputKey::F7, GLFW_KEY_F7},
+    {InputKey::F8, GLFW_KEY_F8},
+    {InputKey::F9, GLFW_KEY_F9},
     // InputKey::Unknown intentionally omitted
 };
 
