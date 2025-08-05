@@ -1,6 +1,6 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Running on macOS" &&
-    cmake -H. -Bbin/release/desktop -DPLATFORM=Desktop -DCMAKE_BUILD_TYPE=Release &&
+    cmake -H. -Bbin/release/desktop -DPLATFORM=Desktop -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_CLANG_TIDY=clang-tidy &&
     cmake --build ./bin/release/desktop &&
     bin/release/desktop/Platformer
 elif [[ "$OSTYPE" == "msys"* || "$OSTYPE" == "cygwin"* || "$OSTYPE" == "win32" ]]; then
