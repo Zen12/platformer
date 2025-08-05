@@ -2,7 +2,7 @@
 
 #define DEBUG_ENGINE_MESH_RENDERER_PIPELINE 0
 
-void RenderPipeline::RenderSprites() const
+void RenderPipeline::RenderSprites(const float& deltaTime) const
 {
     const auto projectionMat = _camera3d.lock()->GetProjection();
     const auto viewMat = _cameraTransform3d.lock()->GetModel();
@@ -15,7 +15,7 @@ void RenderPipeline::RenderSprites() const
 
         if (const auto& sprite = value.lock())
         {
-            sprite->Update(); // move to material
+            sprite->Update(deltaTime); // move to material
 
             const auto model = sprite->GetEntity().lock()->GetComponent<Transform>().lock();
 
@@ -35,7 +35,7 @@ void RenderPipeline::RenderSprites() const
     }
 }
 
-void RenderPipeline::RenderLines() const {
+void RenderPipeline::RenderLines(const float& deltaTime) const {
 
     const auto projectionMat = _camera3d.lock()->GetProjection();
     const auto viewMat = _cameraTransform3d.lock()->GetModel();
@@ -48,7 +48,7 @@ void RenderPipeline::RenderLines() const {
 
         if (const auto& line = value.lock())
         {
-            line->Update(); // move to material
+            line->Update(deltaTime); // move to material
 
             const auto model = line->GetEntity().lock()->GetComponent<Transform>().lock();
 
@@ -69,7 +69,7 @@ void RenderPipeline::RenderLines() const {
 
 }
 
-void RenderPipeline::RenderMeshes() {
+void RenderPipeline::RenderMeshes(const float& deltaTime) {
 
     std::sort(_meshRenderers.begin(), _meshRenderers.end(),
         [](const std::weak_ptr<MeshRenderer>& a, const std::weak_ptr<MeshRenderer>& b) {
@@ -111,7 +111,7 @@ void RenderPipeline::RenderMeshes() {
 #endif
 #endif
 
-            meshRenderer->Update(); // move to material
+            meshRenderer->Update(deltaTime); // move to material
 
             const auto model = meshRenderer->GetEntity().lock()->GetComponent<Transform>().lock();
 
@@ -150,7 +150,7 @@ void RenderPipeline::ClearFrame() const noexcept {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void RenderPipeline::RenderUI() const
+void RenderPipeline::RenderUI(const float& deltaTime) const
 {
     const auto projection = _uiCamera.GetProjection();
 
@@ -158,7 +158,7 @@ void RenderPipeline::RenderUI() const
     {
         if (const auto& text = value.lock())
         {
-            text->Update();
+            text->Update(deltaTime);
             text->Render(projection);
         }
     }
@@ -167,7 +167,7 @@ void RenderPipeline::RenderUI() const
     {
         if (const auto& image = value.lock())
         {
-            image->Update();
+            image->Update(deltaTime);
             image->Render(projection);
         }
     }

@@ -20,7 +20,7 @@ public:
       _mesh(Mesh::GenerateSprite())
     {}
 
-    void Update() const override;
+    void Update([[maybe_unused]] const float& deltaTime) const override;
 
     void SetSprite(std::weak_ptr<Sprite> sprite) noexcept;
 

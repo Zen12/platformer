@@ -59,7 +59,7 @@ public:
         }
     }
 
-    void Update() const override
+    void Update([[maybe_unused]] const float& deltaTime) const override
     {
         const auto position = _body->GetPosition();
         _entity.lock()->GetComponent<Transform>().lock()->SetPosition(

@@ -19,7 +19,7 @@ void Engine::LoadFirstScene() {
 
     _renderPipeline = std::make_shared<RenderPipeline>(_window);
 
-    _sceneManager = std::make_shared<SceneManager>(_renderPipeline, _window,_assetManager);
+    _sceneManager = std::make_shared<SceneManager>(_renderPipeline, _window,_assetManager, _inputSystem);
 
     _sceneManager->LoadScene(scene);
 
@@ -48,42 +48,20 @@ void Engine::Tick() {
     ss << std::fixed << std::setprecision(0) << fps;
     _fpsText.lock()->SetText(ss.str());
 
-    const auto character = _sceneManager->GetEntityById("main-character").lock()->GetComponent<Transform>().lock();
     const auto world =  _physicsWorld->GetWorld().lock();
-
-
-    auto position = character->GetPosition();
 
     _inputSystem->Update();
 
-    const auto speed = 2.0f;
-
-    if (_inputSystem->IsKeyPressing(InputKey::W) || _inputSystem->IsKeyPress(InputKey::W)) {
-        position.y += speed * deltaTime;
-    }
-
-    if (_inputSystem->IsKeyPressing(InputKey::S)|| _inputSystem->IsKeyPress(InputKey::S)) {
-        position.y -= speed* deltaTime;
-    }
-    if (_inputSystem->IsKeyPressing(InputKey::A) || _inputSystem->IsKeyPress(InputKey::A)) {
-        position.x -= speed * deltaTime;
-    }
-    if (_inputSystem->IsKeyPressing(InputKey::D) || _inputSystem->IsKeyPress(InputKey::D)) {
-        position.x += speed * deltaTime;
-    }
-
-    character->SetPosition(position);
-
-    _sceneManager->Update();
+    _sceneManager->Update(deltaTime);
 
     _renderPipeline->ClearFrame();
-    _renderPipeline->RenderMeshes();
-    _renderPipeline->RenderSprites();
+    _renderPipeline->RenderMeshes(deltaTime);
+    _renderPipeline->RenderSprites(deltaTime);
 
 #ifndef NDEBUG
-    _renderPipeline->RenderLines();
+    _renderPipeline->RenderLines(deltaTime);
 #endif
-    _renderPipeline->RenderUI();
+    _renderPipeline->RenderUI(deltaTime);
 
     _window->SwapBuffers();
 
@@ -91,12 +69,12 @@ void Engine::Tick() {
     if (_inputSystem->IsKeyUp(InputKey::Escape)) {
         _window->Destroy();
     }
-#endif
 
     if (_inputSystem->IsKeyUp(InputKey::R)) {
         _isReloadRequested = true;
         _window->Destroy();
     }
+#endif
 }
 
 bool Engine::IsTickable() const {

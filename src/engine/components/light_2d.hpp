@@ -17,19 +17,20 @@ private:
     std::weak_ptr<PhysicsWorld> _physicsWorld;
     std::weak_ptr<MeshRenderer> _meshRenderer;
 
-    const float radius = 20.0f;
-    const int segments = 50;
+    const float _radius = 20.0f;
+    const int _segments = 50;
+
+    glm::vec2 _offset = glm::vec2(0.0f);
 
 
 
 public:
 
     Light2dComponent() = delete;
-    explicit Light2dComponent(const std::weak_ptr<Entity> &entity)
-    : Component(entity) {
+    explicit Light2dComponent(const std::weak_ptr<Entity> &entity) : Component(entity) {
     }
 
-    void Update() const override {
+    void Update([[maybe_unused]] const float& deltaTime) const override {
         UpdateLights();
     }
 
@@ -43,6 +44,10 @@ public:
 
     void SetPhysicsWorld(std::weak_ptr<PhysicsWorld> physicsWorld) noexcept {
         _physicsWorld = std::move(physicsWorld);
+    }
+
+    void SetOffset(const glm::vec2 &offset) noexcept {
+        _offset = offset;
     }
 
 private:

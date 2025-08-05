@@ -22,7 +22,7 @@ public:
     {
     }
 
-    void Update() const override;
+    void Update([[maybe_unused]] const float& deltaTime) const override;
 
     void SetMaterial(const std::weak_ptr<Material> &material)
     {

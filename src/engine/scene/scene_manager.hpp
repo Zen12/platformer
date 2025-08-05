@@ -13,6 +13,7 @@
 #include "../components/physics/box_collider2d_component.hpp"
 #include "../components/physics/rigidbody2d_component.hpp"
 #include "../debug/debug.hpp"
+#include "../system/input_system.hpp"
 
 
 class SceneManager {
@@ -29,6 +30,7 @@ private:
     std::weak_ptr<RenderPipeline> _renderPipeline;
     std::weak_ptr<Window> _window;
     std::weak_ptr<AssetManager> _assetManager;
+    std::weak_ptr<InputSystem> _inputSystem;
 
     std::shared_ptr<RectTransformRoot> _root;
 
@@ -39,8 +41,10 @@ private:
     SceneManager(
         const std::weak_ptr<RenderPipeline> &render,
         const std::weak_ptr<Window> &window,
-        const std::weak_ptr<AssetManager> &assetManager)
-        : _renderPipeline(render), _window(window), _assetManager(assetManager) {
+        const std::weak_ptr<AssetManager> &assetManager,
+        const std::weak_ptr<InputSystem> &inputSystem)
+        : _renderPipeline(render), _window(window), _assetManager(assetManager),_inputSystem(inputSystem)
+        {
         _root = std::make_shared<RectTransformRoot>(window);
     }
 
@@ -60,9 +64,9 @@ private:
         return {};
     }
 
-    void Update() const {
+    void Update(const float& deltaTime) const {
         for (const auto &entity: _entities) {
-            entity->Update();
+            entity->Update(deltaTime);
         }
     }
 

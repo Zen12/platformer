@@ -67,3 +67,7 @@ add_custom_target(run
         DEPENDS ${CMAKE_PROJECT_NAME}
         WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/output"
 )
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC TEST_ASSET_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/")
+endif()

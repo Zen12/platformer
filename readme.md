@@ -59,12 +59,11 @@ TODO
 - 🌙 Lua scripting
 
 ## TODO
-- [ ] Spine runtime
+- [x] Spine runtime
 - [ ] 2d Character controller
 - [ ] Webgl build 
 - [ ] Light2d better ray-detection
 - [ ] UI buttons
-- [ ] Post-processing components
 
 
 🇲🇩

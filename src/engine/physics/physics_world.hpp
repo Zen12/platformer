@@ -19,10 +19,10 @@ public:
         _world->Step(deltaTime, velocityIterations, positionIterations);
     }
 
-    void UpdateColliders() const {
+    void UpdateColliders(const float& deltaTime) const {
         for (const auto& component : _components) {
             if (auto collider = component.lock()) {
-                collider->Update();
+                collider->Update(deltaTime);
             }
         }
     }

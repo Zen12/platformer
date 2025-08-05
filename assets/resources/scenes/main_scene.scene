@@ -74,6 +74,11 @@ entities:
               - type: spine_renderer
               - data:
                   - spine_data: 6c51e080-77d1-440c-bdc0-47169c111e20
+          - component:
+              - type: character_controller
+              - data:
+                  - speed: 2.0
+                  - jump_power: 2.0
   - obj:
       - guid: light_2d
       - components:
@@ -100,6 +105,8 @@ entities:
               - type: light_2d
               - data:
                   - center: main-character
+                  - offset_x : 0.0
+                  - offset_y : 1.7
   - obj:
     - guid: sprite-tile-bfad823e
     - components:

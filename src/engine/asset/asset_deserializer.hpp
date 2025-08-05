@@ -118,9 +118,11 @@ struct MeshRendererComponentSerialization final : public ComponentSerialization
 struct Light2dComponentSerialization final : public ComponentSerialization
 {
     const std::string CenterTransform;
+    const float OffsetX;
+    const float OffsetY;
 
-    explicit Light2dComponentSerialization(std::string centerTransform)
-        : CenterTransform(std::move(centerTransform))
+    Light2dComponentSerialization(std::string centerTransform, const float offsetX, const float offsetY)
+        : CenterTransform(std::move(centerTransform)), OffsetX(offsetX), OffsetY(offsetY)
     {
     }
 
@@ -215,6 +217,14 @@ struct TransformComponentSerialization final : public ComponentSerialization
     [[nodiscard]] std::string getType() const override { return "transform"; }
 };
 
+struct CharacterControllerComponentSerialization final : public ComponentSerialization
+{
+    float Speed{};
+    float JumpPower{};
+
+    [[nodiscard]] std::string getType() const override { return "character_controller"; }
+};
+
 struct EntitySerialization
 {
     std::string guid;
@@ -284,7 +294,9 @@ inline std::unique_ptr<MeshRendererComponentSerialization> createMeshRenderer(co
 inline std::unique_ptr<Light2dComponentSerialization> createLight2dRenderer(const YAML::Node &map)
 {
     return std::make_unique<Light2dComponentSerialization>(
-        map["center"].as<std::string>());
+        map["center"].as<std::string>(),
+        map["offset_x"].as<float>(),
+        map["offset_y"].as<float>());
 }
 
 inline std::unique_ptr<LineRenderComponentSerialization> createLineRenderer(const YAML::Node &map)
@@ -399,6 +411,13 @@ inline std::unique_ptr<Box2dColliderSerialization> createBoxCollider(const YAML:
     return comp;
 }
 
+inline std::unique_ptr<CharacterControllerComponentSerialization> createCharacterController(const YAML::Node & map) {
+    auto comp = std::make_unique<CharacterControllerComponentSerialization>();
+    comp->Speed = map["speed"].as<float>();
+    comp->JumpPower = map["jump_power"].as<float>();
+    return comp;
+}
+
 inline std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAML::Node &node)
 {
     const auto nodeMap = sequenceToMap(node);
@@ -437,6 +456,8 @@ inline std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAM
         return createMeshRenderer(map);
     }if (type == "spine_renderer") {
         return createSpineRenderer(map);
+    } if (type == "character_controller") {
+        return createCharacterController(map);
     }
 
     throw std::runtime_error("Unknown component type: " + type);

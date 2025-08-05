@@ -57,9 +57,9 @@ public:
 
     void Init() const noexcept;
     void ClearFrame() const noexcept;
-    void RenderUI() const;
-    void RenderSprites() const;
-    void RenderLines() const;
-    void RenderMeshes();
+    void RenderUI(const float& deltaTime) const;
+    void RenderSprites(const float& deltaTime) const;
+    void RenderLines(const float& deltaTime) const;
+    void RenderMeshes(const float& deltaTime);
     void Cleanup();
 };

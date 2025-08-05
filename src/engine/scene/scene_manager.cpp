@@ -1,5 +1,7 @@
 #include "scene_manager.hpp"
 
+#include "../gameplay/character_controller.hpp"
+
 
 void SceneManager::LoadScene(const SceneAsset &scene) {
     PROFILE_SCOPE("Loading of scene " + scene.Name);
@@ -148,12 +150,22 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
 
                         light2d->SetPhysicsWorld(_physicsWorld);
                         light2d->SetMeshRenderer(newEntity->GetComponent<MeshRenderer>());
+                        light2d->SetOffset(glm::vec2(serialization->OffsetX, serialization->OffsetY));
                     }
                 }else if (comp->getType() == "mesh_renderer") {
                     if (const auto mesh_renderer = newEntity->AddComponent<MeshRenderer>().lock()) {
                         const auto *serialization = dynamic_cast<MeshRendererComponentSerialization *>(comp.get());
                         mesh_renderer->SetMaterial(GetMaterial(serialization->MaterialGuid));
                         _renderPipeline.lock()->AddRenderer(mesh_renderer);
+                    }
+                }else if (comp->getType() == "character_controller") {
+                    if (const auto component = newEntity->AddComponent<CharacterController>().lock()) {
+                        const auto *serialization = dynamic_cast<CharacterControllerComponentSerialization *>(comp.get());
+                        const CharacterControllerSettings characterSettings = {serialization->Speed, serialization->JumpPower};
+                        component->SetCharacterControllerSettings(characterSettings);
+                        component->SetInputSystem(_inputSystem);
+                        component->SetPhysicsWorld(_physicsWorld);
+
                     }
                 }
             }

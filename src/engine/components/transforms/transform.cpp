@@ -1,6 +1,6 @@
 #include "transform.hpp"
 
-void Transform::Update() const
+void Transform::Update([[maybe_unused]] const float& deltaTime) const
 {
 }
 
