@@ -45,7 +45,7 @@ public:
         _material = std::move( material);
     }
 
-    void Update([[maybe_unused]] const float& deltaTime) const override {
+    void Update([[maybe_unused]] const float& deltaTime) override {
         if (const auto material = _material.lock()) {
             if (const auto sprite = _sprite.lock()) {
                 sprite->Bind();

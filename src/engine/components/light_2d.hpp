@@ -30,7 +30,7 @@ public:
     explicit Light2dComponent(const std::weak_ptr<Entity> &entity) : Component(entity) {
     }
 
-    void Update([[maybe_unused]] const float& deltaTime) const override {
+    void Update([[maybe_unused]] const float& deltaTime) override {
         UpdateLights();
     }
 

@@ -34,7 +34,7 @@ public:
         _material = material;
     }
 
-    void Update([[maybe_unused]] const float& deltaTime) const override;
+    void Update([[maybe_unused]] const float& deltaTime) override;
     void Render(const glm::mat4 &projection);
 
     [[nodiscard]] int32_t GetShaderId() const { return _material.lock()->GetShaderId(); }

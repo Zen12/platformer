@@ -25,7 +25,7 @@ public:
     }
     ~Transform() override = default;
 
-    void Update([[maybe_unused]] const float& deltaTime) const override;
+    void Update([[maybe_unused]] const float& deltaTime) override;
 
     [[nodiscard]] virtual glm::mat4 GetModel() const;
 

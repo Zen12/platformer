@@ -1,6 +1,6 @@
 #include "ui_image_renderer.hpp"
 
-void UiImageRenderer::Update([[maybe_unused]] const float& deltaTime) const
+void UiImageRenderer::Update([[maybe_unused]] const float& deltaTime)
 {
     if (const auto material = _material.lock())
     {

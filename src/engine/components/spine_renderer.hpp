@@ -21,7 +21,7 @@ public:
         _skeletonRenderer = std::make_unique<spine::SkeletonRenderer>();
     }
 
-    void Update(const float& deltaTime) const override {
+    void Update(const float& deltaTime) override {
         if (const auto spine = _spine.lock()) {
             if (const auto skeleton = spine->GetSkeleton().lock()) {
                 skeleton->update(deltaTime);

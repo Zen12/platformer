@@ -16,7 +16,7 @@ public:
       _line(Line::Generate())
     {}
 
-    void Update([[maybe_unused]] const float& deltaTime) const override {
+    void Update([[maybe_unused]] const float& deltaTime) override {
         if (const auto material = _material.lock()) {
             material->Bind();
         }

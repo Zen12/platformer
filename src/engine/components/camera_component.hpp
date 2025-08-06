@@ -23,7 +23,7 @@ public:
         return _camera.GetProjection();
     }
 
-    void Update(const float& deltaTime) const override
+    void Update([[maybe_unused]] const float& deltaTime) override
     {
     }
 };

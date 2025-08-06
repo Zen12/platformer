@@ -219,8 +219,13 @@ struct TransformComponentSerialization final : public ComponentSerialization
 
 struct CharacterControllerComponentSerialization final : public ComponentSerialization
 {
-    float Speed{};
-    float JumpPower{};
+    // movement
+    float MovementSpeed{1};
+
+    // jump
+    float JumpHeigh{1};
+    float JumpDuration{1};
+    float JumpDownMultiplier{1};
 
     [[nodiscard]] std::string getType() const override { return "character_controller"; }
 };
@@ -413,8 +418,10 @@ inline std::unique_ptr<Box2dColliderSerialization> createBoxCollider(const YAML:
 
 inline std::unique_ptr<CharacterControllerComponentSerialization> createCharacterController(const YAML::Node & map) {
     auto comp = std::make_unique<CharacterControllerComponentSerialization>();
-    comp->Speed = map["speed"].as<float>();
-    comp->JumpPower = map["jump_power"].as<float>();
+    comp->MovementSpeed = map["movement_speed"].as<float>();
+    comp->JumpHeigh = map["jump_heigh"].as<float>();
+    comp->JumpDuration = map["jump_duration"].as<float>();
+    comp->JumpDownMultiplier = map["jump_down_multiplier"].as<float>();
     return comp;
 }
 

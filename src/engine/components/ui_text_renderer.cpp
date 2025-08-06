@@ -27,7 +27,7 @@ UiTextRenderer::UiTextRenderer(const std::weak_ptr<Entity> &entity) : Component(
     Bind();
 }
 
-void UiTextRenderer::Update([[maybe_unused]] const float& deltaTime) const
+void UiTextRenderer::Update([[maybe_unused]] const float& deltaTime)
 {
     if (auto material = _material.lock())
     {

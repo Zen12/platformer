@@ -21,7 +21,7 @@ public:
         return _entity;
     }
 
-    virtual void Update([[maybe_unused]] const float& deltaTime) const = 0;
+    virtual void Update([[maybe_unused]] const float& deltaTime) = 0;
     virtual ~Component() = default;
 
 protected:
@@ -66,7 +66,7 @@ public:
         _components.erase(typeid(T));
     }
 
-    void Update(const float &deltaTime) const
+    void Update(const float &deltaTime)
     {
         for (const auto &[type, component] : _components)
         {

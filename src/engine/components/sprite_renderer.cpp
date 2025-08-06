@@ -12,7 +12,7 @@ void SpriteRenderer::SetMaterial(std::weak_ptr<Material> material) noexcept {
     _material = std::move(material);
 }
 
-void SpriteRenderer::Update([[maybe_unused]] const float& deltaTime) const
+void SpriteRenderer::Update([[maybe_unused]] const float& deltaTime)
 {
     if ( const auto sprite = _sprite.lock())
     {
