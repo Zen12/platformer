@@ -96,3 +96,7 @@ void Window::SwapBuffers() const noexcept {
 void Window::PullEvent() const noexcept {
     glfwPollEvents();
 }
+
+bool Window::IsFocus() const noexcept {
+    return glfwGetWindowAttrib(window, GLFW_FOCUSED);
+}

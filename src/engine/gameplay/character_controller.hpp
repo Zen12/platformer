@@ -39,6 +39,15 @@ private:
     std::weak_ptr<PhysicsWorld> _world;
     CharacterControllerSettings _characterSettings{};
 
+    glm::vec2 _characterSize{1.0f, 2.0f};
+    glm::vec2 _halfCharacterSize{0.5f, 1.0f};
+    glm::vec2 _fourthPartCharacterSize{0.25f, 0.5f};
+
+    glm::vec2 _topRightCorner = {_characterSize.x, _characterSize.y};
+    glm::vec2 _topLeftCorner = {-_characterSize.x, _characterSize.y};
+    glm::vec2 _downRightCorner = {_characterSize.x, -_characterSize.y};
+    glm::vec2 _downLeftCorner = {_characterSize.x, -_characterSize.y};
+
 
     float _currentJumpDuration{100000};
 
@@ -46,10 +55,22 @@ private:
 
 private:
 
-    [[nodiscard]] bool IsGrounded(const b2World *world, const Transform *transform, glm::vec2 &hitPos) const {
-        const auto position = transform->GetPosition();
-        b2Vec2 pointA(position.x, position.y + 0.2f);    // Start of ray
-        b2Vec2 pointB(position.x, position.y);   // End of ray
+    void ResetJump() noexcept {
+        _velocity.y = 0;
+        _currentJumpDuration = _characterSettings.JumpDuration + 1;
+    }
+    [[nodiscard]] glm::vec2 GetCenter() const noexcept {
+        if (const auto tr = _transform.lock()) {
+            const auto ground = tr->GetPosition();
+            return  {ground.x, ground.y + _halfCharacterSize.y};
+        }
+
+        return glm::vec2{0.0f, 0.0f};
+    }
+
+    [[nodiscard]] bool IsHitDir(const b2World *world, glm::vec2 position, glm::vec2 dir, glm::vec2 &hitPos) const {
+        b2Vec2 pointA(position.x, position.y);    // Start of ray
+        b2Vec2 pointB(position.x + dir.x, position.y + dir.y);   // End of ray
 
         RayCastClosestCallback callback;
         world->RayCast(&callback, pointA, pointB);
@@ -59,23 +80,105 @@ private:
         return callback.Hit;
     }
 
+    [[nodiscard]] bool IsHitUp(const b2World *world, glm::vec2 &hitPos) const {
+        const auto center = GetCenter();
+
+        if (IsHitDir(world,
+            center + glm::vec2{_halfCharacterSize.x, _fourthPartCharacterSize.y},
+            glm::vec2{0.0f, _fourthPartCharacterSize.y}, hitPos))
+            return true;
+
+        if (IsHitDir(world,
+              center + glm::vec2{-_halfCharacterSize.x, _fourthPartCharacterSize.y},
+              glm::vec2{0.0f, _fourthPartCharacterSize.y}, hitPos))
+            return true;
+
+
+        return false;
+    }
+
+    [[nodiscard]] bool IsHitLeft(const b2World *world, glm::vec2 &hitPos) const {
+        const auto center = GetCenter();
+
+        if (IsHitDir(world,
+            center + glm::vec2(-_fourthPartCharacterSize.x, -_fourthPartCharacterSize.y),
+            glm::vec2(-_fourthPartCharacterSize.y, 0.0f), hitPos))
+            return true;
+
+        if (IsHitDir(world,
+        center + glm::vec2(-_fourthPartCharacterSize.x, _fourthPartCharacterSize.y),
+            glm::vec2(-_fourthPartCharacterSize.y, 0.0f), hitPos))
+            return true;
+
+
+        return false;
+    }
+
+    [[nodiscard]] bool IsHitRight(const b2World *world, glm::vec2 &hitPos) const {
+        const auto center = GetCenter();
+
+        if (IsHitDir(world,
+            center + glm::vec2(_fourthPartCharacterSize.x, -_fourthPartCharacterSize.y),
+            glm::vec2(_fourthPartCharacterSize.y, 0.0f), hitPos))
+            return true;
+
+        if (IsHitDir(world,
+        center + glm::vec2(_fourthPartCharacterSize.x, _fourthPartCharacterSize.y),
+            glm::vec2(_fourthPartCharacterSize.y, 0.0f), hitPos))
+            return true;
+
+        return false;
+    }
+
+
+    [[nodiscard]] bool IsGrounded(const b2World *world, glm::vec2 &hitPos) const {
+        const auto center = GetCenter();
+
+        if (IsHitDir(world,
+            center + glm::vec2{_halfCharacterSize.x, -_fourthPartCharacterSize.y},
+            glm::vec2{0.0f, -_fourthPartCharacterSize.y}, hitPos))
+            return true;
+
+        if (IsHitDir(world,
+              center + glm::vec2{-_halfCharacterSize.x, -_fourthPartCharacterSize.y},
+              glm::vec2{0.0f, -_fourthPartCharacterSize.y}, hitPos))
+            return true;
+
+
+        return false;
+    }
+
     void UpdateInternal(const float &deltaTime, InputSystem *input, Transform *transform, b2World* world) {
 
         auto position = transform->GetPosition();
 
         glm::vec2 hitPos{};
 
-        if (IsGrounded(world, transform, hitPos) && _velocity.y < 0.001f) {
-            _velocity.y = 0;
-            position.y = hitPos.y;
-            _currentJumpDuration = _characterSettings.JumpDuration + 1;
-            if (input->IsKeyPressing(InputKey::A) || input->IsKeyPress(InputKey::A)) {
-                _velocity.x = -_characterSettings.MovementSpeed;
-            } else if (input->IsKeyPressing(InputKey::D) || input->IsKeyPress(InputKey::D)) {
-                _velocity.x = _characterSettings.MovementSpeed;
-            } else {
-                _velocity.x = 0;
+        if (IsGrounded(world, hitPos)) {
+            ResetJump();
+
+            float diff = std::abs(hitPos.y - position.y);
+            if (diff > 0.01) {
+                position.y = hitPos.y;
             }
+            if (input->IsKeyPressing(InputKey::A) || input->IsKeyPress(InputKey::A)) {
+                _velocity.x += -_characterSettings.AccelerationSpeed;
+                if (_velocity.x < -_characterSettings.MaxMovementSpeed)
+                    _velocity.x = -_characterSettings.MaxMovementSpeed;
+            } else if (input->IsKeyPressing(InputKey::D) || input->IsKeyPress(InputKey::D)) {
+                _velocity.x += _characterSettings.AccelerationSpeed;
+                if (_velocity.x > _characterSettings.MaxMovementSpeed)
+                    _velocity.x = _characterSettings.MaxMovementSpeed;
+            } else {
+                const float sign =  std::signbit(_velocity.x) ? -1.0f : 1.0f;
+                float absValue = std::abs(_velocity.x);
+                absValue -= _characterSettings.Deceleration;
+                if (absValue < 0) {
+                    absValue = 0;
+                }
+                _velocity.x = sign * absValue;
+            }
+
 
             if (input->IsKeyPress(InputKey::Space)) {
                 _currentJumpDuration = 0;
@@ -87,6 +190,23 @@ private:
 
             if (_currentJumpDuration > _characterSettings.JumpDuration) {
                 _velocity.y = -(_characterSettings.JumpHeigh / _characterSettings.JumpDuration) * _characterSettings.JumpDownMultiplier;
+            }
+        }
+
+
+        if (IsHitLeft(world, hitPos)) {
+            if (_velocity.x < 0)
+                _velocity.x = 0;
+        }
+
+        if (IsHitRight(world, hitPos)) {
+            if (_velocity.x > 0)
+                _velocity.x = 0;
+        }
+
+        if (IsHitUp(world, hitPos)) {
+            if (_velocity.y > 0) {
+                ResetJump();
             }
         }
 

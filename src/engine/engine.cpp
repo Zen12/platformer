@@ -1,5 +1,7 @@
 #include "engine.hpp"
 
+#include <thread>
+
 Engine::Engine(const std::string &projectPath) : _projectPath(projectPath) {
 
     AssetLoader::Init();
@@ -65,7 +67,6 @@ void Engine::Tick() {
 
     _window->SwapBuffers();
 
-#ifndef NDEBUG
     if (_inputSystem->IsKeyUp(InputKey::Escape)) {
         _window->Destroy();
     }
@@ -74,7 +75,6 @@ void Engine::Tick() {
         _isReloadRequested = true;
         _window->Destroy();
     }
-#endif
 }
 
 bool Engine::IsTickable() const {

@@ -77,10 +77,12 @@ entities:
           - component:
               - type: character_controller
               - data:
-                  - movement_speed: 5.0
-                  - jump_heigh: 4.0
-                  - jump_duration: 0.45
-                  - jump_down_multiplier: 1.1
+                  - max_movement_speed: 5.0
+                  - acceleration_speed: 0.8
+                  - deceleration_speed: 1.0
+                  - jump_heigh: 5
+                  - jump_duration: 0.5
+                  - jump_down_multiplier: 1.2
   - obj:
       - guid: light_2d
       - components:

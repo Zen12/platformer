@@ -4,7 +4,9 @@ class CharacterControllerSettings {
 public:
 
     // movement
-    float MovementSpeed{1};
+    float MaxMovementSpeed{5};
+    float AccelerationSpeed{1};
+    float Deceleration{1};
 
     // jump
     float JumpHeigh{1};
@@ -13,7 +15,19 @@ public:
 
     CharacterControllerSettings() = default;
 
-    CharacterControllerSettings(const float& movementSpeed, const float& jumpHeight, const float& jumpDuration, const float& jumpDownMultiplier)
-        : MovementSpeed(movementSpeed), JumpHeigh(jumpHeight), JumpDuration(jumpDuration), JumpDownMultiplier(jumpDownMultiplier)
+    CharacterControllerSettings(
+        const float& movementSpeed,
+        const float& accelerationSpeed,
+        const float& deceleration,
+        const float& jumpHeight,
+        const float& jumpDuration,
+        const float& jumpDownMultiplier)
+        :
+    MaxMovementSpeed(movementSpeed),
+    AccelerationSpeed(accelerationSpeed),
+    Deceleration(deceleration),
+    JumpHeigh(jumpHeight),
+    JumpDuration(jumpDuration),
+    JumpDownMultiplier(jumpDownMultiplier)
     {}
 };

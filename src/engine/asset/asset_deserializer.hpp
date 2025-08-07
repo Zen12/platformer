@@ -220,7 +220,9 @@ struct TransformComponentSerialization final : public ComponentSerialization
 struct CharacterControllerComponentSerialization final : public ComponentSerialization
 {
     // movement
-    float MovementSpeed{1};
+    float MaxMovementSpeed{1};
+    float AccelerationSpeed{1};
+    float DecelerationSpeed{1};
 
     // jump
     float JumpHeigh{1};
@@ -418,7 +420,9 @@ inline std::unique_ptr<Box2dColliderSerialization> createBoxCollider(const YAML:
 
 inline std::unique_ptr<CharacterControllerComponentSerialization> createCharacterController(const YAML::Node & map) {
     auto comp = std::make_unique<CharacterControllerComponentSerialization>();
-    comp->MovementSpeed = map["movement_speed"].as<float>();
+    comp->MaxMovementSpeed = map["max_movement_speed"].as<float>();
+    comp->AccelerationSpeed = map["acceleration_speed"].as<float>();
+    comp->DecelerationSpeed = map["deceleration_speed"].as<float>();
     comp->JumpHeigh = map["jump_heigh"].as<float>();
     comp->JumpDuration = map["jump_duration"].as<float>();
     comp->JumpDownMultiplier = map["jump_down_multiplier"].as<float>();

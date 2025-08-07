@@ -74,4 +74,6 @@ public:
         _mouseCodes[code] =  mode;
     }
 
+    [[nodiscard]] bool IsFocus() const noexcept;
+
 };

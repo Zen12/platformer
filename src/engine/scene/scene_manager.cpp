@@ -162,7 +162,13 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                     if (const auto component = newEntity->AddComponent<CharacterController>().lock()) {
                         const auto *serialization = dynamic_cast<CharacterControllerComponentSerialization *>(comp.get());
                         const CharacterControllerSettings characterSettings =
-                            {serialization->MovementSpeed, serialization->JumpHeigh, serialization->JumpDuration, serialization->JumpDownMultiplier};
+                            {
+                            serialization->MaxMovementSpeed,
+                            serialization->AccelerationSpeed,
+                            serialization->DecelerationSpeed,
+                            serialization->JumpHeigh,
+                            serialization->JumpDuration,
+                            serialization->JumpDownMultiplier};
                         component->SetCharacterControllerSettings(characterSettings);
                         component->SetInputSystem(_inputSystem);
                         component->SetPhysicsWorld(_physicsWorld);
