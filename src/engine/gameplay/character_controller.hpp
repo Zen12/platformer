@@ -37,6 +37,7 @@ private:
     std::weak_ptr<InputSystem> _inputSystem;
     std::weak_ptr<Transform> _transform;
     std::weak_ptr<PhysicsWorld> _world;
+    std::weak_ptr<SpineRenderer> _renderer;
     CharacterControllerSettings _characterSettings{};
 
     glm::vec2 _characterSize{1.0f, 2.0f};
@@ -53,7 +54,27 @@ private:
 
     glm::vec3 _velocity{0};
 
+    std::string _animationValue;
+    bool _isRight = false;
+
+
 private:
+
+    void SetAnimationValue(const std::string &animation) {
+        if (_animationValue == animation) {
+            return;
+        }
+        _animationValue = animation;
+        if (const auto render = _renderer.lock()) {
+            render->SetAnimation(animation);
+        }
+    }
+
+    void SetFaceRight(const bool& isFaceRight) {
+        if (const auto render = _renderer.lock()) {
+            render->SetFaceRight(isFaceRight);
+        }
+    }
 
     void ResetJump() noexcept {
         _velocity.y = 0;
@@ -158,10 +179,12 @@ private:
             _velocity.x += -_characterSettings.AccelerationSpeed;
             if (_velocity.x < -_characterSettings.MaxMovementSpeed)
                 _velocity.x = -_characterSettings.MaxMovementSpeed;
+            _isRight = false;
         } else if (input->IsKeyPressing(InputKey::D) || input->IsKeyPress(InputKey::D)) {
             _velocity.x += _characterSettings.AccelerationSpeed;
             if (_velocity.x > _characterSettings.MaxMovementSpeed)
                 _velocity.x = _characterSettings.MaxMovementSpeed;
+            _isRight = true;
         } else {
             const float sign =  std::signbit(_velocity.x) ? -1.0f : 1.0f;
             float absValue = std::abs(_velocity.x);
@@ -210,7 +233,14 @@ private:
                 ResetJump();
             }
         }
+        if (_velocity.y > 0.01)
+            SetAnimationValue("jump");
+        else if (std::abs(_velocity.x) > 0.01)
+            SetAnimationValue("walk");
+        else
+            SetAnimationValue("idle");
 
+        SetFaceRight(_isRight);
         transform->SetPosition(position + (_velocity * deltaTime));
     }
 
@@ -230,6 +260,26 @@ public:
 
     void SetPhysicsWorld(const std::weak_ptr<PhysicsWorld> &physicsWorld) noexcept {
         _world = physicsWorld;
+    }
+
+    void SetSpineRenderer(const std::weak_ptr<SpineRenderer> &spineRenderer) noexcept {
+        _renderer = spineRenderer;
+
+        if (const auto render = _renderer.lock()) {
+            render->SetTransition("walk", "idle", 0.3);
+            render->SetTransition("walk", "jump", 0.3);
+            render->SetTransition("walk", "idle-turn", 0.3);
+
+            render->SetTransition("idle", "walk", 0.3);
+            render->SetTransition("idle", "jump", 0.3);
+            render->SetTransition("idle", "idle-turn", 0.3);
+
+
+            render->SetTransition("jump", "idle", 0.3);
+            render->SetTransition("jump", "walk", 0.3);
+            render->SetTransition("jump", "idle-turn", 0.3);
+
+        }
     }
 
 

@@ -173,6 +173,7 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                         component->SetCharacterControllerSettings(characterSettings);
                         component->SetInputSystem(_inputSystem);
                         component->SetPhysicsWorld(_physicsWorld);
+                        component->SetSpineRenderer(newEntity->GetComponent<SpineRenderer>());
 
                     }
                 }
@@ -231,20 +232,35 @@ std::shared_ptr<Material> SceneManager::GetMaterial(const std::string &guid) {
     return {};
 }
 
-std::shared_ptr<SpineData> SceneManager::LoadSpineData( const SpineAsset& asset) const {
-    if (const auto assetManager = _assetManager.lock()) {
-        // Load the atlas and the skeleton data
-        const auto atlas = assetManager->LoadSourceByGuid<spine::Atlas*>(asset.atlas);
+std::shared_ptr<SpineData> SceneManager::LoadSpineData(const SpineAsset& asset) const {
+    if (auto assetManager = _assetManager.lock()) {
+        // Load atlas (Spine owns this pointer)
+        auto atlas = assetManager->LoadSourceByGuid<spine::Atlas*>(asset.atlas);
+
         spine::SkeletonBinary binary(atlas);
 
-        const auto skeletonPath = assetManager->GetPathFromGuid(asset.skeleton);
-        spine::SkeletonData *skeletonData = binary.readSkeletonDataFile(skeletonPath.c_str());
+        // Load SkeletonData (Spine allocates it with new)
+        spine::SkeletonData* rawSkeletonData = binary.readSkeletonDataFile(
+            assetManager->GetPathFromGuid(asset.skeleton).c_str()
+        );
 
-        std::shared_ptr<spine::Skeleton> skeleton = std::make_shared<spine::Skeleton>(skeletonData);
+        // Wrap in smart pointer so it's freed automatically
+        auto skeletonData = std::shared_ptr<spine::SkeletonData>(rawSkeletonData);
 
-        spine::AnimationStateData animationStateData(skeletonData);
+        // Create AnimationStateData and wrap in smart pointer
+        auto stateData = std::make_shared<spine::AnimationStateData>(skeletonData.get());
 
-        return std::make_shared<SpineData>(skeleton, std::make_shared<spine::AnimationState>(&animationStateData));
+        // Create Skeleton and AnimationState
+        auto skeleton = std::make_shared<spine::Skeleton>(skeletonData.get());
+        auto animationState = std::make_shared<spine::AnimationState>(stateData.get());
+
+        // Store all in SpineData so nothing is destroyed prematurely
+        return std::make_shared<SpineData>(
+            skeletonData,
+            stateData,
+            skeleton,
+            animationState
+        );
     }
 
     return {};

@@ -22,7 +22,6 @@ private:
     std::vector<std::weak_ptr<SpriteRenderer>> _sprites;
     std::vector<std::weak_ptr<MeshRenderer>> _meshRenderers;
     std::vector<std::weak_ptr<LineRenderer>> _lines;
-    std::vector<std::weak_ptr<SpineRenderer>> _spines;
     std::vector<std::weak_ptr<UiTextRenderer>> _texts;
     std::vector<std::weak_ptr<UiImageRenderer>> _images;
 
