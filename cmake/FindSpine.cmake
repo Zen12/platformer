@@ -4,6 +4,7 @@ FetchContent_Declare(
         spine_cpp
         GIT_REPOSITORY https://github.com/EsotericSoftware/spine-runtimes.git
         GIT_TAG 4.2
+        GIT_SHALLOW TRUE
 )
 
 FetchContent_MakeAvailable(spine_cpp)
