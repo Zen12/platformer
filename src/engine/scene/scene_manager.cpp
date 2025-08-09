@@ -168,7 +168,8 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                             serialization->DecelerationSpeed,
                             serialization->JumpHeigh,
                             serialization->JumpDuration,
-                            serialization->JumpDownMultiplier};
+                            serialization->JumpDownMultiplier,
+                            serialization->AirControl};
                         component->SetCharacterControllerSettings(characterSettings);
                         component->SetInputSystem(_inputSystem);
                         component->SetPhysicsWorld(_physicsWorld);

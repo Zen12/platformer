@@ -228,6 +228,7 @@ struct CharacterControllerComponentSerialization final : public ComponentSeriali
     float JumpHeigh{1};
     float JumpDuration{1};
     float JumpDownMultiplier{1};
+    float AirControl{0.1};
 
     [[nodiscard]] std::string getType() const override { return "character_controller"; }
 };
@@ -426,6 +427,7 @@ inline std::unique_ptr<CharacterControllerComponentSerialization> createCharacte
     comp->JumpHeigh = map["jump_heigh"].as<float>();
     comp->JumpDuration = map["jump_duration"].as<float>();
     comp->JumpDownMultiplier = map["jump_down_multiplier"].as<float>();
+    comp->AirControl = map["air_control"].as<float>();
     return comp;
 }
 

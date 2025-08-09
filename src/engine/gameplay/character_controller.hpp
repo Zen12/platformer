@@ -154,6 +154,24 @@ private:
 
         glm::vec2 hitPos{};
 
+        if (input->IsKeyPressing(InputKey::A) || input->IsKeyPress(InputKey::A)) {
+            _velocity.x += -_characterSettings.AccelerationSpeed;
+            if (_velocity.x < -_characterSettings.MaxMovementSpeed)
+                _velocity.x = -_characterSettings.MaxMovementSpeed;
+        } else if (input->IsKeyPressing(InputKey::D) || input->IsKeyPress(InputKey::D)) {
+            _velocity.x += _characterSettings.AccelerationSpeed;
+            if (_velocity.x > _characterSettings.MaxMovementSpeed)
+                _velocity.x = _characterSettings.MaxMovementSpeed;
+        } else {
+            const float sign =  std::signbit(_velocity.x) ? -1.0f : 1.0f;
+            float absValue = std::abs(_velocity.x);
+            absValue -= _characterSettings.Deceleration;
+            if (absValue < 0) {
+                absValue = 0;
+            }
+            _velocity.x = sign * absValue;
+        }
+
         if (IsGrounded(world, hitPos)) {
             ResetJump();
 
@@ -161,24 +179,6 @@ private:
             if (diff > 0.01) {
                 position.y = hitPos.y;
             }
-            if (input->IsKeyPressing(InputKey::A) || input->IsKeyPress(InputKey::A)) {
-                _velocity.x += -_characterSettings.AccelerationSpeed;
-                if (_velocity.x < -_characterSettings.MaxMovementSpeed)
-                    _velocity.x = -_characterSettings.MaxMovementSpeed;
-            } else if (input->IsKeyPressing(InputKey::D) || input->IsKeyPress(InputKey::D)) {
-                _velocity.x += _characterSettings.AccelerationSpeed;
-                if (_velocity.x > _characterSettings.MaxMovementSpeed)
-                    _velocity.x = _characterSettings.MaxMovementSpeed;
-            } else {
-                const float sign =  std::signbit(_velocity.x) ? -1.0f : 1.0f;
-                float absValue = std::abs(_velocity.x);
-                absValue -= _characterSettings.Deceleration;
-                if (absValue < 0) {
-                    absValue = 0;
-                }
-                _velocity.x = sign * absValue;
-            }
-
 
             if (input->IsKeyPress(InputKey::Space)) {
                 _currentJumpDuration = 0;
@@ -186,6 +186,7 @@ private:
             }
 
         } else {
+            _velocity.x *= _characterSettings.AirControl;
             _currentJumpDuration += deltaTime;
 
             if (_currentJumpDuration > _characterSettings.JumpDuration) {

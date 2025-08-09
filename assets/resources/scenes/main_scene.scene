@@ -83,6 +83,7 @@ entities:
                   - jump_heigh: 5
                   - jump_duration: 0.5
                   - jump_down_multiplier: 1.2
+                  - air_control: 0.8
   - obj:
       - guid: light_2d
       - components:
