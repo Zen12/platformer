@@ -234,9 +234,9 @@ private:
             }
         }
         if (_velocity.y > 0.01)
-            SetAnimationValue("jump");
-        else if (std::abs(_velocity.x) > 0.01)
             SetAnimationValue("walk");
+        else if (std::abs(_velocity.x) > 0.01)
+            SetAnimationValue("run");
         else
             SetAnimationValue("idle");
 
@@ -267,17 +267,13 @@ public:
 
         if (const auto render = _renderer.lock()) {
             render->SetTransition("walk", "idle", 0.3);
-            render->SetTransition("walk", "jump", 0.3);
-            render->SetTransition("walk", "idle-turn", 0.3);
+            render->SetTransition("walk", "run", 0.3);
 
             render->SetTransition("idle", "walk", 0.3);
-            render->SetTransition("idle", "jump", 0.3);
-            render->SetTransition("idle", "idle-turn", 0.3);
+            render->SetTransition("idle", "run", 0.3);
 
-
-            render->SetTransition("jump", "idle", 0.3);
-            render->SetTransition("jump", "walk", 0.3);
-            render->SetTransition("jump", "idle-turn", 0.3);
+            render->SetTransition("run", "idle", 0.3);
+            render->SetTransition("run", "walk", 0.3);
 
         }
     }
