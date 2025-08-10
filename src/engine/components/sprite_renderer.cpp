@@ -31,10 +31,3 @@ void SpriteRenderer::Render() const noexcept
         glDrawElements(GL_TRIANGLES, static_cast<int32_t>(_mesh.GetIndicesCount()), GL_UNSIGNED_INT, nullptr);
     }
 }
-
-int32_t SpriteRenderer::GetShaderId() const noexcept {
-    if (const auto material = _material.lock()) {
-        return material->GetShaderId();
-    }
-    return -1;
-}

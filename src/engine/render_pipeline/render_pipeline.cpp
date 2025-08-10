@@ -1,72 +1,29 @@
 #include "render_pipeline.hpp"
 
+#include "../debug/debug.hpp"
+
 #define DEBUG_ENGINE_MESH_RENDERER_PIPELINE 0
 
 void RenderPipeline::RenderSprites(const float& deltaTime) const
 {
-    const auto projectionMat = _camera3d.lock()->GetProjection();
-    const auto viewMat = _cameraTransform3d.lock()->GetModel();
-
-    const auto projection = glm::value_ptr(projectionMat);
-    const auto view = glm::value_ptr(viewMat);
+    const auto projection = _camera3d.lock()->GetProjection();
+    const auto view = _cameraTransform3d.lock()->GetModel();
 
     for (const auto& value : _sprites)
     {
 
-        if (const auto& sprite = value.lock())
+        if (const auto& component = value.lock())
         {
-            sprite->Update(deltaTime); // move to material
+            component->Update(deltaTime); // move to material
 
-            const auto model = sprite->GetEntity().lock()->GetComponent<Transform>().lock();
+            const auto model = component->GetModel();
+            component->SetUniformMat4("model",model);
+            component->SetUniformMat4("view",view);
+            component->SetUniformMat4("projection",projection);
 
-            const auto shaderId = sprite->GetShaderId();
-
-            const auto modelLock = glGetUniformLocation(shaderId, "model");
-            glUniformMatrix4fv(modelLock, 1, GL_FALSE, glm::value_ptr(model->GetModel()));
-
-            const auto viewLock = glGetUniformLocation(shaderId, "view");
-            glUniformMatrix4fv(viewLock, 1, GL_FALSE, view);
-
-            const auto projLock = glGetUniformLocation(shaderId, "projection");
-            glUniformMatrix4fv(projLock, 1, GL_FALSE, projection);
-
-            sprite->Render();
+            component->Render();
         }
     }
-}
-
-void RenderPipeline::RenderLines(const float& deltaTime) const {
-
-    const auto projectionMat = _camera3d.lock()->GetProjection();
-    const auto viewMat = _cameraTransform3d.lock()->GetModel();
-
-    const auto projection = glm::value_ptr(projectionMat);
-    const auto view = glm::value_ptr(viewMat);
-
-    for (const auto& value : _lines)
-    {
-
-        if (const auto& line = value.lock())
-        {
-            line->Update(deltaTime); // move to material
-
-            const auto model = line->GetEntity().lock()->GetComponent<Transform>().lock();
-
-            const auto shaderId = line->GetShaderId();
-
-            const auto modelLock = glGetUniformLocation(shaderId, "model");
-            glUniformMatrix4fv(modelLock, 1, GL_FALSE, glm::value_ptr(model->GetModel()));
-
-            const auto viewLock = glGetUniformLocation(shaderId, "view");
-            glUniformMatrix4fv(viewLock, 1, GL_FALSE, view);
-
-            const auto projLock = glGetUniformLocation(shaderId, "projection");
-            glUniformMatrix4fv(projLock, 1, GL_FALSE, projection);
-
-            line->Render();
-        }
-    }
-
 }
 
 void RenderPipeline::RenderMeshes(const float& deltaTime) {
@@ -125,6 +82,15 @@ void RenderPipeline::RenderMeshes(const float& deltaTime) {
 #endif
 #endif
 }
+
+#ifndef NDEBUG
+void RenderPipeline::RenderDebugLines() const {
+    DebugLines::DrawLines();
+    DebugLines::Clear();
+}
+
+#endif
+
 
 void RenderPipeline::Init() const noexcept {
     //glEnable(GL_CULL_FACE); // spine runtime requires

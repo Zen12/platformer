@@ -134,13 +134,7 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                         rigidBody->SetWorld(_physicsWorld);
                         rigidBody->Init(serialization->isDynamic);
                     }
-                }else if (comp->getType() == "line_renderer") {
-                    if (auto lineRenderer = newEntity->AddComponent<LineRenderer>().lock()) {
-                        const auto *serialization = dynamic_cast<LineRenderComponentSerialization *>(comp.get());
-                        lineRenderer->SetMaterial(GetMaterial(serialization->MaterialGuid));
-                        _renderPipeline.lock()->AddRenderer(lineRenderer);
-                    }
-                }else if (comp->getType() == "light_2d") {
+                } else if (comp->getType() == "light_2d") {
                     if (const auto light2d = newEntity->AddComponent<Light2dComponent>().lock()) {
                         const auto *serialization = dynamic_cast<Light2dComponentSerialization *>(comp.get());
                         const auto ref = GetEntity(serialization->CenterTransform);

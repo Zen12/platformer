@@ -4,6 +4,7 @@
 #include <chrono>
 #include <string>
 #include <utility>
+#include "../render/line.hpp"
 
 #ifndef NDEBUG
 #define PROFILE_SCOPE(name) ScopedTimer timer(name)
@@ -26,4 +27,16 @@ struct ScopedTimer {
         std::cout << name << " took " << duration << " seconds\n";
     }
 };
+
+
+struct DebugLines {
+public:
+    static void AddLine(const glm::vec3& start, const glm::vec3& end);
+
+    static void DrawLines();
+
+    static void Clear();
+};
+
 #endif
+

@@ -63,7 +63,7 @@ void Engine::Tick() {
     _renderPipeline->RenderSprites(deltaTime);
 
 #ifndef NDEBUG
-    _renderPipeline->RenderLines(deltaTime);
+    _renderPipeline->RenderDebugLines();
 #endif
     _renderPipeline->RenderUI(deltaTime);
 

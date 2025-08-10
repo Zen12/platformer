@@ -132,22 +132,6 @@ struct Light2dComponentSerialization final : public ComponentSerialization
     }
 };
 
-struct LineRenderComponentSerialization final : public ComponentSerialization
-{
-    const std::string MaterialGuid;
-
-    explicit LineRenderComponentSerialization(std::string materialGuid)
-        : MaterialGuid(std::move(materialGuid))
-    {
-    }
-
-    [[nodiscard]] std::string getType() const override
-    {
-        return "line_renderer";
-    }
-};
-
-
 struct SpriteComponentSerialization final : public ComponentSerialization
 {
     std::string Path;
@@ -307,12 +291,6 @@ inline std::unique_ptr<Light2dComponentSerialization> createLight2dRenderer(cons
         map["offset_y"].as<float>());
 }
 
-inline std::unique_ptr<LineRenderComponentSerialization> createLineRenderer(const YAML::Node &map)
-{
-    return std::make_unique<LineRenderComponentSerialization>(
-        map["material"].as<std::string>());
-}
-
 inline std::unique_ptr<SpriteRenderComponentSerialization> createSpriteRenderer(const YAML::Node &map)
 {
     return std::make_unique<SpriteRenderComponentSerialization>(
@@ -446,12 +424,9 @@ inline std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAM
     {
         return createTransform(map);
     }
-    else if (type == "rect_transform")
-    {
+    else if (type == "rect_transform") {
         return createRectTransform(map);
-    }
-    else if (type == "ui_image")
-    {
+    } else if (type == "ui_image") {
         return createUiImage(map);
     } if (type == "ui_text") {
         return createUiText(map);
@@ -459,15 +434,13 @@ inline std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAM
         return createSpriteRenderer(map);
     } else if (type == "box_collider") {
         return createBoxCollider(map);
-    }else if (type == "rigidbody2d") {
+    } else if (type == "rigidbody2d") {
         return createRigidBody(map);
-    } else if (type == "line_renderer") {
-        return createLineRenderer(map);
     } else if (type == "light_2d") {
         return createLight2dRenderer(map);
     } if (type == "mesh_renderer") {
         return createMeshRenderer(map);
-    }if (type == "spine_renderer") {
+    } if (type == "spine_renderer") {
         return createSpineRenderer(map);
     } if (type == "character_controller") {
         return createCharacterController(map);

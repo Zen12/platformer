@@ -44,6 +44,12 @@ Line Line::Generate() {
     return Line(vertices);
 }
 
+std::shared_ptr<Line> Line::GenerateLine(const glm::vec3 &start, const glm::vec3 &end) {
+    const std::vector<float> vertices = { start.x, start.y, start.z, end.x, end.y, end.z };
+
+    return std::make_shared<Line>(vertices);
+}
+
 Line::Line(const std::vector<float> &vertices) {
     _vertices = vertices;
 
