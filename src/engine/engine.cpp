@@ -31,7 +31,9 @@ void Engine::LoadFirstScene() {
 
     _renderPipeline->Init();
 
-    _fpsText = _sceneManager->GetEntityById("text-fps").lock()->GetComponent<UiTextRenderer>().lock();
+    if (const auto fpsText = _sceneManager->GetEntityById("text-fps").lock()) {
+        _fpsText = fpsText->GetComponent<UiTextRenderer>();
+    }
 }
 
 Engine::~Engine() {
@@ -45,12 +47,12 @@ void Engine::Tick() {
     const float deltaTime = _timer.GetResetDelta();
     _timer.Reset();
 
-    const float fps = 1.0f / deltaTime;
-    std::stringstream ss;
-    ss << std::fixed << std::setprecision(0) << fps;
-    _fpsText.lock()->SetText(ss.str());
-
-    const auto world =  _physicsWorld->GetWorld().lock();
+    if (const auto fpsText = _fpsText.lock()) {
+        const float fps = 1.0f / deltaTime;
+        std::stringstream ss;
+        ss << std::fixed << std::setprecision(0) << fps;
+        _fpsText.lock()->SetText(ss.str());
+    }
 
     _inputSystem->Update();
 

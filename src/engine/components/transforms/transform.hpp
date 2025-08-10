@@ -25,18 +25,18 @@ public:
     }
     ~Transform() override = default;
 
-    void Update([[maybe_unused]] const float& deltaTime) override;
+    void Update([[maybe_unused]] const float& deltaTime) noexcept override;
 
     [[nodiscard]] virtual glm::mat4 GetModel() const;
 
-    void SetPosition(const glm::vec3 &position);
-    [[nodiscard]] glm::vec3 GetPosition() const;
+    void SetPosition(const glm::vec3 &position) noexcept;
+    [[nodiscard]] glm::vec3 GetPosition() const noexcept;
 
-    void SetPosition(const float& x, const float& y);
+    void SetPosition(const float& x, const float& y) noexcept;
 
-    void SetEulerRotation(const glm::vec3 &euler);
-    [[nodiscard]] glm::vec3 GetEulerRotation() const;
+    void SetEulerRotation(const glm::vec3 &euler) noexcept;
+    [[nodiscard]] glm::vec3 GetEulerRotation() const noexcept;
 
-    void SetScale(const glm::vec3 &scale);
-    [[nodiscard]] glm::vec3 GetScale() const;
+    void SetScale(const glm::vec3 &scale) noexcept;
+    [[nodiscard]] glm::vec3 GetScale() const noexcept;
 };

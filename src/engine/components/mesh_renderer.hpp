@@ -40,6 +40,12 @@ public:
         }
     }
 
+    void SetUniformMat4(const std::string& name, const glm::mat4 &m) const noexcept {
+        if (const auto material = _material.lock()) {
+            material->SetMat4(name, m);
+        }
+    }
+
 
     void SetMaterial(std::weak_ptr<Material> material) {
         _material = std::move( material);
@@ -80,19 +86,18 @@ public:
 #endif
     }
 
-    [[nodiscard]] int32_t GetShaderId() const noexcept {
-        if (const auto material = _material.lock()) {
-            return material->GetShaderId();
-        }
-
-        return -1;
-    }
-
     [[nodiscard]] float GetZOrder() const noexcept {
         if (const auto transform = _transform.lock()) {
             return transform->GetPosition().z;
         }
 
         return 0;
+    }
+
+    [[nodiscard]] glm::mat4 GetModel() const noexcept {
+        if (const auto transform = _transform.lock()) {
+            return transform->GetModel();
+        }
+        return {};
     }
 };

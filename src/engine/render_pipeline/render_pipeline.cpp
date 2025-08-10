@@ -73,8 +73,8 @@ void RenderPipeline::RenderMeshes(const float& deltaTime) {
 
     std::sort(_meshRenderers.begin(), _meshRenderers.end(),
         [](const std::weak_ptr<MeshRenderer>& a, const std::weak_ptr<MeshRenderer>& b) {
-            auto sa = a.lock();
-            auto sb = b.lock();
+            const auto sa = a.lock();
+            const auto sb = b.lock();
 
             // Sort expired items last
             if (!sa) {
@@ -86,11 +86,8 @@ void RenderPipeline::RenderMeshes(const float& deltaTime) {
             return sa->GetZOrder() < sb->GetZOrder();
         });
 
-    const auto projectionMat = _camera3d.lock()->GetProjection();
-    const auto viewMat = _cameraTransform3d.lock()->GetModel();
-
-    const auto projection = glm::value_ptr(projectionMat);
-    const auto view = glm::value_ptr(viewMat);
+    const auto projection = _camera3d.lock()->GetProjection();
+    const auto view = _cameraTransform3d.lock()->GetModel();
 
 #ifndef NDEBUG
 #if DEBUG_ENGINE_MESH_RENDERER_PIPELINE
@@ -111,20 +108,11 @@ void RenderPipeline::RenderMeshes(const float& deltaTime) {
 #endif
 #endif
 
-            meshRenderer->Update(deltaTime); // move to material
+            meshRenderer->Update(deltaTime);
 
-            const auto model = meshRenderer->GetEntity().lock()->GetComponent<Transform>().lock();
-
-            const auto shaderId = meshRenderer->GetShaderId();
-
-            const auto modelLock = glGetUniformLocation(shaderId, "model");
-            glUniformMatrix4fv(modelLock, 1, GL_FALSE, glm::value_ptr(model->GetModel()));
-
-            const auto viewLock = glGetUniformLocation(shaderId, "view");
-            glUniformMatrix4fv(viewLock, 1, GL_FALSE, view);
-
-            const auto projLock = glGetUniformLocation(shaderId, "projection");
-            glUniformMatrix4fv(projLock, 1, GL_FALSE, projection);
+            meshRenderer->SetUniformMat4("model", meshRenderer->GetModel());
+            meshRenderer->SetUniformMat4("view", view);
+            meshRenderer->SetUniformMat4("projection", projection);
 
             meshRenderer->Render();
         }

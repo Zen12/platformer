@@ -1,6 +1,6 @@
 #include "transform.hpp"
 
-void Transform::Update([[maybe_unused]] const float& deltaTime)
+void Transform::Update([[maybe_unused]] const float& deltaTime) noexcept
 {
 }
 
@@ -22,38 +22,38 @@ glm::mat4 Transform::GetModel() const
     return model;
 }
 
-void Transform::SetPosition(const glm::vec3 &position)
+void Transform::SetPosition(const glm::vec3 &position) noexcept
 {
     _position = position;
 }
 
-void Transform::SetPosition(const float& x, const float& y)
+void Transform::SetPosition(const float& x, const float& y) noexcept
 {
     _position.x = x;
     _position.y = y;
 }
 
-glm::vec3 Transform::GetPosition() const
+glm::vec3 Transform::GetPosition() const noexcept
 {
     return _position;
 }
 
-void Transform::SetEulerRotation(const glm::vec3 &euler)
+void Transform::SetEulerRotation(const glm::vec3 &euler) noexcept
 {
     _eulerRotation = euler;
 }
 
-glm::vec3 Transform::GetEulerRotation() const
+glm::vec3 Transform::GetEulerRotation() const noexcept
 {
     return _eulerRotation;
 }
 
-void Transform::SetScale(const glm::vec3 &scale)
+void Transform::SetScale(const glm::vec3 &scale) noexcept
 {
     _scale = scale;
 }
 
-glm::vec3 Transform::GetScale() const
+glm::vec3 Transform::GetScale() const noexcept
 {
     return _scale;
 }
