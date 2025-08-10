@@ -196,6 +196,21 @@ void SceneManager::UnLoadAll() {
     _meshes.clear();
 }
 
+std::weak_ptr<Entity> SceneManager::GetEntityById(const std::string &id) const {
+    for (const auto &entity: _entities) {
+        if (entity->GetId() == id) {
+            return entity;
+        }
+    }
+    return {};
+}
+
+void SceneManager::Update(const float &deltaTime) const {
+    for (const auto &entity: _entities) {
+        entity->Update(deltaTime);
+    }
+}
+
 std::shared_ptr<Shader> SceneManager::GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) {
     if (const auto assetManager = _assetManager.lock()) {
 

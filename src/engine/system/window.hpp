@@ -21,24 +21,7 @@ public:
     void SwapBuffers() const noexcept;
     void PullEvent() const noexcept;
 
-    void ClearWithValue(const int &value) noexcept {
-
-        for (auto it = _keyboardCodes.begin(); it != _keyboardCodes.end(); ) {
-            if (it->second == value) {
-                it = _keyboardCodes.erase(it);
-            } else {
-                ++it;
-            }
-        }
-
-        for (auto it = _mouseCodes.begin(); it != _mouseCodes.end(); ) {
-            if (it->second == value) {
-                it = _mouseCodes.erase(it);
-            } else {
-                ++it;
-            }
-        }
-    }
+    void ClearWithValue(const int &value) noexcept;
 
     [[nodiscard]] uint16_t GetWidth() const noexcept {
         return _width;

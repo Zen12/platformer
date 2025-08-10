@@ -153,76 +153,18 @@ public:
         : _window(window)
     {}
 
-    void Update() {
-        if (const auto window = _window.lock()) {
-            window->ClearWithValue(INPUT_RELEASE);
-            window->PullEvent();
-            _keyCodes = window->GetKeyboardCodes();
-            _mouseCodes = window->GetMouseCodes();
-        }
-    }
+    void Update();
 
-    bool IsKeyPress(const InputKey &key) {
-        const auto value = InputKeyMapToGLFW.at(key);
-        for (const auto &[code, state] : _keyCodes) {
-            if (code == value && state == INPUT_PRESS) {
-                return true;
-            }
-        }
-        return false;
-    }
+    bool IsKeyPress(const InputKey &key);
 
-    bool IsKeyPressing(const InputKey &key) {
-        const auto value = InputKeyMapToGLFW.at(key);
-        for (const auto &[code, state] : _keyCodes) {
-            if (code == value && state == INPUT_REPEAT) {
-                return true;
-            }
-        }
-        return false;
-    }
+    bool IsKeyPressing(const InputKey &key);
 
-    bool IsKeyUp(const InputKey &key) {
-        const auto value = InputKeyMapToGLFW.at(key);
-        for (const auto &[code, state] : _keyCodes) {
-            if (code == value && state == INPUT_RELEASE) {
-                return true;
-            }
-        }
-        return false;
-    }
+    bool IsKeyUp(const InputKey &key);
 
-    bool IsMousePress(const MouseButton &button) {
-        const auto value = MouseButtonMapToGLFW.at(button);
-        for (const auto &[code, state] : _mouseCodes) {
-            if (code == value && state == INPUT_PRESS) {
-                return true;
-            }
-        }
-        return false;
-    }
+    bool IsMousePress(const MouseButton &button);
 
-    bool IsMousePressing(const MouseButton &button) {
-        const auto value = MouseButtonMapToGLFW.at(button);
-        for (const auto &[code, state] : _mouseCodes) {
-            if (code == value && (state == INPUT_REPEAT || state == INPUT_PRESS)) {
-                return true;
-            }
-        }
-        return false;
-    }
+    bool IsMousePressing(const MouseButton &button);
 
-    bool IsMouseUp(const MouseButton &button) {
-        const auto value = MouseButtonMapToGLFW.at(button);
-        for (const auto &[code, state] : _mouseCodes) {
-            if (code == value && state == INPUT_RELEASE) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-
+    bool IsMouseUp(const MouseButton &button);
 };
 

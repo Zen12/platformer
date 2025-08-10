@@ -1,6 +1,6 @@
 #include "light_2d.hpp"
 
-void Light2dComponent::UpdateLights() const noexcept {
+void Light2dComponent::Update([[maybe_unused]] const float &deltaTime) {
     if (const auto world = _physicsWorld.lock()->GetWorld().lock()) {
         if (const auto center = _center.lock()) {
             std::vector<float> meshVert{};

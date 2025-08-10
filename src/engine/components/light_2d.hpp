@@ -30,9 +30,7 @@ public:
     explicit Light2dComponent(const std::weak_ptr<Entity> &entity) : Component(entity) {
     }
 
-    void Update([[maybe_unused]] const float& deltaTime) override {
-        UpdateLights();
-    }
+    void Update([[maybe_unused]] const float& deltaTime) override;
 
     void SetMeshRenderer(std::weak_ptr<MeshRenderer> meshRenderer) noexcept {
         _meshRenderer = std::move(meshRenderer);
@@ -51,7 +49,6 @@ public:
     }
 
 private:
-    void UpdateLights() const noexcept;
 
     // move to utils class
     [[nodiscard]] static float DegToRad(const float& degrees) noexcept {

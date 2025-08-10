@@ -37,7 +37,7 @@ private:
     std::shared_ptr<PhysicsWorld> _physicsWorld = std::make_shared<PhysicsWorld>(b2Vec2{0.0, -10.0});
 
 
-    public:
+public:
     SceneManager(
         const std::weak_ptr<RenderPipeline> &render,
         const std::weak_ptr<Window> &window,
@@ -55,20 +55,9 @@ private:
         return _physicsWorld;
     }
 
-    [[nodiscard]] std::weak_ptr<Entity> GetEntityById(const std::string& id) const{
-        for (const auto &entity: _entities) {
-            if (entity->GetId() == id) {
-                return entity;
-            }
-        }
-        return {};
-    }
+    [[nodiscard]] std::weak_ptr<Entity> GetEntityById(const std::string& id) const;
 
-    void Update(const float& deltaTime) const {
-        for (const auto &entity: _entities) {
-            entity->Update(deltaTime);
-        }
-    }
+    void Update(const float& deltaTime) const;
 
 private:
     [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid);
@@ -84,7 +73,5 @@ private:
     [[nodiscard]] std::shared_ptr<Entity> GetEntity(const std::string& id) const;
 
     [[nodiscard]] std::shared_ptr<SpineData> GetSpineData(const std::string &guid, const SpineAsset& asset);
-
-
 
 };

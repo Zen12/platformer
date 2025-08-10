@@ -1,6 +1,9 @@
 #pragma once
 #include <iostream>
 #include <box2d/box2d.h>
+#include "../components/entity.hpp"
+
+#include "glm/ext/scalar_int_sized.hpp"
 
 class PhysicsWorld
 {
@@ -15,24 +18,11 @@ public:
         : _world(new b2World(gravity))
     {}
 
-    void Simulate(const float& deltaTime) const {
-        _world->Step(deltaTime, velocityIterations, positionIterations);
-    }
+    void Simulate(const float& deltaTime) const;
 
-    void UpdateColliders(const float& deltaTime) const {
-        for (const auto& component : _components) {
-            if (auto collider = component.lock()) {
-                collider->Update(deltaTime);
-            }
-        }
-    }
+    void UpdateColliders(const float& deltaTime) const;
 
-    [[nodiscard]] std::weak_ptr<b2World> GetWorld() const {
-        return _world;
-    }
+    [[nodiscard]] std::weak_ptr<b2World> GetWorld() const;
 
-    void AddColliderComponent(const std::weak_ptr<Component> &collider) {
-        _components.push_back(collider);
-    }
-
+    void AddColliderComponent(const std::weak_ptr<Component> &collider);
 };

@@ -3,8 +3,8 @@
 class Time
 {
 private:
-    std::chrono::high_resolution_clock::time_point _start;
-    std::chrono::high_resolution_clock::time_point _lastReset;
+    std::chrono::high_resolution_clock::time_point _start{};
+    std::chrono::high_resolution_clock::time_point _lastReset{};
 
 public:
     void Start()
@@ -32,9 +32,9 @@ public:
         return duration.count();
     }
 
-    [[nodiscard]] float GetResetDeltaFps() const
+    [[nodiscard]] float GetResetDeltaFps() const noexcept
     {
         const auto delta = GetResetDelta();
-        return 1 / delta;
+        return 1.0f / delta;
     }
 };

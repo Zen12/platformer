@@ -3,23 +3,12 @@
 #include "../components/entity.hpp"
 #include "../components/transforms/transform.hpp"
 #include "../system/input_system.hpp"
+#include "box2d/b2_world.h"
+#include "../physics/physics_world.hpp"
+#include "../physics/raycast.hpp"
+#include "../components/spine_renderer.hpp"
 
 /*
-Movement
-Acceleration
-MaxSpeed
-Deceleration
-
-Camera:
-DampingX
-DampingY
-LookAhead
-
-Jump:
-JumpHeigh
-Duration
-JumpDownMultiplyer
-
 Assists:
 Coyote Time - time in air to jump
 Jump Buffer - time to remember jump-button-down so when the ground it will jump
@@ -36,8 +25,8 @@ class CharacterController final : public Component{
 private:
     std::weak_ptr<InputSystem> _inputSystem;
     std::weak_ptr<Transform> _transform;
-    std::weak_ptr<PhysicsWorld> _world;
-    std::weak_ptr<SpineRenderer> _renderer;
+    std::weak_ptr<PhysicsWorld> _world{};
+    std::weak_ptr<SpineRenderer> _renderer{};
     CharacterControllerSettings _characterSettings{};
 
     glm::vec2 _characterSize{1.0f, 2.0f};
@@ -70,185 +59,26 @@ private:
         }
     }
 
-    void SetFaceRight(const bool& isFaceRight) {
-        if (const auto render = _renderer.lock()) {
-            render->SetFaceRight(isFaceRight);
-        }
-    }
+    void SetFaceRight(const bool& isFaceRight);
 
-    void ResetJump() noexcept {
-        _velocity.y = 0;
-        _currentJumpDuration = _characterSettings.JumpDuration + 1;
-    }
-    [[nodiscard]] glm::vec2 GetCenter() const noexcept {
-        if (const auto tr = _transform.lock()) {
-            const auto ground = tr->GetPosition();
-            return  {ground.x, ground.y + _halfCharacterSize.y};
-        }
+    void ResetJump() noexcept;
 
-        return glm::vec2{0.0f, 0.0f};
-    }
+    [[nodiscard]] glm::vec2 GetCenter() const noexcept;
 
-    [[nodiscard]] bool IsHitDir(const b2World *world, glm::vec2 position, glm::vec2 dir, glm::vec2 &hitPos) const {
-        b2Vec2 pointA(position.x, position.y);    // Start of ray
-        b2Vec2 pointB(position.x + dir.x, position.y + dir.y);   // End of ray
+    [[nodiscard]] bool IsHitDir(const b2World *world, glm::vec2 position, glm::vec2 dir, glm::vec2 &hitPos) const;
 
-        RayCastClosestCallback callback;
-        world->RayCast(&callback, pointA, pointB);
+    [[nodiscard]] bool IsHitUp(const b2World *world, glm::vec2 &hitPos) const;
 
-        hitPos = glm::vec2(callback.Point.x, callback.Point.y);
+    [[nodiscard]] bool IsHitLeft(const b2World *world, glm::vec2 &hitPos) const;
 
-        return callback.Hit;
-    }
+    [[nodiscard]] bool IsHitRight(const b2World *world, glm::vec2 &hitPos) const;
 
-    [[nodiscard]] bool IsHitUp(const b2World *world, glm::vec2 &hitPos) const {
-        const auto center = GetCenter();
+    [[nodiscard]] bool IsGrounded(const b2World *world, glm::vec2 &hitPos) const;
 
-        if (IsHitDir(world,
-            center + glm::vec2{_halfCharacterSize.x, _fourthPartCharacterSize.y},
-            glm::vec2{0.0f, _fourthPartCharacterSize.y}, hitPos))
-            return true;
-
-        if (IsHitDir(world,
-              center + glm::vec2{-_halfCharacterSize.x, _fourthPartCharacterSize.y},
-              glm::vec2{0.0f, _fourthPartCharacterSize.y}, hitPos))
-            return true;
-
-
-        return false;
-    }
-
-    [[nodiscard]] bool IsHitLeft(const b2World *world, glm::vec2 &hitPos) const {
-        const auto center = GetCenter();
-
-        if (IsHitDir(world,
-            center + glm::vec2(-_fourthPartCharacterSize.x, -_fourthPartCharacterSize.y),
-            glm::vec2(-_fourthPartCharacterSize.y, 0.0f), hitPos))
-            return true;
-
-        if (IsHitDir(world,
-        center + glm::vec2(-_fourthPartCharacterSize.x, _fourthPartCharacterSize.y),
-            glm::vec2(-_fourthPartCharacterSize.y, 0.0f), hitPos))
-            return true;
-
-
-        return false;
-    }
-
-    [[nodiscard]] bool IsHitRight(const b2World *world, glm::vec2 &hitPos) const {
-        const auto center = GetCenter();
-
-        if (IsHitDir(world,
-            center + glm::vec2(_fourthPartCharacterSize.x, -_fourthPartCharacterSize.y),
-            glm::vec2(_fourthPartCharacterSize.y, 0.0f), hitPos))
-            return true;
-
-        if (IsHitDir(world,
-        center + glm::vec2(_fourthPartCharacterSize.x, _fourthPartCharacterSize.y),
-            glm::vec2(_fourthPartCharacterSize.y, 0.0f), hitPos))
-            return true;
-
-        return false;
-    }
-
-
-    [[nodiscard]] bool IsGrounded(const b2World *world, glm::vec2 &hitPos) const {
-        const auto center = GetCenter();
-
-        if (IsHitDir(world,
-            center + glm::vec2{_halfCharacterSize.x, -_fourthPartCharacterSize.y},
-            glm::vec2{0.0f, -_fourthPartCharacterSize.y}, hitPos))
-            return true;
-
-        if (IsHitDir(world,
-              center + glm::vec2{-_halfCharacterSize.x, -_fourthPartCharacterSize.y},
-              glm::vec2{0.0f, -_fourthPartCharacterSize.y}, hitPos))
-            return true;
-
-
-        return false;
-    }
-
-    void UpdateInternal(const float &deltaTime, InputSystem *input, Transform *transform, b2World* world) {
-
-        auto position = transform->GetPosition();
-
-        glm::vec2 hitPos{};
-
-        if (input->IsKeyPressing(InputKey::A) || input->IsKeyPress(InputKey::A)) {
-            _velocity.x += -_characterSettings.AccelerationSpeed;
-            if (_velocity.x < -_characterSettings.MaxMovementSpeed)
-                _velocity.x = -_characterSettings.MaxMovementSpeed;
-            _isRight = false;
-        } else if (input->IsKeyPressing(InputKey::D) || input->IsKeyPress(InputKey::D)) {
-            _velocity.x += _characterSettings.AccelerationSpeed;
-            if (_velocity.x > _characterSettings.MaxMovementSpeed)
-                _velocity.x = _characterSettings.MaxMovementSpeed;
-            _isRight = true;
-        } else {
-            const float sign =  std::signbit(_velocity.x) ? -1.0f : 1.0f;
-            float absValue = std::abs(_velocity.x);
-            absValue -= _characterSettings.Deceleration;
-            if (absValue < 0) {
-                absValue = 0;
-            }
-            _velocity.x = sign * absValue;
-        }
-
-        if (IsGrounded(world, hitPos)) {
-            ResetJump();
-
-            float diff = std::abs(hitPos.y - position.y);
-            if (diff > 0.01) {
-                position.y = hitPos.y;
-            }
-
-            if (input->IsKeyPress(InputKey::Space)) {
-                _currentJumpDuration = 0;
-                _velocity.y = _characterSettings.JumpHeigh / _characterSettings.JumpDuration;
-            }
-
-        } else {
-            _velocity.x *= _characterSettings.AirControl;
-            _currentJumpDuration += deltaTime;
-
-            if (_currentJumpDuration > _characterSettings.JumpDuration) {
-                _velocity.y = -(_characterSettings.JumpHeigh / _characterSettings.JumpDuration) * _characterSettings.JumpDownMultiplier;
-            }
-        }
-
-
-        if (IsHitLeft(world, hitPos)) {
-            if (_velocity.x < 0)
-                _velocity.x = 0;
-        }
-
-        if (IsHitRight(world, hitPos)) {
-            if (_velocity.x > 0)
-                _velocity.x = 0;
-        }
-
-        if (IsHitUp(world, hitPos)) {
-            if (_velocity.y > 0) {
-                ResetJump();
-            }
-        }
-        if (_velocity.y > 0.01)
-            SetAnimationValue("walk");
-        else if (std::abs(_velocity.x) > 0.01)
-            SetAnimationValue("run");
-        else
-            SetAnimationValue("idle");
-
-        SetFaceRight(_isRight);
-        transform->SetPosition(position + (_velocity * deltaTime));
-    }
+    void UpdateInternal(const float &deltaTime, InputSystem *input, Transform *transform, b2World* world);
 
 public:
-    explicit CharacterController(const std::weak_ptr<Entity> &entity)
-        : Component(entity) {
-        _transform = _entity.lock()->GetComponent<Transform>();
-    }
+    explicit CharacterController(const std::weak_ptr<Entity> &entity);
 
     void SetInputSystem(const std::weak_ptr<InputSystem> &inputSystem) noexcept {
         _inputSystem = inputSystem;
@@ -262,31 +92,7 @@ public:
         _world = physicsWorld;
     }
 
-    void SetSpineRenderer(const std::weak_ptr<SpineRenderer> &spineRenderer) noexcept {
-        _renderer = spineRenderer;
+    void SetSpineRenderer(const std::weak_ptr<SpineRenderer> &spineRenderer) noexcept;
 
-        if (const auto render = _renderer.lock()) {
-            render->SetTransition("walk", "idle", 0.3);
-            render->SetTransition("walk", "run", 0.3);
-
-            render->SetTransition("idle", "walk", 0.3);
-            render->SetTransition("idle", "run", 0.3);
-
-            render->SetTransition("run", "idle", 0.3);
-            render->SetTransition("run", "walk", 0.3);
-
-        }
-    }
-
-
-    void Update(const float& deltaTime) override {
-
-        if (const auto input = _inputSystem.lock())
-            if (const auto transform = _transform.lock())
-                if (const auto world = _world.lock())
-                    if (const auto b2World = world->GetWorld().lock())
-                        UpdateInternal(deltaTime, input.get(), transform.get(), b2World.get());
-
-    }
-
+    void Update(const float& deltaTime) override;
 };

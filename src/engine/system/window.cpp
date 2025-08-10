@@ -97,6 +97,25 @@ void Window::PullEvent() const noexcept {
     glfwPollEvents();
 }
 
+void Window::ClearWithValue(const int &value) noexcept {
+
+    for (auto it = _keyboardCodes.begin(); it != _keyboardCodes.end(); ) {
+        if (it->second == value) {
+            it = _keyboardCodes.erase(it);
+        } else {
+            ++it;
+        }
+    }
+
+    for (auto it = _mouseCodes.begin(); it != _mouseCodes.end(); ) {
+        if (it->second == value) {
+            it = _mouseCodes.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+
 bool Window::IsFocus() const noexcept {
     return glfwGetWindowAttrib(window, GLFW_FOCUSED);
 }
