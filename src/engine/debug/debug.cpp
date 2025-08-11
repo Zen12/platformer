@@ -13,11 +13,15 @@ const std::string vertexSource = R"(
 #version 330 core
 
 layout(location = 0) in vec3 aPos;
+layout(location = 1) in vec3 aColor;
 
 uniform mat4 projection;
 uniform mat4 view;
 
+out vec3 color;
+
 void main() {
+    color = aColor;
     gl_Position = projection * view * vec4(aPos, 1.0);
 }
 
@@ -30,8 +34,10 @@ const std::string fragmentSource = R"(
 
 out vec4 FragColor;
 
+in vec3 color;
+
 void main() {
-    FragColor = vec4(1.0, 0.0, 0.0, 1.0); // red
+    FragColor = vec4(color.x, color.y, color.z, 1.0);
 }
 
 )";
@@ -50,7 +56,11 @@ void DebugLines::UpdateViewProjection(const glm::mat4 &view, const glm::mat4 &pr
 }
 
 void DebugLines::AddLine(const glm::vec3 &start, const glm::vec3 &end) {
-    const auto lines = Line::GenerateLine(start, end);
+    AddLine(start, end, glm::vec3(1.0, 0.0, 0.0)); // red color
+}
+
+void DebugLines::AddLine(const glm::vec3 &start, const glm::vec3 &end, const glm::vec3 &color) {
+    const auto lines = Line::GenerateLine(start, end, color);
     _lines.push_back(lines);
 }
 

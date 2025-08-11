@@ -144,7 +144,7 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
 
                         light2d->SetPhysicsWorld(_physicsWorld);
                         light2d->SetMeshRenderer(newEntity->GetComponent<MeshRenderer>());
-                        light2d->SetOffset(glm::vec2(serialization->OffsetX, serialization->OffsetY));
+                        light2d->SetOffset(glm::vec3(serialization->OffsetX, serialization->OffsetY, 0.0));
                     }
                 }else if (comp->getType() == "mesh_renderer") {
                     if (const auto mesh_renderer = newEntity->AddComponent<MeshRenderer>().lock()) {

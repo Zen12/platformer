@@ -44,8 +44,10 @@ Line Line::Generate() {
     return Line(vertices);
 }
 
-std::shared_ptr<Line> Line::GenerateLine(const glm::vec3 &start, const glm::vec3 &end) {
-    const std::vector<float> vertices = { start.x, start.y, start.z, end.x, end.y, end.z };
+std::shared_ptr<Line> Line::GenerateLine(const glm::vec3 &start, const glm::vec3 &end, const glm::vec3 &color) {
+    const std::vector<float> vertices = {
+        start.x, start.y, start.z, color.x, color.y, color.z,
+        end.x, end.y, end.z, color.x, color.y, color.z };
 
     return std::make_shared<Line>(vertices);
 }
@@ -57,9 +59,17 @@ Line::Line(const std::vector<float> &vertices) {
     glGenBuffers(1, &_vbo);
     glBindVertexArray(_vao);
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-    glBufferData(GL_ARRAY_BUFFER,  static_cast<long>(_vertices.size() * sizeof(float)), _vertices.data(), GL_DYNAMIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glBufferData(GL_ARRAY_BUFFER,  static_cast<long>(_vertices.size() * sizeof(float)), _vertices.data(), GL_STATIC_DRAW);
+
+    const int32_t stride = 6 * sizeof(float);
+    // pos
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
     glEnableVertexAttribArray(0);
+    // color
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void *)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 #ifndef NDEBUG
 #if DEBUG_ENGINE_LINES

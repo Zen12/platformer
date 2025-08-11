@@ -2,7 +2,9 @@
 
 #ifndef NDEBUG
 #include "../debug/debug.hpp"
+#define LIGHT_COMPONENT_DEBUG 1
 #endif
+
 
 void Light2dComponent::Update([[maybe_unused]] const float &deltaTime) {
     if (const auto world = _physicsWorld.lock()->GetWorld().lock()) {
@@ -10,27 +12,27 @@ void Light2dComponent::Update([[maybe_unused]] const float &deltaTime) {
             std::vector<float> meshVert{};
             std::vector<unsigned int> meshIndex{};
 
-            const auto centerPosition = center->GetPosition();
+            const auto centerPosition = center->GetPosition() + _offset;
 
-            meshVert.emplace_back(centerPosition.x + _offset.x);
-            meshVert.emplace_back(centerPosition.y + _offset.y);
-            meshVert.emplace_back(0);
+           meshVert.emplace_back(centerPosition.x);
+           meshVert.emplace_back(centerPosition.y);
+           meshVert.emplace_back(0);
 
             // uv
             meshVert.emplace_back(0);
             meshVert.emplace_back(0);
 
-            const float step = 360.0f / static_cast<float>(_segments);
+            constexpr float maxAngle = 360;
+            constexpr float startAngle = 0;
+
+            const float step = maxAngle / static_cast<float>(_segments);
 
             for (int i = 0; i < _segments; i++) {
                 const float angle = static_cast<float>(i) * step;
 
-                const float angleRad = DegToRad(angle);
+                const float angleRad = DegToRad(angle + startAngle);
                 float x = centerPosition.x + _radius * std::cos(angleRad);
                 float y = centerPosition.y + _radius * std::sin(angleRad);
-#ifndef NDEBUG
-                DebugLines::AddLine(glm::vec3(x, y, 0), glm::vec3(x, y, 1));
-#endif
 
                 b2Vec2 pointA(centerPosition.x, centerPosition.y);    // Start of ray
                 b2Vec2 pointB(x, y);   // End of ray
@@ -45,7 +47,7 @@ void Light2dComponent::Update([[maybe_unused]] const float &deltaTime) {
 
                 const auto vertex = std::vector<float>{
                     centerPosition.x, centerPosition.y, 0.0f,
-                    x,y, 0.0f};
+                    x, y, 0.0f};
 
                 meshVert.emplace_back(x);
                 meshVert.emplace_back(y);
@@ -67,8 +69,13 @@ void Light2dComponent::Update([[maybe_unused]] const float &deltaTime) {
             meshIndex.emplace_back(1);
 
             if (const auto meshRenderer = _meshRenderer.lock()) {
-                meshRenderer->SetUniformVec3("center", centerPosition);
+                meshRenderer->GetEntity().lock()->GetComponent<Transform>().lock()->SetPosition(centerPosition);
                 meshRenderer->UpdateMesh(meshVert, meshIndex);
+#ifndef NDEBUG
+#if LIGHT_COMPONENT_DEBUG
+                meshRenderer->DrawDebug();
+#endif
+#endif
             }
         }
     }

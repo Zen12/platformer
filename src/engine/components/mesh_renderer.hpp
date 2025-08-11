@@ -63,18 +63,6 @@ public:
         if (const auto material = _material.lock()) {
             glDrawElements(GL_TRIANGLES, static_cast<int32_t>(_mesh.GetIndicesCount()), GL_UNSIGNED_INT, nullptr);
         }
-
-#ifndef NDEBUG
-#if DEBUG_ENGINE_MESH_RENDERER
-
-        const auto verts = _mesh.GetVertices();
-        for (int i=0; i< verts.size(); i+=3) {
-            const glm::vec3 target  = glm::vec3(verts[i], verts[i+1], verts[i+2]);
-            DebugLines::AddLine(_transform.lock()->GetPosition(), target);
-        }
-
-#endif
-#endif
     }
 
     [[nodiscard]] float GetZOrder() const noexcept {
@@ -84,6 +72,19 @@ public:
 
         return 0;
     }
+
+#ifndef NDEBUG
+#if DEBUG_ENGINE_MESH_RENDERER
+    void DrawDebug() {
+        const auto verts = _mesh.GetVertices();
+        for (int i=0; i< verts.size(); i+=5) {
+            const glm::vec3 target  = glm::vec3(verts[i], verts[i+1], verts[i+2]);
+            DebugLines::AddLine(_transform.lock()->GetPosition(), target);
+        }
+    }
+
+#endif
+#endif
 
     [[nodiscard]] glm::mat4 GetModel() const noexcept {
         if (const auto transform = _transform.lock()) {

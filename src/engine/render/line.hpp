@@ -33,6 +33,6 @@ public:
     void UpdateVertices(const std::vector<float> &vertices);
 
     static Line Generate();
-    static std::shared_ptr<Line> GenerateLine(const glm::vec3 &start, const glm::vec3 &end);
+    static std::shared_ptr<Line> GenerateLine(const glm::vec3 &start, const glm::vec3 &end, const glm::vec3 &color);
 
 };

@@ -20,7 +20,7 @@ private:
     const float _radius = 20.0f;
     const int _segments = 50;
 
-    glm::vec2 _offset = glm::vec2(0.0f);
+    glm::vec3 _offset =  glm::vec3{0.0f, 2.0f, 0.0f};
 
 
 
@@ -44,7 +44,7 @@ public:
         _physicsWorld = std::move(physicsWorld);
     }
 
-    void SetOffset(const glm::vec2 &offset) noexcept {
+    void SetOffset(const glm::vec3 &offset) noexcept {
         _offset = offset;
     }
 
