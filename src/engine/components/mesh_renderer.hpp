@@ -1,11 +1,12 @@
 #pragma once
 #include "entity.hpp"
+#include "../debug/debug.hpp"
 #include "../render/material.hpp"
 #include "../render/mesh.hpp"
 #include "../render/line.hpp"
 #include "transforms/transform.hpp"
 
-#define DEBUG_ENGINE_MESH_RENDERER 0
+#define DEBUG_ENGINE_MESH_RENDERER 1
 
 
 class MeshRenderer final : public Component {
@@ -15,9 +16,6 @@ private:
     std::weak_ptr<Material> _material{};
     std::weak_ptr<Sprite> _sprite{};
     std::weak_ptr<Transform> _transform{};
-#ifndef NDEBUG
-    std::vector<std::unique_ptr<Line>> _lines{};
-#endif
 
 public:
     explicit MeshRenderer(const std::weak_ptr<Entity> &entity)
@@ -68,18 +66,11 @@ public:
 
 #ifndef NDEBUG
 #if DEBUG_ENGINE_MESH_RENDERER
-        const auto verts = _mesh.GetVertices();
-        int lineIndex = 0;
-        for (int i=0; i< verts.size(); i+=3) {
-            std::vector<float> arr = {verts[i], verts[i+1], verts[i+2], 0, 0, 0};
-            if (lineIndex >= _lines.size()) {
-                _lines.emplace_back(std::make_unique<Line>(arr));
-            } else {
-                _lines[lineIndex]->UpdateVertices(arr);
-            }
 
-            _lines[lineIndex]->Bind();
-            lineIndex++;
+        const auto verts = _mesh.GetVertices();
+        for (int i=0; i< verts.size(); i+=3) {
+            const glm::vec3 target  = glm::vec3(verts[i], verts[i+1], verts[i+2]);
+            DebugLines::AddLine(_transform.lock()->GetPosition(), target);
         }
 
 #endif

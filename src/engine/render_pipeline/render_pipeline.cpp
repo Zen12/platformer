@@ -85,6 +85,11 @@ void RenderPipeline::RenderMeshes(const float& deltaTime) {
 
 #ifndef NDEBUG
 void RenderPipeline::RenderDebugLines() const {
+
+    const auto projection = _camera3d.lock()->GetProjection();
+    const auto view = _cameraTransform3d.lock()->GetModel();
+
+    DebugLines::UpdateViewProjection(view, projection);
     DebugLines::DrawLines();
     DebugLines::Clear();
 }
@@ -98,6 +103,10 @@ void RenderPipeline::Init() const noexcept {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+#ifndef NDEBUG
+    DebugLines::Init();
+#endif
 }
 
 void RenderPipeline::ClearFrame() const noexcept {
@@ -129,4 +138,5 @@ void RenderPipeline::RenderUI(const float& deltaTime) const
 
 void RenderPipeline::Cleanup()
 {
+    DebugLines::Clear();
 }

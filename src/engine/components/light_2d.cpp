@@ -1,5 +1,9 @@
 #include "light_2d.hpp"
 
+#ifndef NDEBUG
+#include "../debug/debug.hpp"
+#endif
+
 void Light2dComponent::Update([[maybe_unused]] const float &deltaTime) {
     if (const auto world = _physicsWorld.lock()->GetWorld().lock()) {
         if (const auto center = _center.lock()) {
@@ -24,6 +28,9 @@ void Light2dComponent::Update([[maybe_unused]] const float &deltaTime) {
                 const float angleRad = DegToRad(angle);
                 float x = centerPosition.x + _radius * std::cos(angleRad);
                 float y = centerPosition.y + _radius * std::sin(angleRad);
+#ifndef NDEBUG
+                DebugLines::AddLine(glm::vec3(x, y, 0), glm::vec3(x, y, 1));
+#endif
 
                 b2Vec2 pointA(centerPosition.x, centerPosition.y);    // Start of ray
                 b2Vec2 pointB(x, y);   // End of ray
