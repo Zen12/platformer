@@ -37,7 +37,6 @@ private:
     std::shared_ptr<SceneManager> _sceneManager;
     std::shared_ptr<Window> _window;
     std::shared_ptr<RenderPipeline> _renderPipeline;
-    std::shared_ptr<PhysicsWorld> _physicsWorld;
 
     std::string _projectPath;
     ProjectAsset _projectAsset;

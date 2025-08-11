@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../components/entity.hpp"
+#include "scene.hpp"
 #include "../components/transforms/rect_transform_root.hpp"
 #include "../render/shader.hpp"
 #include "../render/material.hpp"
@@ -18,24 +18,7 @@
 
 class SceneManager {
 
-private:
-    std::vector<std::shared_ptr<Entity>> _entities;
-    std::unordered_map<std::string, std::shared_ptr<Shader>> _shaders;
-    std::unordered_map<std::string, std::shared_ptr<Material>> _materials;
-    std::unordered_map<std::string, std::shared_ptr<Sprite>> _sprites;
-    std::unordered_map<std::string, std::shared_ptr<SpineData>> _spineDatas;
-    std::unordered_map<std::string, std::shared_ptr<Font>> _fonts;
-    std::unordered_map<std::string, std::shared_ptr<Mesh>> _meshes;
-
-    std::weak_ptr<RenderPipeline> _renderPipeline;
-    std::weak_ptr<Window> _window;
-    std::weak_ptr<AssetManager> _assetManager;
-    std::weak_ptr<InputSystem> _inputSystem;
-
-    std::shared_ptr<RectTransformRoot> _root;
-
-    std::shared_ptr<PhysicsWorld> _physicsWorld = std::make_shared<PhysicsWorld>(b2Vec2{0.0, -10.0});
-
+    std::shared_ptr<Scene> _scene;
 
 public:
     SceneManager(
@@ -43,16 +26,15 @@ public:
         const std::weak_ptr<Window> &window,
         const std::weak_ptr<AssetManager> &assetManager,
         const std::weak_ptr<InputSystem> &inputSystem)
-        : _renderPipeline(render), _window(window), _assetManager(assetManager),_inputSystem(inputSystem)
+        : _scene(std::make_shared<Scene>(render, window, assetManager, inputSystem))
         {
-        _root = std::make_shared<RectTransformRoot>(window);
     }
 
     void LoadScene(const SceneAsset& serialization);
-    void UnLoadAll();
+    void UnLoadAll() const;
 
-    std::shared_ptr<PhysicsWorld> GetPhysicsWorld() {
-        return _physicsWorld;
+    [[nodiscard]] std::weak_ptr<PhysicsWorld> GetPhysicsWorld() const {
+        return _scene->GetPhysicsWorld();;
     }
 
     [[nodiscard]] std::weak_ptr<Entity> GetEntityById(const std::string& id) const;
@@ -60,18 +42,18 @@ public:
     void Update(const float& deltaTime) const;
 
 private:
-    [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid);
+    [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) const;
 
-    [[nodiscard]] std::shared_ptr<Material> GetMaterial(const std::string& guid);
+    [[nodiscard]] std::shared_ptr<Material> GetMaterial(const std::string& guid) const;
 
     [[nodiscard]] std::shared_ptr<SpineData> LoadSpineData(const SpineAsset &asset) const;
 
-    [[nodiscard]] std::shared_ptr<Sprite> GetSprite(const std::string& guid);
+    [[nodiscard]] std::shared_ptr<Sprite> GetSprite(const std::string& guid) const;
 
-    [[nodiscard]] std::shared_ptr<Font> GetFont(const std::string& guid);
+    [[nodiscard]] std::shared_ptr<Font> GetFont(const std::string& guid) const;
 
     [[nodiscard]] std::shared_ptr<Entity> GetEntity(const std::string& id) const;
 
-    [[nodiscard]] std::shared_ptr<SpineData> GetSpineData(const std::string &guid, const SpineAsset& asset);
+    [[nodiscard]] std::shared_ptr<SpineData> GetSpineData(const std::string &guid, const SpineAsset& asset) const;
 
 };

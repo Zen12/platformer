@@ -2,6 +2,9 @@
 
 #include "../render/material.hpp"
 
+#ifndef NDEBUG
+
+
 static std::vector<std::shared_ptr<Line>> _lines;
 static std::shared_ptr<Shader> _shader;
 static std::shared_ptr<Material> _material;
@@ -79,3 +82,5 @@ void DebugLines::DrawLines() {
 void DebugLines::Clear() {
     _lines.clear();
 }
+
+#endif

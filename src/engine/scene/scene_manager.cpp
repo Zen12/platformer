@@ -6,21 +6,21 @@
 void SceneManager::LoadScene(const SceneAsset &scene) {
     PROFILE_SCOPE("Loading of scene " + scene.Name);
 
-    if (const auto assetManager = _assetManager.lock()) {
+    if (const auto assetManager = _scene->GetAssetManager().lock()) {
         std::weak_ptr<Entity> sceneCamera;
         for (const auto &entity : scene.Entities)
         {
             const auto newEntity = std::make_shared<Entity>();
             newEntity->SetId(entity.guid);
 
-            _entities.push_back(newEntity);
+            _scene->AddEntity(newEntity);
 
             for (const auto &comp : entity.components)
             {
                 if (comp->getType() == "camera") {
                     const auto *cam = dynamic_cast<CameraComponentSerialization *>(comp.get());
                     if (const auto camera = newEntity->AddComponent<CameraComponent>().lock()) {
-                        camera->SetCamera(Camera{cam->aspectPower, false, cam->isPerspective, _window});
+                        camera->SetCamera(Camera{cam->aspectPower, false, cam->isPerspective, _scene->GetWindow()});
                         sceneCamera = newEntity;
                     }
                 }
@@ -38,7 +38,7 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                 }
                 else if (comp->getType() == "rect_transform") {
                     if (const auto rect = newEntity->AddComponent<RectTransform>().lock()) {
-                        rect->SetParent(_root);
+                        rect->SetParent(_scene->GetRoot());
                         const auto *tf = dynamic_cast<RectTransformComponentSerialization *>(comp.get());
 
                         for (const auto &layout : tf->Layouts)
@@ -74,7 +74,7 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                         uiImage->SetMaterial(material);
                         uiImage->SetSprite(sprite);
 
-                        _renderPipeline.lock()->AddRenderer(uiImage);
+                        _scene->GetRenderPipeline().lock()->AddRenderer(uiImage);
                     }
                 }
                 else if (comp->getType() == "ui_text") {
@@ -89,7 +89,7 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                         uiText->SetText(serialization->Text);
 
 
-                        _renderPipeline.lock()->AddRenderer(uiText);
+                        _scene->GetRenderPipeline().lock()->AddRenderer(uiText);
                     }
 
                 }else if (comp->getType() == "sprite_renderer") {
@@ -103,7 +103,7 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                         spriteRenderer->SetMaterial(material);
                         spriteRenderer->SetSprite(sprite);
 
-                        _renderPipeline.lock()->AddRenderer(spriteRenderer);
+                        _scene->GetRenderPipeline().lock()->AddRenderer(spriteRenderer);
                     }
 
                 }else if (comp->getType() == "spine_renderer") {
@@ -131,7 +131,7 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                 }else if (comp->getType() == "rigidbody2d") {
                     if (auto rigidBody = newEntity->AddComponent<Rigidbody2dComponent>().lock()) {
                         const auto *serialization = dynamic_cast<Rigidbody2dSerialization *>(comp.get());
-                        rigidBody->SetWorld(_physicsWorld);
+                        rigidBody->SetWorld(_scene->GetPhysicsWorld());
                         rigidBody->Init(serialization->isDynamic);
                     }
                 } else if (comp->getType() == "light_2d") {
@@ -142,7 +142,7 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                             light2d->SetCenterTransform(transform);
                         }
 
-                        light2d->SetPhysicsWorld(_physicsWorld);
+                        light2d->SetPhysicsWorld(_scene->GetPhysicsWorld());
                         light2d->SetMeshRenderer(newEntity->GetComponent<MeshRenderer>());
                         light2d->SetOffset(glm::vec3(serialization->OffsetX, serialization->OffsetY, 0.0));
                     }
@@ -150,7 +150,7 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                     if (const auto mesh_renderer = newEntity->AddComponent<MeshRenderer>().lock()) {
                         const auto *serialization = dynamic_cast<MeshRendererComponentSerialization *>(comp.get());
                         mesh_renderer->SetMaterial(GetMaterial(serialization->MaterialGuid));
-                        _renderPipeline.lock()->AddRenderer(mesh_renderer);
+                        _scene->GetRenderPipeline().lock()->AddRenderer(mesh_renderer);
                     }
                 }else if (comp->getType() == "character_controller") {
                     if (const auto component = newEntity->AddComponent<CharacterController>().lock()) {
@@ -165,8 +165,8 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
                             serialization->JumpDownMultiplier,
                             serialization->AirControl};
                         component->SetCharacterControllerSettings(characterSettings);
-                        component->SetInputSystem(_inputSystem);
-                        component->SetPhysicsWorld(_physicsWorld);
+                        component->SetInputSystem(_scene->GetInputSystem());
+                        component->SetPhysicsWorld(_scene->GetPhysicsWorld());
                         component->SetSpineRenderer(newEntity->GetComponent<SpineRenderer>());
 
                     }
@@ -174,153 +174,49 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
             }
         }
 
-        _renderPipeline.lock()->UpdateCamera(
+        _scene->GetRenderPipeline().lock()->UpdateCamera(
             sceneCamera.lock()->GetComponent<CameraComponent>(),
             sceneCamera.lock()->GetComponent<Transform>());
     }
 }
 
-void SceneManager::UnLoadAll() {
-    _entities.clear();
-    _shaders.clear();
-    _materials.clear();
-    _sprites.clear();
-    _spineDatas.clear();
-    _fonts.clear();
-    _meshes.clear();
+void SceneManager::UnLoadAll() const {
+    _scene->UnLoadAll();
 }
 
 std::weak_ptr<Entity> SceneManager::GetEntityById(const std::string &id) const {
-    for (const auto &entity: _entities) {
-        if (entity->GetId() == id) {
-            return entity;
-        }
-    }
-    return {};
+    return _scene->GetEntityById(id);
 }
 
 void SceneManager::Update(const float &deltaTime) const {
-    for (const auto &entity: _entities) {
-        entity->Update(deltaTime);
-    }
+    return _scene->Update(deltaTime);
 }
 
-std::shared_ptr<Shader> SceneManager::GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) {
-    if (const auto assetManager = _assetManager.lock()) {
-
-        if (_shaders.find(vertexGuid + fragmentGuid) == _shaders.end()) {
-            const auto vertexSource = assetManager->LoadSourceByGuid<std::string>(vertexGuid);
-            const auto fragmentSource = assetManager->LoadSourceByGuid<std::string>(fragmentGuid);
-            const auto shader = std::make_shared<Shader>(vertexSource, fragmentSource);
-            _shaders[vertexGuid + fragmentGuid] = shader;
-            return shader;
-        }
-
-        return _shaders[vertexGuid + fragmentGuid];
-    }
-
-    return {};
+std::shared_ptr<Shader> SceneManager::GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) const {
+    return _scene->GetShader(vertexGuid, fragmentGuid);
 }
 
-std::shared_ptr<Material> SceneManager::GetMaterial(const std::string &guid) {
-    if (const auto assetManager = _assetManager.lock()) {
-        if (_materials.find(guid) == _materials.end()) {
-            const auto materialAsset = assetManager->LoadAssetByGuid<MaterialAsset>(guid);
-            const auto shader = GetShader(materialAsset.VertexShaderGuid, materialAsset.FragmentShaderGuid);
-            const auto material = std::make_shared<Material>(shader);
-
-            const auto font = GetFont(materialAsset.Font);
-            material->SetFont(font);
-
-            _materials[guid] = material;
-            return material;
-        }
-        return _materials[guid];
-    }
-
-    return {};
+std::shared_ptr<Material> SceneManager::GetMaterial(const std::string &guid) const {
+    return _scene->GetMaterial(guid);
 }
 
 std::shared_ptr<SpineData> SceneManager::LoadSpineData(const SpineAsset& asset) const {
-    if (auto assetManager = _assetManager.lock()) {
-        // Load atlas (Spine owns this pointer)
-        auto atlas = assetManager->LoadSourceByGuid<spine::Atlas*>(asset.atlas);
-
-        spine::SkeletonBinary binary(atlas);
-
-        // Load SkeletonData (Spine allocates it with new)
-        spine::SkeletonData* rawSkeletonData = binary.readSkeletonDataFile(
-            assetManager->GetPathFromGuid(asset.skeleton).c_str()
-        );
-
-        // Wrap in smart pointer so it's freed automatically
-        auto skeletonData = std::shared_ptr<spine::SkeletonData>(rawSkeletonData);
-
-        // Create AnimationStateData and wrap in smart pointer
-        auto stateData = std::make_shared<spine::AnimationStateData>(skeletonData.get());
-
-        // Create Skeleton and AnimationState
-        auto skeleton = std::make_shared<spine::Skeleton>(skeletonData.get());
-        auto animationState = std::make_shared<spine::AnimationState>(stateData.get());
-
-        // Store all in SpineData so nothing is destroyed prematurely
-        return std::make_shared<SpineData>(
-            skeletonData,
-            stateData,
-            skeleton,
-            animationState
-        );
-    }
-
-    return {};
+    return _scene->LoadSpineData(asset);
 }
 
 
-std::shared_ptr<SpineData> SceneManager::GetSpineData(const std::string &guid, const SpineAsset& asset) {
-
-    if (const auto assetManager = _assetManager.lock()) {
-        if (_spineDatas.find(guid) == _spineDatas.end()) {
-            const auto spineData = LoadSpineData(asset);
-            _spineDatas[guid] = spineData;
-            return spineData;
-        }
-        return _spineDatas[guid];
-    }
-    return {};
+std::shared_ptr<SpineData> SceneManager::GetSpineData(const std::string &guid, const SpineAsset& asset) const {
+    return _scene->GetSpineData(guid, asset);
 }
 
-std::shared_ptr<Sprite> SceneManager::GetSprite(const std::string &guid) {
-    if (const auto assetManager = _assetManager.lock()) {
-        if (_sprites.find(guid) == _sprites.end()) {
-            const auto sprite = std::make_shared<Sprite>(assetManager->LoadSourceByGuid<Sprite>(guid));
-            _sprites[guid] = sprite;
-            return sprite;
-        }
-        return _sprites[guid];
-    }
-    return {};
+std::shared_ptr<Sprite> SceneManager::GetSprite(const std::string &guid) const {
+    return _scene->GetSprite(guid);
 }
 
-std::shared_ptr<Font> SceneManager::GetFont(const std::string &guid) {
-    if (guid.empty())
-        return {};
-
-    if (const auto assetManager = _assetManager.lock()) {
-        if (_fonts.find(guid) == _fonts.end()) {
-            const auto fontFile = assetManager->LoadSourceByGuid<Font>(guid);
-            std::shared_ptr<Font> font = std::make_shared<Font>(fontFile);
-            _fonts[guid] = font;
-            return font;
-        }
-        return _fonts[guid];
-    }
-    return {};
+std::shared_ptr<Font> SceneManager::GetFont(const std::string &guid) const {
+   return _scene->GetFont(guid);
 }
 
 std::shared_ptr<Entity> SceneManager::GetEntity(const std::string &id) const {
-    for (const auto & entity: _entities) {
-        if (entity->GetId() == id)
-            return entity;
-    }
-    return {};
+    return _scene->GetEntity(id);
 }

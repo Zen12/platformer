@@ -25,8 +25,6 @@ void Engine::LoadFirstScene() {
 
     _sceneManager->LoadScene(scene);
 
-    _physicsWorld = _sceneManager->GetPhysicsWorld();
-
     _timer.Start();
 
     _renderPipeline->Init();

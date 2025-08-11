@@ -138,5 +138,7 @@ void RenderPipeline::RenderUI(const float& deltaTime) const
 
 void RenderPipeline::Cleanup()
 {
+#ifndef NDEBUG
     DebugLines::Clear();
+#endif
 }
