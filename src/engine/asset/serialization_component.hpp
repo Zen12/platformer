@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <yaml-cpp/yaml.h>
+#include <glm/vec3.hpp>
 
 
 struct ComponentSerialization
@@ -9,10 +10,11 @@ struct ComponentSerialization
     [[nodiscard]] virtual std::string getType() const = 0;
 };
 
-
-struct Vec3
+struct EntitySerialization
 {
-    float x, y, z;
+    std::string Tag;
+    std::string Guid;
+    std::vector<std::unique_ptr<ComponentSerialization>> Components;
 };
 
 struct RectLayoutSerialization
@@ -30,7 +32,7 @@ struct RectLayoutSerialization
 
 struct Box2dColliderSerialization final : public ComponentSerialization
 {
-    Vec3 scale{};
+    glm::vec3 scale{};
 
     [[nodiscard]] std::string getType() const override { return "box_collider"; }
 };
@@ -68,12 +70,7 @@ struct ShaderComponentSerialization final : public ComponentSerialization
 };
 struct SpineRenderComponentSerialization final : public ComponentSerialization
 {
-    const std::string SpineGuid;
-
-    explicit SpineRenderComponentSerialization(std::string spineGuid)
-        : SpineGuid(std::move(spineGuid))
-    {
-    }
+    std::string SpineGuid;
 
     [[nodiscard]] std::string getType() const override
     {
@@ -83,13 +80,8 @@ struct SpineRenderComponentSerialization final : public ComponentSerialization
 
 struct SpriteRenderComponentSerialization final : public ComponentSerialization
 {
-    const std::string MaterialGuid;
-    const std::string SpriteGuid;
-
-    explicit SpriteRenderComponentSerialization(std::string materialGuid, std::string spriteGuid)
-        : MaterialGuid(std::move(materialGuid)), SpriteGuid(std::move(spriteGuid))
-    {
-    }
+    std::string MaterialGuid;
+    std::string SpriteGuid;
 
     [[nodiscard]] std::string getType() const override
     {
@@ -99,12 +91,7 @@ struct SpriteRenderComponentSerialization final : public ComponentSerialization
 
 struct MeshRendererComponentSerialization final : public ComponentSerialization
 {
-    const std::string MaterialGuid;
-
-    explicit MeshRendererComponentSerialization(std::string materialGuid)
-        : MaterialGuid(std::move(materialGuid))
-    {
-    }
+    std::string MaterialGuid;
 
     [[nodiscard]] std::string getType() const override
     {
@@ -114,14 +101,9 @@ struct MeshRendererComponentSerialization final : public ComponentSerialization
 
 struct Light2dComponentSerialization final : public ComponentSerialization
 {
-    const std::string CenterTransform;
-    const float OffsetX;
-    const float OffsetY;
-
-    Light2dComponentSerialization(std::string centerTransform, const float offsetX, const float offsetY)
-        : CenterTransform(std::move(centerTransform)), OffsetX(offsetX), OffsetY(offsetY)
-    {
-    }
+    std::string CenterTransform;
+    float OffsetX;
+    float OffsetY;
 
     [[nodiscard]] std::string getType() const override
     {
@@ -132,10 +114,6 @@ struct Light2dComponentSerialization final : public ComponentSerialization
 struct SpriteComponentSerialization final : public ComponentSerialization
 {
     std::string Path;
-    explicit SpriteComponentSerialization(std::string path)
-        : Path(std::move(path))
-    {
-    }
 
     [[nodiscard]] std::string getType() const override
     {
@@ -170,8 +148,8 @@ struct UiTextComponentSerialization final : public ComponentSerialization {
 
 struct UiImageComponentSerialization final : public ComponentSerialization
 {
-    std::string MaterialGUID;
-    std::string SpriteGUID;
+    std::string MaterialGuid;
+    std::string SpriteGuid;
 
     [[nodiscard]] std::string getType() const override
     {
@@ -191,9 +169,9 @@ struct RectTransformComponentSerialization final : public ComponentSerialization
 
 struct TransformComponentSerialization final : public ComponentSerialization
 {
-    Vec3 position{};
-    Vec3 rotation{};
-    Vec3 scale{};
+    glm::vec3 position{};
+    glm::vec3 rotation{};
+    glm::vec3 scale{};
 
     [[nodiscard]] std::string getType() const override { return "transform"; }
 };
@@ -213,27 +191,3 @@ struct CharacterControllerComponentSerialization final : public ComponentSeriali
 
     [[nodiscard]] std::string getType() const override { return "character_controller"; }
 };
-
-struct EntitySerialization
-{
-    std::string Tag;
-    std::string Guid;
-    std::vector<std::unique_ptr<ComponentSerialization>> Components;
-};
-
-// Helper to extract a map from a YAML node that is a sequence of single-key maps
-inline YAML::Node sequenceToMap(const YAML::Node &seq)
-{
-    YAML::Node result(YAML::NodeType::Map);
-    for (const auto &item : seq)
-    {
-        if (item.IsMap() && item.size() == 1)
-        {
-            for (const auto &kv : item)
-            {
-                result[kv.first] = kv.second;
-            }
-        }
-    }
-    return result;
-}

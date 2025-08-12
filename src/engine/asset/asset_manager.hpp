@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 #include "serialization_asset.hpp"
-#include "asset_deserializer.hpp"
+#include "yaml/yaml_deserializer.hpp"
 #include <fstream>
 #include <yaml-cpp/yaml.h>
 

@@ -74,8 +74,8 @@ void SceneManager::LoadScene(const SceneAsset &scene) const {
 
                         const auto *serialization = dynamic_cast<UiImageComponentSerialization *>(comp.get());
 
-                        const auto material = GetMaterial(serialization->MaterialGUID);
-                        const auto sprite = GetSprite(serialization->SpriteGUID);
+                        const auto material = GetMaterial(serialization->MaterialGuid);
+                        const auto sprite = GetSprite(serialization->SpriteGuid);
 
                         uiImage->SetMaterial(material);
                         uiImage->SetSprite(sprite);
