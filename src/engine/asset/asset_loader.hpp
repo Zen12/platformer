@@ -11,7 +11,7 @@
 
 #include <ft2build.h>
 
-#include "asset_files.hpp"
+#include "serialization_asset.hpp"
 #include "../render/spine/spine_data.hpp"
 #include "spine/Atlas.h"
 #include "spine/Bone.h"

@@ -8,12 +8,6 @@
 
 class Entity;
 
-struct ComponentSerialization
-{
-    virtual ~ComponentSerialization() = default;
-    [[nodiscard]] virtual std::string getType() const = 0;
-};
-
 class Component
 {
 public:
