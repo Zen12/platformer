@@ -220,4 +220,12 @@ public:
         }
         return {};
     }
+
+    [[nodiscard]] std::weak_ptr<Entity> FindByTag(const std::string &tag) const {
+        for (const auto & entity: _entities) {
+            if (entity->GetTag() == tag)
+                return entity;
+        }
+        return {};
+    }
 };

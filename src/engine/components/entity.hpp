@@ -40,6 +40,7 @@ class Entity : public std::enable_shared_from_this<Entity>
 private:
     std::unordered_map<std::type_index, std::shared_ptr<Component>> _components{};
     std::string _id{};
+    std::string _tag{};
 
 public:
     Entity() = default;
@@ -85,7 +86,13 @@ public:
         _id = id;
     }
 
+    void SetTag(const std::string& tag) {
+        _tag = tag;
+    }
+
     [[nodiscard]] const std::string& GetId() const { return _id;}
+
+    [[nodiscard]] const std::string& GetTag() const { return _tag;}
 
 };
 

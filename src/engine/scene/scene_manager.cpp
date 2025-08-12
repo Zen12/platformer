@@ -3,25 +3,31 @@
 #include "../gameplay/character_controller.hpp"
 
 
-void SceneManager::LoadScene(const SceneAsset &scene) {
+void SceneManager::LoadScene(const SceneAsset &scene) const {
     PROFILE_SCOPE("Loading of scene " + scene.Name);
 
     if (const auto assetManager = _scene->GetAssetManager().lock()) {
-        std::weak_ptr<Entity> sceneCamera;
-        for (const auto &entity : scene.Entities)
-        {
+        std::vector<std::shared_ptr<Entity>> entities;
+
+        for (const auto &entity : scene.Entities) {
             const auto newEntity = std::make_shared<Entity>();
-            newEntity->SetId(entity.guid);
+            newEntity->SetId(entity.Guid);
+            newEntity->SetTag(entity.Tag);
 
+            entities.push_back(newEntity);
             _scene->AddEntity(newEntity);
+        }
 
-            for (const auto &comp : entity.components)
+        for (int i = 0; i < scene.Entities.size(); i++) {
+            auto &entity = scene.Entities[i];
+            const auto& newEntity = entities[i];
+
+            for (const auto &comp : entity.Components)
             {
                 if (comp->getType() == "camera") {
                     const auto *cam = dynamic_cast<CameraComponentSerialization *>(comp.get());
                     if (const auto camera = newEntity->AddComponent<CameraComponent>().lock()) {
                         camera->SetCamera(Camera{cam->aspectPower, false, cam->isPerspective, _scene->GetWindow()});
-                        sceneCamera = newEntity;
                     }
                 }
                 else if (comp->getType() == "transform")
@@ -174,9 +180,13 @@ void SceneManager::LoadScene(const SceneAsset &scene) {
             }
         }
 
-        _scene->GetRenderPipeline().lock()->UpdateCamera(
-            sceneCamera.lock()->GetComponent<CameraComponent>(),
-            sceneCamera.lock()->GetComponent<Transform>());
+        const auto sceneCamera = _scene->FindByTag("main_camera");
+
+        if (const auto camera = sceneCamera.lock()) {
+            _scene->GetRenderPipeline().lock()->UpdateCamera(
+      camera->GetComponent<CameraComponent>(),
+      camera->GetComponent<Transform>());
+        }
     }
 }
 

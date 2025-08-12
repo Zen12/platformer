@@ -219,8 +219,9 @@ struct CharacterControllerComponentSerialization final : public ComponentSeriali
 
 struct EntitySerialization
 {
-    std::string guid;
-    std::vector<std::unique_ptr<ComponentSerialization>> components;
+    std::string Tag;
+    std::string Guid;
+    std::vector<std::unique_ptr<ComponentSerialization>> Components;
 };
 
 // Helper to extract a map from a YAML node that is a sequence of single-key maps
@@ -460,15 +461,18 @@ namespace YAML
         {
             if (const auto objNode = node["obj"])
             {
-                const auto sequanceNode = sequenceToMap(objNode);
+                const auto nodeMap = sequenceToMap(objNode);
 
-                rhs.guid = sequanceNode["guid"].as<std::string>();
+                rhs.Guid = nodeMap["guid"].as<std::string>();
+                if (nodeMap["tag"]) {
+                    rhs.Tag = nodeMap["tag"].as<std::string>();
+                }
 
-                for (const auto &compNode : sequanceNode["components"])
+                for (const auto &compNode : nodeMap["components"])
                 {
                     if (const auto componentNode = compNode["component"])
                     {
-                        rhs.components.push_back(createComponentFromYAML(componentNode));
+                        rhs.Components.push_back(createComponentFromYAML(componentNode));
                     }
                 }
             }
