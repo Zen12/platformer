@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include <memory>
+#include "../components/entity.hpp"
 
 struct Vec3
 {
@@ -23,12 +24,6 @@ struct RectLayoutSerialization
     : Type(std::move(type)), Value(value), X(x), Y(y)
     {
     }
-};
-
-struct ComponentSerialization
-{
-    virtual ~ComponentSerialization() = default;
-    [[nodiscard]] virtual std::string getType() const = 0;
 };
 
 struct Box2dColliderSerialization final : public ComponentSerialization
