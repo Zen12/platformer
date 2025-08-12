@@ -2,8 +2,8 @@
 
 #include <fstream>
 
-#include "../render/sprite.hpp"
-#include "../render/font.hpp"
+#include "../../render/sprite.hpp"
+#include "../../render/font.hpp"
 #include <yaml-cpp/yaml.h>
 
 #include <GL/glew.h>
@@ -11,9 +11,9 @@
 
 #include <ft2build.h>
 
-#include "serialization_asset.hpp"
-#include "yaml/yaml_deserializer.hpp"
-#include "../render/spine/spine_data.hpp"
+#include "../serialization/serialization_asset.hpp"
+#include "../yaml/yaml_deserializer.hpp"
+#include "../../render/spine/spine_data.hpp"
 #include "spine/Atlas.h"
 #include "spine/Bone.h"
 #include "spine/Skeleton.h"

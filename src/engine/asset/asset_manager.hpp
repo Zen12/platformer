@@ -5,12 +5,12 @@
 #include <utility>
 #include <vector>
 #include <string>
-#include "serialization_asset.hpp"
+#include "serialization/serialization_asset.hpp"
 #include "yaml/yaml_deserializer.hpp"
 #include <fstream>
 #include <yaml-cpp/yaml.h>
 
-#include "asset_loader.hpp"
+#include "loaders/asset_loader.hpp"
 
 class AssetManager {
 private:

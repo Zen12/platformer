@@ -2,7 +2,7 @@
 
 #ifndef NDEBUG
 #include "../debug/debug.hpp"
-#define LIGHT_COMPONENT_DEBUG 1
+#define LIGHT_COMPONENT_DEBUG 0
 #endif
 
 
@@ -12,11 +12,12 @@ void Light2dComponent::Update([[maybe_unused]] const float &deltaTime) {
             std::vector<float> meshVert{};
             std::vector<unsigned int> meshIndex{};
 
+
             const auto centerPosition = center->GetPosition() + _offset;
 
            meshVert.emplace_back(centerPosition.x);
            meshVert.emplace_back(centerPosition.y);
-           meshVert.emplace_back(0);
+           meshVert.emplace_back(centerPosition.z);
 
             // uv
             meshVert.emplace_back(0);
@@ -45,13 +46,9 @@ void Light2dComponent::Update([[maybe_unused]] const float &deltaTime) {
                     y = callback.Point.y;
                 }
 
-                const auto vertex = std::vector<float>{
-                    centerPosition.x, centerPosition.y, 0.0f,
-                    x, y, 0.0f};
-
                 meshVert.emplace_back(x);
                 meshVert.emplace_back(y);
-                meshVert.emplace_back(0);
+                meshVert.emplace_back(centerPosition.z);
                 // uv
                 meshVert.emplace_back(0);
                 meshVert.emplace_back(0);

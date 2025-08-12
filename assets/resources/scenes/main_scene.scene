@@ -111,8 +111,10 @@ entities:
               - type: light_2d
               - data:
                   - center: main-character
-                  - offset_x : 0.0
-                  - offset_y : 1.7
+                  - offset:
+                      - x: 0.0
+                      - y: 1.7
+                      - z: -1.0
   - obj:
     - guid: sprite-tile-bfad823e
     - components:

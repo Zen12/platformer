@@ -18,7 +18,7 @@ void SceneManager::LoadScene(const SceneAsset &scene) const {
             _scene->AddEntity(newEntity);
         }
 
-        for (int i = 0; i < scene.Entities.size(); i++) {
+        for (size_t i = 0; i < scene.Entities.size(); i++) {
             auto &entity = scene.Entities[i];
             const auto& newEntity = entities[i];
 
@@ -150,7 +150,7 @@ void SceneManager::LoadScene(const SceneAsset &scene) const {
 
                         light2d->SetPhysicsWorld(_scene->GetPhysicsWorld());
                         light2d->SetMeshRenderer(newEntity->GetComponent<MeshRenderer>());
-                        light2d->SetOffset(glm::vec3(serialization->OffsetX, serialization->OffsetY, 0.0));
+                        light2d->SetOffset(serialization->Offset);
                     }
                 }else if (comp->getType() == "mesh_renderer") {
                     if (const auto mesh_renderer = newEntity->AddComponent<MeshRenderer>().lock()) {

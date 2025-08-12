@@ -3,7 +3,7 @@
 #include "../render/font.hpp"
 #include "../render/mesh.hpp"
 #include "../render/material.hpp"
-#include "../asset/asset_loader.hpp"
+#include "../asset/loaders/asset_loader.hpp"
 #include "transforms/transform.hpp"
 #include "transforms/rect_transform.hpp"
 #include "entity.hpp"

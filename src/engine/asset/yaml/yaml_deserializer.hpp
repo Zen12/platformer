@@ -5,8 +5,8 @@
 #include <iostream>
 #include <memory>
 
-#include "../serialization_component.hpp"
-#include "../serialization_asset.hpp"
+#include "../serialization/serialization_component.hpp"
+#include "../serialization/serialization_asset.hpp"
 
 // Helper to extract a map from a YAML node that is a sequence of single-key maps
 inline YAML::Node sequenceToMap(const YAML::Node &seq)
@@ -123,8 +123,7 @@ namespace YAML
         static bool decode(const Node &node, Light2dComponentSerialization &rhs) {
             const auto map = sequenceToMap(node);
             rhs.CenterTransform = map["center"].as<std::string>();
-            rhs.OffsetX = map["offset_x"].as<float>();
-            rhs.OffsetY = map["offset_y"].as<float>();
+            rhs.Offset = map["offset"].as<glm::vec3>();
             return true;
         }
     };

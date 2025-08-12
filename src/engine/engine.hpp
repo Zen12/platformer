@@ -9,7 +9,7 @@
 #include "render/mesh.hpp"
 #include "system/input_system.hpp"
 #include "system/window.hpp"
-#include "asset/asset_loader.hpp"
+#include "asset/loaders/asset_loader.hpp"
 
 #include "components/entity.hpp"
 #include "components/sprite_renderer.hpp"

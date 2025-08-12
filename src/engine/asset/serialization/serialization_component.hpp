@@ -102,8 +102,7 @@ struct MeshRendererComponentSerialization final : public ComponentSerialization
 struct Light2dComponentSerialization final : public ComponentSerialization
 {
     std::string CenterTransform;
-    float OffsetX;
-    float OffsetY;
+    glm::vec3 Offset;
 
     [[nodiscard]] std::string getType() const override
     {
