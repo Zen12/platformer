@@ -62,12 +62,16 @@ file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/output/assets")
 file(COPY "${CMAKE_SOURCE_DIR}/assets"
         DESTINATION "${CMAKE_BINARY_DIR}/output")
 
-add_custom_target(run
-        COMMAND "${CMAKE_BINARY_DIR}/output/${CMAKE_PROJECT_NAME}"
-        DEPENDS ${CMAKE_PROJECT_NAME}
-        WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/output"
-)
-
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC TEST_ASSET_PATH="${CMAKE_CURRENT_SOURCE_DIR}/assets/")
+    add_custom_target(run
+            COMMAND "${CMAKE_BINARY_DIR}/output/${CMAKE_PROJECT_NAME}" "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+            DEPENDS ${CMAKE_PROJECT_NAME}
+            WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/output"
+    )
+else()
+    add_custom_target(run
+            COMMAND "${CMAKE_BINARY_DIR}/output/${CMAKE_PROJECT_NAME}"
+            DEPENDS ${CMAKE_PROJECT_NAME}
+            WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/output"
+    )
 endif()

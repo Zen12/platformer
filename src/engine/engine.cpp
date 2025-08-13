@@ -2,10 +2,12 @@
 
 #include <thread>
 
-Engine::Engine(const std::string &projectPath) : _projectPath(projectPath) {
+Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectPath) {
 
+    std::cout << "Load project from: " << _projectPath << "\n";
     AssetLoader::Init();
-    _projectAsset = AssetLoader::LoadFromPath<ProjectAsset>(projectPath + "project.yaml");
+    const std::filesystem::path projectFilePath = _projectPath.append("project.yaml");
+    _projectAsset = AssetLoader::LoadFromPath<ProjectAsset>(projectFilePath);
 
     _assetManager = std::make_shared<AssetManager>(projectPath);
     _assetManager->Init();

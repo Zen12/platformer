@@ -38,7 +38,7 @@ private:
     std::shared_ptr<Window> _window;
     std::shared_ptr<RenderPipeline> _renderPipeline;
 
-    std::string _projectPath;
+    std::filesystem::path _projectPath;
     ProjectAsset _projectAsset;
 
     std::weak_ptr<UiTextRenderer> _fpsText;
@@ -48,7 +48,7 @@ private:
     float _targetFrameTime = 0.02f;
 
 public:
-    explicit Engine(const std::string &projectPath);
+    explicit Engine(const std::filesystem::path &projectPath);
 
     void LoadFirstScene();
 
