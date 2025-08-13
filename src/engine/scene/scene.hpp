@@ -11,6 +11,7 @@
 #include "../asset/asset_manager.hpp"
 #include "../physics/physics_world.hpp"
 #include "../components/light_2d.hpp"
+#include "../gameplay/character_controller.hpp"
 #include "../components/spine_renderer.hpp"
 #include "../components/physics/box_collider2d_component.hpp"
 #include "../components/physics/rigidbody2d_component.hpp"

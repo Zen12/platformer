@@ -1,6 +1,58 @@
 #include "scene_manager.hpp"
 
+#include "../asset/factories/component_factory.hpp"
 #include "../gameplay/character_controller.hpp"
+
+
+template< typename TSerialization, typename TFactory>
+void SceneManager::AddComponent(std::weak_ptr<Entity> e, TSerialization *serialization) const {
+
+    static_assert(std::is_base_of_v<ComponentSerialization, TSerialization>,
+          "TSerialization must inherit from ComponentSerialization");
+
+    static_assert(std::is_base_of_v<BaseComponentFactory, TFactory>,
+          "TFactory must inherit from BaseComponentFactory");
+
+    auto cameraFactory = TFactory{};
+    cameraFactory.SetScene(_scene);
+    cameraFactory.SetEntity(e);
+    cameraFactory.AddComponent(e, *serialization);
+}
+
+template<typename TSerialization, typename TFactory>
+bool SceneManager::TryToAddComponent(ComponentSerialization* component, std::weak_ptr<Entity> e) const {
+
+    static_assert(std::is_base_of_v<ComponentSerialization, TSerialization>,
+              "TSerialization must inherit from ComponentSerialization");
+
+    static_assert(std::is_base_of_v<BaseComponentFactory, TFactory>,
+      "TFactory must inherit from BaseComponentFactory");
+
+    if (const auto componentSerialization = dynamic_cast<TSerialization *>(component)) {
+        AddComponent<TSerialization, TFactory>(e, componentSerialization);
+        return true;
+    }
+
+    return false;
+}
+
+template <typename TSerialization, typename TFactory, typename... Rest>
+bool SceneManager::TryToAddComponents(ComponentSerialization* comp, std::weak_ptr<Entity> e) const {
+
+    static_assert(std::is_base_of_v<ComponentSerialization, TSerialization>,
+                  "TSerialization must inherit from ComponentSerialization");
+
+    static_assert(std::is_base_of_v<BaseComponentFactory, TFactory>,
+      "TFactory must inherit from BaseComponentFactory");
+
+    if (TryToAddComponent<TSerialization, TFactory>(comp, e)) {
+        return true;
+    }
+    if constexpr (sizeof...(Rest) > 0) {
+        return TryToAddComponents<Rest...>(comp, e);
+    }
+    return false;
+}
 
 
 void SceneManager::LoadScene(const SceneAsset &scene) const {
@@ -20,162 +72,26 @@ void SceneManager::LoadScene(const SceneAsset &scene) const {
 
         for (size_t i = 0; i < scene.Entities.size(); i++) {
             auto &entity = scene.Entities[i];
-            const auto& newEntity = entities[i];
+            auto &newEntity = entities[i];
 
             for (const auto &comp : entity.Components)
             {
-                if (comp->getType() == "camera") {
-                    const auto *cam = dynamic_cast<CameraComponentSerialization *>(comp.get());
-                    if (const auto camera = newEntity->AddComponent<CameraComponent>().lock()) {
-                        camera->SetCamera(Camera{cam->aspectPower, false, cam->isPerspective, _scene->GetWindow()});
-                    }
-                }
-                else if (comp->getType() == "transform")
-                {
-                    if (const auto cameraTr = newEntity->AddComponent<Transform>().lock()) {
-                        auto *tf = dynamic_cast<TransformComponentSerialization *>(comp.get());
-                        const auto position = glm::vec3(tf->position.x, tf->position.y, tf->position.z);
-                        const auto rotation = glm::vec3(tf->rotation.x, tf->rotation.y, tf->rotation.z);
-                        const auto scale = glm::vec3(tf->scale.x, tf->scale.y, tf->scale.z);
-                        cameraTr->SetPosition(position);
-                        cameraTr->SetEulerRotation(rotation);
-                        cameraTr->SetScale(scale);
-                    }
-                }
-                else if (comp->getType() == "rect_transform") {
-                    if (const auto rect = newEntity->AddComponent<RectTransform>().lock()) {
-                        rect->SetParent(_scene->GetRoot());
-                        const auto *tf = dynamic_cast<RectTransformComponentSerialization *>(comp.get());
 
-                        for (const auto &layout : tf->Layouts)
-                        {
-                            if (layout.Type == "center_x")
-                                rect->AddLayoutOption(std::make_unique<CenterXLayoutOption>());
-                            else if (layout.Type == "center_y")
-                                rect->AddLayoutOption(std::make_unique<CenterYLayoutOption>());
-                            else if (layout.Type == "pixel_width")
-                                rect->AddLayoutOption(std::make_unique<PixelWidthLayoutOption>(layout.Value));
-                            else if (layout.Type == "pixel_height")
-                                rect->AddLayoutOption(std::make_unique<PixelHeightLayoutOption>(layout.Value));
-                            else if (layout.Type == "pivot")
-                                rect->AddLayoutOption(std::make_unique<PivotLayoutOption>(glm::vec2(layout.X, layout.Y)));
-                            else if (layout.Type == "pixel_x")
-                                rect->AddLayoutOption(std::make_unique<PixelXLayoutOption>(layout.X, static_cast<AlignmentLayout>(layout.Value)));
-                            else if (layout.Type == "pixel_y")
-                                rect->AddLayoutOption(std::make_unique<PixelYLayoutOption>(layout.Y, static_cast<AlignmentLayout>(layout.Value)));
-                            else
-                                std::cerr << "Unknown layout type: " << layout.Type << std::endl;
-                        }
-                    }
-                }
-                else if (comp->getType() == "ui_image")
-                {
-                    if (const auto uiImage = newEntity->AddComponent<UiImageRenderer>().lock()) {
-
-                        const auto *serialization = dynamic_cast<UiImageComponentSerialization *>(comp.get());
-
-                        const auto material = GetMaterial(serialization->MaterialGuid);
-                        const auto sprite = GetSprite(serialization->SpriteGuid);
-
-                        uiImage->SetMaterial(material);
-                        uiImage->SetSprite(sprite);
-
-                        _scene->GetRenderPipeline().lock()->AddRenderer(uiImage);
-                    }
-                }
-                else if (comp->getType() == "ui_text") {
-
-                    if (const auto uiText = newEntity->AddComponent<UiTextRenderer>().lock()) {
-
-                        const auto *serialization = dynamic_cast<UiTextComponentSerialization *>(comp.get());
-
-                        const auto material = GetMaterial(serialization->MaterialGUID);
-
-                        uiText->SetMaterial(material);
-                        uiText->SetText(serialization->Text);
-
-
-                        _scene->GetRenderPipeline().lock()->AddRenderer(uiText);
-                    }
-
-                }else if (comp->getType() == "sprite_renderer") {
-
-                    if (const auto spriteRenderer = newEntity->AddComponent<SpriteRenderer>().lock()) {
-
-                        const auto *serialization = dynamic_cast<SpriteRenderComponentSerialization *>(comp.get());
-                        const auto material = GetMaterial(serialization->MaterialGuid);
-                        const auto sprite = GetSprite(serialization->SpriteGuid);
-
-                        spriteRenderer->SetMaterial(material);
-                        spriteRenderer->SetSprite(sprite);
-
-                        _scene->GetRenderPipeline().lock()->AddRenderer(spriteRenderer);
-                    }
-
-                }else if (comp->getType() == "spine_renderer") {
-
-                    if (const auto spineRenderer = newEntity->AddComponent<SpineRenderer>().lock()) {
-
-                        const auto *serialization = dynamic_cast<SpineRenderComponentSerialization *>(comp.get());
-                        const auto spineAsset = assetManager->LoadAssetByGuid<SpineAsset>(serialization->SpineGuid);
-
-                        const auto sprite = GetSprite(spineAsset.image);
-
-                        const auto spineData = GetSpineData(serialization->SpineGuid, spineAsset);
-                        const auto meshRenderer = newEntity->GetComponent<MeshRenderer>();
-                        meshRenderer.lock()->SetSprite(sprite);
-                        spineRenderer->SetSpine(spineData);
-                        spineRenderer->SetSpineScale(spineAsset.spineScale);
-                        spineRenderer->SetMeshRenderer(meshRenderer);
-                    }
-
-                }else if (comp->getType() == "box_collider") {
-                    if (auto boxCollider = newEntity->AddComponent<BoxCollider2DComponent>().lock()) {
-                        const auto *serialization = dynamic_cast<Box2dColliderSerialization *>(comp.get());
-                        boxCollider->Init(glm::vec2(serialization->scale.x, serialization->scale.y));
-                    }
-                }else if (comp->getType() == "rigidbody2d") {
-                    if (auto rigidBody = newEntity->AddComponent<Rigidbody2dComponent>().lock()) {
-                        const auto *serialization = dynamic_cast<Rigidbody2dSerialization *>(comp.get());
-                        rigidBody->SetWorld(_scene->GetPhysicsWorld());
-                        rigidBody->Init(serialization->isDynamic);
-                    }
-                } else if (comp->getType() == "light_2d") {
-                    if (const auto light2d = newEntity->AddComponent<Light2dComponent>().lock()) {
-                        const auto *serialization = dynamic_cast<Light2dComponentSerialization *>(comp.get());
-                        const auto ref = GetEntity(serialization->CenterTransform);
-                        if (const auto transform = ref->GetComponent<Transform>().lock()) {
-                            light2d->SetCenterTransform(transform);
-                        }
-
-                        light2d->SetPhysicsWorld(_scene->GetPhysicsWorld());
-                        light2d->SetMeshRenderer(newEntity->GetComponent<MeshRenderer>());
-                        light2d->SetOffset(serialization->Offset);
-                    }
-                }else if (comp->getType() == "mesh_renderer") {
-                    if (const auto mesh_renderer = newEntity->AddComponent<MeshRenderer>().lock()) {
-                        const auto *serialization = dynamic_cast<MeshRendererComponentSerialization *>(comp.get());
-                        mesh_renderer->SetMaterial(GetMaterial(serialization->MaterialGuid));
-                        _scene->GetRenderPipeline().lock()->AddRenderer(mesh_renderer);
-                    }
-                }else if (comp->getType() == "character_controller") {
-                    if (const auto component = newEntity->AddComponent<CharacterController>().lock()) {
-                        const auto *serialization = dynamic_cast<CharacterControllerComponentSerialization *>(comp.get());
-                        const CharacterControllerSettings characterSettings =
-                            {
-                            serialization->MaxMovementSpeed,
-                            serialization->AccelerationSpeed,
-                            serialization->DecelerationSpeed,
-                            serialization->JumpHeigh,
-                            serialization->JumpDuration,
-                            serialization->JumpDownMultiplier,
-                            serialization->AirControl};
-                        component->SetCharacterControllerSettings(characterSettings);
-                        component->SetInputSystem(_scene->GetInputSystem());
-                        component->SetPhysicsWorld(_scene->GetPhysicsWorld());
-                        component->SetSpineRenderer(newEntity->GetComponent<SpineRenderer>());
-
-                    }
+                if (!TryToAddComponents<
+                    CameraComponentSerialization, CameraComponentFactory,
+                    TransformComponentSerialization, TransformFactory,
+                    RectTransformComponentSerialization, RectTransformFactory,
+                    UiImageComponentSerialization, UiImageFactory,
+                    UiTextComponentSerialization, UiTextComponentFactory,
+                    SpriteRenderComponentSerialization, SpriteRendererFactory,
+                    SpineRenderComponentSerialization, SpineRendererFactory,
+                    Box2dColliderSerialization, BoxCollider2dFactory,
+                    Rigidbody2dSerialization, Rigidbody2dFactory,
+                    Light2dComponentSerialization, Light2dFactory,
+                    MeshRendererComponentSerialization, MeshRendererFactory,
+                    CharacterControllerComponentSerialization, CharacterControllerFactory
+                >(comp.get(), std::weak_ptr<Entity>(newEntity))) {
+                    std::cerr << "can't add component" << std::endl;
                 }
             }
         }

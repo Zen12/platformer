@@ -22,10 +22,26 @@ public:
     explicit RectTransform(const std::weak_ptr<Entity> &entity) : Transform(entity)
     {
         _constrains = std::make_unique<LayoutOptions>();
-    };
+    }
 
-    void AddLayoutOption(std::unique_ptr<LayoutOption> layout) const {
-        _constrains->AddLayout(std::move(layout));
+    template<typename TLayoutOption>
+    void AddLayoutOption() const {
+        _constrains->AddLayout(std::make_unique<TLayoutOption>());
+    }
+
+    template<typename TLayoutOption>
+    void AddLayoutOption(const float value) const {
+        _constrains->AddLayout(std::make_unique<TLayoutOption>(value));
+    }
+
+    template<typename TLayoutOption>
+    void AddLayoutOption(const glm::vec2 value) const {
+        _constrains->AddLayout(std::make_unique<TLayoutOption>(value));
+    }
+
+    template<typename TLayoutOption>
+    void AddLayoutOption(const float &value, const AlignmentLayout &alignment) const {
+        _constrains->AddLayout(std::make_unique<TLayoutOption>(value, alignment));
     }
 
     void SetParent(const std::weak_ptr<RectTransform> &parent)

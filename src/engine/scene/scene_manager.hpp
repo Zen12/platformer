@@ -56,4 +56,14 @@ private:
 
     [[nodiscard]] std::shared_ptr<SpineData> GetSpineData(const std::string &guid, const SpineAsset& asset) const;
 
+    template <typename TSerialization, typename TFactory>
+    void AddComponent(std::weak_ptr<Entity> e, TSerialization *serialization) const;
+
+    template<typename TComponent, typename TFactory>
+    bool TryToAddComponent(ComponentSerialization* component, std::weak_ptr<Entity> e) const;
+
+    template<class SerializationT, class FactoryT, class ... Rest>
+    bool TryToAddComponents(ComponentSerialization *comp, std::weak_ptr<Entity> e) const;
 };
+
+
