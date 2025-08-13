@@ -19,8 +19,7 @@
 #include "../system/input_system.hpp"
 
 class Scene {
-public:
-    std::vector<std::shared_ptr<Entity>> _entities;
+private:
     std::unordered_map<std::string, std::shared_ptr<Shader>> _shaders;
     std::unordered_map<std::string, std::shared_ptr<Material>> _materials;
     std::unordered_map<std::string, std::shared_ptr<Sprite>> _sprites;
@@ -36,6 +35,10 @@ public:
     std::shared_ptr<RectTransformRoot> _root;
 
     std::shared_ptr<PhysicsWorld> _physicsWorld = std::make_shared<PhysicsWorld>(b2Vec2{0.0, -10.0});
+
+    std::vector<std::shared_ptr<Entity>> Entities;
+
+public:
 
     Scene(
         const std::weak_ptr<RenderPipeline> &render,
@@ -73,11 +76,11 @@ public:
     }
 
     void AddEntity(const std::shared_ptr<Entity> &entity) {
-        _entities.push_back(entity);
+        Entities.push_back(entity);
     }
 
     void UnLoadAll() {
-        _entities.clear();
+        Entities.clear();
         _shaders.clear();
         _materials.clear();
         _sprites.clear();
@@ -88,7 +91,7 @@ public:
 
 
     [[nodiscard]] std::weak_ptr<Entity> GetEntityById(const std::string &id) const {
-        for (const auto &entity: _entities) {
+        for (const auto &entity: Entities) {
             if (entity->GetId() == id) {
                 return entity;
             }
@@ -96,8 +99,19 @@ public:
         return {};
     }
 
+    [[nodiscard]] size_t GetEntityCount() const noexcept {
+        return Entities.size();
+    }
+
+    [[nodiscard]] std::shared_ptr<Entity> GetEntityByIndex(const uint32_t& index) const noexcept {
+        if (index >= Entities.size()) {
+            return {};
+        }
+        return Entities[index];
+    }
+
     void Update(const float &deltaTime) const {
-        for (const auto &entity: _entities) {
+        for (const auto &entity: Entities) {
             entity->Update(deltaTime);
         }
     }
@@ -215,7 +229,7 @@ public:
     }
 
     [[nodiscard]] std::shared_ptr<Entity> GetEntity(const std::string &id) const {
-        for (const auto & entity: _entities) {
+        for (const auto & entity: Entities) {
             if (entity->GetId() == id)
                 return entity;
         }
@@ -223,7 +237,7 @@ public:
     }
 
     [[nodiscard]] std::weak_ptr<Entity> FindByTag(const std::string &tag) const {
-        for (const auto & entity: _entities) {
+        for (const auto & entity: Entities) {
             if (entity->GetTag() == tag)
                 return entity;
         }

@@ -55,6 +55,7 @@ void RunEngine() {
     while (engine.IsTickable())
     {
         engine.Tick();
+        engine.WaitForTargetFrameRate();
     }
 
     if (engine.IsReloadRequested()) {

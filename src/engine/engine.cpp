@@ -14,6 +14,8 @@ Engine::Engine(const std::string &projectPath) : _projectPath(projectPath) {
     _window->WinInit();
 
     _inputSystem = std::make_shared<InputSystem>(_window);
+
+    _targetFrameTime = 1.0f / _projectAsset.TargetFps;
 }
 
 void Engine::LoadFirstScene() {
@@ -31,6 +33,17 @@ void Engine::LoadFirstScene() {
 
     if (const auto fpsText = _sceneManager->GetEntityById("text-fps").lock()) {
         _fpsText = fpsText->GetComponent<UiTextRenderer>();
+    }
+}
+
+void Engine::WaitForTargetFrameRate() const {
+
+    const float elapsed = _timer.GetResetDelta();
+
+    const float sleepTime = _targetFrameTime - elapsed;
+
+    if (sleepTime > 0.0) {
+        std::this_thread::sleep_for(std::chrono::duration<float>(sleepTime));
     }
 }
 

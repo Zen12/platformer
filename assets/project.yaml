@@ -2,5 +2,6 @@ name: Platformer
 resolution:
   - 800
   - 600
+target_fps: 60
 scenes:
   - d0677c93-a26f-4793-9eb7-5232d99378d1

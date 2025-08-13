@@ -55,28 +55,27 @@ bool SceneManager::TryToAddComponents(ComponentSerialization* comp, std::weak_pt
 }
 
 
-void SceneManager::LoadScene(const SceneAsset &scene) const {
-    PROFILE_SCOPE("Loading of scene " + scene.Name);
+void SceneManager::LoadScene(const SceneAsset &sceneAsset) const {
+    PROFILE_SCOPE("Loading of scene " + sceneAsset.Name);
 
     if (const auto assetManager = _scene->GetAssetManager().lock()) {
         std::vector<std::shared_ptr<Entity>> entities;
 
-        for (const auto &entity : scene.Entities) {
+        for (const auto &entitySerialization : sceneAsset.Entities) {
             const auto newEntity = std::make_shared<Entity>();
-            newEntity->SetId(entity.Guid);
-            newEntity->SetTag(entity.Tag);
+            newEntity->SetId(entitySerialization.Guid);
+            newEntity->SetTag(entitySerialization.Tag);
 
             entities.push_back(newEntity);
             _scene->AddEntity(newEntity);
         }
 
-        for (size_t i = 0; i < scene.Entities.size(); i++) {
-            auto &entity = scene.Entities[i];
-            auto &newEntity = entities[i];
+        for (size_t i = 0; i < sceneAsset.Entities.size(); i++) {
+            const auto &entitySerialization = sceneAsset.Entities[i];
+            const auto &entityInstance = _scene->GetEntityByIndex(i);
 
-            for (const auto &comp : entity.Components)
+            for (const auto &comp : entitySerialization.Components)
             {
-
                 if (!TryToAddComponents<
                     CameraComponentSerialization, CameraComponentFactory,
                     TransformComponentSerialization, TransformFactory,
@@ -90,7 +89,7 @@ void SceneManager::LoadScene(const SceneAsset &scene) const {
                     Light2dComponentSerialization, Light2dFactory,
                     MeshRendererComponentSerialization, MeshRendererFactory,
                     CharacterControllerComponentSerialization, CharacterControllerFactory
-                >(comp.get(), std::weak_ptr<Entity>(newEntity))) {
+                >(comp.get(), std::weak_ptr<Entity>(entityInstance))) {
                     std::cerr << "can't add component" << std::endl;
                 }
             }

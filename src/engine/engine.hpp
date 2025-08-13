@@ -45,11 +45,14 @@ private:
     Time _timer;
 
     bool _isReloadRequested = false;
+    float _targetFrameTime = 0.02f;
 
 public:
     explicit Engine(const std::string &projectPath);
 
     void LoadFirstScene();
+
+    void WaitForTargetFrameRate() const;
 
     ~Engine();
 

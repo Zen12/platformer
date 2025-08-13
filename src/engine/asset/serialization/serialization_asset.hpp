@@ -30,11 +30,11 @@ struct MaterialAsset : Asset
     std::string Font{};
 };
 
-struct ProjectAsset
+struct ProjectAsset : Asset
 {
-    std::string Name{};
     std::vector<std::string> Scenes{};
     std::vector<int> Resolution{};
+    float TargetFps{60.0f};
 };
 
 struct SpineAsset : Asset {
