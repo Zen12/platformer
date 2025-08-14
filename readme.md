@@ -60,7 +60,8 @@ TODO
 
 ## TODO
 - [x] Spine runtime
-- [ ] 2d Character controller
+- [x] 2d Character controller
+- [ ] Shooter behaviour
 - [ ] Webgl build 
 - [ ] Light2d better ray-detection
 - [ ] UI buttons

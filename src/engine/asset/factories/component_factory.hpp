@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 
+#include "../../gameplay/ai_controller.hpp"
 #include "../../scene/scene.hpp"
 
 class BaseComponentFactory {
@@ -231,6 +232,33 @@ protected:
 class CharacterControllerFactory final : public ComponentFactory<CharacterController, CharacterControllerComponentSerialization> {
 protected:
     void FillComponent(const std::weak_ptr<CharacterController> &component, const CharacterControllerComponentSerialization &serialization) override {
+
+        if (const auto scene = _scene.lock()) {
+            if (const auto comp = component.lock()) {
+
+                const CharacterControllerSettings characterSettings =
+                    {
+                    serialization.MaxMovementSpeed,
+                    serialization.AccelerationSpeed,
+                    serialization.DecelerationSpeed,
+                    serialization.JumpHeigh,
+                    serialization.JumpDuration,
+                    serialization.JumpDownMultiplier,
+                    serialization.AirControl};
+
+                comp->SetCharacterControllerSettings(characterSettings);
+                comp->SetInputSystem(scene->GetInputSystem());
+                comp->SetPhysicsWorld(scene->GetPhysicsWorld());
+                comp->SetSpineRenderer(_entity.lock()->GetComponent<SpineRenderer>());
+
+            }
+        }
+    }
+};
+
+class AiControllerFactory final : public ComponentFactory<AiController, AiControllerComponentSerialization> {
+protected:
+    void FillComponent(const std::weak_ptr<AiController> &component, const AiControllerComponentSerialization &serialization) override {
 
         if (const auto scene = _scene.lock()) {
             if (const auto comp = component.lock()) {

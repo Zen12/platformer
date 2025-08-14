@@ -37,6 +37,7 @@ public:
 
     static void AddLine(const glm::vec3& start, const glm::vec3& end);
     static void AddLine(const glm::vec3& start, const glm::vec3& end, const glm::vec3& color);
+    static void AddLine(const glm::vec2 &start, const glm::vec2 &end);
 
     static void DrawLines();
 

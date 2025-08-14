@@ -71,6 +71,23 @@ namespace YAML
     };
 
     template <>
+    struct convert<AiControllerComponentSerialization>
+    {
+        static bool decode(const Node &node, AiControllerComponentSerialization &rhs)
+        {
+            const auto map = sequenceToMap(node);
+            rhs.MaxMovementSpeed = map["max_movement_speed"].as<float>();
+            rhs.AccelerationSpeed = map["acceleration_speed"].as<float>();
+            rhs.DecelerationSpeed = map["deceleration_speed"].as<float>();
+            rhs.JumpHeigh = map["jump_heigh"].as<float>();
+            rhs.JumpDuration = map["jump_duration"].as<float>();
+            rhs.JumpDownMultiplier = map["jump_down_multiplier"].as<float>();
+            rhs.AirControl = map["air_control"].as<float>();
+            return true;
+        }
+    };
+
+    template <>
     struct convert<CameraComponentSerialization>
     {
         static bool decode(const Node &node, CameraComponentSerialization &rhs)
@@ -259,6 +276,8 @@ namespace YAML
                 return Parse<SpineRenderComponentSerialization>(data);
             } if (type == "character_controller") {
                 return Parse<CharacterControllerComponentSerialization>(data);
+            } else if (type == "ai_controller") {
+                return Parse<AiControllerComponentSerialization>(data);
             }
 
             throw std::runtime_error("Unknown component type: " + type);

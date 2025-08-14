@@ -86,7 +86,7 @@ entities:
                   - jump_down_multiplier: 1.2
                   - air_control: 0.8
   - obj:
-      - guid: light_2d
+      - guid: alien-character
       - components:
           - component:
               - type: transform
@@ -94,7 +94,7 @@ entities:
                   - position:
                       - x: 0.0
                       - y: 0.0
-                      - z: -10.0
+                      - z: 0.0
                   - rotation:
                       - x: 0.0
                       - y: 0.0
@@ -106,15 +106,21 @@ entities:
           - component:
               - type: mesh_renderer
               - data:
-                  - material: b1604380-8385-4912-9f2b-178103120328
+                  - material: 5faecd48-398f-46db-889f-ba4199c2636f
           - component:
-              - type: light_2d
+              - type: spine_renderer
               - data:
-                  - center: main-character
-                  - offset:
-                      - x: 0.0
-                      - y: 1.7
-                      - z: -1.0
+                  - spine_data: 74affba0-da5d-4b28-bcd7-625ef48e9d6a
+          - component:
+              - type: ai_controller
+              - data:
+                  - max_movement_speed: 5.0
+                  - acceleration_speed: 0.8
+                  - deceleration_speed: 1.0
+                  - jump_heigh: 5
+                  - jump_duration: 0.5
+                  - jump_down_multiplier: 1.2
+                  - air_control: 0.8
   - obj:
     - guid: sprite-tile-bfad823e
     - components:

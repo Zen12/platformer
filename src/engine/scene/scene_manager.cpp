@@ -88,7 +88,8 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) const {
                     Rigidbody2dSerialization, Rigidbody2dFactory,
                     Light2dComponentSerialization, Light2dFactory,
                     MeshRendererComponentSerialization, MeshRendererFactory,
-                    CharacterControllerComponentSerialization, CharacterControllerFactory
+                    CharacterControllerComponentSerialization, CharacterControllerFactory,
+                    AiControllerComponentSerialization, AiControllerFactory
                 >(comp.get(), std::weak_ptr<Entity>(entityInstance))) {
                     std::cerr << "can't add component" << std::endl;
                 }

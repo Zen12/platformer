@@ -103,6 +103,8 @@ void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *in
     b2World *world) {
 
     auto position = transform->GetPosition();
+    glm::vec2 lookAt = glm::vec2(position.x + 1, position.y);
+    SetLookAt(lookAt);
 
     glm::vec2 hitPos{};
 
@@ -165,11 +167,11 @@ void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *in
         }
     }
     if (_velocity.y > 0.01)
-        SetAnimationValue("walk");
+        SetAnimation(0, "walk", true);
     else if (std::abs(_velocity.x) > 0.01)
-        SetAnimationValue("run");
+        SetAnimation(0, "run", true);
     else
-        SetAnimationValue("idle");
+        SetAnimation(0, "idle", true);
 
     SetFaceRight(_isRight);
     transform->SetPosition(position + (_velocity * deltaTime));
@@ -177,6 +179,12 @@ void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *in
 
 CharacterController::CharacterController(const std::weak_ptr<Entity> &entity): Component(entity) {
     _transform = _entity.lock()->GetComponent<Transform>();
+}
+
+void CharacterController::SetLookAt(glm::vec2 &lookAt) {
+    if (const auto& render = _renderer.lock()) {
+        render->LookAt(lookAt);
+    }
 }
 
 void CharacterController::SetSpineRenderer(const std::weak_ptr<SpineRenderer> &spineRenderer) noexcept {
@@ -193,6 +201,8 @@ void CharacterController::SetSpineRenderer(const std::weak_ptr<SpineRenderer> &s
         render->SetTransition("run", "walk", 0.3);
 
     }
+
+    SetAnimation(1, "aim", true);
 }
 
 void CharacterController::Update(const float &deltaTime) {

@@ -1,4 +1,6 @@
 #pragma once
+#include <memory>
+
 #include "character_controller_settings.h"
 #include "../components/entity.hpp"
 #include "../components/transforms/transform.hpp"
@@ -9,8 +11,10 @@
 #include "../components/spine_renderer.hpp"
 
 
-class CharacterController final : public Component{
+
+class AiController final : public Component{
 private:
+
     std::weak_ptr<InputSystem> _inputSystem;
     std::weak_ptr<Transform> _transform;
     std::weak_ptr<PhysicsWorld> _world{};
@@ -72,7 +76,7 @@ private:
     void SetLookAt(glm::vec2 &lookAt);
 
 public:
-    explicit CharacterController(const std::weak_ptr<Entity> &entity);
+    explicit AiController(const std::weak_ptr<Entity> &entity);
 
     void SetInputSystem(const std::weak_ptr<InputSystem> &inputSystem) noexcept {
         _inputSystem = inputSystem;

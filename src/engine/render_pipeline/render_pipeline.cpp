@@ -8,6 +8,7 @@ void RenderPipeline::RenderSprites(const float& deltaTime) const
 {
 
     glEnable(GL_CULL_FACE);
+    glDisable(GL_BLEND);
 
     const auto projection = _camera3d.lock()->GetProjection();
     const auto view = _cameraTransform3d.lock()->GetModel();
@@ -32,6 +33,8 @@ void RenderPipeline::RenderSprites(const float& deltaTime) const
 void RenderPipeline::RenderMeshes(const float& deltaTime) {
 
     glDisable(GL_CULL_FACE); // spine runtime requires
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
     std::sort(_meshRenderers.begin(), _meshRenderers.end(),
         [](const std::weak_ptr<MeshRenderer>& a, const std::weak_ptr<MeshRenderer>& b) {
@@ -103,10 +106,8 @@ void RenderPipeline::RenderDebugLines() const {
 
 
 void RenderPipeline::Init() const noexcept {
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 
 #ifndef NDEBUG
     DebugLines::Init();
@@ -119,6 +120,9 @@ void RenderPipeline::ClearFrame() const noexcept {
 
 void RenderPipeline::RenderUI(const float& deltaTime) const
 {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     const auto projection = _uiCamera.GetProjection();
 
     for (const auto& value : _texts)

@@ -62,6 +62,10 @@ void DebugLines::AddLine(const glm::vec3 &start, const glm::vec3 &end) {
     AddLine(start, end, glm::vec3(1.0, 0.0, 0.0)); // red color
 }
 
+void DebugLines::AddLine(const glm::vec2 &start, const glm::vec2 &end) {
+    AddLine(glm::vec3(start.x, start.y, 0),  glm::vec3(end.x, end.y, 0), glm::vec3(1.0, 0.0, 0.0)); // red color
+}
+
 void DebugLines::AddLine(const glm::vec3 &start, const glm::vec3 &end, const glm::vec3 &color) {
     const auto lines = Line::GenerateLine(start, end, color);
     _lines.push_back(lines);

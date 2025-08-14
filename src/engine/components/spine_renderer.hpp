@@ -22,6 +22,18 @@ public:
         _skeletonRenderer = std::make_unique<spine::SkeletonRenderer>();
     }
 
+
+    void LookAt(const glm::vec2 &lookAt) {
+        DebugLines::AddLine(lookAt, lookAt + glm::vec2(0, 1));
+        auto skeleton = _spine.lock()->GetSkeleton();
+        const auto gun = skeleton.lock()->findBone("crosshair");
+        glm::vec2 bonePos = { gun->getWorldX(), gun->getWorldY() };
+        float angle = glm::degrees(atan2(lookAt.y - bonePos.y, lookAt.x - bonePos.x));
+        // Apply rotation in Spine’s local bone space
+        gun->setRotation(angle);
+        skeleton.lock()->updateWorldTransform(spine::Physics_Update);
+    }
+
     void Update(const float& deltaTime) override {
         if (const auto spine = _spine.lock()) {
             if (const auto skeleton = spine->GetSkeleton().lock()) {
@@ -34,13 +46,15 @@ public:
 
                 skeleton->updateWorldTransform(spine::Physics_None);
 
+                std::vector<float> vertices{};
+                std::vector<uint32_t> index{};
+
                 // Now render
                 spine::RenderCommand *command = _skeletonRenderer->render(*skeleton);
-                if (command) {
+                while (command) {
                     const int num_command_vertices = command->numVertices;
 
-                    std::vector<float> vertices{};
-                    std::vector<uint32_t> index{};
+
 
                     const float *positions = command->positions;
                     const float *uvs = command->uvs;
@@ -57,15 +71,17 @@ public:
                         index.push_back(command->indices[i]);
                     }
 
-                    _meshRenderer.lock()->UpdateMesh(vertices, index);
+                    command = command->next;
                 }
+                _meshRenderer.lock()->UpdateMesh(vertices, index);
+
             }
         }
     }
 
-    void SetAnimation(const std::string &animation) const {
+    void SetAnimation(const size_t &index, const std::string &animation, const bool& isLoop) const {
         if (const auto spine = _spine.lock()) {
-            spine->SetAnimation(animation);
+            spine->SetAnimation(index, animation, isLoop);
         }
     }
 
