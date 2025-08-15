@@ -1,12 +1,10 @@
 #pragma once
 
-#include "../render/font.hpp"
-#include "../render/mesh.hpp"
 #include "../render/material.hpp"
 #include "../asset/loaders/asset_loader.hpp"
-#include "transforms/transform.hpp"
-#include "transforms/rect_transform.hpp"
 #include "entity.hpp"
+#include "transforms/rect_transform.hpp"
+
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -14,7 +12,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-class UiTextRenderer : public Component
+class UiTextRenderer final : public Component
 {
 private:
     std::string _text{};

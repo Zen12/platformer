@@ -27,7 +27,7 @@ private:
     std::unordered_map<std::string, std::shared_ptr<Font>> _fonts;
     std::unordered_map<std::string, std::shared_ptr<Mesh>> _meshes;
 
-    std::weak_ptr<RenderPipeline> _renderPipeline;
+    std::shared_ptr<RenderPipeline> _renderPipeline;
     std::weak_ptr<Window> _window;
     std::weak_ptr<AssetManager> _assetManager;
     std::weak_ptr<InputSystem> _inputSystem;
@@ -41,14 +41,15 @@ private:
 public:
 
     Scene(
-        const std::weak_ptr<RenderPipeline> &render,
         const std::weak_ptr<Window> &window,
         const std::weak_ptr<AssetManager> &assetManager,
         const std::weak_ptr<InputSystem> &inputSystem)
-        : _renderPipeline(render), _window(window), _assetManager(assetManager),_inputSystem(inputSystem)
+        :  _window(window), _assetManager(assetManager),_inputSystem(inputSystem)
 
     {
         _root = std::make_shared<RectTransformRoot>(window);
+        _renderPipeline = std::make_shared<RenderPipeline>(window);
+        _renderPipeline->Init();
     }
 
     [[nodiscard]] std::shared_ptr<RectTransformRoot> GetRoot() const {
@@ -79,17 +80,6 @@ public:
         Entities.push_back(entity);
     }
 
-    void UnLoadAll() {
-        Entities.clear();
-        _shaders.clear();
-        _materials.clear();
-        _sprites.clear();
-        _spineDatas.clear();
-        _fonts.clear();
-        _meshes.clear();
-    }
-
-
     [[nodiscard]] std::weak_ptr<Entity> GetEntityById(const std::string &id) const {
         for (const auto &entity: Entities) {
             if (entity->GetId() == id) {
@@ -114,6 +104,18 @@ public:
         for (const auto &entity: Entities) {
             entity->Update(deltaTime);
         }
+    }
+
+    void Render(const float &deltaTime) const {
+
+        _renderPipeline->ClearFrame();
+        _renderPipeline->RenderMeshes(deltaTime);
+        _renderPipeline->RenderSprites(deltaTime);
+
+#ifndef NDEBUG
+        _renderPipeline->RenderDebugLines();
+#endif
+        _renderPipeline->RenderUI(deltaTime);
     }
 
     [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) {

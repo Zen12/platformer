@@ -16,22 +16,16 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
     _window->WinInit();
 
     _inputSystem = std::make_shared<InputSystem>(_window);
-
     _targetFrameTime = 1.0f / _projectAsset.TargetFps;
 }
 
 void Engine::LoadFirstScene() {
     const auto scene = _assetManager->LoadAssetByGuid<SceneAsset>(_projectAsset.Scenes[0]);
 
-    _renderPipeline = std::make_shared<RenderPipeline>(_window);
-
-    _sceneManager = std::make_shared<SceneManager>(_renderPipeline, _window,_assetManager, _inputSystem);
-
+    _sceneManager = std::make_shared<SceneManager>(_window,_assetManager, _inputSystem);
     _sceneManager->LoadScene(scene);
 
-    _timer.Start();
-
-    _renderPipeline->Init();
+    _frameTimer.Start();
 
     if (const auto fpsText = _sceneManager->GetEntityById("text-fps").lock()) {
         _fpsText = fpsText->GetComponent<UiTextRenderer>();
@@ -40,7 +34,7 @@ void Engine::LoadFirstScene() {
 
 void Engine::WaitForTargetFrameRate() const {
 
-    const float elapsed = _timer.GetResetDelta();
+    const float elapsed = _frameTimer.GetResetDelta();
 
     const float sleepTime = _targetFrameTime - elapsed;
 
@@ -50,15 +44,14 @@ void Engine::WaitForTargetFrameRate() const {
 }
 
 Engine::~Engine() {
-    AssetLoader::DeInit();
-    _sceneManager->UnLoadAll();
+    std::cout << "Destroying gameengine..." << std::endl;
     _window->Destroy();
 }
 
 void Engine::Tick() {
 
-    const float deltaTime = _timer.GetResetDelta();
-    _timer.Reset();
+    const float deltaTime = _frameTimer.GetResetDelta();
+    _frameTimer.Reset();
 
     if (const auto fpsText = _fpsText.lock()) {
         const float fps = 1.0f / deltaTime;
@@ -71,14 +64,7 @@ void Engine::Tick() {
 
     _sceneManager->Update(deltaTime);
 
-    _renderPipeline->ClearFrame();
-    _renderPipeline->RenderMeshes(deltaTime);
-    _renderPipeline->RenderSprites(deltaTime);
 
-#ifndef NDEBUG
-    _renderPipeline->RenderDebugLines();
-#endif
-    _renderPipeline->RenderUI(deltaTime);
 
     _window->SwapBuffers();
 

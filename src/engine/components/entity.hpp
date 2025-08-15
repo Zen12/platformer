@@ -28,12 +28,13 @@ protected:
     std::weak_ptr<Entity> _entity;
 };
 
-class Entity : public std::enable_shared_from_this<Entity>
+class Entity
 {
 private:
     std::unordered_map<std::type_index, std::shared_ptr<Component>> _components{};
     std::string _id{};
     std::string _tag{};
+    std::weak_ptr<Entity> _self{};
 
 public:
     Entity() = default;
@@ -43,9 +44,7 @@ public:
     {
         static_assert(std::is_base_of_v<Component, T>, "T must derive from Component");
 
-        auto sharedThis = std::weak_ptr<Entity>(shared_from_this());
-
-        auto component = std::make_shared<T>(sharedThis);
+        auto component = std::make_shared<T>(_self);
         _components[typeid(T)] = component;
         return component;
     }
@@ -81,6 +80,10 @@ public:
 
     void SetTag(const std::string& tag) {
         _tag = tag;
+    }
+
+    void SetSelf(const std::shared_ptr<Entity> &self) {
+        _self = self;
     }
 
     [[nodiscard]] const std::string& GetId() const { return _id;}

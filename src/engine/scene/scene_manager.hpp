@@ -22,11 +22,10 @@ class SceneManager {
 
 public:
     SceneManager(
-        const std::weak_ptr<RenderPipeline> &render,
         const std::weak_ptr<Window> &window,
         const std::weak_ptr<AssetManager> &assetManager,
         const std::weak_ptr<InputSystem> &inputSystem)
-        : _scene(std::make_shared<Scene>(render, window, assetManager, inputSystem))
+        : _scene(std::make_shared<Scene>(window, assetManager, inputSystem))
         {
     }
 

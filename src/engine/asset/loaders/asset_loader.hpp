@@ -43,11 +43,6 @@ public:
         };
     }
 
-    static void DeInit() {
-       // _textureLoader = nullptr;
-    }
-
-
     template<>
     Sprite LoadFromPath<Sprite>(const std::string &path) {
         auto loader = _textureLoader();

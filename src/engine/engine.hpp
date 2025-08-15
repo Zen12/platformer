@@ -36,13 +36,12 @@ private:
     std::shared_ptr<AssetManager> _assetManager;
     std::shared_ptr<SceneManager> _sceneManager;
     std::shared_ptr<Window> _window;
-    std::shared_ptr<RenderPipeline> _renderPipeline;
 
     std::filesystem::path _projectPath;
     ProjectAsset _projectAsset;
 
     std::weak_ptr<UiTextRenderer> _fpsText;
-    Time _timer;
+    Time _frameTimer;
 
     bool _isReloadRequested = false;
     float _targetFrameTime = 0.02f;

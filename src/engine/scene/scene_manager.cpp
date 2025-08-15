@@ -65,6 +65,7 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) const {
             const auto newEntity = std::make_shared<Entity>();
             newEntity->SetId(entitySerialization.Guid);
             newEntity->SetTag(entitySerialization.Tag);
+            newEntity->SetSelf(newEntity);
 
             entities.push_back(newEntity);
             _scene->AddEntity(newEntity);
@@ -106,16 +107,13 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) const {
     }
 }
 
-void SceneManager::UnLoadAll() const {
-    _scene->UnLoadAll();
-}
-
 std::weak_ptr<Entity> SceneManager::GetEntityById(const std::string &id) const {
     return _scene->GetEntityById(id);
 }
 
 void SceneManager::Update(const float &deltaTime) const {
-    return _scene->Update(deltaTime);
+    _scene->Update(deltaTime);
+    _scene->Render(deltaTime);
 }
 
 std::shared_ptr<Shader> SceneManager::GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) const {

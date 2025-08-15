@@ -2,8 +2,7 @@
 #include "engine/engine.hpp"
 
 
-
-void RunEngine() {
+bool RunEngine() {
 
     Engine engine(GetProjectRootPath());
 
@@ -15,12 +14,17 @@ void RunEngine() {
         engine.WaitForTargetFrameRate();
     }
 
-    if (engine.IsReloadRequested()) {
-        RunEngine();
+    return engine.IsReloadRequested();
+}
+
+void LoadEngine() {
+    const bool reload = RunEngine();
+
+    if (reload) {
+        LoadEngine();
     }
 }
 
 int main() {
-
-    RunEngine();
+    LoadEngine();
 }
