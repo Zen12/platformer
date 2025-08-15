@@ -146,3 +146,9 @@ struct AiControllerComponentSerialization final : public ComponentSerialization
 
 };
 
+struct ShowFpsComponentSerialization final : public ComponentSerialization
+{
+
+};
+
+

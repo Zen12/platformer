@@ -25,6 +25,10 @@ entities:
               - data:
                   - material: f22681f4-45d1-4542-a838-99f854890c28
                   - text: "FPS text"
+          - component:
+              - type: "ui_show_fps"
+              - data:
+                  - none: ""
   - obj:
       - guid: main-camera
       - tag: main_camera

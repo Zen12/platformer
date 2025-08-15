@@ -64,7 +64,7 @@ TODO
 - ```CONST_VARIALBE```
 - ```file_name.cpp/hpp```
 - ```folder_name```
-- ```serialization_filed_in_yaml```
+- ```serialized_file_in_yaml```
 - ```//comments``` means hack-description or todo
 
 ## 📚 Class types(Suffixes):
@@ -74,8 +74,11 @@ TODO
 - ```Asset``` files that are used to generate ```Data```
 - ```Factory``` creates ```Data``` or ```Component```
 - ```ComponentSerialization``` DTO from ```Asset``` to ```Component```
-- ```Component``` applies existing data. Doesn't change it or have control of lifetime
-- ```Controller``` doesn't apply the data, just changes it and sets to component
+- ```Renderer``` render things
+- ```Component``` Has simple logic to update ```Renderer``` or other ```Component```
+- ```Controller``` Has complex logic that involves interaction with ```System``` or/and ```Controllers``` or/and ```Components```
+- ```System``` something to interact with native-os or 3rd party. Is NOT part of the ```Scene```
+
 
 ## 🛠️ Architecture:
 ### 📀 Memory management:
@@ -102,6 +105,7 @@ TODO
     - ```MeshRenderer```:
       - Used for most important (Light2d, Spine)
       - Sorted by Z
+      - SpineRender updates ```MeshRenderer```
 - World coordinates:
   - UI
     - ```Projection``` is Camera ortho based of window size

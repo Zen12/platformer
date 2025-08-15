@@ -90,9 +90,13 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) const {
                     Light2dComponentSerialization, Light2dFactory,
                     MeshRendererComponentSerialization, MeshRendererFactory,
                     CharacterControllerComponentSerialization, CharacterControllerFactory,
-                    AiControllerComponentSerialization, AiControllerFactory
+                    AiControllerComponentSerialization, AiControllerFactory,
+                    ShowFpsComponentSerialization, ShowFpsComponentFactory
                 >(comp.get(), std::weak_ptr<Entity>(entityInstance))) {
                     std::cerr << "can't add component" << std::endl;
+#ifndef NDEBUG
+                    exit(-1);
+#endif
                 }
             }
         }
@@ -113,6 +117,9 @@ std::weak_ptr<Entity> SceneManager::GetEntityById(const std::string &id) const {
 
 void SceneManager::Update(const float &deltaTime) const {
     _scene->Update(deltaTime);
+}
+
+void SceneManager::Render(const float &deltaTime) const  {
     _scene->Render(deltaTime);
 }
 

@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <vector>
 #include "../components/entity.hpp"
+#include "../components/ui_show_fps.hpp"
 
 #include "../components/transforms/rect_transform_root.hpp"
 #include "../render/shader.hpp"

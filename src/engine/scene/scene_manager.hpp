@@ -40,6 +40,8 @@ public:
 
     void Update(const float& deltaTime) const;
 
+    void Render(const float &deltaTime) const;
+
 private:
     [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) const;
 

@@ -286,6 +286,17 @@ protected:
     }
 };
 
+class ShowFpsComponentFactory final : public ComponentFactory<ShowFpsComponent, ShowFpsComponentSerialization> {
+protected:
+    void FillComponent(const std::weak_ptr<ShowFpsComponent> &component, const ShowFpsComponentSerialization &serialization) override {
+        if (const auto entity = _entity.lock()) {
+            if (const auto comp = component.lock()) {
+                comp->SetText(entity->GetComponent<UiTextRenderer>());
+            }
+        }
+    }
+};
+
 
 
 

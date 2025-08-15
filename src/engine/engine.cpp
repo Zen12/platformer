@@ -26,10 +26,6 @@ void Engine::LoadFirstScene() {
     _sceneManager->LoadScene(scene);
 
     _frameTimer.Start();
-
-    if (const auto fpsText = _sceneManager->GetEntityById("text-fps").lock()) {
-        _fpsText = fpsText->GetComponent<UiTextRenderer>();
-    }
 }
 
 void Engine::WaitForTargetFrameRate() const {
@@ -52,20 +48,9 @@ void Engine::Tick() {
 
     const float deltaTime = _frameTimer.GetResetDelta();
     _frameTimer.Reset();
-
-    if (const auto fpsText = _fpsText.lock()) {
-        const float fps = 1.0f / deltaTime;
-        std::stringstream ss;
-        ss << std::fixed << std::setprecision(0) << fps;
-        _fpsText.lock()->SetText(ss.str());
-    }
-
     _inputSystem->Update();
-
     _sceneManager->Update(deltaTime);
-
-
-
+    _sceneManager->Render(deltaTime);
     _window->SwapBuffers();
 
 /*

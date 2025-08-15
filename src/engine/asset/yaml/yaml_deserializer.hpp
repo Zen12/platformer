@@ -88,6 +88,15 @@ namespace YAML
     };
 
     template <>
+    struct convert<ShowFpsComponentSerialization>
+    {
+        static bool decode([[maybe_unused]] const Node &node, [[maybe_unused]] ShowFpsComponentSerialization &rhs)
+        {
+            return true;
+        }
+    };
+
+    template <>
     struct convert<CameraComponentSerialization>
     {
         static bool decode(const Node &node, CameraComponentSerialization &rhs)
@@ -278,6 +287,8 @@ namespace YAML
                 return Parse<CharacterControllerComponentSerialization>(data);
             } else if (type == "ai_controller") {
                 return Parse<AiControllerComponentSerialization>(data);
+            } else if (type == "ui_show_fps") {
+                return Parse<ShowFpsComponentSerialization>(data);
             }
 
             throw std::runtime_error("Unknown component type: " + type);

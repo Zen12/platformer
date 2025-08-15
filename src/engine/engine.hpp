@@ -40,7 +40,6 @@ private:
     std::filesystem::path _projectPath;
     ProjectAsset _projectAsset;
 
-    std::weak_ptr<UiTextRenderer> _fpsText;
     Time _frameTimer;
 
     bool _isReloadRequested = false;
