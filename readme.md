@@ -54,12 +54,12 @@ TODO
 - 🔦 2d lightning
 - 🎳 2d physics
 
-## 📚 Code convention:
+## 📚 Code convention
 - ```ClassOrStructName```
 - ```PublicVariable```
 - ```MethodName()```
 - ```FunctionName()```
-- ```_privateVariable```
+- ```_privateOrProtectedVariable```
 - ```localVariable```
 - ```CONST_VARIALBE```
 - ```file_name.cpp/hpp```
@@ -67,10 +67,10 @@ TODO
 - ```serialized_file_in_yaml```
 - ```//comments``` means hack-description or todo
 
-## 📚 Class types(Suffixes):
+## 📚 Class types(Suffixes)
 
 - ```Manager``` controls life-time and execution of objects
-- ```Data``` data that is generated in runtime, used by ```Components```
+- ```Data``` data that is generated at runtime, used by ```Components```
 - ```Asset``` files that are used to generate ```Data```
 - ```Factory``` creates ```Data``` or ```Component```
 - ```ComponentSerialization``` DTO from ```Asset``` to ```Component```
@@ -79,13 +79,45 @@ TODO
 - ```Controller``` Has complex logic that involves interaction with ```System``` or/and ```Controllers``` or/and ```Components```
 - ```System``` something to interact with native-os or 3rd party. Is NOT part of the ```Scene```
 
+## 📚 Class structure
+```
 
-## 🛠️ Architecture:
-### 📀 Memory management:
+class MyClass:
+{
+// 1st public variables 
+public:
+  int MyPublicVariable;
+  
+// 2nd protected variables
+protected:
+  int _myProtectedVariable;
+
+// 3rd private variables
+private:
+  int _myPrivateVariable;
+  
+  
+// 4th public methods
+public:
+  void MyPublicMethod();
+  
+// 5th protected methods
+protected:
+  void MyProtectedMethod();
+  
+// 6th protected methods
+protected:
+  void MyPrivatedMethod();
+
+}
+```
+
+## 🛠️ Architecture
+### 📀 Memory management
 - Lifetime of an obj is determined by ```shared_ptr```/```week_ptr```
 - Raw pointers can be used in 3rd party lib api calls
 - ```Engine``` is the owner of ```Managers```
-- ```Managers``` are the owners of ```asset``` and ```entities```
+- ```Managers``` are the owners of ```Assets``` and ```Entities```
 - ```Entity``` is owner of ```Component```
 - All objects are exposed by ```week_ptr```. Only owner has ```shared_ptr```
 - The destruction flow:
@@ -94,6 +126,9 @@ TODO
 ### 🔦 Rendering
 - Only 2d support
 - Call order: ```Engine``` -> ```RenderPipeline``` -> ```RenderComponent``` -> Binding ```Mesh```/```Material```/```Asset```
+- Each render type has it's own camera. They should be as considered independent concepts 
+- ```Renderers``` has only one ```material```. ```Material``` is data + ```Shader```
+- Some renderers can have data separate from Material
 - Types of renders:
   - Ui:
     - ```UiImage```
@@ -109,20 +144,29 @@ TODO
 - World coordinates:
   - UI
     - ```Projection``` is Camera ortho based of window size
-    - ```UiLayouts``` alter the ```Model``` matrix. It's screen responsive
+    - ```UiLayouts``` alter the ```Model``` matrix. It is for screen responsive
   - 3d World:
     - Model-View-Projection
     - ```RenderPipline``` orders by Z only ```MeshRenderers```
 ### 🗂️ Asset management
 - Yaml serialization
-- File name agnostic, generated .meta files for reference tracking
-## 🧠 TODO
-- [x] Spine runtime
-- [x] 2d Character controller
+- File name agnostic, generates .meta files for reference tracking
+  🏃
+
+### 🧠 What is missing
+- Proper editor. Used AI generated scripts in python, please read that code before using it.
+- Proper FSM for App-State management and animation state behaviour
+- Sound
+
+## 🏃🏃🏃 TODO 🏃🏃🏃
 - [ ] Shooter behaviour
-- [ ] Webgl build 
+- [ ] PathFinder A*
+- [ ] One enemy that tries to kill + spawners
 - [ ] Light2d better ray-detection
 - [ ] UI buttons
-
+- [ ] One level
+- [ ] Character Controller balancing
+- [ ] Webgl build
+- [ ] Windows build
 
 🇲🇩

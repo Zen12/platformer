@@ -5,18 +5,19 @@
 void CharacterController::SetAnimation(const size_t &index, const std::string &animation, const bool &isLoop, const bool &isReverse) {
 
     if (_animationValue.find(index) != _animationValue.end()) {
-        if (_animationValue[index] == animation) {
+        const auto [animationCache, isReverseCache ] = _animationValue[index];
+        if (animationCache == animation && isReverseCache == isReverse  ) {
             return;
         }
     }
 
-    _animationValue[index] = animation;
+    _animationValue[index] = {animation, isReverse};
     if (const auto render = _renderer.lock()) {
         render->SetAnimation(index, animation, isLoop, isReverse);
     }
 }
 
-void CharacterController::SetFaceRight(const bool &isFaceRight) {
+void CharacterController::SetFaceRight(const bool &isFaceRight) const noexcept {
     if (const auto render = _renderer.lock()) {
         render->SetFaceRight(isFaceRight);
     }
@@ -187,7 +188,7 @@ void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *in
         SetAnimation(0, "walk", true, false);
     else if (std::abs(_velocity.x) > 0.01) {
         const bool isCorrectDirection =  _isRight == _velocity.x > 0.0f;
-        SetAnimation(0, "run", true, isCorrectDirection);
+        SetAnimation(0, "run", true, !isCorrectDirection);
     }
     else
         SetAnimation(0, "idle", true, false);

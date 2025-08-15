@@ -10,8 +10,6 @@
 #include "../render_pipeline/render_pipeline.hpp"
 
 
-class CameraComponent;
-
 class CharacterController final : public Component {
 private:
     std::weak_ptr<InputSystem> _inputSystem;
@@ -35,7 +33,7 @@ private:
 
     glm::vec3 _velocity{0};
 
-    std::map<size_t, std::string> _animationValue;
+    std::map<size_t,std::tuple<std::string, bool>> _animationValue;
     bool _isRight = false;
 
 
@@ -43,7 +41,7 @@ private:
 
     void SetAnimation(const size_t &index, const std::string &animation, const bool &isLoop, const bool &isReverse);
 
-    void SetFaceRight(const bool& isFaceRight);
+    void SetFaceRight(const bool& isFaceRight) const noexcept;
 
     void ResetJump() noexcept;
 
