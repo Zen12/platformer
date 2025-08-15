@@ -23,16 +23,30 @@ public:
     }
 
 
-    void LookAt(const glm::vec2 &lookAt) {
-        DebugLines::AddLine(lookAt, lookAt + glm::vec2(0, 1));
-        auto skeleton = _spine.lock()->GetSkeleton();
-        const auto gun = skeleton.lock()->findBone("crosshair");
-        glm::vec2 bonePos = { gun->getWorldX(), gun->getWorldY() };
-        float angle = glm::degrees(atan2(lookAt.y - bonePos.y, lookAt.x - bonePos.x));
-        // Apply rotation in Spine’s local bone space
-        gun->setRotation(angle);
-        skeleton.lock()->updateWorldTransform(spine::Physics_Update);
+    void LookAt(const glm::vec3 &lookAt) const {
+#ifndef NDEBUG
+        // Draw debug direction
+        DebugLines::AddLine(lookAt, lookAt + glm::vec3(0, 1, 0));
+#endif
+        // Lock spine instance
+        auto spinePtr = _spine.lock();
+        if (!spinePtr) return;
+
+        // Lock skeleton
+        auto skeletonPtr = spinePtr->GetSkeleton().lock();
+        if (!skeletonPtr) return;
+
+        // Find the target bone
+        spine::Bone* gun = skeletonPtr->findBone("crosshair");
+        if (!gun)
+            return;
+        const auto position = GetEntity().lock()->GetComponent<Transform>().lock()->GetPosition();
+
+        const auto dir = (position - lookAt) / _spineScale;
+        gun->setX(-dir.x * _direction);
+        gun->setY(-dir.y); // spine is inverted
     }
+
 
     void Update(const float& deltaTime) override {
         if (const auto spine = _spine.lock()) {
@@ -59,7 +73,7 @@ public:
                     const float *positions = command->positions;
                     const float *uvs = command->uvs;
                     for (int i = 0, j = 0; i < num_command_vertices; i++, j += 2) {
-                        vertices.push_back(positions[j + 0] * (_spineScale * _direction));
+                        vertices.push_back(positions[j + 0] * (_spineScale * _direction)); // skeleton->setScaleX() breaks animation
                         vertices.push_back(positions[j + 1] * _spineScale);
                         vertices.push_back(0); //z
 
@@ -79,9 +93,9 @@ public:
         }
     }
 
-    void SetAnimation(const size_t &index, const std::string &animation, const bool& isLoop) const {
+    void SetAnimation(const size_t &index, const std::string &animation, const bool& isLoop, const bool& isReverse) const {
         if (const auto spine = _spine.lock()) {
-            spine->SetAnimation(index, animation, isLoop);
+            spine->SetAnimation(index, animation, isLoop, isReverse);
         }
     }
 

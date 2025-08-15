@@ -238,22 +238,24 @@ protected:
 
         if (const auto scene = _scene.lock()) {
             if (const auto comp = component.lock()) {
+                if (const auto render = scene->GetRenderPipeline().lock()) {
 
-                const CharacterControllerSettings characterSettings =
-                    {
-                    serialization.MaxMovementSpeed,
-                    serialization.AccelerationSpeed,
-                    serialization.DecelerationSpeed,
-                    serialization.JumpHeigh,
-                    serialization.JumpDuration,
-                    serialization.JumpDownMultiplier,
-                    serialization.AirControl};
+                    const CharacterControllerSettings characterSettings =
+                        {
+                        serialization.MaxMovementSpeed,
+                        serialization.AccelerationSpeed,
+                        serialization.DecelerationSpeed,
+                        serialization.JumpHeigh,
+                        serialization.JumpDuration,
+                        serialization.JumpDownMultiplier,
+                        serialization.AirControl};
 
-                comp->SetCharacterControllerSettings(characterSettings);
-                comp->SetInputSystem(scene->GetInputSystem());
-                comp->SetPhysicsWorld(scene->GetPhysicsWorld());
-                comp->SetSpineRenderer(_entity.lock()->GetComponent<SpineRenderer>());
-
+                    comp->SetCharacterControllerSettings(characterSettings);
+                    comp->SetInputSystem(scene->GetInputSystem());
+                    comp->SetPhysicsWorld(scene->GetPhysicsWorld());
+                    comp->SetRenderPipeline(render);
+                    comp->SetSpineRenderer(_entity.lock()->GetComponent<SpineRenderer>());
+                }
             }
         }
     }
@@ -288,7 +290,7 @@ protected:
 
 class ShowFpsComponentFactory final : public ComponentFactory<ShowFpsComponent, ShowFpsComponentSerialization> {
 protected:
-    void FillComponent(const std::weak_ptr<ShowFpsComponent> &component, const ShowFpsComponentSerialization &serialization) override {
+    void FillComponent(const std::weak_ptr<ShowFpsComponent> &component, [[maybe_unused]] const ShowFpsComponentSerialization &serialization) override {
         if (const auto entity = _entity.lock()) {
             if (const auto comp = component.lock()) {
                 comp->SetText(entity->GetComponent<UiTextRenderer>());

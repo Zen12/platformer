@@ -7,11 +7,15 @@
 #include "../physics/physics_world.hpp"
 #include "../physics/raycast.hpp"
 #include "../components/spine_renderer.hpp"
+#include "../render_pipeline/render_pipeline.hpp"
 
 
-class CharacterController final : public Component{
+class CameraComponent;
+
+class CharacterController final : public Component {
 private:
     std::weak_ptr<InputSystem> _inputSystem;
+    std::weak_ptr<RenderPipeline> _renderPipeline;
     std::weak_ptr<Transform> _transform;
     std::weak_ptr<PhysicsWorld> _world{};
     std::weak_ptr<SpineRenderer> _renderer{};
@@ -37,19 +41,7 @@ private:
 
 private:
 
-    void SetAnimation(const size_t &index, const std::string &animation, const bool &isLoop) {
-
-        if (_animationValue.find(index) != _animationValue.end()) {
-            if (_animationValue[index] == animation) {
-                return;
-            }
-        }
-
-        _animationValue[index] = animation;
-        if (const auto render = _renderer.lock()) {
-            render->SetAnimation(index, animation, isLoop);
-        }
-    }
+    void SetAnimation(const size_t &index, const std::string &animation, const bool &isLoop, const bool &isReverse);
 
     void SetFaceRight(const bool& isFaceRight);
 
@@ -69,7 +61,9 @@ private:
 
     void UpdateInternal(const float &deltaTime, InputSystem *input, Transform *transform, b2World* world);
 
-    void SetLookAt(glm::vec2 &lookAt);
+    void SetLookAt(const glm::vec3 &lookAt) const;
+
+    [[nodiscard]] glm::vec3 GetMousePosition() const;
 
 public:
     explicit CharacterController(const std::weak_ptr<Entity> &entity);
@@ -84,6 +78,10 @@ public:
 
     void SetPhysicsWorld(const std::weak_ptr<PhysicsWorld> &physicsWorld) noexcept {
         _world = physicsWorld;
+    }
+
+    void SetRenderPipeline(const std::weak_ptr<RenderPipeline> &renderPipeline) noexcept {
+        _renderPipeline = renderPipeline;
     }
 
     void SetSpineRenderer(const std::weak_ptr<SpineRenderer> &spineRenderer) noexcept;

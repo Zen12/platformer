@@ -14,11 +14,11 @@ SpineData::SpineData(std::shared_ptr<spine::SkeletonData> skeletonData,
     _animationState(std::move(animationState)),
     _skeletonData(std::move(skeletonData)),
     _stateData(std::move(stateData)) {
-        //_animationState->setAnimation(1, "aim", true);
 }
 
-void SpineData::SetAnimation(const size_t &index, const std::string &name, const bool &isLoop) const {
-    _animationState->setAnimation(index, name.c_str(), isLoop);
+void SpineData::SetAnimation(const size_t &index, const std::string &name, const bool &isLoop, const bool &isReverse) const {
+    const auto track = _animationState->setAnimation(index, name.c_str(), isLoop);
+    track->setReverse(isReverse);
 }
 
 void SpineData::SetTransition(const std::string &anim1, const std::string &anim2, const float &time) const {

@@ -99,16 +99,11 @@ bool AiController::IsGrounded(const b2World *world, glm::vec2 &hitPos) const {
     return false;
 }
 
-void AiController::UpdateInternal(const float &deltaTime, InputSystem *input, Transform *transform,
-    b2World *world) {
-    //SetAnimation(0, "run", true);
-}
-
 AiController::AiController(const std::weak_ptr<Entity> &entity): Component(entity) {
     _transform = _entity.lock()->GetComponent<Transform>();
 }
 
-void AiController::SetLookAt(glm::vec2 &lookAt) {
+void AiController::SetLookAt(const glm::vec3 &lookAt) {
     if (const auto& render = _renderer.lock()) {
         render->LookAt(lookAt);
     }
@@ -116,15 +111,10 @@ void AiController::SetLookAt(glm::vec2 &lookAt) {
 
 void AiController::SetSpineRenderer(const std::weak_ptr<SpineRenderer> &spineRenderer) noexcept {
     _renderer = spineRenderer;
-    _renderer.lock()->SetAnimation(0, "death", true);
+    _renderer.lock()->SetAnimation(0, "death", true, false);
 }
 
-void AiController::Update(const float &deltaTime) {
+void AiController::Update([[maybe_unused]] const float &deltaTime) {
 
-    if (const auto input = _inputSystem.lock())
-        if (const auto transform = _transform.lock())
-            if (const auto world = _world.lock())
-                if (const auto b2World = world->GetWorld().lock())
-                    UpdateInternal(deltaTime, input.get(), transform.get(), b2World.get());
 
 }

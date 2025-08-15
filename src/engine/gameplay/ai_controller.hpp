@@ -51,7 +51,7 @@ private:
 
         _animationValue[index] = animation;
         if (const auto render = _renderer.lock()) {
-            render->SetAnimation(index, animation, isLoop);
+            render->SetAnimation(index, animation, isLoop, false);
         }
     }
 
@@ -73,7 +73,7 @@ private:
 
     void UpdateInternal(const float &deltaTime, InputSystem *input, Transform *transform, b2World* world);
 
-    void SetLookAt(glm::vec2 &lookAt);
+    void SetLookAt(const glm::vec3 &lookAt);
 
 public:
     explicit AiController(const std::weak_ptr<Entity> &entity);
@@ -92,5 +92,5 @@ public:
 
     void SetSpineRenderer(const std::weak_ptr<SpineRenderer> &spineRenderer) noexcept;
 
-    void Update(const float& deltaTime) override;
+    void Update([[maybe_unused]] const float& deltaTime) override;
 };

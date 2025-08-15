@@ -91,6 +91,19 @@ void RenderPipeline::RenderMeshes(const float& deltaTime) {
 #endif
 }
 
+glm::vec3 RenderPipeline::ScreenToWorldPoint(glm::vec2 screenPos) const {
+    return ScreenToWorldPoint(glm::vec3(screenPos.x, screenPos.y, 0));
+}
+
+glm::vec3 RenderPipeline::ScreenToWorldPoint(const glm::vec3 &screenPos) const {
+
+    if (const auto camera = _camera3d.lock()) {
+        return camera->ScreenToWorldPoint(screenPos);
+    }
+
+    return glm::vec3(0.0f);
+}
+
 #ifndef NDEBUG
 void RenderPipeline::RenderDebugLines() const {
 

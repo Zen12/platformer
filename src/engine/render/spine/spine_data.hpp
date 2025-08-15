@@ -21,7 +21,7 @@ public:
         std::shared_ptr<spine::Skeleton> skeleton,
         std::shared_ptr<spine::AnimationState> animationState);
 
-    void SetAnimation(const size_t &index, const std::string &name, const bool &isLoop) const;
+    void SetAnimation(const size_t &index, const std::string &name, const bool &isLoop, const bool &isReverse) const;
 
     void SetTransition(const std::string &anim1, const std::string &anim2, const float &time) const;
 

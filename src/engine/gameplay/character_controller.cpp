@@ -1,5 +1,21 @@
 #include "character_controller.hpp"
 
+#include "../components/camera_component.hpp"
+
+void CharacterController::SetAnimation(const size_t &index, const std::string &animation, const bool &isLoop, const bool &isReverse) {
+
+    if (_animationValue.find(index) != _animationValue.end()) {
+        if (_animationValue[index] == animation) {
+            return;
+        }
+    }
+
+    _animationValue[index] = animation;
+    if (const auto render = _renderer.lock()) {
+        render->SetAnimation(index, animation, isLoop, isReverse);
+    }
+}
+
 void CharacterController::SetFaceRight(const bool &isFaceRight) {
     if (const auto render = _renderer.lock()) {
         render->SetFaceRight(isFaceRight);
@@ -103,8 +119,6 @@ void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *in
     b2World *world) {
 
     auto position = transform->GetPosition();
-    glm::vec2 lookAt = glm::vec2(position.x + 1, position.y);
-    SetLookAt(lookAt);
 
     glm::vec2 hitPos{};
 
@@ -112,12 +126,10 @@ void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *in
         _velocity.x += -_characterSettings.AccelerationSpeed;
         if (_velocity.x < -_characterSettings.MaxMovementSpeed)
             _velocity.x = -_characterSettings.MaxMovementSpeed;
-        _isRight = false;
     } else if (input->IsKeyPressing(InputKey::D) || input->IsKeyPress(InputKey::D)) {
         _velocity.x += _characterSettings.AccelerationSpeed;
         if (_velocity.x > _characterSettings.MaxMovementSpeed)
             _velocity.x = _characterSettings.MaxMovementSpeed;
-        _isRight = true;
     } else {
         const float sign =  std::signbit(_velocity.x) ? -1.0f : 1.0f;
         float absValue = std::abs(_velocity.x);
@@ -166,25 +178,45 @@ void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *in
             ResetJump();
         }
     }
-    if (_velocity.y > 0.01)
-        SetAnimation(0, "walk", true);
-    else if (std::abs(_velocity.x) > 0.01)
-        SetAnimation(0, "run", true);
-    else
-        SetAnimation(0, "idle", true);
 
+    const auto mouseWorldPosition = GetMousePosition();
+    _isRight = mouseWorldPosition.x > position.x;
     SetFaceRight(_isRight);
+
+    if (_velocity.y > 0.01)
+        SetAnimation(0, "walk", true, false);
+    else if (std::abs(_velocity.x) > 0.01) {
+        const bool isCorrectDirection =  _isRight == _velocity.x > 0.0f;
+        SetAnimation(0, "run", true, isCorrectDirection);
+    }
+    else
+        SetAnimation(0, "idle", true, false);
+
+
+
     transform->SetPosition(position + (_velocity * deltaTime));
+    SetLookAt(mouseWorldPosition);
 }
 
 CharacterController::CharacterController(const std::weak_ptr<Entity> &entity): Component(entity) {
     _transform = _entity.lock()->GetComponent<Transform>();
 }
 
-void CharacterController::SetLookAt(glm::vec2 &lookAt) {
-    if (const auto& render = _renderer.lock()) {
+void CharacterController::SetLookAt(const glm::vec3 &lookAt) const {
+    if (const auto render = _renderer.lock()) {
         render->LookAt(lookAt);
     }
+}
+
+glm::vec3 CharacterController::GetMousePosition() const {
+
+    if (const auto input = _inputSystem.lock()) {
+        if (const auto render = _renderPipeline.lock()) {
+            const auto mousePosition = input->GetMouseScreenSpace();
+            return render->ScreenToWorldPoint(mousePosition);
+        }
+    }
+    return {0.0f, 0.0f, 0.0f};
 }
 
 void CharacterController::SetSpineRenderer(const std::weak_ptr<SpineRenderer> &spineRenderer) noexcept {
@@ -202,7 +234,7 @@ void CharacterController::SetSpineRenderer(const std::weak_ptr<SpineRenderer> &s
 
     }
 
-    SetAnimation(1, "aim", true);
+    SetAnimation(1, "aim", true, false);
 }
 
 void CharacterController::Update(const float &deltaTime) {
