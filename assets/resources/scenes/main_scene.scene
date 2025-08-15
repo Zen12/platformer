@@ -90,6 +90,36 @@ entities:
                   - jump_down_multiplier: 1.2
                   - air_control: 0.8
   - obj:
+      - guid: light_2d
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: -10.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+          - component:
+              - type: mesh_renderer
+              - data:
+                  - material: b1604380-8385-4912-9f2b-178103120328
+          - component:
+              - type: light_2d
+              - data:
+                  - center: main-character
+                  - offset:
+                      - x: 0.0
+                      - y: 1.7
+                      - z: -1.0
+  - obj:
       - guid: alien-character
       - components:
           - component:

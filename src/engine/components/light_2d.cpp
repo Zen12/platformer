@@ -2,7 +2,7 @@
 
 #ifndef NDEBUG
 #include "../debug/debug.hpp"
-#define LIGHT_COMPONENT_DEBUG 0
+#define LIGHT_COMPONENT_DEBUG 1
 #endif
 
 
