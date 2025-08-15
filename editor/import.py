@@ -10,6 +10,9 @@ What it does:
 import os
 import uuid
 
+"""TODO: THIS IS HARDCODED. Make it as param or dynamic from project.yaml"""
+""" Expected usage is from root of project by calling: python3 editor/import.py"""
+directory = 'assets/resources'
 
 
 def dict_to_yaml(data, indent=0):
@@ -58,9 +61,6 @@ def ext_check(value_ext):
         ".engine-spine": "engine-spine"
     }
     return mapping.get(value_ext, "error")
-
-"""TODO: THIS IS HARDCODED. Make it as param or dynamic from project.yaml"""
-directory = 'assets/resources'
 
 for root, dirs, files in os.walk(directory):
     # Modify dirs in-place to skip hidden folders and specific names

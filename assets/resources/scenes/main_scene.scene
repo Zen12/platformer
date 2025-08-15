@@ -155,7 +155,6 @@ entities:
             - x: 1.0
             - y: 1.0
             - z: 0.0
-
   - obj:
     - guid: sprite-tile-6e1c8125
     - components:

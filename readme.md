@@ -15,50 +15,104 @@ TODO
 
 ``` 
 ⚙️ .gitignore 
-🗂️ assets
+🗂️ assets               # engine-project used in build 
     ├─ 🗂️ resources
     └─ 🗒️ project.yaml
-📦 bin
-📦 build
-📚 cmake 
+📦 bin                  # build folder for ./run.sh
+📚 cmake                # packages
+    ├─ ⚙️ FindBox2D.cmake
     ├─ ⚙️ FindFreetype.cmake
     ├─ ⚙️ FindGLEW.cmake
     ├─ ⚙️ FindGLFW3.cmake
     ├─ ⚙️ FindGLM.cmake
+    ├─ ⚙️ FindSpine.cmake
     └─ ⚙️ FindYamlCpp.cmake
-🛠️ editor_tools 
-    └─ 📄 import.py
-💻 src 
+🛠️ editor               # editor scripts, not real editor
+    ├─ 📄 import.py
+    └─ 📄 clear_all_refs.py
+💻 src                  # source code
     ├─ 🚀 main.cpp
-    └─ 🧠 src
+    └─ 🧠 engine
         ├─ 📄 engine.h
         ├─ 📁 assets
         ├─ 📁 components
         ├─ 📁 renderers
         ├─ 📁 render_pipiline
         └─ 📁 system
-🚀 run.sh
-🚀 run_debug.sh
+🚀 run.sh               # release build script
+🚀 run_debug.sh         # debug build script
 ⚙️ CMakeLists.txt
 📘 readme.md
  ``` 
 
 
 
-## 🦾 Features 
-- 🎨 OpenGL/WebGL
+## 🦾 Features
 - 🏢 macOS, windows, web
-- 🔳 UI system 
-    - ⚓ Anchor base 
-    - 🈸 Font rendering
-- 📀 Asset management 
-    - 🖥️ Small Editor
-    - 📚 Scene
+- 🔳 UI system
+- 📀 Asset management
 - 🔦 2d lightning
 - 🎳 2d physics
-- 🌙 Lua scripting
 
-## TODO
+## 📚 Code convention:
+- ```ClassOrStructName```
+- ```PublicVariable```
+- ```MethodName()```
+- ```FunctionName()```
+- ```_privateVariable```
+- ```localVariable```
+- ```CONST_VARIALBE```
+- ```file_name.cpp/hpp```
+- ```folder_name```
+- ```serialization_filed_in_yaml```
+- ```//comments``` means hack-description or todo
+
+## 📚 Class types(Suffixes):
+
+- ```Manager``` controls life-time and execution of objects
+- ```Data``` data that is generated in runtime, used by ```Components```
+- ```Asset``` files that are used to generate ```Data```
+- ```Factory``` creates ```Data``` or ```Component```
+- ```ComponentSerialization``` DTO from ```Asset``` to ```Component```
+- ```Component``` applies existing data. Doesn't change it or have control of lifetime
+- ```Controller``` doesn't apply the data, just changes it and sets to component
+
+## 🛠️ Architecture:
+### 📀 Memory management:
+- Lifetime of an obj is determined by ```shared_ptr```/```week_ptr```
+- Raw pointers can be used in 3rd party lib api calls
+- ```Engine``` is the owner of ```Managers```
+- ```Managers``` are the owners of ```asset``` and ```entities```
+- ```Entity``` is owner of ```Component```
+- All objects are exposed by ```week_ptr```. Only owner has ```shared_ptr```
+- The destruction flow:
+  - ```~Engine``` -> ```~Manager``` -> ```~Asset``` / ```~Entity``` -> ```~Component```
+
+### 🔦 Rendering
+- Only 2d support
+- Call order: ```Engine``` -> ```RenderPipeline``` -> ```RenderComponent``` -> Binding ```Mesh```/```Material```/```Asset```
+- Types of renders:
+  - Ui:
+    - ```UiImage```
+    - ```UiText```
+  - 3d World:
+    - ```SpriteRenderer```:
+      - Used as background
+      - Are not sorted by Z (fix later)
+    - ```MeshRenderer```:
+      - Used for most important (Light2d, Spine)
+      - Sorted by Z
+- World coordinates:
+  - UI
+    - ```Projection``` is Camera ortho based of window size
+    - ```UiLayouts``` alter the ```Model``` matrix. It's screen responsive
+  - 3d World:
+    - Model-View-Projection
+    - ```RenderPipline``` orders by Z only ```MeshRenderers```
+### 🗂️ Asset management
+- Yaml serialization
+- File name agnostic, generated .meta files for reference tracking
+## 🧠 TODO
 - [x] Spine runtime
 - [x] 2d Character controller
 - [ ] Shooter behaviour

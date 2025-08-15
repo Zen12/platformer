@@ -10,6 +10,7 @@ import os
 import uuid
 
 """TODO: THIS IS HARDCODED. Make it as param or dynamic from project.yaml"""
+""" Expected usage is from root of project by calling: python3 editor/import.py"""
 directory = 'assets/resources'
 
 
