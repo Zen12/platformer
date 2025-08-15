@@ -88,37 +88,3 @@ public:
     [[nodiscard]] const std::string& GetTag() const { return _tag;}
 
 };
-
-/*
-template<class TComponentSerialization>
-class ComponentFactory {
-    static_assert(std::is_base_of_v<ComponentSerialization, TComponentSerialization>,
-                  "TComponentSerialization must derive from ComponentSerialization");
-
-protected:
-    std::weak_ptr<Scene> _scene;
-
-
-public:
-    explicit ComponentFactory(std::weak_ptr<Scene> scene)
-        : _scene(std::move(scene))
-    {}
-    virtual ~ComponentFactory() = default;
-
-    template <typename TComponent>
-    void Create(const TComponentSerialization& serialization, Entity e) {
-        static_assert(std::is_base_of_v<Component, TComponent>,
-                      "TComponent must derive from Component");
-
-        const auto componentPtr = e.AddComponent<TComponent>();
-        if (auto component = componentPtr.lock()) {
-            SetComponentImpl(serialization, component.get());
-        }
-    }
-
-protected:
-    // Non-templated virtual: erased to base type
-    virtual void SetComponentImpl(const TComponentSerialization& serialization,
-                                  Component* component) = 0;
-};
-*/

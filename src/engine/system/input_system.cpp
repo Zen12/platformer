@@ -68,3 +68,23 @@ bool InputSystem::IsMouseUp(const MouseButton &button) {
     }
     return false;
 }
+
+glm::vec2 InputSystem::GetMouseWindowPosition() const noexcept {
+    if (const auto window = _window.lock()) {
+        double x, y;
+        window->GetMousePosition(&x, &y);
+        return { static_cast<float>(x), static_cast<float>(y) };
+    }
+
+    return glm::vec2(0.0f);
+}
+
+glm::vec2 InputSystem::GetMouseScreenSpace() const noexcept {
+    if (const auto window = _window.lock()) {
+        const auto pos = GetMouseWindowPosition();
+        const auto size = glm::vec2{static_cast<float>(pos.x), static_cast<float>(pos.y)};
+        return {(pos.x + size.x), (pos.y+ size.y)};
+    }
+
+    return glm::vec2(0.0f);
+}

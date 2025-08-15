@@ -55,6 +55,8 @@ public:
     void RenderUI(const float& deltaTime) const;
     void RenderSprites(const float& deltaTime) const;
     void RenderMeshes(const float& deltaTime);
+
+    [[nodiscard]] std::weak_ptr<CameraComponent> Get3dCamera() const { return _camera3d; }
 #ifndef NDEBUG
     void RenderDebugLines() const;
 #endif

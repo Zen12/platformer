@@ -119,3 +119,7 @@ void Window::ClearWithValue(const int &value) noexcept {
 bool Window::IsFocus() const noexcept {
     return glfwGetWindowAttrib(window, GLFW_FOCUSED);
 }
+
+void Window::GetMousePosition(double *x, double *y) const noexcept {
+    glfwGetCursorPos(window, x, y);
+}

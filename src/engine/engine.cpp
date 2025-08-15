@@ -82,6 +82,16 @@ void Engine::Tick() {
 
     _window->SwapBuffers();
 
+/*
+    if (const auto camera3d = _renderPipeline->Get3dCamera().lock()) {
+        const auto mousePosition = _inputSystem->GetMouseScreenSpace();
+        const auto worldPosition = camera3d->ScreenToWorldPoint(mousePosition);
+
+        DebugLines::AddLine(worldPosition, glm::vec3(0.0f, 0.0f, 0.0f));
+    }
+    */
+
+
     if (_inputSystem->IsKeyUp(InputKey::Escape)) {
         _window->Destroy();
     }

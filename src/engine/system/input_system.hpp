@@ -2,6 +2,7 @@
 
 #include "window.hpp"
 #include "GLFW/glfw3.h"
+#include "glm/vec2.hpp"
 
 enum class InputKey {
     Unknown,
@@ -166,5 +167,8 @@ public:
     bool IsMousePressing(const MouseButton &button);
 
     bool IsMouseUp(const MouseButton &button);
+
+    [[nodiscard]] glm::vec2 GetMouseWindowPosition() const noexcept;
+    [[nodiscard]] glm::vec2 GetMouseScreenSpace() const noexcept;
 };
 

@@ -59,4 +59,6 @@ public:
 
     [[nodiscard]] bool IsFocus() const noexcept;
 
+    void GetMousePosition(double *x, double *y) const noexcept;
+
 };
