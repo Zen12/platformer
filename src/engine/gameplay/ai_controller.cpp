@@ -111,7 +111,7 @@ AiController::AiController(const std::weak_ptr<Entity> &entity): Component(entit
 
 void AiController::SetLookAt(const glm::vec3 &lookAt) const {
     if (const auto& render = _renderer.lock()) {
-        render->LookAt(lookAt);
+        render->LookAt(lookAt, "test");
     }
 }
 

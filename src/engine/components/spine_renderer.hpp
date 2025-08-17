@@ -5,6 +5,8 @@
 #include "../render/material.hpp"
 #include "../render/spine/spine_data.hpp"
 
+#define DEBUG_SPINE_RENDERER 0
+
 
 class SpineRenderer final : public Component {
 private:
@@ -23,21 +25,25 @@ public:
     }
 
 
-    void LookAt(const glm::vec3 &lookAt) const {
+    void LookAt(const glm::vec3 &lookAt, const std::string &boneName) const {
 #ifndef NDEBUG
+#if DEBUG_SPINE_RENDERER
         // Draw debug direction
         DebugLines::AddLine(lookAt, lookAt + glm::vec3(0, 1, 0));
 #endif
+#endif
         // Lock spine instance
-        auto spinePtr = _spine.lock();
-        if (!spinePtr) return;
+        const auto spinePtr = _spine.lock();
+        if (!spinePtr)
+            return;
 
         // Lock skeleton
-        auto skeletonPtr = spinePtr->GetSkeleton().lock();
-        if (!skeletonPtr) return;
+        const auto skeletonPtr = spinePtr->GetSkeleton().lock();
+        if (!skeletonPtr)
+            return;
 
         // Find the target bone
-        spine::Bone* gun = skeletonPtr->findBone("crosshair");
+        spine::Bone* gun = skeletonPtr->findBone(boneName.c_str());
         if (!gun)
             return;
         const auto position = GetEntity().lock()->GetComponent<Transform>().lock()->GetPosition();
@@ -45,6 +51,26 @@ public:
         const auto dir = (position - lookAt) / _spineScale;
         gun->setX(-dir.x * _direction);
         gun->setY(-dir.y); // spine is inverted
+    }
+
+    [[nodiscard]] glm::vec3 GetBonePosition(const std::string &boneName) const {
+        // Lock skeleton
+        const auto spinePtr = _spine.lock();
+        if (!spinePtr) {
+            std::cerr << "SpineRenderer::GetBonePosition: No spinePtr found" << std::endl;
+            return {0, 0, 0};
+        }
+
+        const auto skeletonPtr = spinePtr->GetSkeleton().lock();
+        if (!skeletonPtr) {
+            std::cerr << "SpineRenderer::GetBonePosition: No skeletonPtr found" << std::endl;
+            return {0, 0, 0};
+        }
+        spine::Bone* bone = skeletonPtr->findBone(boneName.c_str());
+
+        const auto position = GetEntity().lock()->GetComponent<Transform>().lock()->GetPosition();
+
+        return {(bone->getWorldX() * _spineScale) * _direction + position.x, bone->getWorldY() * _spineScale + position.y, 0};
     }
 
 

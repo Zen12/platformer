@@ -75,7 +75,6 @@ private:
 
     [[nodiscard]] bool IsGrounded( glm::vec2 &hitPos) const;
 
-    void UpdateInternal(const float &deltaTime, InputSystem *input, Transform *transform);
 
     void SetLookAt(const glm::vec3 &lookAt) const;
 
