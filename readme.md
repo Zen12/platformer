@@ -67,51 +67,6 @@ TODO
 - ```serialized_file_in_yaml```
 - ```//comments``` means hack-description or todo
 
-## 📚 Class types(Suffixes)
-
-- ```Manager``` controls life-time and execution of objects
-- ```Data``` data that is generated at runtime, used by ```Components```
-- ```Asset``` files that are used to generate ```Data```
-- ```Factory``` creates ```Data``` or ```Component```
-- ```ComponentSerialization``` DTO from ```Asset``` to ```Component```
-- ```Renderer``` render things
-- ```Component``` Has simple logic to update ```Renderer``` or other ```Component```
-- ```Controller``` Has complex logic that involves interaction with ```System``` or/and ```Controllers``` or/and ```Components```
-- ```System``` something to interact with native-os or 3rd party. Is NOT part of the ```Scene```
-
-## 📚 Class structure
-```
-
-class MyClass:
-{
-// 1st public variables 
-public:
-  int MyPublicVariable;
-  
-// 2nd protected variables
-protected:
-  int _myProtectedVariable;
-
-// 3rd private variables
-private:
-  int _myPrivateVariable;
-  
-  
-// 4th public methods
-public:
-  void MyPublicMethod();
-  
-// 5th protected methods
-protected:
-  void MyProtectedMethod();
-  
-// 6th protected methods
-protected:
-  void MyPrivatedMethod();
-
-}
-```
-
 ## 🛠️ Architecture
 ### 📀 Memory management
 - Lifetime of an obj is determined by ```shared_ptr```/```week_ptr```
@@ -159,14 +114,16 @@ protected:
 - Sound
 
 ## 🏃🏃🏃 TODO 🏃🏃🏃
-- [ ] Shooter behaviour
-- [ ] PathFinder A*
 - [ ] One enemy that tries to kill + spawners
+- [ ] PathFinder A*
 - [ ] Light2d better ray-detection
+- [ ] Simple particles for walk and shoot(bullet)
+- [ ] Webgl build
+- [ ] Windows build
+- [ ] Health bars
 - [ ] UI buttons
 - [ ] One level
 - [ ] Character Controller balancing
-- [ ] Webgl build
-- [ ] Windows build
+- [ ] Restart level
 
 🇲🇩

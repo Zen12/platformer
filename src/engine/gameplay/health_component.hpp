@@ -12,7 +12,7 @@ public:
         : Component(entity), _health(0) {
     }
 
-    void Update(const float &deltaTime) override {
+    void Update([[maybe_unused]] const float &deltaTime) override {
 
     }
 

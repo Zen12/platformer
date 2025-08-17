@@ -34,7 +34,6 @@ private:
     glm::vec3 _velocity{0};
 
     std::map<size_t, std::string> _animationValue;
-    bool _isRight = false;
 
 
 private:
