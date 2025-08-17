@@ -39,6 +39,9 @@ private:
 
     std::vector<std::shared_ptr<Entity>> Entities;
 
+    std::vector<std::string> _entitiesToRemove{};
+
+
 public:
 
     Scene(
@@ -101,9 +104,28 @@ public:
         return Entities[index];
     }
 
+    void RemoveEntityById(const std::string &id) {
+        _entitiesToRemove.push_back(id);
+    }
+
     void Update(const float &deltaTime) const {
         for (const auto &entity: Entities) {
             entity->Update(deltaTime);
+        }
+    }
+
+    void RemovePendingEntities() {
+        for (const auto & id: _entitiesToRemove) {
+
+            const auto it = std::find_if(Entities.begin(), Entities.end(),
+                [id](const std::shared_ptr<Entity> &entity) {
+                return entity->GetId() == id;
+                });
+
+            if (it != Entities.end()) {
+                _physicsWorld->RemoveRigidBody(it->get()->GetComponent<Rigidbody2dComponent>());
+                Entities.erase(it);
+            }
         }
     }
 

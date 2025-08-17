@@ -2,6 +2,7 @@
 #include <memory>
 
 #include "../../gameplay/ai_controller.hpp"
+#include "../../gameplay/health_component.hpp"
 #include "../../scene/scene.hpp"
 
 class BaseComponentFactory {
@@ -284,7 +285,8 @@ protected:
                         serialization.JumpHeigh,
                         serialization.JumpDuration,
                         serialization.JumpDownMultiplier,
-                        serialization.AirControl};
+                        serialization.AirControl,
+                        serialization.Damage};
 
                     comp->SetCharacterControllerSettings(characterSettings);
                     comp->SetInputSystem(scene->GetInputSystem());
@@ -312,7 +314,8 @@ protected:
                     serialization.JumpHeigh,
                     serialization.JumpDuration,
                     serialization.JumpDownMultiplier,
-                    serialization.AirControl};
+                    serialization.AirControl,
+                    serialization.Damage};
 
                 comp->SetCharacterControllerSettings(characterSettings);
                 comp->SetInputSystem(scene->GetInputSystem());
@@ -331,6 +334,16 @@ protected:
             if (const auto comp = component.lock()) {
                 comp->SetText(entity->GetComponent<UiTextRenderer>());
             }
+        }
+    }
+};
+
+class HealthComponentFactory final : public ComponentFactory<HealthComponent, HealthComponentSerialization> {
+protected:
+    void FillComponent(const std::weak_ptr<HealthComponent> &component, [[maybe_unused]] const HealthComponentSerialization &serialization) override {
+        if (const auto comp = component.lock()) {
+            comp->SetHealth(serialization.Health);
+            comp->SetScene(_scene.lock());
         }
     }
 };

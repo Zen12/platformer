@@ -129,6 +129,7 @@ struct CharacterControllerComponentSerialization final : public ComponentSeriali
     float JumpDownMultiplier{1};
     float AirControl{0.1};
 
+    float Damage{10};
 };
 
 struct AiControllerComponentSerialization final : public ComponentSerialization
@@ -144,11 +145,17 @@ struct AiControllerComponentSerialization final : public ComponentSerialization
     float JumpDownMultiplier{1};
     float AirControl{0.1};
 
+    float Damage{10};
+
 };
 
 struct ShowFpsComponentSerialization final : public ComponentSerialization
 {
 
+};
+
+struct HealthComponentSerialization final : public ComponentSerialization {
+    float Health;
 };
 
 

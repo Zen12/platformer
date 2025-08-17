@@ -1,5 +1,7 @@
 #include "character_controller.hpp"
 
+#include "health_component.hpp"
+
 #define CHARACTER_CONTROLLER_DEBUG 0
 
 void CharacterController::AppendAnimation(const size_t &index, const std::string &animation, const bool &isLoop) const {
@@ -204,9 +206,9 @@ void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *in
         SetAnimation(0, "idle", true, false);
 
 
-   // if (input->IsMousePress(MouseButton::Left)) {
+    if (input->IsMousePress(MouseButton::Left)) {
         Shoot(mouseWorldPosition);
-    //}
+    }
 
     transform->SetPosition(position + (_velocity * deltaTime));
     SetLookAt(mouseWorldPosition);
@@ -237,17 +239,22 @@ void CharacterController::Shoot(const glm::vec3 &lookAt) {
     if (const auto world = _world.lock()) {
         const auto startPosition = _renderer.lock()->GetBonePosition("gun-tip");
         const auto result = world->RayCast(startPosition, lookAt);
-        auto finalPosition = lookAt;
-
-        if (result.IsHit)
-            finalPosition = result.Point;
 
 #ifndef NDEBUG
 #if CHARACTER_CONTROLLER_DEBUG
-        DebugLines::AddLine(startPosition, finalPosition);
+        DebugLines::AddLine(startPosition, lookAt);
 #endif
 #endif
 
+        if (result.IsHit) {
+            if (const auto rigid = result.Rigidbody.lock()) {
+                if (const auto entity = rigid->GetEntity().lock()) {
+                    if (const auto health = entity->GetComponent<HealthComponent>().lock()) {
+                        health->DecreaseHealth(_characterSettings.Damage);
+                    }
+                }
+            }
+        }
     }
 }
 

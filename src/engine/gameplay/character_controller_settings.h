@@ -15,6 +15,8 @@ public:
 
     float AirControl{0.1};
 
+    float Damage{10};
+
     CharacterControllerSettings() = default;
 
     CharacterControllerSettings(
@@ -24,7 +26,8 @@ public:
         const float& jumpHeight,
         const float& jumpDuration,
         const float& jumpDownMultiplier,
-        const float& airControl)
+        const float& airControl,
+        const float& damage)
         :
             MaxMovementSpeed(movementSpeed),
             AccelerationSpeed(accelerationSpeed),
@@ -32,6 +35,7 @@ public:
             JumpHeigh(jumpHeight),
             JumpDuration(jumpDuration),
             JumpDownMultiplier(jumpDownMultiplier),
-            AirControl(airControl)
+            AirControl(airControl),
+            Damage(damage)
     {}
 };

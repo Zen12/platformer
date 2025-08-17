@@ -67,3 +67,21 @@ void PhysicsWorld::AddRigidBodyComponent(const std::weak_ptr<Rigidbody2dComponen
     _colliders[rigidBody] = std::vector<std::weak_ptr<BoxCollider2DComponent>>();
     _bodies[rigidBody] = body;
 }
+
+void PhysicsWorld::RemoveRigidBody(const std::weak_ptr<Rigidbody2dComponent> &rigidBody) {
+
+    if (rigidBody.expired())
+        return;
+
+    _world->DestroyBody(_bodies[rigidBody]);
+
+    const auto colliders = _colliders[rigidBody];
+    for (auto& collider : colliders) {
+        _rigidBodies.erase(collider);
+        _fixtures.erase(collider);
+    }
+
+    _colliders.erase(rigidBody);
+    _bodies.erase(rigidBody);
+
+}

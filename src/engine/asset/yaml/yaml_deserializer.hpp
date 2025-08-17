@@ -66,6 +66,7 @@ namespace YAML
             rhs.JumpDuration = map["jump_duration"].as<float>();
             rhs.JumpDownMultiplier = map["jump_down_multiplier"].as<float>();
             rhs.AirControl = map["air_control"].as<float>();
+            rhs.Damage = map["damage"].as<float>();
             return true;
         }
     };
@@ -83,6 +84,19 @@ namespace YAML
             rhs.JumpDuration = map["jump_duration"].as<float>();
             rhs.JumpDownMultiplier = map["jump_down_multiplier"].as<float>();
             rhs.AirControl = map["air_control"].as<float>();
+            rhs.Damage = map["damage"].as<float>();
+            return true;
+        }
+    };
+
+    template <>
+    struct convert<HealthComponentSerialization>
+    {
+        static bool decode([[maybe_unused]] const Node &node, [[maybe_unused]] HealthComponentSerialization &rhs)
+        {
+            const auto map = sequenceToMap(node);
+            rhs.Health = map["health"].as<float>();
+
             return true;
         }
     };
@@ -289,6 +303,8 @@ namespace YAML
                 return Parse<AiControllerComponentSerialization>(data);
             } else if (type == "ui_show_fps") {
                 return Parse<ShowFpsComponentSerialization>(data);
+            } else if (type == "health_component") {
+                return Parse<HealthComponentSerialization>(data);
             }
 
             throw std::runtime_error("Unknown component type: " + type);

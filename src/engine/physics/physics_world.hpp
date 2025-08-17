@@ -73,4 +73,6 @@ public:
         const b2FixtureDef &fixtureDef);
 
     void AddRigidBodyComponent(const std::weak_ptr<Rigidbody2dComponent> &rigidBody, b2Body *body);
+
+    void RemoveRigidBody(const std::weak_ptr<Rigidbody2dComponent> &rigidBody);
 };

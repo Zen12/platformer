@@ -91,7 +91,8 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) const {
                     MeshRendererComponentSerialization, MeshRendererFactory,
                     CharacterControllerComponentSerialization, CharacterControllerFactory,
                     AiControllerComponentSerialization, AiControllerFactory,
-                    ShowFpsComponentSerialization, ShowFpsComponentFactory
+                    ShowFpsComponentSerialization, ShowFpsComponentFactory,
+                    HealthComponentSerialization, HealthComponentFactory
                 >(comp.get(), std::weak_ptr<Entity>(entityInstance))) {
                     std::cerr << "can't add component" << std::endl;
 #ifndef NDEBUG
@@ -116,6 +117,7 @@ std::weak_ptr<Entity> SceneManager::GetEntityById(const std::string &id) const {
 }
 
 void SceneManager::Update(const float &deltaTime) const {
+    _scene->RemovePendingEntities();
     _scene->Update(deltaTime);
 }
 
