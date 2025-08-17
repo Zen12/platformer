@@ -33,8 +33,13 @@ void RenderPipeline::RenderSprites(const float& deltaTime) const
 void RenderPipeline::RenderMeshes(const float& deltaTime) {
 
     glDisable(GL_CULL_FACE); // spine runtime requires
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    //glEnable(GL_BLEND);
+    // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_COLOR, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_COLOR, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+   // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_CONSTANT_ALPHA);
+
+
+     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     std::sort(_meshRenderers.begin(), _meshRenderers.end(),
         [](const std::weak_ptr<MeshRenderer>& a, const std::weak_ptr<MeshRenderer>& b) {

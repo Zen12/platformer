@@ -21,6 +21,10 @@ void SpineData::SetAnimation(const size_t &index, const std::string &name, const
     track->setReverse(isReverse);
 }
 
+void SpineData::AppendAnimation(const size_t &index, const std::string &name, const bool &isLoop) const {
+    _animationState->addAnimation(index, name.c_str(), isLoop, 0.0);
+}
+
 void SpineData::SetTransition(const std::string &anim1, const std::string &anim2, const float &time) const {
     _stateData->setMix(anim1.c_str(), anim2.c_str(), time);
 }

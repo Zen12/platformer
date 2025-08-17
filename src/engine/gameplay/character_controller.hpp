@@ -38,6 +38,7 @@ private:
 
 
 private:
+    void AppendAnimation(const size_t &index, const std::string &animation, const bool &isLoop) const;
 
     void SetAnimation(const size_t &index, const std::string &animation, const bool &isLoop, const bool &isReverse);
 
@@ -62,6 +63,8 @@ private:
     void SetLookAt(const glm::vec3 &lookAt) const;
 
     [[nodiscard]] glm::vec3 GetMousePosition() const;
+
+    void Shoot(const glm::vec3 &position);
 
 public:
     explicit CharacterController(const std::weak_ptr<Entity> &entity);

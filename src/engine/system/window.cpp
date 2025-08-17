@@ -116,6 +116,25 @@ void Window::ClearWithValue(const int &value) noexcept {
     }
 }
 
+void Window::SwapWithValue(const int &target, const int &newValue) noexcept {
+
+    for (auto it = _keyboardCodes.begin(); it != _keyboardCodes.end(); ) {
+        if (it->second == target) {
+            it->second = newValue;
+        } else {
+            ++it;
+        }
+    }
+
+    for (auto it = _mouseCodes.begin(); it != _mouseCodes.end(); ) {
+        if (it->second == target) {
+            it->second = newValue;
+        } else {
+            ++it;
+        }
+    }
+}
+
 bool Window::IsFocus() const noexcept {
     return glfwGetWindowAttrib(window, GLFW_FOCUSED);
 }

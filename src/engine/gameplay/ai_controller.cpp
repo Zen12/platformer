@@ -111,7 +111,7 @@ void AiController::SetLookAt(const glm::vec3 &lookAt) {
 
 void AiController::SetSpineRenderer(const std::weak_ptr<SpineRenderer> &spineRenderer) noexcept {
     _renderer = spineRenderer;
-    _renderer.lock()->SetAnimation(0, "death", true, false);
+    _renderer.lock()->SetAnimation(0, "run", true, false);
 }
 
 void AiController::Update([[maybe_unused]] const float &deltaTime) {

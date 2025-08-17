@@ -93,6 +93,12 @@ public:
         }
     }
 
+    void AppendAnimation(const size_t &index, const std::string &animation, const bool& isLoop) const {
+        if (const auto spine = _spine.lock()) {
+            spine->AppendAnimation(index, animation, isLoop);
+        }
+    }
+
     void SetAnimation(const size_t &index, const std::string &animation, const bool& isLoop, const bool& isReverse) const {
         if (const auto spine = _spine.lock()) {
             spine->SetAnimation(index, animation, isLoop, isReverse);

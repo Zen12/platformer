@@ -146,6 +146,11 @@ public:
                 const auto font = GetFont(materialAsset.Font);
                 material->SetFont(font);
 
+                if (!materialAsset.Image.empty()) {
+                    const auto sprite = GetSprite(materialAsset.Image);
+                    material->AddSprite(sprite);
+                }
+
                 _materials[guid] = material;
                 return material;
             }

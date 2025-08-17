@@ -55,6 +55,12 @@ private:
         }
     }
 
+    void AppendAnimation(const size_t &index, const std::string &animation, const bool &isLoop) const {
+        if (const auto render = _renderer.lock()) {
+            render->AppendAnimation(index, animation, isLoop);
+        }
+    }
+
     void SetFaceRight(const bool& isFaceRight);
 
     void ResetJump() noexcept;

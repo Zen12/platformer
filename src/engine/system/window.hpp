@@ -23,6 +23,8 @@ public:
 
     void ClearWithValue(const int &value) noexcept;
 
+    void SwapWithValue(const int &target, const int &newValue) noexcept;
+
     [[nodiscard]] uint16_t GetWidth() const noexcept {
         return _width;
     }

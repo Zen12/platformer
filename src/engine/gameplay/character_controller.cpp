@@ -1,7 +1,15 @@
 #include "character_controller.hpp"
 
+#include "ai_controller.hpp"
+#include "ai_controller.hpp"
 #include "../components/camera_component.hpp"
 
+void CharacterController::AppendAnimation(const size_t &index, const std::string &animation, const bool &isLoop) const {
+
+    if (const auto render = _renderer.lock()) {
+        render->AppendAnimation(index, animation, isLoop);
+    }
+}
 void CharacterController::SetAnimation(const size_t &index, const std::string &animation, const bool &isLoop, const bool &isReverse) {
 
     if (_animationValue.find(index) != _animationValue.end()) {
@@ -194,6 +202,9 @@ void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *in
         SetAnimation(0, "idle", true, false);
 
 
+    if (input->IsMousePress(MouseButton::Left)) {
+        Shoot(mouseWorldPosition);
+    }
 
     transform->SetPosition(position + (_velocity * deltaTime));
     SetLookAt(mouseWorldPosition);
@@ -218,6 +229,12 @@ glm::vec3 CharacterController::GetMousePosition() const {
         }
     }
     return {0.0f, 0.0f, 0.0f};
+}
+
+void CharacterController::Shoot(const glm::vec3 &lookAt) {
+    if (const auto world = _world.lock()) {
+        std::cout << lookAt.x << " " << lookAt.y << std::endl;
+    }
 }
 
 void CharacterController::SetSpineRenderer(const std::weak_ptr<SpineRenderer> &spineRenderer) noexcept {

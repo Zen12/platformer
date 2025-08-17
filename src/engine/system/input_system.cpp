@@ -2,6 +2,7 @@
 
 void InputSystem::Update() {
     if (const auto window = _window.lock()) {
+        window->SwapWithValue(INPUT_PRESS, INPUT_REPEAT);
         window->ClearWithValue(INPUT_RELEASE);
         window->PullEvent();
         _keyCodes = window->GetKeyboardCodes();

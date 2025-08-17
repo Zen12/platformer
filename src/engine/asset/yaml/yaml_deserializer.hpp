@@ -358,6 +358,10 @@ namespace YAML
                 rhs.Font = node["font"].as<std::string>();
             }
 
+            if (node["image"] && node["image"].IsScalar()) {
+                rhs.Image = node["image"].as<std::string>();
+            }
+
             return true;
         }
     };
