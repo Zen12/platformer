@@ -5,8 +5,6 @@
 #include "mesh_renderer.hpp"
 #include "../render/material.hpp"
 #include "../physics/physics_world.hpp"
-#include "../physics/raycast.hpp"
-#include "../render/line.hpp"
 #include "transforms/transform.hpp"
 
 

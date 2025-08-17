@@ -35,15 +35,11 @@ void Light2dComponent::Update([[maybe_unused]] const float &deltaTime) {
                 float x = centerPosition.x + _radius * std::cos(angleRad);
                 float y = centerPosition.y + _radius * std::sin(angleRad);
 
-                b2Vec2 pointA(centerPosition.x, centerPosition.y);    // Start of ray
-                b2Vec2 pointB(x, y);   // End of ray
+                const auto result = _physicsWorld.lock()->RayCast(centerPosition, glm::vec3(x, y, 0));
 
-                RayCastClosestCallback callback;
-                world->RayCast(&callback, pointA, pointB);
-
-                if (callback.Hit) {
-                    x = callback.Point.x;
-                    y = callback.Point.y;
+                if (result.IsHit) {
+                    x = result.Point.x;
+                    y = result.Point.y;
                 }
 
                 meshVert.emplace_back(x);

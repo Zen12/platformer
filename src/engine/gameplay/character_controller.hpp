@@ -3,9 +3,7 @@
 #include "../components/entity.hpp"
 #include "../components/transforms/transform.hpp"
 #include "../system/input_system.hpp"
-#include "box2d/b2_world.h"
 #include "../physics/physics_world.hpp"
-#include "../physics/raycast.hpp"
 #include "../components/spine_renderer.hpp"
 #include "../render_pipeline/render_pipeline.hpp"
 
@@ -48,17 +46,17 @@ private:
 
     [[nodiscard]] glm::vec2 GetCenter() const noexcept;
 
-    [[nodiscard]] bool IsHitDir(const b2World *world, glm::vec2 position, glm::vec2 dir, glm::vec2 &hitPos) const;
+    [[nodiscard]] bool IsHitDir(glm::vec2 position, glm::vec2 dir, glm::vec2 &hitPos) const;
 
-    [[nodiscard]] bool IsHitUp(const b2World *world, glm::vec2 &hitPos) const;
+    [[nodiscard]] bool IsHitUp(glm::vec2 &hitPos) const;
 
-    [[nodiscard]] bool IsHitLeft(const b2World *world, glm::vec2 &hitPos) const;
+    [[nodiscard]] bool IsHitLeft(glm::vec2 &hitPos) const;
 
-    [[nodiscard]] bool IsHitRight(const b2World *world, glm::vec2 &hitPos) const;
+    [[nodiscard]] bool IsHitRight(glm::vec2 &hitPos) const;
 
-    [[nodiscard]] bool IsGrounded(const b2World *world, glm::vec2 &hitPos) const;
+    [[nodiscard]] bool IsGrounded(glm::vec2 &hitPos) const;
 
-    void UpdateInternal(const float &deltaTime, InputSystem *input, Transform *transform, b2World* world);
+    void UpdateInternal(const float &deltaTime, InputSystem *input, Transform *transform);
 
     void SetLookAt(const glm::vec3 &lookAt) const;
 

@@ -179,7 +179,20 @@ protected:
 
         if (const auto scene = _scene.lock()) {
             if (const auto comp = component.lock()) {
-                comp->Init(glm::vec2(serialization.scale.x, serialization.scale.y));
+                if (const auto world = scene->GetPhysicsWorld().lock()) {
+                    b2PolygonShape dynamicBox;
+                    dynamicBox.SetAsBox(serialization.scale.x / 2, serialization.scale.y / 2);  // 2x2 box
+
+                    b2FixtureDef fixtureDef;
+                    fixtureDef.shape = &dynamicBox;
+                    fixtureDef.density = 1.0f; // TODO move to serialization
+                    fixtureDef.friction = 0.3f;  // TODO move to serialization
+
+                    const auto rigidBody = _entity.lock()->GetComponent<Rigidbody2dComponent>();
+                    const auto collider = _entity.lock()->AddComponent<BoxCollider2DComponent>();
+                    world->AddColliderComponent(rigidBody, collider, fixtureDef);
+
+                }
             }
         }
     }
@@ -191,8 +204,31 @@ protected:
 
         if (const auto scene = _scene.lock()) {
             if (const auto comp = component.lock()) {
-                comp->SetWorld(scene->GetPhysicsWorld());
-                comp->Init(serialization.isDynamic);
+
+                if (const auto& world = scene->GetPhysicsWorld().lock()) {
+
+                    auto def = b2BodyDef();
+                    if (serialization.isDynamic)
+                        def.type = b2_dynamicBody;
+                    else
+                        def.type = b2_staticBody;
+
+                    const auto position = _entity.lock()->GetComponent<Transform>().lock()->GetPosition();
+                    def.position.Set(position.x, position.y);
+
+                    b2Body *body = world->GetWorld().lock()->CreateBody(&def);
+
+                    b2MassData massData;
+                    massData.mass = 5.0f;  // TODO move to serialization
+                    massData.center = body->GetLocalCenter();  // usually (0,0)
+                    massData.I = 1.0f;  // moment of inertia, set appropriately
+                    body->SetMassData(&massData);
+
+                    body->SetLinearDamping(1.0f);
+
+                    std::weak_ptr<Rigidbody2dComponent> rigidComponent = _entity.lock()->AddComponent<Rigidbody2dComponent>();
+                    world->AddRigidBodyComponent(rigidComponent, body);
+                }
             }
         }
     }

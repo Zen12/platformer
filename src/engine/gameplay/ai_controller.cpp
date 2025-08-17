@@ -20,44 +20,50 @@ glm::vec2 AiController::GetCenter() const noexcept {
     return glm::vec2{0.0f, 0.0f};
 }
 
-bool AiController::IsHitDir(const b2World *world, glm::vec2 position, glm::vec2 dir, glm::vec2 &hitPos) const {
-    b2Vec2 pointA(position.x, position.y);    // Start of ray
-    b2Vec2 pointB(position.x + dir.x, position.y + dir.y);   // End of ray
+bool AiController::IsHitDir(glm::vec2 position, glm::vec2 dir, glm::vec2 &hitPos) const {
 
-    RayCastClosestCallback callback;
-    world->RayCast(&callback, pointA, pointB);
+    if (const auto world = _world.lock()) {
 
-    hitPos = glm::vec2(callback.Point.x, callback.Point.y);
+        const glm::vec3 pointA(position.x, position.y, 0);    // Start of ray
+        const glm::vec3 pointB(position.x + dir.x, position.y + dir.y, 0);   // End of ray
 
-    return callback.Hit;
+        const auto result = world->RayCast( pointA, pointB);
+
+        hitPos = glm::vec2(result.Point.x, result.Point.y);
+
+        return result.IsHit;
+    }
+
+    return false;
 }
 
-bool AiController::IsHitUp(const b2World *world, glm::vec2 &hitPos) const {
+bool AiController::IsHitUp(glm::vec2 &hitPos) const {
     const auto center = GetCenter();
 
-    if (IsHitDir(world,
+    if (IsHitDir(
                  center + glm::vec2{_halfCharacterSize.x, _fourthPartCharacterSize.y},
                  glm::vec2{0.0f, _fourthPartCharacterSize.y}, hitPos))
         return true;
 
-    if (IsHitDir(world,
+    if (IsHitDir(
                  center + glm::vec2{-_halfCharacterSize.x, _fourthPartCharacterSize.y},
                  glm::vec2{0.0f, _fourthPartCharacterSize.y}, hitPos))
         return true;
 
 
     return false;
+
 }
 
-bool AiController::IsHitLeft(const b2World *world, glm::vec2 &hitPos) const {
+bool AiController::IsHitLeft(glm::vec2 &hitPos) const {
     const auto center = GetCenter();
 
-    if (IsHitDir(world,
+    if (IsHitDir(
                  center + glm::vec2(-_fourthPartCharacterSize.x, -_fourthPartCharacterSize.y),
                  glm::vec2(-_fourthPartCharacterSize.y, 0.0f), hitPos))
         return true;
 
-    if (IsHitDir(world,
+    if (IsHitDir(
                  center + glm::vec2(-_fourthPartCharacterSize.x, _fourthPartCharacterSize.y),
                  glm::vec2(-_fourthPartCharacterSize.y, 0.0f), hitPos))
         return true;
@@ -66,15 +72,15 @@ bool AiController::IsHitLeft(const b2World *world, glm::vec2 &hitPos) const {
     return false;
 }
 
-bool AiController::IsHitRight(const b2World *world, glm::vec2 &hitPos) const {
+bool AiController::IsHitRight(glm::vec2 &hitPos) const {
     const auto center = GetCenter();
 
-    if (IsHitDir(world,
+    if (IsHitDir(
                  center + glm::vec2(_fourthPartCharacterSize.x, -_fourthPartCharacterSize.y),
                  glm::vec2(_fourthPartCharacterSize.y, 0.0f), hitPos))
         return true;
 
-    if (IsHitDir(world,
+    if (IsHitDir(
                  center + glm::vec2(_fourthPartCharacterSize.x, _fourthPartCharacterSize.y),
                  glm::vec2(_fourthPartCharacterSize.y, 0.0f), hitPos))
         return true;
@@ -82,15 +88,15 @@ bool AiController::IsHitRight(const b2World *world, glm::vec2 &hitPos) const {
     return false;
 }
 
-bool AiController::IsGrounded(const b2World *world, glm::vec2 &hitPos) const {
+bool AiController::IsGrounded(glm::vec2 &hitPos) const {
     const auto center = GetCenter();
 
-    if (IsHitDir(world,
+    if (IsHitDir(
                  center + glm::vec2{_halfCharacterSize.x, -_fourthPartCharacterSize.y},
                  glm::vec2{0.0f, -_fourthPartCharacterSize.y}, hitPos))
         return true;
 
-    if (IsHitDir(world,
+    if (IsHitDir(
                  center + glm::vec2{-_halfCharacterSize.x, -_fourthPartCharacterSize.y},
                  glm::vec2{0.0f, -_fourthPartCharacterSize.y}, hitPos))
         return true;
@@ -103,7 +109,7 @@ AiController::AiController(const std::weak_ptr<Entity> &entity): Component(entit
     _transform = _entity.lock()->GetComponent<Transform>();
 }
 
-void AiController::SetLookAt(const glm::vec3 &lookAt) {
+void AiController::SetLookAt(const glm::vec3 &lookAt) const {
     if (const auto& render = _renderer.lock()) {
         render->LookAt(lookAt);
     }

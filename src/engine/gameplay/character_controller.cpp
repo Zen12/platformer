@@ -1,8 +1,5 @@
 #include "character_controller.hpp"
 
-#include "ai_controller.hpp"
-#include "ai_controller.hpp"
-#include "../components/camera_component.hpp"
 
 void CharacterController::AppendAnimation(const size_t &index, const std::string &animation, const bool &isLoop) const {
 
@@ -45,27 +42,32 @@ glm::vec2 CharacterController::GetCenter() const noexcept {
     return glm::vec2{0.0f, 0.0f};
 }
 
-bool CharacterController::IsHitDir(const b2World *world, glm::vec2 position, glm::vec2 dir, glm::vec2 &hitPos) const {
-    b2Vec2 pointA(position.x, position.y);    // Start of ray
-    b2Vec2 pointB(position.x + dir.x, position.y + dir.y);   // End of ray
+bool CharacterController::IsHitDir(glm::vec2 position, glm::vec2 dir, glm::vec2 &hitPos) const {
 
-    RayCastClosestCallback callback;
-    world->RayCast(&callback, pointA, pointB);
+        if (const auto world = _world.lock()) {
 
-    hitPos = glm::vec2(callback.Point.x, callback.Point.y);
+            const glm::vec3 pointA(position.x, position.y, 0);    // Start of ray
+            const glm::vec3 pointB(position.x + dir.x, position.y + dir.y, 0);   // End of ray
 
-    return callback.Hit;
-}
+            const auto result = world->RayCast( pointA, pointB);
 
-bool CharacterController::IsHitUp(const b2World *world, glm::vec2 &hitPos) const {
+            hitPos = glm::vec2(result.Point.x, result.Point.y);
+
+            return result.IsHit;
+        }
+
+        return false;
+    }
+
+bool CharacterController::IsHitUp(glm::vec2 &hitPos) const {
     const auto center = GetCenter();
 
-    if (IsHitDir(world,
+    if (IsHitDir(
                  center + glm::vec2{_halfCharacterSize.x, _fourthPartCharacterSize.y},
                  glm::vec2{0.0f, _fourthPartCharacterSize.y}, hitPos))
         return true;
 
-    if (IsHitDir(world,
+    if (IsHitDir(
                  center + glm::vec2{-_halfCharacterSize.x, _fourthPartCharacterSize.y},
                  glm::vec2{0.0f, _fourthPartCharacterSize.y}, hitPos))
         return true;
@@ -74,15 +76,15 @@ bool CharacterController::IsHitUp(const b2World *world, glm::vec2 &hitPos) const
     return false;
 }
 
-bool CharacterController::IsHitLeft(const b2World *world, glm::vec2 &hitPos) const {
+bool CharacterController::IsHitLeft(glm::vec2 &hitPos) const {
     const auto center = GetCenter();
 
-    if (IsHitDir(world,
+    if (IsHitDir(
                  center + glm::vec2(-_fourthPartCharacterSize.x, -_fourthPartCharacterSize.y),
                  glm::vec2(-_fourthPartCharacterSize.y, 0.0f), hitPos))
         return true;
 
-    if (IsHitDir(world,
+    if (IsHitDir(
                  center + glm::vec2(-_fourthPartCharacterSize.x, _fourthPartCharacterSize.y),
                  glm::vec2(-_fourthPartCharacterSize.y, 0.0f), hitPos))
         return true;
@@ -91,15 +93,15 @@ bool CharacterController::IsHitLeft(const b2World *world, glm::vec2 &hitPos) con
     return false;
 }
 
-bool CharacterController::IsHitRight(const b2World *world, glm::vec2 &hitPos) const {
+bool CharacterController::IsHitRight(glm::vec2 &hitPos) const {
     const auto center = GetCenter();
 
-    if (IsHitDir(world,
+    if (IsHitDir(
                  center + glm::vec2(_fourthPartCharacterSize.x, -_fourthPartCharacterSize.y),
                  glm::vec2(_fourthPartCharacterSize.y, 0.0f), hitPos))
         return true;
 
-    if (IsHitDir(world,
+    if (IsHitDir(
                  center + glm::vec2(_fourthPartCharacterSize.x, _fourthPartCharacterSize.y),
                  glm::vec2(_fourthPartCharacterSize.y, 0.0f), hitPos))
         return true;
@@ -107,15 +109,15 @@ bool CharacterController::IsHitRight(const b2World *world, glm::vec2 &hitPos) co
     return false;
 }
 
-bool CharacterController::IsGrounded(const b2World *world, glm::vec2 &hitPos) const {
+bool CharacterController::IsGrounded(glm::vec2 &hitPos) const {
     const auto center = GetCenter();
 
-    if (IsHitDir(world,
+    if (IsHitDir(
                  center + glm::vec2{_halfCharacterSize.x, -_fourthPartCharacterSize.y},
                  glm::vec2{0.0f, -_fourthPartCharacterSize.y}, hitPos))
         return true;
 
-    if (IsHitDir(world,
+    if (IsHitDir(
                  center + glm::vec2{-_halfCharacterSize.x, -_fourthPartCharacterSize.y},
                  glm::vec2{0.0f, -_fourthPartCharacterSize.y}, hitPos))
         return true;
@@ -124,8 +126,7 @@ bool CharacterController::IsGrounded(const b2World *world, glm::vec2 &hitPos) co
     return false;
 }
 
-void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *input, Transform *transform,
-    b2World *world) {
+void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *input, Transform *transform) {
 
     auto position = transform->GetPosition();
 
@@ -149,7 +150,7 @@ void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *in
         _velocity.x = sign * absValue;
     }
 
-    if (IsGrounded(world, hitPos)) {
+    if (IsGrounded(hitPos)) {
         ResetJump();
 
         const float diff = std::abs(hitPos.y - position.y);
@@ -172,17 +173,17 @@ void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *in
     }
 
 
-    if (IsHitLeft(world, hitPos)) {
+    if (IsHitLeft(hitPos)) {
         if (_velocity.x < 0)
             _velocity.x = 0;
     }
 
-    if (IsHitRight(world, hitPos)) {
+    if (IsHitRight(hitPos)) {
         if (_velocity.x > 0)
             _velocity.x = 0;
     }
 
-    if (IsHitUp(world, hitPos)) {
+    if (IsHitUp(hitPos)) {
         if (_velocity.y > 0) {
             ResetJump();
         }
@@ -261,6 +262,6 @@ void CharacterController::Update(const float &deltaTime) {
         if (const auto transform = _transform.lock())
             if (const auto world = _world.lock())
                 if (const auto b2World = world->GetWorld().lock())
-                    UpdateInternal(deltaTime, input.get(), transform.get(), b2World.get());
+                    UpdateInternal(deltaTime, input.get(), transform.get());
 
 }
