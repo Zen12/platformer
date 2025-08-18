@@ -52,7 +52,7 @@ bool CharacterController::IsHitDir(glm::vec2 position, glm::vec2 dir, glm::vec2 
             const glm::vec3 pointA(position.x, position.y, 0);    // Start of ray
             const glm::vec3 pointB(position.x + dir.x, position.y + dir.y, 0);   // End of ray
 
-            const auto result = world->RayCast( pointA, pointB);
+            const auto result = world->RayCast( pointA, pointB, std::vector<std::string>{"enemy"});
 
             hitPos = glm::vec2(result.Point.x, result.Point.y);
 

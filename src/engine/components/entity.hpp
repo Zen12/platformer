@@ -55,6 +55,9 @@ public:
         static_assert(std::is_base_of_v<Component, T>, "T must derive from Component");
 
         auto it = _components.find(typeid(T));
+        if (it == _components.end()) {
+            return {};
+        }
         return std::dynamic_pointer_cast<T>(it->second);
     }
 

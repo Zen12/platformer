@@ -9,17 +9,36 @@
 #include "glm/vec3.hpp"
 
 #include "glm/ext/scalar_int_sized.hpp"
+#include <vector>
+#include <string>
+#include <ranges>
+#include <iostream>
 
 class RayCastClosestCallback final : public b2RayCastCallback {
+private:
+    std::function<bool(b2Fixture*)> _filterFn;
+
 public:
     b2Vec2 Point;
     b2Vec2 Normal;
     float Fraction = 1.0f;
     bool Hit = false;
     b2Fixture *Fixture;
+    using FilterFn = std::function<bool(b2Fixture*)>;
+
+
+    void SetFilter(const std::function<bool(b2Fixture*)> &filter) noexcept{
+        _filterFn = filter;
+    }
 
     float ReportFixture(b2Fixture* fixture, const b2Vec2& p,
                         const b2Vec2& n, const float f) override {
+
+        // If filter exists and returns false -> skip fixture
+        if (_filterFn && !_filterFn(fixture)) {
+            return -1.0f; // ignore and continue
+        }
+
         Hit = true;
         Point = p;
         Normal = n;
@@ -61,9 +80,12 @@ public:
 
     void Simulate(const float& deltaTime) const;
 
+    void UpdateRigidBodies() const;
+
     void UpdateColliders(const float& deltaTime) const;
 
-    [[nodiscard]] RayCastResult RayCast(const glm::vec3& origin, const glm::vec3& direction);
+    [[nodiscard]] RayCastResult RayCast(const glm::vec3& origin, const glm::vec3& target);
+    [[nodiscard]] RayCastResult RayCast(const glm::vec3& origin, const glm::vec3& target, const std::vector<std::string> &ignoreTags);
 
     [[nodiscard]] std::weak_ptr<b2World> GetWorld() const;
 

@@ -32,6 +32,7 @@ struct RectLayoutSerialization
 struct Box2dColliderSerialization final : public ComponentSerialization
 {
     glm::vec3 scale{};
+    glm::vec3 translate{};
 };
 
 struct Rigidbody2dSerialization final : public ComponentSerialization

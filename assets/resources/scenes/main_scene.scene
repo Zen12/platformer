@@ -54,6 +54,7 @@ entities:
                   - aspectPower: 100.0
                   - isPerspective: false
   - obj:
+      - tag: "main-character"
       - guid: main-character
       - components:
           - component:
@@ -122,6 +123,7 @@ entities:
                       - z: -1.0
   - obj:
       - guid: alien-character
+      - tag: "enemy"
       - components:
           - component:
               - type: transform
@@ -149,7 +151,7 @@ entities:
           - component:
               - type: ai_controller
               - data:
-                  - max_movement_speed: 5.0
+                  - max_movement_speed: 2.0
                   - acceleration_speed: 0.8
                   - deceleration_speed: 1.0
                   - jump_heigh: 5
@@ -164,6 +166,10 @@ entities:
           - component:
               - type: box_collider
               - data:
+                  - translate:
+                      - x: 0.0
+                      - y: 0.5
+                      - z: 0.0
                   - size:
                       - x: 1.0
                       - y: 1.0

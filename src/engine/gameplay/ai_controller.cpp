@@ -6,11 +6,6 @@ void AiController::SetFaceRight(const bool &isFaceRight) {
     }
 }
 
-void AiController::ResetJump() noexcept {
-    _velocity.y = 0;
-    _currentJumpDuration = _characterSettings.JumpDuration + 1;
-}
-
 glm::vec2 AiController::GetCenter() const noexcept {
     if (const auto tr = _transform.lock()) {
         const auto ground = tr->GetPosition();
@@ -122,5 +117,52 @@ void AiController::SetSpineRenderer(const std::weak_ptr<SpineRenderer> &spineRen
 
 void AiController::Update([[maybe_unused]] const float &deltaTime) {
 
+    auto position = _transform.lock()->GetPosition();
+    const auto targetPos = _target.lock()->GetPosition();
+    glm::vec2 hitPos{};
 
+
+    if (targetPos.x < position.x) {
+        _velocity.x += -_characterSettings.AccelerationSpeed;
+        if (_velocity.x < -_characterSettings.MaxMovementSpeed)
+            _velocity.x = -_characterSettings.MaxMovementSpeed;
+        SetFaceRight(true);
+
+    } else  {
+        _velocity.x += _characterSettings.AccelerationSpeed;
+        if (_velocity.x > _characterSettings.MaxMovementSpeed)
+            _velocity.x = _characterSettings.MaxMovementSpeed;
+        SetFaceRight(false);
+    }
+
+    if (IsGrounded(hitPos)) {
+
+        const float diff = std::abs(hitPos.y - position.y);
+        if (diff > 0.01) {
+            position.y = hitPos.y;
+        }
+    } else {
+        _velocity.x *= _characterSettings.AirControl;
+        _velocity.y = -(_characterSettings.JumpHeigh / _characterSettings.JumpDuration) * _characterSettings.JumpDownMultiplier;
+    }
+
+
+    if (IsHitLeft(hitPos)) {
+        if (_velocity.x < 0)
+            _velocity.x = 0;
+    }
+
+    if (IsHitRight(hitPos)) {
+        if (_velocity.x > 0)
+            _velocity.x = 0;
+    }
+
+    if (glm::distance(targetPos, position) < 1) {
+        _velocity = glm::vec3(0, 0, 0);
+        SetAnimation(0, "hit", true);
+    }  else {
+        SetAnimation(0, "run", true);
+    }
+
+    _transform.lock()->SetPosition(position + (_velocity * deltaTime));
 }

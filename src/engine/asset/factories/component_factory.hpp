@@ -182,7 +182,13 @@ protected:
             if (const auto comp = component.lock()) {
                 if (const auto world = scene->GetPhysicsWorld().lock()) {
                     b2PolygonShape dynamicBox;
-                    dynamicBox.SetAsBox(serialization.scale.x / 2, serialization.scale.y / 2);  // 2x2 box
+                    // Half extents, then offset, then angle
+                    dynamicBox.SetAsBox(
+                        serialization.scale.x / 2,             // half width
+                        serialization.scale.y / 2,             // half height
+                        b2Vec2(serialization.translate.x, serialization.translate.y), // offset upward by half its height
+                        0.0f                                   // rotation
+                    );
 
                     b2FixtureDef fixtureDef;
                     fixtureDef.shape = &dynamicBox;
@@ -321,6 +327,7 @@ protected:
                 comp->SetInputSystem(scene->GetInputSystem());
                 comp->SetPhysicsWorld(scene->GetPhysicsWorld());
                 comp->SetSpineRenderer(_entity.lock()->GetComponent<SpineRenderer>());
+                comp->SetTarget(scene->GetEntityById("main-character").lock()->GetComponent<Transform>().lock());
 
             }
         }

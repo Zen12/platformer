@@ -15,6 +15,7 @@ private:
 
     std::weak_ptr<InputSystem> _inputSystem;
     std::weak_ptr<Transform> _transform;
+    std::weak_ptr<Transform> _target;
     std::weak_ptr<PhysicsWorld> _world{};
     std::weak_ptr<SpineRenderer> _renderer{};
     CharacterControllerSettings _characterSettings{};
@@ -29,7 +30,6 @@ private:
     glm::vec2 _downLeftCorner = {_characterSize.x, -_characterSize.y};
 
 
-    float _currentJumpDuration{100000};
 
     glm::vec3 _velocity{0};
 
@@ -60,8 +60,6 @@ private:
 
     void SetFaceRight(const bool& isFaceRight);
 
-    void ResetJump() noexcept;
-
     [[nodiscard]] glm::vec2 GetCenter() const noexcept;
 
     [[nodiscard]] bool IsHitDir(glm::vec2 position, glm::vec2 dir, glm::vec2 &hitPos) const;
@@ -90,6 +88,10 @@ public:
 
     void SetPhysicsWorld(const std::weak_ptr<PhysicsWorld> &physicsWorld) noexcept {
         _world = physicsWorld;
+    }
+
+    void SetTarget(const std::weak_ptr<Transform> &target) noexcept {
+        _target = target;
     }
 
     void SetSpineRenderer(const std::weak_ptr<SpineRenderer> &spineRenderer) noexcept;

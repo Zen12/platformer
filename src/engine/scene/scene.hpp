@@ -112,6 +112,7 @@ public:
         for (const auto &entity: Entities) {
             entity->Update(deltaTime);
         }
+        _physicsWorld->UpdateRigidBodies();
     }
 
     void RemovePendingEntities() {

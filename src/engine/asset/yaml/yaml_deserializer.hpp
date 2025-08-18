@@ -242,6 +242,9 @@ namespace YAML
         static bool decode(const Node &node, Box2dColliderSerialization &rhs) {
             const auto map = sequenceToMap(node);
             rhs.scale = map["size"].as<glm::vec3>();
+            if (map["translate"].IsDefined())
+                rhs.translate = map["translate"].as<glm::vec3>();
+
             return true;
         }
     };
