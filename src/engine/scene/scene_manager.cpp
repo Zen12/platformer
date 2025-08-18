@@ -59,48 +59,8 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) const {
     PROFILE_SCOPE("Loading of scene " + sceneAsset.Name);
 
     if (const auto assetManager = _scene->GetAssetManager().lock()) {
-        std::vector<std::shared_ptr<Entity>> entities;
 
-        for (const auto &entitySerialization : sceneAsset.Entities) {
-            const auto newEntity = std::make_shared<Entity>();
-            newEntity->SetId(entitySerialization.Guid);
-            newEntity->SetTag(entitySerialization.Tag);
-            newEntity->SetSelf(newEntity);
-
-            entities.push_back(newEntity);
-            _scene->AddEntity(newEntity);
-        }
-
-        for (size_t i = 0; i < sceneAsset.Entities.size(); i++) {
-            const auto &entitySerialization = sceneAsset.Entities[i];
-            const auto &entityInstance = _scene->GetEntityByIndex(i);
-
-            for (const auto &comp : entitySerialization.Components)
-            {
-                if (!TryToAddComponents<
-                    CameraComponentSerialization, CameraComponentFactory,
-                    TransformComponentSerialization, TransformFactory,
-                    RectTransformComponentSerialization, RectTransformFactory,
-                    UiImageComponentSerialization, UiImageFactory,
-                    UiTextComponentSerialization, UiTextComponentFactory,
-                    SpriteRenderComponentSerialization, SpriteRendererFactory,
-                    SpineRenderComponentSerialization, SpineRendererFactory,
-                    Box2dColliderSerialization, BoxCollider2dFactory,
-                    Rigidbody2dSerialization, Rigidbody2dFactory,
-                    Light2dComponentSerialization, Light2dFactory,
-                    MeshRendererComponentSerialization, MeshRendererFactory,
-                    CharacterControllerComponentSerialization, CharacterControllerFactory,
-                    AiControllerComponentSerialization, AiControllerFactory,
-                    ShowFpsComponentSerialization, ShowFpsComponentFactory,
-                    HealthComponentSerialization, HealthComponentFactory
-                >(comp.get(), std::weak_ptr<Entity>(entityInstance))) {
-                    std::cerr << "can't add component" << std::endl;
-#ifndef NDEBUG
-                    exit(-1);
-#endif
-                }
-            }
-        }
+        LoadEntities(sceneAsset.Entities);
 
         const auto sceneCamera = _scene->FindByTag("main_camera");
 
@@ -108,6 +68,44 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) const {
             _scene->GetRenderPipeline().lock()->UpdateCamera(
       camera->GetComponent<CameraComponent>(),
       camera->GetComponent<Transform>());
+        }
+    }
+}
+
+void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serialization) const {
+
+    for (const auto &entitySerialization : serialization) {
+        _scene->CreateEntity(entitySerialization);
+    }
+
+    for (size_t i = 0; i < serialization.size(); i++) {
+        const auto &entitySerialization = serialization[i];
+        const auto &entityInstance = _scene->GetEntityByIndex(i);
+
+        for (const auto &comp : entitySerialization.Components)
+        {
+            if (!TryToAddComponents<
+                CameraComponentSerialization, CameraComponentFactory,
+                TransformComponentSerialization, TransformFactory,
+                RectTransformComponentSerialization, RectTransformFactory,
+                UiImageComponentSerialization, UiImageFactory,
+                UiTextComponentSerialization, UiTextComponentFactory,
+                SpriteRenderComponentSerialization, SpriteRendererFactory,
+                SpineRenderComponentSerialization, SpineRendererFactory,
+                Box2dColliderSerialization, BoxCollider2dFactory,
+                Rigidbody2dSerialization, Rigidbody2dFactory,
+                Light2dComponentSerialization, Light2dFactory,
+                MeshRendererComponentSerialization, MeshRendererFactory,
+                CharacterControllerComponentSerialization, CharacterControllerFactory,
+                AiControllerComponentSerialization, AiControllerFactory,
+                ShowFpsComponentSerialization, ShowFpsComponentFactory,
+                HealthComponentSerialization, HealthComponentFactory
+            >(comp.get(), std::weak_ptr<Entity>(entityInstance))) {
+                std::cerr << "can't add component" << std::endl;
+#ifndef NDEBUG
+                exit(-1);
+#endif
+            }
         }
     }
 }

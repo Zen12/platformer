@@ -85,6 +85,7 @@ namespace YAML
             rhs.JumpDownMultiplier = map["jump_down_multiplier"].as<float>();
             rhs.AirControl = map["air_control"].as<float>();
             rhs.Damage = map["damage"].as<float>();
+            rhs.AiTargetTransformTag = map["ai_target_transform_tag"].as<std::string>();
             return true;
         }
     };

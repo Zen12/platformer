@@ -292,7 +292,8 @@ protected:
                         serialization.JumpDuration,
                         serialization.JumpDownMultiplier,
                         serialization.AirControl,
-                        serialization.Damage};
+                        serialization.Damage,
+                        std::string{}};
 
                     comp->SetCharacterControllerSettings(characterSettings);
                     comp->SetInputSystem(scene->GetInputSystem());
@@ -321,13 +322,14 @@ protected:
                     serialization.JumpDuration,
                     serialization.JumpDownMultiplier,
                     serialization.AirControl,
-                    serialization.Damage};
+                    serialization.Damage,
+                    serialization.AiTargetTransformTag};
 
                 comp->SetCharacterControllerSettings(characterSettings);
                 comp->SetInputSystem(scene->GetInputSystem());
                 comp->SetPhysicsWorld(scene->GetPhysicsWorld());
                 comp->SetSpineRenderer(_entity.lock()->GetComponent<SpineRenderer>());
-                comp->SetTarget(scene->GetEntityById("main-character").lock()->GetComponent<Transform>().lock());
+                comp->SetTarget(scene->GetEntityById(characterSettings.AiTargetTransformTag).lock()->GetComponent<Transform>().lock());
 
             }
         }

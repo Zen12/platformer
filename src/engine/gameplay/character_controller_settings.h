@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 class CharacterControllerSettings {
 public:
@@ -17,6 +18,8 @@ public:
 
     float Damage{10};
 
+    std::string AiTargetTransformTag{};
+
     CharacterControllerSettings() = default;
 
     CharacterControllerSettings(
@@ -27,7 +30,8 @@ public:
         const float& jumpDuration,
         const float& jumpDownMultiplier,
         const float& airControl,
-        const float& damage)
+        const float& damage,
+        const std::string&aiTargetTag)
         :
             MaxMovementSpeed(movementSpeed),
             AccelerationSpeed(accelerationSpeed),
@@ -36,6 +40,7 @@ public:
             JumpDuration(jumpDuration),
             JumpDownMultiplier(jumpDownMultiplier),
             AirControl(airControl),
-            Damage(damage)
+            Damage(damage),
+            AiTargetTransformTag(aiTargetTag)
     {}
 };

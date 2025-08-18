@@ -30,7 +30,7 @@ public:
     }
 
     void LoadScene(const SceneAsset& serialization) const;
-    void UnLoadAll() const;
+    void LoadEntities(const std::vector<EntitySerialization> &serialization) const;
 
     [[nodiscard]] std::weak_ptr<PhysicsWorld> GetPhysicsWorld() const {
         return _scene->GetPhysicsWorld();;

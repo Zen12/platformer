@@ -19,6 +19,13 @@
 #include "../debug/debug.hpp"
 #include "../system/input_system.hpp"
 
+struct PrefabInstantiateData {
+    std::string Id;
+    glm::vec3 Position{glm::vec3(1)};
+    glm::vec3 Rotation{glm::vec3(0)};
+    glm::vec3 Scale{glm::vec3(1)};
+};
+
 class Scene {
 private:
     std::unordered_map<std::string, std::shared_ptr<Shader>> _shaders;
@@ -42,7 +49,10 @@ private:
     std::vector<std::string> _entitiesToRemove{};
 
 
+
 public:
+
+    std::vector<PrefabInstantiateData> PrefabRequestInstantiate{};
 
     Scene(
         const std::weak_ptr<Window> &window,
@@ -80,9 +90,16 @@ public:
         return _window;
     }
 
-    void AddEntity(const std::shared_ptr<Entity> &entity) {
-        Entities.push_back(entity);
+    std::weak_ptr<Entity> CreateEntity(const EntitySerialization &entitySerialization) {
+        const auto newEntity = std::make_shared<Entity>();
+        newEntity->SetId(entitySerialization.Guid);
+        newEntity->SetTag(entitySerialization.Tag);
+        newEntity->SetSelf(newEntity);
+
+        Entities.push_back(newEntity);
+        return newEntity;
     }
+
 
     [[nodiscard]] std::weak_ptr<Entity> GetEntityById(const std::string &id) const {
         for (const auto &entity: Entities) {

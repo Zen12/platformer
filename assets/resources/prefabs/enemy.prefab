@@ -1,0 +1,57 @@
+- guid: alien-character
+- tag: "enemy"
+- components:
+    - component:
+        - type: transform
+        - data:
+            - position:
+                - x: 0.0
+                - y: 0.0
+                - z: 0.0
+            - rotation:
+                - x: 0.0
+                - y: 0.0
+                - z: 0.0
+            - scale:
+                - x: 1.0
+                - y: 1.0
+                - z: 1.0
+    - component:
+        - type: mesh_renderer
+        - data:
+            - material: 5faecd48-398f-46db-889f-ba4199c2636f
+    - component:
+        - type: spine_renderer
+        - data:
+            - spine_data: 74affba0-da5d-4b28-bcd7-625ef48e9d6a
+    - component:
+        - type: ai_controller
+        - data:
+            - max_movement_speed: 2.0
+            - acceleration_speed: 0.8
+            - deceleration_speed: 1.0
+            - jump_heigh: 5
+            - jump_duration: 0.5
+            - jump_down_multiplier: 1.2
+            - air_control: 0.8
+            - damage : 1
+            - ai_target_transform_tag: "main-character"
+    - component:
+        - type: rigidbody2d
+        - data:
+            - isDynamic: false
+    - component:
+        - type: box_collider
+        - data:
+            - translate:
+                - x: 0.0
+                - y: 0.5
+                - z: 0.0
+            - size:
+                - x: 1.0
+                - y: 1.0
+                - z: 0.0
+    - component:
+        - type: health_component
+        - data:
+            - health: 100
