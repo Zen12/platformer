@@ -42,7 +42,6 @@ public:
 
     void Update(const float &deltaTime) override {
         _timer -= deltaTime;
-        std::cout << _timer << std::endl;
         if (_timer <= 0) {
             _timer = _spawnTime;
             Spawn();

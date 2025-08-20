@@ -74,13 +74,14 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) const {
 
 void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serialization) const {
 
+    std::vector<std::weak_ptr<Entity>> entities;
     for (const auto &entitySerialization : serialization) {
-        _scene->CreateEntity(entitySerialization);
+        entities.push_back(_scene->CreateEntity(entitySerialization));
     }
 
     for (size_t i = 0; i < serialization.size(); i++) {
         const auto &entitySerialization = serialization[i];
-        const auto &entityInstance = _scene->GetEntityByIndex(i);
+        const auto &entityInstance = entities[i];
 
         for (const auto &comp : entitySerialization.Components)
         {
