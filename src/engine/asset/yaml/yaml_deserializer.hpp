@@ -250,6 +250,18 @@ namespace YAML
         }
     };
 
+    //prefab_spawner
+    template <>
+    struct convert<PrefabSpawnerSerialization>
+    {
+        static bool decode(const Node &node, PrefabSpawnerSerialization &rhs) {
+            const auto map = sequenceToMap(node);
+            rhs.prefabId = map["prefab_id"].as<std::string>();
+            rhs.spawnTime = map["spawn_time"].as<float>();
+            return true;
+        }
+    };
+
     template <>
     struct convert<Rigidbody2dSerialization>
     {
@@ -309,6 +321,8 @@ namespace YAML
                 return Parse<ShowFpsComponentSerialization>(data);
             } else if (type == "health_component") {
                 return Parse<HealthComponentSerialization>(data);
+            } else if (type == "prefab_spawner") {
+                return Parse<PrefabSpawnerSerialization>(data);
             }
 
             throw std::runtime_error("Unknown component type: " + type);
@@ -320,7 +334,8 @@ namespace YAML
             {
                 const auto nodeMap = sequenceToMap(objNode);
 
-                rhs.Guid = nodeMap["guid"].as<std::string>();
+                if (nodeMap["guid"])
+                    rhs.Guid = nodeMap["guid"].as<std::string>();
                 if (nodeMap["tag"]) {
                     rhs.Tag = nodeMap["tag"].as<std::string>();
                 }
@@ -333,6 +348,18 @@ namespace YAML
                     }
                 }
             }
+            return true;
+        }
+    };
+
+    template <>
+    struct convert<PrefabAsset>
+    {
+        static bool decode(const Node &node, PrefabAsset &rhs)
+        {
+            const auto nodeMap = sequenceToMap(node);
+            rhs.Name = nodeMap["name"].as<std::string>();
+            rhs.Obj = nodeMap.as<EntitySerialization>();
             return true;
         }
     };

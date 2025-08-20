@@ -14,19 +14,22 @@
 #include "../components/physics/rigidbody2d_component.hpp"
 #include "../debug/debug.hpp"
 #include "../system/input_system.hpp"
+#include "../system/guid_generator.hpp"
+
 
 
 class SceneManager {
 
     std::shared_ptr<Scene> _scene;
+    std::weak_ptr<AssetManager> _assetManager;
 
 public:
     SceneManager(
         const std::weak_ptr<Window> &window,
         const std::weak_ptr<AssetManager> &assetManager,
         const std::weak_ptr<InputSystem> &inputSystem)
-        : _scene(std::make_shared<Scene>(window, assetManager, inputSystem))
-        {
+        : _scene(std::make_shared<Scene>(window, assetManager, inputSystem)) {
+        _assetManager = assetManager;
     }
 
     void LoadScene(const SceneAsset& serialization) const;
@@ -37,6 +40,8 @@ public:
     }
 
     [[nodiscard]] std::weak_ptr<Entity> GetEntityById(const std::string& id) const;
+
+    void CreateRequestedPrefabs() const;
 
     void Update(const float& deltaTime) const;
 

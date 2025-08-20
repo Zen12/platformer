@@ -15,6 +15,11 @@ struct SceneAsset : Asset
     std::vector<EntitySerialization> Entities;
 };
 
+struct PrefabAsset : Asset
+{
+    EntitySerialization Obj;
+};
+
 struct MetaAsset : Asset
 {
     std::string Guid{};

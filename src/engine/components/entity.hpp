@@ -45,7 +45,7 @@ public:
         static_assert(std::is_base_of_v<Component, T>, "T must derive from Component");
 
         auto component = std::make_shared<T>(_self);
-        _components[typeid(T)] = component;
+        _components[typeid(T)] = std::static_pointer_cast<Component>(component);
         return component;
     }
 

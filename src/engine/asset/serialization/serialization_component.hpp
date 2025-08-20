@@ -13,7 +13,7 @@ struct EntitySerialization
 {
     std::string Tag;
     std::string Guid;
-    std::vector<std::unique_ptr<ComponentSerialization>> Components;
+    std::vector<std::shared_ptr<ComponentSerialization>> Components;
 };
 
 struct RectLayoutSerialization
@@ -33,6 +33,12 @@ struct Box2dColliderSerialization final : public ComponentSerialization
 {
     glm::vec3 scale{};
     glm::vec3 translate{};
+};
+
+struct PrefabSpawnerSerialization final : public ComponentSerialization
+{
+    std::string prefabId;
+    float spawnTime = 0;
 };
 
 struct Rigidbody2dSerialization final : public ComponentSerialization

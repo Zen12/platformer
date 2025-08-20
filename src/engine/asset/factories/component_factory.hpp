@@ -2,6 +2,7 @@
 #include <memory>
 
 #include "../../gameplay/ai_controller.hpp"
+#include "../../gameplay/prefab_spawner.hpp"
 #include "../../gameplay/health_component.hpp"
 #include "../../scene/scene.hpp"
 
@@ -63,6 +64,17 @@ class TransformFactory final : public ComponentFactory<Transform, TransformCompo
             transform->SetScale(serialization.scale);
         }
 
+    }
+};
+
+class PrefabSpawnerFactor final : public ComponentFactory<PrefabSpawner, PrefabSpawnerSerialization> {
+protected:
+    void FillComponent(const std::weak_ptr<PrefabSpawner> &component, const PrefabSpawnerSerialization &serialization) override {
+        if (const auto comp = component.lock()) {
+            comp->SetPrefabId(serialization.prefabId);
+            comp->SetScene(_scene);
+            comp->SetSpawnTimer(serialization.spawnTime);
+        }
     }
 };
 

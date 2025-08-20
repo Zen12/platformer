@@ -99,7 +99,8 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
                 CharacterControllerComponentSerialization, CharacterControllerFactory,
                 AiControllerComponentSerialization, AiControllerFactory,
                 ShowFpsComponentSerialization, ShowFpsComponentFactory,
-                HealthComponentSerialization, HealthComponentFactory
+                HealthComponentSerialization, HealthComponentFactory,
+                PrefabSpawnerSerialization, PrefabSpawnerFactor
             >(comp.get(), std::weak_ptr<Entity>(entityInstance))) {
                 std::cerr << "can't add component" << std::endl;
 #ifndef NDEBUG
@@ -114,8 +115,37 @@ std::weak_ptr<Entity> SceneManager::GetEntityById(const std::string &id) const {
     return _scene->GetEntityById(id);
 }
 
+void SceneManager::CreateRequestedPrefabs() const {
+
+    std::vector<EntitySerialization> serializations{};
+
+    if (const auto assetManager = _assetManager.lock()) {
+
+        for (const auto& prefabRequest: _scene->PrefabRequestInstantiate) {
+            auto prefabAsset = assetManager->LoadAssetByGuid<PrefabAsset>(prefabRequest.Id);
+            prefabAsset.Obj.Guid = GuidGenerator::GenerateGuid();
+            for (auto &component : prefabAsset.Obj.Components) {
+
+                if (auto *tr = dynamic_cast<TransformComponentSerialization *>(component.get()); tr != nullptr) {
+                    tr->position = prefabRequest.Position;
+                    tr->rotation = prefabRequest.Rotation;
+                    tr->scale = prefabRequest.Scale;
+                }
+            }
+
+
+            serializations.push_back(prefabAsset.Obj);
+        }
+    }
+
+
+    LoadEntities(serializations);
+    _scene->PrefabRequestInstantiate.clear();
+}
+
 void SceneManager::Update(const float &deltaTime) const {
     _scene->RemovePendingEntities();
+    CreateRequestedPrefabs();
     _scene->Update(deltaTime);
 }
 
