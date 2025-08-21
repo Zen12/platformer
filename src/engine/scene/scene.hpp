@@ -31,7 +31,7 @@ private:
     std::unordered_map<std::string, std::shared_ptr<Shader>> _shaders;
     std::unordered_map<std::string, std::shared_ptr<Material>> _materials;
     std::unordered_map<std::string, std::shared_ptr<Sprite>> _sprites;
-    std::unordered_map<std::string, std::shared_ptr<SpineData>> _spineDatas;
+    std::vector<std::shared_ptr<SpineData>> _spineDatas;
     std::unordered_map<std::string, std::shared_ptr<Font>> _fonts;
     std::unordered_map<std::string, std::shared_ptr<Mesh>> _meshes;
 
@@ -235,8 +235,12 @@ public:
     }
 
 
-    [[nodiscard]] std::shared_ptr<SpineData> GetSpineData(const std::string &guid, const SpineAsset& asset) {
+    [[nodiscard]] std::shared_ptr<SpineData> GetSpineData([[maybe_unused]] const std::string &guid, const SpineAsset& asset) {
 
+        const auto spine = LoadSpineData(asset);
+        _spineDatas.push_back(spine);
+        return spine;
+        /*
         if (const auto assetManager = _assetManager.lock()) {
             if (_spineDatas.find(guid) == _spineDatas.end()) {
                 const auto spineData = LoadSpineData(asset);
@@ -246,6 +250,7 @@ public:
             return _spineDatas[guid];
         }
         return {};
+        */
     }
 
     [[nodiscard]] std::shared_ptr<Sprite> GetSprite(const std::string &guid) {

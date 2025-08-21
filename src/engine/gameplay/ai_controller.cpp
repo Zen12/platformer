@@ -141,6 +141,7 @@ void AiController::Update([[maybe_unused]] const float &deltaTime) {
         if (diff > 0.01) {
             position.y = hitPos.y;
         }
+        _velocity.y = 0;
     } else {
         _velocity.x *= _characterSettings.AirControl;
         _velocity.y = -(_characterSettings.JumpHeigh / _characterSettings.JumpDuration) * _characterSettings.JumpDownMultiplier;
