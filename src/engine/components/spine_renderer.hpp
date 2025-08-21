@@ -91,7 +91,9 @@ public:
 
                 // Now render
                 spine::RenderCommand *command = _skeletonRenderer->render(*skeleton);
-                while (command) {
+
+                // support only one draw call from spine
+                if (command) {
                     const int num_command_vertices = command->numVertices;
 
 
@@ -155,5 +157,33 @@ public:
 
     void SetMeshRenderer(std::weak_ptr<MeshRenderer> material) noexcept {
         _meshRenderer = std::move(material);
+    }
+
+    std::string GetMoveAnimation()const {
+        if (const auto spine = _spine.lock()) {
+            return spine->MoveAnimationName;
+        }
+        return "";
+    }
+
+    std::string GetJumpAnimation()const {
+        if (const auto spine = _spine.lock()) {
+            return spine->JumpAnimationName;
+        }
+        return "";
+    }
+
+    std::string GetHitAnimation()const {
+        if (const auto spine = _spine.lock()) {
+            return spine->HitAnimationName;
+        }
+        return "";
+    }
+
+    std::string GetIdleAnimation()const {
+        if (const auto spine = _spine.lock()) {
+            return spine->IdleAnimationName;
+        }
+        return "";
     }
 };

@@ -227,7 +227,11 @@ public:
                 skeletonData,
                 stateData,
                 skeleton,
-                animationState
+                animationState,
+                asset.moveAnimationName,
+                asset.jumpAnimationName,
+                asset.hitAnimationName,
+                asset.idleAnimationName
             );
         }
 

@@ -112,7 +112,7 @@ void AiController::SetLookAt(const glm::vec3 &lookAt) const {
 
 void AiController::SetSpineRenderer(const std::weak_ptr<SpineRenderer> &spineRenderer) noexcept {
     _renderer = spineRenderer;
-    _renderer.lock()->SetAnimation(0, "run", true, false);
+    _renderer.lock()->SetAnimation(0,  _renderer.lock()->GetMoveAnimation(), true, false);
 }
 
 void AiController::Update([[maybe_unused]] const float &deltaTime) {
@@ -126,13 +126,13 @@ void AiController::Update([[maybe_unused]] const float &deltaTime) {
         _velocity.x += -_characterSettings.AccelerationSpeed;
         if (_velocity.x < -_characterSettings.MaxMovementSpeed)
             _velocity.x = -_characterSettings.MaxMovementSpeed;
-        SetFaceRight(true);
+        SetFaceRight(false);
 
     } else  {
         _velocity.x += _characterSettings.AccelerationSpeed;
         if (_velocity.x > _characterSettings.MaxMovementSpeed)
             _velocity.x = _characterSettings.MaxMovementSpeed;
-        SetFaceRight(false);
+        SetFaceRight(true);
     }
 
     if (IsGrounded(hitPos)) {
@@ -160,9 +160,9 @@ void AiController::Update([[maybe_unused]] const float &deltaTime) {
 
     if (glm::distance(targetPos, position) < 1) {
         _velocity = glm::vec3(0, 0, 0);
-        SetAnimation(0, "hit", true);
+        SetAnimation(0, _renderer.lock()->GetHitAnimation(), true);
     }  else {
-        SetAnimation(0, "run", true);
+        SetAnimation(0,  _renderer.lock()->GetMoveAnimation(), true);
     }
 
     _transform.lock()->SetPosition(position + (_velocity * deltaTime));

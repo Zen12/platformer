@@ -7,18 +7,23 @@ spine::SpineExtension *spine::getDefaultExtension() {
 }
 
 
-SpineData::SpineData(std::shared_ptr<spine::SkeletonData> skeletonData,
-    std::shared_ptr<spine::AnimationStateData> stateData, std::shared_ptr<spine::Skeleton> skeleton,
-    std::shared_ptr<spine::AnimationState> animationState):
-    _skeleton(std::move(skeleton)),
-    _animationState(std::move(animationState)),
-    _skeletonData(std::move(skeletonData)),
-    _stateData(std::move(stateData)) {
-}
-
 void SpineData::SetAnimation(const size_t &index, const std::string &name, const bool &isLoop, const bool &isReverse) const {
     const auto track = _animationState->setAnimation(index, name.c_str(), isLoop);
     track->setReverse(isReverse);
+}
+
+SpineData::SpineData(std::shared_ptr<spine::SkeletonData> skeletonData,
+    std::shared_ptr<spine::AnimationStateData> stateData, std::shared_ptr<spine::Skeleton> skeleton,
+    std::shared_ptr<spine::AnimationState> animationState, std::string moveAnimationName, std::string jumpAnimationName,
+    std::string hitAnimationName, std::string idleAnimationName):
+    _skeleton(std::move(skeleton)),
+    _animationState(std::move(animationState)),
+    _skeletonData(std::move(skeletonData)),
+    _stateData(std::move(stateData)),
+    MoveAnimationName(moveAnimationName),
+    JumpAnimationName(jumpAnimationName),
+    HitAnimationName(hitAnimationName),
+    IdleAnimationName(idleAnimationName){
 }
 
 void SpineData::AppendAnimation(const size_t &index, const std::string &name, const bool &isLoop) const {

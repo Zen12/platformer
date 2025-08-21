@@ -197,13 +197,13 @@ void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *in
     SetFaceRight(_isRight);
 
     if (_velocity.y > 0.01)
-        SetAnimation(0, "walk", true, false);
+        SetAnimation(0, _renderer.lock()->GetJumpAnimation(), true, false);
     else if (std::abs(_velocity.x) > 0.01) {
         const bool isCorrectDirection =  _isRight == _velocity.x > 0.0f;
-        SetAnimation(0, "run", true, !isCorrectDirection);
+        SetAnimation(0, _renderer.lock()->GetMoveAnimation(), true, !isCorrectDirection);
     }
     else
-        SetAnimation(0, "idle", true, false);
+        SetAnimation(0, _renderer.lock()->GetIdleAnimation(), true, false);
 
 
     if (input->IsMousePress(MouseButton::Left)) {

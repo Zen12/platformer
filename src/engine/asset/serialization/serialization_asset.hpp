@@ -49,6 +49,10 @@ struct SpineAsset : Asset {
     std::string image;
     std::string json;
     float spineScale;
+    std::string moveAnimationName;
+    std::string jumpAnimationName;
+    std::string hitAnimationName;
+    std::string idleAnimationName;
 };
 
 

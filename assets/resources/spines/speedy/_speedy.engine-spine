@@ -1,0 +1,10 @@
+name : "Speedy"
+skeleton: 6f33a151-548d-4afd-b67a-f0d429b301bc
+atlas: 71e6917f-e777-4693-a03b-dfe6f811251a
+image: 48478a9f-eca7-4a88-a13f-d028938b50d2
+json: da406bed-5267-4860-8403-7454126ec9cf
+spine_scale: 0.003
+move_animation_name: run
+jump_animation_name: run
+hit_animation_name: run
+idle_animation_name: run

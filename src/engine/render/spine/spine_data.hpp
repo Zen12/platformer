@@ -15,11 +15,21 @@ private:
     const std::shared_ptr<spine::AnimationStateData> _stateData;
 
 public:
+    const std::string MoveAnimationName;
+    const std::string JumpAnimationName;
+    const std::string HitAnimationName;
+    const std::string IdleAnimationName;
+
+public:
     SpineData(
         std::shared_ptr<spine::SkeletonData> skeletonData,
         std::shared_ptr<spine::AnimationStateData> stateData,
         std::shared_ptr<spine::Skeleton> skeleton,
-        std::shared_ptr<spine::AnimationState> animationState);
+        std::shared_ptr<spine::AnimationState> animationState,
+        std::string moveAnimationName,
+        std::string jumpAnimationName,
+        std::string hitAnimationName,
+        std::string idleAnimationName);
 
     void AppendAnimation(const size_t &index, const std::string &name, const bool &isLoop) const;
     void SetAnimation(const size_t &index, const std::string &name, const bool &isLoop, const bool &isReverse) const;

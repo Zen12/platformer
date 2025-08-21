@@ -8,7 +8,7 @@ unsigned int AssetTextureLoader::texture_load(const char *file_path) {
     stbi_set_flip_vertically_on_load(true);
     unsigned char *data = stbi_load(file_path, &width, &height, &nrChannels, 0);
     if (!data) {
-        printf("Failed to load texture\n");
+        printf("Failed to load texture at path: %s\n", file_path);
         return 0;
     }
 
@@ -54,7 +54,7 @@ uint32_t AssetTextureLoader::load_sprite(const std::string &path) {
 
     if (dataPtr == nullptr)
     {
-        std::cerr << "Failed to load texture" << std::endl;
+        std::cerr << "Failed to load texture: " << path << std::endl;
         return 0;
     }
 

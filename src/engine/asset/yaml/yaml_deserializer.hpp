@@ -437,6 +437,10 @@ namespace YAML
             rhs.image = node["image"].as<std::string>();
             rhs.json = node["json"].as<std::string>();
             rhs.spineScale = node["spine_scale"].as<float>();
+            rhs.moveAnimationName = node["move_animation_name"].as<std::string>();
+            rhs.jumpAnimationName = node["jump_animation_name"].as<std::string>();
+            rhs.hitAnimationName = node["hit_animation_name"].as<std::string>();
+            rhs.idleAnimationName = node["idle_animation_name"].as<std::string>();
             return true;
         }
     };
