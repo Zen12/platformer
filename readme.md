@@ -114,16 +114,16 @@ TODO
 - Sound
 
 ## 🏃🏃🏃 TODO 🏃🏃🏃
-- [ ] One enemy that tries to kill + spawners
 - [ ] PathFinder A*
 - [ ] Light2d better ray-detection
 - [ ] Simple particles for walk and shoot(bullet)
-- [ ] Webgl build
-- [ ] Windows build
 - [ ] Health bars
 - [ ] UI buttons
-- [ ] One level
+- [ ] One level (art)
 - [ ] Character Controller balancing
+- [ ] Win/Lose state
 - [ ] Restart level
+- [ ] Webgl build
+- [ ] Windows build
 
 🇲🇩
