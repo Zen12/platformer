@@ -101,7 +101,8 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
                 AiControllerComponentSerialization, AiControllerFactory,
                 ShowFpsComponentSerialization, ShowFpsComponentFactory,
                 HealthComponentSerialization, HealthComponentFactory,
-                PrefabSpawnerSerialization, PrefabSpawnerFactor
+                PrefabSpawnerSerialization, PrefabSpawnerFactor,
+                GridPrefabSpawnerSerialization, GridPrefabSpawnerFactor
             >(comp.get(), std::weak_ptr<Entity>(entityInstance))) {
                 std::cerr << "can't add component" << std::endl;
 #ifndef NDEBUG

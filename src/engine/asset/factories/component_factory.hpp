@@ -2,6 +2,7 @@
 #include <memory>
 
 #include "../../gameplay/ai_controller.hpp"
+#include "../../gameplay/grid_prefab_spawner.hpp"
 #include "../../gameplay/prefab_spawner.hpp"
 #include "../../gameplay/health_component.hpp"
 #include "../../scene/scene.hpp"
@@ -64,6 +65,19 @@ class TransformFactory final : public ComponentFactory<Transform, TransformCompo
             transform->SetScale(serialization.scale);
         }
 
+    }
+};
+
+class GridPrefabSpawnerFactor final : public ComponentFactory<GridPrefabSpawner, GridPrefabSpawnerSerialization> {
+protected:
+    void FillComponent(const std::weak_ptr<GridPrefabSpawner> &component, const GridPrefabSpawnerSerialization &serialization) override {
+        if (const auto comp = component.lock()) {
+            comp->SetPrefabId(serialization.prefabId);
+            comp->SetScene(_scene);
+            comp->SetSpawnOffset(serialization.spawnOffset);
+            comp->SetSpawnStep(serialization.spawnStep);
+            comp->Spawn(serialization.grid);
+        }
     }
 };
 

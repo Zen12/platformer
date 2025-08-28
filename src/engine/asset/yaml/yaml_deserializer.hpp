@@ -250,6 +250,35 @@ namespace YAML
         }
     };
 
+    //grid_prefab_spawner
+    template <>
+    struct convert<GridPrefabSpawnerSerialization>
+    {
+        static bool decode(const Node &node, GridPrefabSpawnerSerialization &rhs) {
+            const auto map = sequenceToMap(node);
+            rhs.prefabId = map["prefab_id"].as<std::string>();
+            rhs.spawnOffset = map["spawn_offset"].as<glm::vec3>();
+            rhs.spawnStep = map["spawn_step"].as<glm::vec3>();
+            rhs.grid = std::vector<std::vector<bool>>();
+            if (map["grid"]) {
+                const auto grid = map["grid"];
+
+                for (const auto &position : grid) {
+                    std::vector<bool> vec;
+
+                    for (const auto &item : position) {
+                        const auto value = item.as<int>();
+                        vec.push_back(value == 1);
+                    }
+
+                    rhs.grid.emplace_back(vec);
+                }
+            }
+
+            return true;
+        }
+    };
+
     //prefab_spawner
     template <>
     struct convert<PrefabSpawnerSerialization>
@@ -336,6 +365,8 @@ namespace YAML
                 return Parse<HealthComponentSerialization>(data);
             } else if (type == "prefab_spawner") {
                 return Parse<PrefabSpawnerSerialization>(data);
+            }else if (type == "grid_prefab_spawner") {
+                return Parse<GridPrefabSpawnerSerialization>(data);
             }
 
             throw std::runtime_error("Unknown component type: " + type);
