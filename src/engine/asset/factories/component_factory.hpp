@@ -73,7 +73,9 @@ protected:
         if (const auto comp = component.lock()) {
             comp->SetPrefabId(serialization.prefabId);
             comp->SetScene(_scene);
+            comp->SetMaxCount(serialization.maxSpawn);
             comp->SetSpawnTimer(serialization.spawnTime);
+            comp->SetPrefabPositions(serialization.positions);
         }
     }
 };

@@ -258,6 +258,19 @@ namespace YAML
             const auto map = sequenceToMap(node);
             rhs.prefabId = map["prefab_id"].as<std::string>();
             rhs.spawnTime = map["spawn_time"].as<float>();
+            rhs.maxSpawn = map["max_spawn"].as<int>();
+            rhs.positions = std::vector<glm::vec3>();
+            if (map["positions"]) {
+                auto positions = map["positions"];
+
+                for (const auto &position : positions) {
+                    const auto x = position[0].as<float>();
+                    const auto y = position[1].as<float>();
+                    const auto z = position[2].as<float>();
+                    rhs.positions.emplace_back(x, y, z);
+                }
+            }
+
             return true;
         }
     };

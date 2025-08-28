@@ -39,6 +39,8 @@ struct PrefabSpawnerSerialization final : public ComponentSerialization
 {
     std::string prefabId;
     float spawnTime = 0;
+    int maxSpawn;
+    std::vector<glm::vec3> positions;
 };
 
 struct Rigidbody2dSerialization final : public ComponentSerialization

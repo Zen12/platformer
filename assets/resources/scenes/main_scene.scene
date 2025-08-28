@@ -113,6 +113,7 @@ entities:
               - data:
                   - prefab_id: 0f2f4e2a-0197-4f47-be93-67a5f415360f
                   - spawn_time: 10.0
+                  - max_spawn: -1
   - obj:
       - guid: light_2d
       - components:
@@ -144,283 +145,37 @@ entities:
                       - y: 1.7
                       - z: -1.0
   - obj:
-    - guid: sprite-tile-bfad823e
-    - components:
-      - component:
-        - type: transform
-        - data:
-          - position:
-            - x: -8.0
-            - y: -7.0
-            - z: 0.0
-          - rotation:
-            - x: 0.0
-            - y: 0.0
-            - z: 0.0
-          - scale:
-            - x: 1.0
-            - y: 1.0
-            - z: 1.0
-      - component:
-        - type: sprite_renderer
-        - data:
-          - material: f22681f4-45d1-4542-a838-99f854890c18
-          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
-      - component:
-        - type: rigidbody2d
-        - data:
-          - isDynamic: false
-      - component:
-        - type: box_collider
-        - data:
-          - size:
-            - x: 1.0
-            - y: 1.0
-            - z: 0.0
-  - obj:
-    - guid: sprite-tile-6e1c8125
-    - components:
-      - component:
-        - type: transform
-        - data:
-          - position:
-            - x: -8.0
-            - y: -6.0
-            - z: 0.0
-          - rotation:
-            - x: 0.0
-            - y: 0.0
-            - z: 0.0
-          - scale:
-            - x: 1.0
-            - y: 1.0
-            - z: 1.0
-      - component:
-        - type: sprite_renderer
-        - data:
-          - material: f22681f4-45d1-4542-a838-99f854890c18
-          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
-      - component:
-        - type: rigidbody2d
-        - data:
-          - isDynamic: false
-      - component:
-        - type: box_collider
-        - data:
-          - size:
-            - x: 1.0
-            - y: 1.0
-            - z: 0.0
-
-  - obj:
-    - guid: sprite-tile-6952a2ce
-    - components:
-      - component:
-        - type: transform
-        - data:
-          - position:
-            - x: -8.0
-            - y: -5.0
-            - z: 0.0
-          - rotation:
-            - x: 0.0
-            - y: 0.0
-            - z: 0.0
-          - scale:
-            - x: 1.0
-            - y: 1.0
-            - z: 1.0
-      - component:
-        - type: sprite_renderer
-        - data:
-          - material: f22681f4-45d1-4542-a838-99f854890c18
-          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
-      - component:
-        - type: rigidbody2d
-        - data:
-          - isDynamic: false
-      - component:
-        - type: box_collider
-        - data:
-          - size:
-            - x: 1.0
-            - y: 1.0
-            - z: 0.0
-
-  - obj:
-    - guid: sprite-tile-a35012a0
-    - components:
-      - component:
-        - type: transform
-        - data:
-          - position:
-            - x: -8.0
-            - y: -4.0
-            - z: 0.0
-          - rotation:
-            - x: 0.0
-            - y: 0.0
-            - z: 0.0
-          - scale:
-            - x: 1.0
-            - y: 1.0
-            - z: 1.0
-      - component:
-        - type: sprite_renderer
-        - data:
-          - material: f22681f4-45d1-4542-a838-99f854890c18
-          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
-      - component:
-        - type: rigidbody2d
-        - data:
-          - isDynamic: false
-      - component:
-        - type: box_collider
-        - data:
-          - size:
-            - x: 1.0
-            - y: 1.0
-            - z: 0.0
-
-  - obj:
-    - guid: sprite-tile-a2f4554d
-    - components:
-      - component:
-        - type: transform
-        - data:
-          - position:
-            - x: -8.0
-            - y: -3.0
-            - z: 0.0
-          - rotation:
-            - x: 0.0
-            - y: 0.0
-            - z: 0.0
-          - scale:
-            - x: 1.0
-            - y: 1.0
-            - z: 1.0
-      - component:
-        - type: sprite_renderer
-        - data:
-          - material: f22681f4-45d1-4542-a838-99f854890c18
-          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
-      - component:
-        - type: rigidbody2d
-        - data:
-          - isDynamic: false
-      - component:
-        - type: box_collider
-        - data:
-          - size:
-            - x: 1.0
-            - y: 1.0
-            - z: 0.0
-
-  - obj:
-    - guid: sprite-tile-2283388e
-    - components:
-      - component:
-        - type: transform
-        - data:
-          - position:
-            - x: -8.0
-            - y: -2.0
-            - z: 0.0
-          - rotation:
-            - x: 0.0
-            - y: 0.0
-            - z: 0.0
-          - scale:
-            - x: 1.0
-            - y: 1.0
-            - z: 1.0
-      - component:
-        - type: sprite_renderer
-        - data:
-          - material: f22681f4-45d1-4542-a838-99f854890c18
-          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
-      - component:
-        - type: rigidbody2d
-        - data:
-          - isDynamic: false
-      - component:
-        - type: box_collider
-        - data:
-          - size:
-            - x: 1.0
-            - y: 1.0
-            - z: 0.0
-
-  - obj:
-    - guid: sprite-tile-da13641a
-    - components:
-      - component:
-        - type: transform
-        - data:
-          - position:
-            - x: -8.0
-            - y: -1.0
-            - z: 0.0
-          - rotation:
-            - x: 0.0
-            - y: 0.0
-            - z: 0.0
-          - scale:
-            - x: 1.0
-            - y: 1.0
-            - z: 1.0
-      - component:
-        - type: sprite_renderer
-        - data:
-          - material: f22681f4-45d1-4542-a838-99f854890c18
-          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
-      - component:
-        - type: rigidbody2d
-        - data:
-          - isDynamic: false
-      - component:
-        - type: box_collider
-        - data:
-          - size:
-            - x: 1.0
-            - y: 1.0
-            - z: 0.0
-
-  - obj:
-    - guid: sprite-tile-276ae3b3
-    - components:
-      - component:
-        - type: transform
-        - data:
-          - position:
-            - x: -8.0
-            - y: 0.0
-            - z: 0.0
-          - rotation:
-            - x: 0.0
-            - y: 0.0
-            - z: 0.0
-          - scale:
-            - x: 1.0
-            - y: 1.0
-            - z: 1.0
-      - component:
-        - type: sprite_renderer
-        - data:
-          - material: f22681f4-45d1-4542-a838-99f854890c18
-          - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
-      - component:
-        - type: rigidbody2d
-        - data:
-          - isDynamic: false
-      - component:
-        - type: box_collider
-        - data:
-          - size:
-            - x: 1.0
-            - y: 1.0
-            - z: 0.0
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+          - component:
+              - type: prefab_spawner
+              - data:
+                  - prefab_id: 2d05d2a1-2265-42a9-91a2-0774777518f0
+                  - spawn_time: 0.0
+                  - max_spawn: 1
+                  - positions:
+                      - [-8.0, -7.0, 0.0]
+                      - [-8.0, -6.0, 0.0]
+                      - [-8.0, -5.0, 0.0]
+                      - [-8.0, -4.0, 0.0]
+                      - [-8.0, -3.0, 0.0]
+                      - [-8.0, -2.0, 0.0]
+                      - [-8.0, -1.0, 0.0]
+                      - [-8.0,  0.0, 0.0]
 
   - obj:
     - guid: sprite-tile-178cd12f
