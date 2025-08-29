@@ -43,12 +43,16 @@ struct PrefabSpawnerSerialization final : public ComponentSerialization
     std::vector<glm::vec3> positions;
 };
 
+struct GridSerialization final : public ComponentSerialization {
+    std::vector<std::vector<int>> grid;
+    glm::vec3 spawnOffset;
+    glm::vec3 spawnStep;
+};
+
 struct GridPrefabSpawnerSerialization final : public ComponentSerialization
 {
     std::string prefabId;
-    glm::vec3 spawnOffset;
-    glm::vec3 spawnStep;
-    std::vector<std::vector<bool>> grid;
+    std::string gridTag;
 };
 
 struct Rigidbody2dSerialization final : public ComponentSerialization

@@ -252,29 +252,38 @@ namespace YAML
 
     //grid_prefab_spawner
     template <>
-    struct convert<GridPrefabSpawnerSerialization>
-    {
-        static bool decode(const Node &node, GridPrefabSpawnerSerialization &rhs) {
+    struct convert<GridSerialization> {
+        static bool decode(const Node &node, GridSerialization &rhs) {
             const auto map = sequenceToMap(node);
-            rhs.prefabId = map["prefab_id"].as<std::string>();
             rhs.spawnOffset = map["spawn_offset"].as<glm::vec3>();
             rhs.spawnStep = map["spawn_step"].as<glm::vec3>();
-            rhs.grid = std::vector<std::vector<bool>>();
+            rhs.grid = std::vector<std::vector<int>>();
             if (map["grid"]) {
                 const auto grid = map["grid"];
 
                 for (const auto &position : grid) {
-                    std::vector<bool> vec;
+                    std::vector<int> vec;
 
                     for (const auto &item : position) {
                         const auto value = item.as<int>();
-                        vec.push_back(value == 1);
+                        vec.push_back(value);
                     }
 
                     rhs.grid.emplace_back(vec);
                 }
             }
+            return true;
+        }
+    };
 
+    //grid_prefab_spawner
+    template <>
+    struct convert<GridPrefabSpawnerSerialization>
+    {
+        static bool decode(const Node &node, GridPrefabSpawnerSerialization &rhs) {
+            const auto map = sequenceToMap(node);
+            rhs.prefabId = map["prefab_id"].as<std::string>();
+            rhs.gridTag = map["grid_tag"].as<std::string>();
             return true;
         }
     };
@@ -367,6 +376,8 @@ namespace YAML
                 return Parse<PrefabSpawnerSerialization>(data);
             }else if (type == "grid_prefab_spawner") {
                 return Parse<GridPrefabSpawnerSerialization>(data);
+            } if (type == "grid") {
+                return Parse<GridSerialization>(data);
             }
 
             throw std::runtime_error("Unknown component type: " + type);

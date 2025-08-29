@@ -1,20 +1,14 @@
 #pragma once
 #include "../components/entity.hpp"
-#include "../scene/scene.hpp"
+#include "../components/grid_component.hpp"
 
 
 class GridPrefabSpawner final : public Component {
 private:
     std::weak_ptr<Scene> _scene{};
     std::string _prefabId{};
-    glm::vec3 _prefabSpawnStep{};
-    glm::vec3 _prefabSpawnOffset{};
-    std::vector<std::vector<bool>> _grid{};
-public:
-    explicit GridPrefabSpawner(const std::weak_ptr<Entity> &entity)
-        : Component(entity) {
-    }
 
+private:
     void SpawnOnPosition(const glm::vec3 &position) const noexcept {
         if (const auto scene = _scene.lock()) {
             scene->PrefabRequestInstantiate.push_back({
@@ -25,35 +19,35 @@ public:
             });
         }
     }
-
-    void SetSpawnStep(const glm::vec3 &step) noexcept {
-        _prefabSpawnStep = step;
+public:
+    explicit GridPrefabSpawner(const std::weak_ptr<Entity> &entity)
+        : Component(entity) {
     }
 
-    void SetSpawnOffset(const glm::vec3 &offset) noexcept {
-        _prefabSpawnOffset = offset;
-    }
-
-    void SetScene(const std::weak_ptr<Scene> &scene) noexcept {
-        _scene = scene;
-    }
-
+   void SetScene(const std::weak_ptr<Scene> &scene) noexcept {
+       _scene = scene;
+   }
 
     void SetPrefabId(std::string prefabId) noexcept {
         _prefabId = std::move(prefabId);
     }
 
-    void Spawn(std::vector<std::vector<bool>> grid) noexcept {
+    void Spawn(const std::weak_ptr<GridComponent> &gridComponent) const noexcept {
 
-        _grid = grid;
-        for (size_t i = 0; i < grid.size(); i++) {
-            for (size_t j = 0; j < grid[i].size(); j++) {
-                if (grid[i][j]) {
-                    const auto position = glm::vec3(
-                        _prefabSpawnOffset.x + _prefabSpawnStep.x * static_cast<float>(j),
-                        _prefabSpawnOffset.y + _prefabSpawnStep.y * static_cast<float>(grid[i].size() - i),
-                        0);
-                    SpawnOnPosition(position);
+        if (const auto g = gridComponent.lock()) {
+            const auto grid = g->Grid;
+            const auto offset = g->SpawnOffset;
+            const auto step = g->SpawnStep;
+
+            for (size_t i = 0; i < grid.size(); i++) {
+                for (size_t j = 0; j < grid[i].size(); j++) {
+                    if (grid[i][j]) {
+                        const auto position = glm::vec3(
+                            offset.x + step.x * static_cast<float>(j),
+                            offset.y + step.y * static_cast<float>(grid[i].size() - i),
+                            0);
+                        SpawnOnPosition(position);
+                    }
                 }
             }
         }

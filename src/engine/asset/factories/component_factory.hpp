@@ -68,15 +68,28 @@ class TransformFactory final : public ComponentFactory<Transform, TransformCompo
     }
 };
 
+class GridFactory final : public ComponentFactory<GridComponent, GridSerialization> {
+protected:
+    void FillComponent(const std::weak_ptr<GridComponent> &component, const GridSerialization &serialization) override {
+        if (const auto comp = component.lock()) {
+            if (const auto scene = _scene.lock()) {
+                comp->SetGrid(serialization.grid);
+                comp->SetSpawnOffset(serialization.spawnOffset);
+                comp->SetSpawnStep(serialization.spawnStep);
+            }
+        }
+    }
+};
+
 class GridPrefabSpawnerFactor final : public ComponentFactory<GridPrefabSpawner, GridPrefabSpawnerSerialization> {
 protected:
     void FillComponent(const std::weak_ptr<GridPrefabSpawner> &component, const GridPrefabSpawnerSerialization &serialization) override {
         if (const auto comp = component.lock()) {
-            comp->SetPrefabId(serialization.prefabId);
-            comp->SetScene(_scene);
-            comp->SetSpawnOffset(serialization.spawnOffset);
-            comp->SetSpawnStep(serialization.spawnStep);
-            comp->Spawn(serialization.grid);
+            if (const auto scene = _scene.lock()) {
+                comp->SetPrefabId(serialization.prefabId);
+                comp->SetScene(_scene);
+                comp->Spawn(scene->FindByTag(serialization.gridTag).lock()->GetComponent<GridComponent>());
+            }
         }
     }
 };
