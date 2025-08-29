@@ -288,6 +288,16 @@ namespace YAML
         }
     };
 
+    template <>
+    struct convert<PathFinderSerialization>
+    {
+        static bool decode(const Node &node, PathFinderSerialization &rhs) {
+            const auto map = sequenceToMap(node);
+            rhs.gridTag = map["grid_tag"].as<std::string>();
+            return true;
+        }
+    };
+
     //prefab_spawner
     template <>
     struct convert<PrefabSpawnerSerialization>
@@ -376,8 +386,10 @@ namespace YAML
                 return Parse<PrefabSpawnerSerialization>(data);
             }else if (type == "grid_prefab_spawner") {
                 return Parse<GridPrefabSpawnerSerialization>(data);
-            } if (type == "grid") {
+            } else if (type == "grid") {
                 return Parse<GridSerialization>(data);
+            } else if (type == "astar_path_finder") {
+                return Parse<PathFinderSerialization>(data);
             }
 
             throw std::runtime_error("Unknown component type: " + type);

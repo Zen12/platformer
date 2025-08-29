@@ -28,4 +28,25 @@ public:
     void SetSpawnStep(const glm::vec2 &step) noexcept {
         this->SpawnStep = step;
     }
+
+    glm::vec3 GetPositionFromIndex(const int &x, const int &y) const noexcept  {
+        return glm::vec3(
+            SpawnOffset.x + SpawnStep.x * static_cast<float>(y),
+            SpawnOffset.y + SpawnStep.y * static_cast<float>(Grid[x].size() - x),
+            0);
+    }
+
+    glm::ivec2 GetClosestIndexFromPosition(const glm::vec2 &pos) const noexcept {
+        // Reverse the formula used in GetPositionFromIndex
+        int y = static_cast<int>(std::round((pos.x - SpawnOffset.x) / SpawnStep.x));
+
+        int x = static_cast<int>(Grid.size()); // default if empty
+        if (!Grid.empty()) {
+            // Solve for x using the inverted formula
+            x = static_cast<int>(Grid[0].size() -
+                std::round((pos.y - SpawnOffset.y) / SpawnStep.y));
+        }
+
+        return glm::ivec2(x, y);
+    }
 };

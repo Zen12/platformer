@@ -33,19 +33,13 @@ public:
     }
 
     void Spawn(const std::weak_ptr<GridComponent> &gridComponent) const noexcept {
-
         if (const auto g = gridComponent.lock()) {
             const auto grid = g->Grid;
-            const auto offset = g->SpawnOffset;
-            const auto step = g->SpawnStep;
 
             for (size_t i = 0; i < grid.size(); i++) {
                 for (size_t j = 0; j < grid[i].size(); j++) {
-                    if (grid[i][j]) {
-                        const auto position = glm::vec3(
-                            offset.x + step.x * static_cast<float>(j),
-                            offset.y + step.y * static_cast<float>(grid[i].size() - i),
-                            0);
+                    if (grid[i][j] == 1) {
+                        const auto position = g->GetPositionFromIndex(i, j);
                         SpawnOnPosition(position);
                     }
                 }

@@ -196,3 +196,24 @@ entities:
               - data:
                   - prefab_id: 2d05d2a1-2265-42a9-91a2-0774777518f0
                   - grid_tag: grid
+  - obj:
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+          - component:
+              - type: astar_path_finder
+              - data:
+                  - grid_tag: grid

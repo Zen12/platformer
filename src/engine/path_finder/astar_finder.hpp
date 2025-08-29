@@ -4,55 +4,63 @@
 #include "astar_grid.hpp"
 #include "../scene/scene.hpp"
 
-class AStarFinder{
+class AStarFinderComponent final : public Component {
 
 private:
-    std::weak_ptr<Scene> _scene;
-    std::unique_ptr<AStarGrid> _astarGrid;
+    std::unique_ptr<AStarGrid> _astarGrid{};
+    std::vector<bool> _blocked{};
+    int _width{}, _height{};
+    std::function<int(int, int)> idx = [&](const int x, const int y){ return y * _width + x; };
+    AStarConfig _cfg{ .allow_diagonal = true, .cut_corners = false };
+    std::weak_ptr<GridComponent> _gridComponent;
 
 public:
-    AStarFinder() {
-        _astarGrid = std::make_unique<AStarGrid>();
+
+    explicit AStarFinderComponent(const std::weak_ptr<Entity> &entity)
+        : Component(entity) {
     }
 
-    void SetScene(const std::weak_ptr<Scene> &scene) {
-        _scene = scene;
+    void Initialize(const std::weak_ptr<GridComponent> &gridComponent) {
+        _gridComponent = gridComponent;
+        if (const auto gridRef = gridComponent.lock()) {
+            const auto grid = gridRef->Grid;
+
+            _width = grid[0].size();
+            _height = grid.size();
+
+            // blocked cells
+            _blocked.clear();
+            _blocked.resize(_width * _height, false);
+
+            for (size_t i = 0; i < grid.size(); i++) {
+                for (size_t j = 0; j < grid[i].size(); j++) {
+                    const auto value = grid[i][j];
+                    _blocked[idx(i, j)] = value == 1;
+                }
+            }
+        }
+
     }
 
-    void Initialize() {
-        const int W = 10, H = 8;
 
-        // blocked cells
-        std::vector<bool> blocked(W * H, false);
-        auto idx = [&](const int x, const int y){ return y * W + x; };
-        blocked[idx(4,3)] = true;
-        blocked[idx(4,4)] = true;
-        blocked[idx(4,5)] = true;
+    AStarPath GetPath(const glm::vec2 start, const glm::vec2 goal) const {
+        AStarGrid::WalkableFn isWalkable = [this](const glm::vec2& pos) {
+            if (const auto grid = _gridComponent.lock()) {
+                const auto indexPos = grid->GetClosestIndexFromPosition(pos);
 
-        auto is_walkable = [&](const glm::vec2& p) {
-            int x = (int)std::round(p.x);
-            int y = (int)std::round(p.y);
-            if (x < 0 || y < 0 || x >= W || y >= H) return false;
-            return !blocked[idx(x, y)];
+                if (indexPos.x < 0 || indexPos.y < 0 || indexPos.x >= _width || indexPos.y >= _height)
+                    return false;
+
+                return !_blocked[idx(indexPos.x, indexPos.y)];
+            }
+
+            return false;
         };
 
-        AStarConfig cfg;
-        cfg.allow_diagonal = true;
-        cfg.cut_corners = false;
-
-        glm::vec2 start{0,0};
-        glm::vec2 goal{9,7};
-        AStarPath path = AStarGrid::find_path(W, H, start, goal, is_walkable, cfg);
-
-        if (path.found) {
-            std::cout << "Path cost = " << path.cost << "\n";
-            for (auto& p : path.points) {
-                std::cout << "(" << p.x << "," << p.y << ")\n";
-            }
-        } else {
-            std::cout << "No path found\n";
-        }
+        return AStarGrid::find_path(_width, _height, start, goal, isWalkable, _cfg);
     }
 
+    void Update([[maybe_unused]] const float &deltaTime) override {
 
+    }
 };

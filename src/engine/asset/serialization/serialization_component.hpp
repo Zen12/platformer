@@ -43,6 +43,10 @@ struct PrefabSpawnerSerialization final : public ComponentSerialization
     std::vector<glm::vec3> positions;
 };
 
+struct PathFinderSerialization final : public ComponentSerialization {
+    std::string gridTag;
+};
+
 struct GridSerialization final : public ComponentSerialization {
     std::vector<std::vector<int>> grid;
     glm::vec3 spawnOffset;
