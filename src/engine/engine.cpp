@@ -34,7 +34,7 @@ void Engine::WaitForTargetFrameRate() const {
 
     const float sleepTime = _targetFrameTime - elapsed;
 
-    if (sleepTime > 0.0) {
+    if (sleepTime > std::numeric_limits<float>::epsilon()) {
         std::this_thread::sleep_for(std::chrono::duration<float>(sleepTime));
     }
 }
@@ -53,16 +53,7 @@ void Engine::Tick() {
     _sceneManager->Render(deltaTime);
     _window->SwapBuffers();
 
-/*
-    if (const auto camera3d = _renderPipeline->Get3dCamera().lock()) {
-        const auto mousePosition = _inputSystem->GetMouseScreenSpace();
-        const auto worldPosition = camera3d->ScreenToWorldPoint(mousePosition);
-
-        DebugLines::AddLine(worldPosition, glm::vec3(0.0f, 0.0f, 0.0f));
-    }
-    */
-
-
+    // maybe #if debug?
     if (_inputSystem->IsKeyUp(InputKey::Escape)) {
         _window->Destroy();
     }

@@ -1,7 +1,7 @@
 ## 📋 Requirements
 - 🧠 ```C++17```
 - 🛠️ ```Cmake``` 3.28 (<4.0)
-- 🛠️ 🚀 ```FetchContent_Declare``` is used as package manager
+- 🛠️ ```FetchContent_Declare``` is used as package manager
 - ⚙️ ```[optional]``` Python used for editor tools
 ## 👋 Getting started 🤞
 ### 🍎 macOS 
@@ -70,11 +70,10 @@ TODO
 ## 🛠️ Architecture
 ### 📀 Memory management
 - Lifetime of an obj is determined by ```shared_ptr```/```week_ptr```
-- Raw pointers can be used in 3rd party lib api calls
+- Raw pointers can be used for 3rd party api calls
 - ```Engine``` is the owner of ```Managers```
 - ```Managers``` are the owners of ```Assets``` and ```Entities```
 - ```Entity``` is owner of ```Component```
-- All objects are exposed by ```week_ptr```. Only owner has ```shared_ptr```
 - The destruction flow:
   - ```~Engine``` -> ```~Manager``` -> ```~Asset``` / ```~Entity``` -> ```~Component```
 
@@ -105,18 +104,16 @@ TODO
     - ```RenderPipline``` orders by Z only ```MeshRenderers```
 ### 🗂️ Asset management
 - Yaml serialization
-- File name agnostic, generates .meta files for reference tracking
-  🏃
+- File path agnostic, generates .meta files for reference tracking
 
 ### 🧠 What is missing
-- Proper editor. Used AI generated scripts in python, please read that code before using it.
+- Proper editor. ATM, just temporary python scripts
 - Proper FSM for App-State management and animation state behaviour
 - Sound
 
 ## 🏃🏃🏃 TODO 🏃🏃🏃
-- [ ] PathFinder A*
-- [ ] Light2d better ray-detection
 - [ ] Simple particles for walk and shoot(bullet)
+- [ ] Light2d better ray-detection
 - [ ] Health bars
 - [ ] UI buttons
 - [ ] One level (art)
