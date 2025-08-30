@@ -173,6 +173,8 @@ struct AiControllerComponentSerialization final : public ComponentSerialization
     float Damage{10};
 
     std::string AiTargetTransformTag{};
+    std::string PathFinderTag{};
+    std::string GridTag{};
 };
 
 struct ShowFpsComponentSerialization final : public ComponentSerialization

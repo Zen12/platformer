@@ -86,6 +86,8 @@ namespace YAML
             rhs.AirControl = map["air_control"].as<float>();
             rhs.Damage = map["damage"].as<float>();
             rhs.AiTargetTransformTag = map["ai_target_transform_tag"].as<std::string>();
+            rhs.PathFinderTag = map["path_finder_tag"].as<std::string>();
+            rhs.GridTag = map["grid_tag"].as<std::string>();
             return true;
         }
     };

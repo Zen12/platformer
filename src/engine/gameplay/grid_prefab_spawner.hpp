@@ -36,10 +36,10 @@ public:
         if (const auto g = gridComponent.lock()) {
             const auto grid = g->Grid;
 
-            for (size_t i = 0; i < grid.size(); i++) {
-                for (size_t j = 0; j < grid[i].size(); j++) {
-                    if (grid[i][j] == 1) {
-                        const auto position = g->GetPositionFromIndex(i, j);
+            for (size_t y = 0; y < grid.size(); y++) {
+                for (size_t x = 0; x < grid[y].size(); x++) {
+                    if (grid[y][x] == 1) {
+                        const auto position = g->GetPositionFromIndex(y, x);
                         SpawnOnPosition(position);
                     }
                 }

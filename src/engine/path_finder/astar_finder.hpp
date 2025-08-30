@@ -7,11 +7,10 @@
 class AStarFinderComponent final : public Component {
 
 private:
-    std::unique_ptr<AStarGrid> _astarGrid{};
+    std::unique_ptr<AStar> _astarGrid{};
     std::vector<bool> _blocked{};
     int _width{}, _height{};
     std::function<int(int, int)> idx = [&](const int x, const int y){ return y * _width + x; };
-    AStarConfig _cfg{ .allow_diagonal = true, .cut_corners = false };
     std::weak_ptr<GridComponent> _gridComponent;
 
 public:
@@ -23,41 +22,20 @@ public:
     void Initialize(const std::weak_ptr<GridComponent> &gridComponent) {
         _gridComponent = gridComponent;
         if (const auto gridRef = gridComponent.lock()) {
-            const auto grid = gridRef->Grid;
-
-            _width = grid[0].size();
-            _height = grid.size();
-
-            // blocked cells
-            _blocked.clear();
-            _blocked.resize(_width * _height, false);
-
-            for (size_t i = 0; i < grid.size(); i++) {
-                for (size_t j = 0; j < grid[i].size(); j++) {
-                    const auto value = grid[i][j];
-                    _blocked[idx(i, j)] = value == 1;
-                }
-            }
+            const auto gridValue = gridRef->Grid;
+            _astarGrid = std::make_unique<AStar>(gridValue[0].size(), gridValue.size(), gridValue);
         }
-
     }
 
 
-    AStarPath GetPath(const glm::vec2 start, const glm::vec2 goal) const {
-        AStarGrid::WalkableFn isWalkable = [this](const glm::vec2& pos) {
-            if (const auto grid = _gridComponent.lock()) {
-                const auto indexPos = grid->GetClosestIndexFromPosition(pos);
+    [[nodiscard]] std::vector<glm::ivec2> GetPath(const glm::vec2 start, const glm::vec2 goal, const bool &canJump) const {
 
-                if (indexPos.x < 0 || indexPos.y < 0 || indexPos.x >= _width || indexPos.y >= _height)
-                    return false;
-
-                return !_blocked[idx(indexPos.x, indexPos.y)];
-            }
-
-            return false;
-        };
-
-        return AStarGrid::find_path(_width, _height, start, goal, isWalkable, _cfg);
+        if (const auto grid = _gridComponent.lock()) {
+            const auto startI = grid->GetClosestIndexFromPosition(start);
+            const auto endI = grid->GetClosestIndexFromPosition(goal);
+            return _astarGrid->findPath(startI, endI, canJump);
+        }
+        return {};
     }
 
     void Update([[maybe_unused]] const float &deltaTime) override {

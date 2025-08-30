@@ -3,11 +3,12 @@
 
 #include "character_controller_settings.h"
 #include "../components/entity.hpp"
+#include "../components/grid_component.hpp"
 #include "../components/transforms/transform.hpp"
 #include "../system/input_system.hpp"
 #include "../physics/physics_world.hpp"
 #include "../components/spine_renderer.hpp"
-
+#include "../path_finder/astar_finder.hpp"
 
 
 class AiController final : public Component{
@@ -18,6 +19,8 @@ private:
     std::weak_ptr<Transform> _target;
     std::weak_ptr<PhysicsWorld> _world{};
     std::weak_ptr<SpineRenderer> _renderer{};
+    std::weak_ptr<AStarFinderComponent> _astarFinder{};
+    std::weak_ptr<GridComponent> _gridComponent{};
     CharacterControllerSettings _characterSettings{};
 
     glm::vec2 _characterSize{1.0f, 2.0f};
@@ -94,7 +97,15 @@ public:
         _target = target;
     }
 
+    void SetPathFinder(const std::weak_ptr<AStarFinderComponent> &pathFinder) noexcept {
+        _astarFinder = pathFinder;
+    }
+
+    void SetGrid(const std::weak_ptr<GridComponent> &grid) noexcept {
+        _gridComponent = grid;
+    }
+
     void SetSpineRenderer(const std::weak_ptr<SpineRenderer> &spineRenderer) noexcept;
 
-    void Update([[maybe_unused]] const float& deltaTime) override;
+    void Update(const float& deltaTime) override;
 };

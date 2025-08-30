@@ -38,6 +38,8 @@
                 - air_control: 0.8
                 - damage : 1
                 - ai_target_transform_tag: "main-character"
+                - path_finder_tag : "path_finder"
+                - grid_tag: "grid"
         - component:
             - type: rigidbody2d
             - data:

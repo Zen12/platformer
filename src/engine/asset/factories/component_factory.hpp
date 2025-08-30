@@ -74,7 +74,6 @@ protected:
     void FillComponent(const std::weak_ptr<AStarFinderComponent> &component, const PathFinderSerialization &serialization) override {
         if (const auto comp = component.lock()) {
             if (const auto scene = _scene.lock()) {
-                std::cout << serialization.gridTag << std::endl;
                 const auto entity = scene->FindByTag(serialization.gridTag);
                 comp->Initialize(entity.lock()->GetComponent<GridComponent>());
             }
@@ -384,8 +383,9 @@ protected:
                 comp->SetInputSystem(scene->GetInputSystem());
                 comp->SetPhysicsWorld(scene->GetPhysicsWorld());
                 comp->SetSpineRenderer(_entity.lock()->GetComponent<SpineRenderer>());
-                comp->SetTarget(scene->GetEntityById(characterSettings.AiTargetTransformTag).lock()->GetComponent<Transform>().lock());
-
+                comp->SetPathFinder(scene->FindByTag(serialization.PathFinderTag).lock()->GetComponent<AStarFinderComponent>());
+                comp->SetTarget(scene->FindByTag(characterSettings.AiTargetTransformTag).lock()->GetComponent<Transform>().lock());
+                comp->SetGrid(scene->FindByTag(serialization.GridTag).lock()->GetComponent<GridComponent>());
             }
         }
     }

@@ -1,6 +1,7 @@
 #pragma once
 #include "entity.hpp"
-
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 
 class GridComponent final: public Component {
 

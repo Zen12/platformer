@@ -55,10 +55,11 @@ public:
 
     void Spawn() {
         if (_maxCount > 0) {
+            _currentSpawnCount++;
+
             if (_currentSpawnCount > _maxCount) {
                 return;
             }
-            _currentSpawnCount++;
         }
 
         if (_prefabPositions.empty()) {
