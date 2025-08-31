@@ -242,14 +242,14 @@ void CharacterController::Shoot(const glm::vec3 &lookAt) const {
 
         if (const auto particles = _particles.lock()) {
             const glm::vec3 dir = lookAt - startPosition;
-            glm::vec3 axis(0.0f, 0.0f, 1.0f); // Z axis
-            float angle1 = glm::radians(30.0f);
-            float angle2 = glm::radians(-30.0f);
+            constexpr glm::vec3 axis(0.0f, 0.0f, 1.0f); // Z axis
+            constexpr float angle1 = glm::radians(30.0f);
+            constexpr float angle2 = glm::radians(-30.0f);
 
-            glm::vec3 rotated1 = glm::rotate(dir, angle1, axis);
-            glm::vec3 rotated2 = glm::rotate(dir, angle2, axis);
+            const glm::vec3 rotated1 = glm::rotate(dir, angle1, axis);
+            const glm::vec3 rotated2 = glm::rotate(dir, angle2, axis);
 
-            const float speed = 1.0f;
+            constexpr float speed = 1.0f;
 
             particles->OverrideDataVelocity(rotated1 * speed, rotated2 * speed);
             particles->Emit(startPosition);
@@ -267,6 +267,20 @@ void CharacterController::Shoot(const glm::vec3 &lookAt) const {
                     if (const auto health = entity->GetComponent<HealthComponent>().lock()) {
                         health->DecreaseHealth(_characterSettings.Damage);
                     }
+                }
+                if (const auto particles = _particles.lock()) {
+                    const glm::vec3 dir = result.Normal;
+                    constexpr glm::vec3 axis(0.0f, 0.0f, 1.0f); // Z axis
+                    constexpr float angle1 = glm::radians(30.0f);
+                    constexpr float angle2 = glm::radians(-30.0f);
+
+                    const glm::vec3 rotated1 = glm::rotate(dir, angle1, axis);
+                    const glm::vec3 rotated2 = glm::rotate(dir, angle2, axis);
+
+                    constexpr float speed = 1.0f;
+
+                    particles->OverrideDataVelocity(rotated1 * speed, rotated2 * speed);
+                    particles->Emit(result.Point);
                 }
             }
         }
