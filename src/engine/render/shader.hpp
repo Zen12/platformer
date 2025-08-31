@@ -29,6 +29,9 @@ public:
     [[nodiscard]] int32_t GetShaderId() const noexcept;
     [[nodiscard]] int32_t GetLocation(const std::string &name) const noexcept;
 
+    void SetVec4(const int32_t &location, const float &x, const float &y, const float &z,
+                 const float &w) const noexcept;
+
     void SetVec2(const int32_t &location, const float &x, const float &y) const noexcept;
     void SetVec3(const int32_t &location, const float &x, const float &y, const float &z) const noexcept;
     void SetMat4(const int32_t &location, const glm::mat4 &mat) const noexcept;

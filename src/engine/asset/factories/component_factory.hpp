@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 
+#include "../../components/particle_emitter.hpp"
 #include "../../gameplay/ai_controller.hpp"
 #include "../../gameplay/grid_prefab_spawner.hpp"
 #include "../../gameplay/prefab_spawner.hpp"
@@ -336,24 +337,26 @@ protected:
         if (const auto scene = _scene.lock()) {
             if (const auto comp = component.lock()) {
                 if (const auto render = scene->GetRenderPipeline().lock()) {
+                    if (const auto entity = _entity.lock()) {
+                        const CharacterControllerSettings characterSettings =
+                            {
+                            serialization.MaxMovementSpeed,
+                            serialization.AccelerationSpeed,
+                            serialization.DecelerationSpeed,
+                            serialization.JumpHeigh,
+                            serialization.JumpDuration,
+                            serialization.JumpDownMultiplier,
+                            serialization.AirControl,
+                            serialization.Damage,
+                            std::string{}};
 
-                    const CharacterControllerSettings characterSettings =
-                        {
-                        serialization.MaxMovementSpeed,
-                        serialization.AccelerationSpeed,
-                        serialization.DecelerationSpeed,
-                        serialization.JumpHeigh,
-                        serialization.JumpDuration,
-                        serialization.JumpDownMultiplier,
-                        serialization.AirControl,
-                        serialization.Damage,
-                        std::string{}};
-
-                    comp->SetCharacterControllerSettings(characterSettings);
-                    comp->SetInputSystem(scene->GetInputSystem());
-                    comp->SetPhysicsWorld(scene->GetPhysicsWorld());
-                    comp->SetRenderPipeline(render);
-                    comp->SetSpineRenderer(_entity.lock()->GetComponent<SpineRenderer>());
+                        comp->SetCharacterControllerSettings(characterSettings);
+                        comp->SetInputSystem(scene->GetInputSystem());
+                        comp->SetPhysicsWorld(scene->GetPhysicsWorld());
+                        comp->SetParticles(entity->GetComponent<ParticleEmitterComponent>());
+                        comp->SetRenderPipeline(render);
+                        comp->SetSpineRenderer(entity->GetComponent<SpineRenderer>());
+                    }
                 }
             }
         }
@@ -404,10 +407,35 @@ protected:
 
 class HealthComponentFactory final : public ComponentFactory<HealthComponent, HealthComponentSerialization> {
 protected:
-    void FillComponent(const std::weak_ptr<HealthComponent> &component, [[maybe_unused]] const HealthComponentSerialization &serialization) override {
+    void FillComponent(const std::weak_ptr<HealthComponent> &component, const HealthComponentSerialization &serialization) override {
         if (const auto comp = component.lock()) {
             comp->SetHealth(serialization.Health);
             comp->SetScene(_scene.lock());
+        }
+    }
+};
+
+class ParticleEmitterComponentFactory final : public ComponentFactory<ParticleEmitterComponent, ParticleEmitterSerialization> {
+protected:
+    void FillComponent(const std::weak_ptr<ParticleEmitterComponent> &component, const ParticleEmitterSerialization &serialization) override {
+        if (const auto scene = _scene.lock()) {
+            if (const auto comp = component.lock()) {
+                comp->SetMaterial(scene->GetMaterial(serialization.materialGuid));
+                comp->SetData({
+                    .Count = serialization.count,
+                    .Duration = serialization.duration,
+                    .StartVelocity = serialization.startVelocity,
+                    .EndVelocity = serialization.endVelocity,
+                    .StartScale = serialization.startScale,
+                    .EndScale = serialization.endScale,
+                    .StartColor = serialization.startColor,
+                    .EndColor = serialization.endColor}
+                );
+
+                if (const auto renderPipeline = scene->GetRenderPipeline().lock()) {
+                    renderPipeline->AddRenderer(comp);
+                }
+            }
         }
     }
 };

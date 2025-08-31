@@ -9,7 +9,7 @@ class AStarFinderComponent final : public Component {
 private:
     std::unique_ptr<AStar> _astarGrid{};
     std::vector<bool> _blocked{};
-    int _width{}, _height{};
+    int _width{};
     std::function<int(int, int)> idx = [&](const int x, const int y){ return y * _width + x; };
     std::weak_ptr<GridComponent> _gridComponent;
 

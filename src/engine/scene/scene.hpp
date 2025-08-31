@@ -152,6 +152,7 @@ public:
         _renderPipeline->ClearFrame();
         _renderPipeline->RenderMeshes(deltaTime);
         _renderPipeline->RenderSprites(deltaTime);
+        _renderPipeline->RenderParticles(deltaTime);
 
 #ifndef NDEBUG
         _renderPipeline->RenderDebugLines();

@@ -66,6 +66,15 @@ public:
         }
     }
 
+    void SetVec4(const std::string &name, const glm::vec4 &value) const noexcept {
+        if (const auto shader = _shader.lock())
+        {
+            shader->Use();
+            const auto location = shader->GetLocation(name);
+            shader->SetVec4(location, value.x, value.y, value.z, value.w);
+        }
+    }
+
     void SetVec3(const std::string &name, const float x, const float y, const float z) const noexcept {
         if (const auto shader = _shader.lock())
         {

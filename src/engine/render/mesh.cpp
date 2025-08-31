@@ -143,6 +143,23 @@ Mesh Mesh::GenerateSquare() {
     return {vertices, indices, false};
 }
 
+std::unique_ptr<Mesh> Mesh::GenerateSpritePtr() {
+    // set up vertex data (and buffer(s)) and configure vertex attributes
+    // ------------------------------------------------------------------
+    const std::vector<float> vertices = {
+        // positions                // texture coords
+        0.5f, 0.5f, 0.0f, 1.0f, 1.0f,   // top right
+        0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
+        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f   // top left
+    };
+    const std::vector<uint32_t> indices = {
+        0, 3, 1,
+        1, 3, 2};
+
+    return std::make_unique<Mesh>(vertices, indices, true);
+}
+
 Mesh Mesh::GenerateSprite() {
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------

@@ -6,10 +6,11 @@
 #include "../physics/physics_world.hpp"
 #include "../components/spine_renderer.hpp"
 #include "../render_pipeline/render_pipeline.hpp"
-
+#include <glm/gtx/rotate_vector.hpp>
 
 class CharacterController final : public Component {
 private:
+    std::weak_ptr<ParticleEmitterComponent> _particles;
     std::weak_ptr<InputSystem> _inputSystem;
     std::weak_ptr<RenderPipeline> _renderPipeline;
     std::weak_ptr<Transform> _transform;
@@ -62,7 +63,7 @@ private:
 
     [[nodiscard]] glm::vec3 GetMousePosition() const;
 
-    void Shoot(const glm::vec3 &position);
+    void Shoot(const glm::vec3 &position) const;
 
 public:
     explicit CharacterController(const std::weak_ptr<Entity> &entity);
@@ -77,6 +78,10 @@ public:
 
     void SetPhysicsWorld(const std::weak_ptr<PhysicsWorld> &physicsWorld) noexcept {
         _world = physicsWorld;
+    }
+
+    void SetParticles(const std::weak_ptr<ParticleEmitterComponent> &particles) noexcept {
+        _particles = particles;
     }
 
     void SetRenderPipeline(const std::weak_ptr<RenderPipeline> &renderPipeline) noexcept {

@@ -56,6 +56,11 @@ int32_t Shader::GetLocation(const std::string &name) const noexcept
     return glGetUniformLocation(_shaderProgram, name.c_str());
 }
 
+void Shader::SetVec4(const int32_t &location, const float &x, const float &y, const float &z, const float &w) const noexcept
+{
+    glUniform4f(location, x, y, z, w);
+}
+
 void Shader::SetVec3(const int32_t &location, const float &x, const float &y, const float &z) const noexcept
 {
     glUniform3f(location, x, y, z);

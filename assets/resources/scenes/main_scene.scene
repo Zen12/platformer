@@ -73,6 +73,28 @@ entities:
                       - y: 1.0
                       - z: 1.0
           - component:
+              - type: particle_emitter
+              - data:
+                  - duration: 0.05
+                  - count: 3
+                  - start_scale: 0.1
+                  - end_scale: 0.8
+                  - start_color: [1.0, 1.0, 0.0, 1.0]
+                  - end_color: [1.0, 0.0, 0.0, 1.0]
+                  - end_color:
+                        - x: 1.0
+                        - y: 1.0
+                        - z: 1.0
+                  - start_velocity:
+                        - x: 3.0
+                        - y: 3.0
+                        - z: 3.0
+                  - end_velocity:
+                      - x: 3.0
+                      - y: 3.0
+                      - z: 3.0
+                  - material_guid: "19d137a9-0bc4-415a-af16-1740ef25c8b2"
+          - component:
                 - type: mesh_renderer
                 - data:
                       - material: 5faecd48-398f-46db-889f-ba4199c2636f

@@ -4,6 +4,7 @@
 #include <yaml-cpp/yaml.h>
 #include <iostream>
 #include <memory>
+#include "glm/vec4.hpp"
 
 #include "../serialization/serialization_component.hpp"
 #include "../serialization/serialization_asset.hpp"
@@ -37,6 +38,19 @@ namespace YAML
             rhs.x = map["x"].as<float>();
             rhs.y = map["y"].as<float>();
             rhs.z = map["z"].as<float>();
+            return true;
+        }
+    };
+
+    template <>
+    struct convert<glm::vec4>
+    {
+        static bool decode(const Node &node, glm::vec4 &rhs)
+        {
+            rhs.x = node[0].as<float>();
+            rhs.y = node[1].as<float>();
+            rhs.z = node[2].as<float>();
+            rhs.w = node[3].as<float>();
             return true;
         }
     };
@@ -326,6 +340,24 @@ namespace YAML
     };
 
     template <>
+    struct convert<ParticleEmitterSerialization>
+    {
+        static bool decode(const Node &node, ParticleEmitterSerialization &rhs) {
+            const auto map = sequenceToMap(node);
+            rhs.count = map["count"].as<size_t>();
+            rhs.startVelocity = map["start_velocity"].as<glm::vec3>();
+            rhs.endVelocity = map["end_velocity"].as<glm::vec3>();
+            rhs.duration = map["duration"].as<float>();
+            rhs.materialGuid = map["material_guid"].as<std::string>();
+            rhs.startScale = map["start_scale"].as<float>();
+            rhs.endScale = map["end_scale"].as<float>();
+            rhs.startColor = map["start_color"].as<glm::vec4>();
+            rhs.endColor = map["end_color"].as<glm::vec4>();
+            return true;
+        }
+    };
+
+    template <>
     struct convert<Rigidbody2dSerialization>
     {
         static bool decode(const Node &node, Rigidbody2dSerialization &rhs) {
@@ -392,6 +424,8 @@ namespace YAML
                 return Parse<GridSerialization>(data);
             } else if (type == "astar_path_finder") {
                 return Parse<PathFinderSerialization>(data);
+            } else if (type == "particle_emitter") {
+                return Parse<ParticleEmitterSerialization>(data);
             }
 
             throw std::runtime_error("Unknown component type: " + type);

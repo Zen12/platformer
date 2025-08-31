@@ -41,6 +41,7 @@ public:
     }
 
     static Mesh GenerateSquare();
+    static std::unique_ptr<Mesh> GenerateSpritePtr();
 
     static Mesh GenerateSprite();
     static Mesh GenerateUI();

@@ -6,7 +6,6 @@
 
 void RenderPipeline::RenderSprites(const float& deltaTime) const
 {
-
     glEnable(GL_CULL_FACE);
     glDisable(GL_BLEND);
 
@@ -16,16 +15,16 @@ void RenderPipeline::RenderSprites(const float& deltaTime) const
     for (const auto& value : _sprites)
     {
 
-        if (const auto& component = value.lock())
+        if (const auto& renderer = value.lock())
         {
-            component->Update(deltaTime); // move to material
+            renderer->Update(deltaTime); // move to material, it is called twice per frame, need to remove it
 
-            const auto model = component->GetModel();
-            component->SetUniformMat4("model",model);
-            component->SetUniformMat4("view",view);
-            component->SetUniformMat4("projection",projection);
+            const auto model = renderer->GetModel();
+            renderer->SetUniformMat4("model",model);
+            renderer->SetUniformMat4("view",view);
+            renderer->SetUniformMat4("projection",projection);
 
-            component->Render();
+            renderer->Render();
         }
     }
 }
@@ -33,13 +32,6 @@ void RenderPipeline::RenderSprites(const float& deltaTime) const
 void RenderPipeline::RenderMeshes(const float& deltaTime) {
 
     glDisable(GL_CULL_FACE); // spine runtime requires
-    //glEnable(GL_BLEND);
-    // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_COLOR, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    //glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_COLOR, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-   // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_CONSTANT_ALPHA);
-
-
-     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     std::sort(_meshRenderers.begin(), _meshRenderers.end(),
         [](const std::weak_ptr<MeshRenderer>& a, const std::weak_ptr<MeshRenderer>& b) {
@@ -78,7 +70,7 @@ void RenderPipeline::RenderMeshes(const float& deltaTime) {
 #endif
 #endif
 
-            meshRenderer->Update(deltaTime);
+            meshRenderer->Update(deltaTime); // move to material, it is called twice per frame, need to remove it
 
             meshRenderer->SetUniformMat4("model", meshRenderer->GetModel());
             meshRenderer->SetUniformMat4("view", view);
@@ -96,6 +88,28 @@ void RenderPipeline::RenderMeshes(const float& deltaTime) {
 #endif
 }
 
+void RenderPipeline::RenderParticles([[maybe_unused]] const float &deltaTime) const {
+
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    auto SOURCE = GL_SRC_COLOR;
+    auto DEST = GL_ONE;
+
+    glBlendFunc( SOURCE, DEST);
+
+    const auto projection = _camera3d.lock()->GetProjection();
+    const auto view = _cameraTransform3d.lock()->GetModel();
+
+    for (const auto& value : _particles) {
+        if (const auto& particle = value.lock()) {
+            particle->SetUniformMat4("view", view);
+            particle->SetUniformMat4("projection", projection);
+
+            particle->Render();
+        }
+    }
+}
+
 glm::vec3 RenderPipeline::ScreenToWorldPoint(glm::vec2 screenPos) const {
     return ScreenToWorldPoint(glm::vec3(screenPos.x, screenPos.y, 0));
 }
@@ -111,6 +125,7 @@ glm::vec3 RenderPipeline::ScreenToWorldPoint(const glm::vec3 &screenPos) const {
 
 #ifndef NDEBUG
 void RenderPipeline::RenderDebugLines() const {
+    glEnable(GL_CULL_FACE);
 
     const auto projection = _camera3d.lock()->GetProjection();
     const auto view = _cameraTransform3d.lock()->GetModel();
@@ -136,8 +151,9 @@ void RenderPipeline::ClearFrame() const noexcept {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void RenderPipeline::RenderUI(const float& deltaTime) const
+void RenderPipeline::RenderUI([[maybe_unused]] const float& deltaTime) const
 {
+    glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -147,7 +163,6 @@ void RenderPipeline::RenderUI(const float& deltaTime) const
     {
         if (const auto& text = value.lock())
         {
-            text->Update(deltaTime);
             text->Render(projection);
         }
     }
@@ -156,7 +171,6 @@ void RenderPipeline::RenderUI(const float& deltaTime) const
     {
         if (const auto& image = value.lock())
         {
-            image->Update(deltaTime);
             image->Render(projection);
         }
     }

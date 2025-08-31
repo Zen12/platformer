@@ -5,6 +5,7 @@
 #include "../components/ui_image_renderer.hpp"
 #include "../system/window.hpp"
 #include  "../components/camera_component.hpp"
+#include "../components/particle_emitter.hpp"
 #include "../components/spine_renderer.hpp"
 
 
@@ -21,6 +22,7 @@ private:
     std::vector<std::weak_ptr<MeshRenderer>> _meshRenderers;
     std::vector<std::weak_ptr<UiTextRenderer>> _texts;
     std::vector<std::weak_ptr<UiImageRenderer>> _images;
+    std::vector<std::weak_ptr<ParticleEmitterComponent>> _particles;
 
 public:
     explicit RenderPipeline(const std::weak_ptr<Window> &window)
@@ -44,17 +46,22 @@ public:
         _cameraTransform3d = cameraTransform3d;
     }
 
-    void AddRenderer(const std::weak_ptr<MeshRenderer> &meshRenderer) { _meshRenderers.push_back(meshRenderer); }
-    void AddRenderer(const std::weak_ptr<SpriteRenderer> &sprite) { _sprites.push_back(sprite); }
+    void AddRenderer(const std::weak_ptr<MeshRenderer> &meshRenderer) noexcept { _meshRenderers.push_back(meshRenderer); }
+    void AddRenderer(const std::weak_ptr<SpriteRenderer> &sprite) noexcept { _sprites.push_back(sprite); }
 
-    void AddRenderer(const std::weak_ptr<UiTextRenderer> &text) { _texts.push_back(text); }
-    void AddRenderer(const std::weak_ptr<UiImageRenderer> &image) { _images.push_back(image); }
+    void AddRenderer(const std::weak_ptr<UiTextRenderer> &text) noexcept { _texts.push_back(text); }
+    void AddRenderer(const std::weak_ptr<UiImageRenderer> &image) noexcept { _images.push_back(image); }
+
+    void AddRenderer(const std::weak_ptr<ParticleEmitterComponent> &particle) noexcept {
+        _particles.push_back(particle);
+    }
 
     void Init() const noexcept;
     void ClearFrame() const noexcept;
     void RenderUI(const float& deltaTime) const;
     void RenderSprites(const float& deltaTime) const;
     void RenderMeshes(const float& deltaTime);
+    void RenderParticles(const float& deltaTime) const;
 
     [[nodiscard]] glm::vec3 ScreenToWorldPoint( glm::vec2 screenPos) const;
 
