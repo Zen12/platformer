@@ -32,12 +32,6 @@ public:
         _mesh.UpdateData(vertices, indices);
     }
 
-    void SetUniformVec3(const std::string& name, const glm::vec3 &v) const noexcept {
-        if (const auto material = _material.lock()) {
-            material->SetVec3Uniform(name, v);
-        }
-    }
-
     void SetUniformMat4(const std::string& name, const glm::mat4 &m) const noexcept {
         if (const auto material = _material.lock()) {
             material->SetMat4(name, m);

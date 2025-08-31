@@ -1,16 +1,10 @@
 #include "material.hpp"
 
-int32_t Material::GetLocation(const std::string &key)  noexcept
+int32_t Material::GetLocation(const std::string &key) const noexcept
 {
-    if (const auto it = _locationMap.find(key); it != _locationMap.end())
-    {
-        return it->second;
-    }
-
     if (const auto shader = _shader.lock())
     {
         const auto location = shader->GetLocation(key);
-        _locationMap[key] = location;
         return location;
     }
 
@@ -30,9 +24,5 @@ void Material::Bind() const
                 sprite->Bind();
             }
         }
-    }
-
-    for (const auto &[id, value]: _vec3Uniforms) {
-        SetVec3(id, value.x, value.y, value.z);
     }
 }
