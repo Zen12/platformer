@@ -16,7 +16,7 @@ private:
     std::weak_ptr<MeshRenderer> _meshRenderer;
 
     const float _radius = 20.0f;
-    const int _segments = 50;
+    const int _segments = 500;
 
     glm::vec3 _offset =  glm::vec3{0.0f, 2.0f, 0.0f};
 

@@ -97,11 +97,13 @@ const RayCastResult PhysicsWorld::RayCast(
         const auto collider = _fixtureToCollider[fixture];
         if (const auto col = collider.lock()) {
             if (const auto entity = col->GetEntity().lock()) {
-                return entity->GetTag() == ignoreTag;
+                return entity->GetTag() != ignoreTag;
             }
         }
-        return false;
+        return true;
     };
+
+    _callback.SetFilter(filter);
 
 
     _world->RayCast(&_callback, pointA, pointB);
