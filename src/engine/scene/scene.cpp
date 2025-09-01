@@ -172,7 +172,7 @@ std::shared_ptr<SpineData> Scene::LoadSpineData(const SpineAsset &asset) const {
     return {};
 }
 
-std::shared_ptr<SpineData> Scene::GetSpineData(const std::string &guid, const SpineAsset &asset) {
+std::shared_ptr<SpineData> Scene::GetSpineData([[maybe_unused]] const std::string &guid, const SpineAsset &asset) {
 
     const auto spine = LoadSpineData(asset);
     _spineDatas.push_back(spine);
