@@ -152,7 +152,6 @@ void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *in
         }
         _velocity.x = sign * absValue;
     }
-    auto scope = new ScopedTimer("   CharacterController::UpdateInternal 2");
     if (IsGrounded(hitPos)) {
         ResetJump();
 
@@ -190,9 +189,6 @@ void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *in
             ResetJump();
         }
     }
-    delete scope;
-    scope = new ScopedTimer("   CharacterController::UpdateInternal 3");
-
     const auto mouseWorldPosition = GetMousePosition();
     _isRight = mouseWorldPosition.x > position.x;
     SetFaceRight(_isRight);
@@ -210,8 +206,6 @@ void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *in
     if (input->IsMousePress(MouseButton::Left)) {
         Shoot(mouseWorldPosition);
     }
-
-    delete scope;
 
     transform->SetPosition(position + (_velocity * deltaTime));
     SetLookAt(mouseWorldPosition);

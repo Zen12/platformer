@@ -1,6 +1,6 @@
 #include "spine_collider.hpp"
 
-#define DEBUG_ENGINE_SPINE_COLLIDER_PROFILE 0
+#define DEBUG_ENGINE_SPINE_COLLIDER_PROFILE 1
 
 void SpineColliderComponent::CreateColliderFixture(spine::Bone *bone, const std::weak_ptr<BoxCollider2DComponent> &collider) const {
     if (const auto entity = _entity.lock()) {
@@ -52,6 +52,11 @@ void SpineColliderComponent::CreateColliderFixture(spine::Bone *bone, const std:
 }
 
 std::weak_ptr<BoxCollider2DComponent> SpineColliderComponent::CreateCollider(spine::Bone *bone) const {
+#ifndef NDEBUG
+#if DEBUG_ENGINE_SPINE_COLLIDER_PROFILE
+    PROFILE_SCOPE("    SpineColliderComponent::CreateCollider");
+#endif
+#endif
     if (const auto entity = _entity.lock()) {
         const auto collider = entity->AddComponent<BoxCollider2DComponent>();
         CreateColliderFixture(bone, collider);
@@ -84,10 +89,14 @@ void SpineColliderComponent::Update([[maybe_unused]] const float &deltaTime) {
                 const auto bones = render->GetBones();
 
                 for (size_t i = 0; i < bones.size(); i++) {
-                    const auto bone = bones[i];
-                    if (_bonesColliders.find(bone) == _bonesColliders.end()) {
+                    if (const auto bone = bones[i]; _bonesColliders.find(bone) == _bonesColliders.end()) {
                         _bonesColliders[bone] =  CreateCollider(bone);;
                     } else {
+#ifndef NDEBUG
+#if DEBUG_ENGINE_SPINE_COLLIDER_PROFILE
+                        PROFILE_SCOPE("    SpineColliderComponent::CreateBones");
+#endif
+#endif
                         const auto collider = _bonesColliders[bone];
                         const auto fixture = world->GetFixtureByCollider(collider);
                         const auto body = world->GetBody(entity->GetComponent<Rigidbody2dComponent>());

@@ -10,7 +10,7 @@ private:
     std::weak_ptr<PhysicsWorld> _physicsWorld;
     std::weak_ptr<Rigidbody2dComponent> _rigidbody2d;
 
-    std::map<spine::Bone *, std::weak_ptr<BoxCollider2DComponent>> _bonesColliders{};
+    std::unordered_map<spine::Bone *, std::weak_ptr<BoxCollider2DComponent>> _bonesColliders{};
 
 private:
     void CreateColliderFixture(spine::Bone *bone, const std::weak_ptr<BoxCollider2DComponent> &collider) const;
