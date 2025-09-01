@@ -7,7 +7,7 @@
 
 
 void Light2dComponent::Update([[maybe_unused]] const float &deltaTime) {
-    if (const auto world = _physicsWorld.lock()->GetWorld().lock()) {
+    if (const auto world = _physicsWorld.lock()) {
         if (const auto center = _center.lock()) {
             std::vector<float> meshVert{};
             std::vector<unsigned int> meshIndex{};
@@ -35,7 +35,7 @@ void Light2dComponent::Update([[maybe_unused]] const float &deltaTime) {
                 float x = centerPosition.x + _radius * std::cos(angleRad);
                 float y = centerPosition.y + _radius * std::sin(angleRad);
 
-                const auto result = _physicsWorld.lock()->RayCast(centerPosition, glm::vec3(x, y, 0));
+                const auto result = world->RayCast(centerPosition, glm::vec3(x, y, 0));
 
                 if (result.IsHit) {
                     x = result.Point.x;

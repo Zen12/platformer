@@ -8,7 +8,10 @@
 // Hash + equality for glm::ivec2
 struct IVec2Hash {
     std::size_t operator()(const glm::ivec2& v) const noexcept {
-        return std::hash<int>()(v.x * 73856093 ^ v.y * 19349663);
+        const std::size_t h1 = std::hash<int>()(v.x);
+        const std::size_t h2 = std::hash<int>()(v.y);
+        // combine hashes
+        return h1 ^ (h2 + 0x9e3779b97f4a7c15ULL + (h1 << 6) + (h1 >> 2));
     }
 };
 struct IVec2Eq {

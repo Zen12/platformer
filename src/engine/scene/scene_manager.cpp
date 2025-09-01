@@ -1,7 +1,6 @@
 #include "scene_manager.hpp"
 
-#include "../asset/factories/component_factory.hpp"
-#include "../gameplay/character_controller.hpp"
+#define DEBUG_ENGINE_SCENE_MANAGER_PROFILE 1
 
 
 template< typename TSerialization, typename TFactory>
@@ -56,7 +55,11 @@ bool SceneManager::TryToAddComponents(ComponentSerialization* comp, std::weak_pt
 
 
 void SceneManager::LoadScene(const SceneAsset &sceneAsset) const {
+#ifndef NDEBUG
+#if DEBUG_ENGINE_SCENE_MANAGER_PROFILE
     PROFILE_SCOPE("Loading of scene " + sceneAsset.Name);
+#endif
+#endif
 
     if (const auto assetManager = _scene->GetAssetManager().lock()) {
 
@@ -150,12 +153,24 @@ void SceneManager::CreateRequestedPrefabs() const {
 }
 
 void SceneManager::Update(const float &deltaTime) const {
+#ifndef NDEBUG
+#if DEBUG_ENGINE_SCENE_MANAGER_PROFILE
+    PROFILE_SCOPE("  SceneManager::Update");
+#endif
+#endif
+
     _scene->RemovePendingEntities();
     CreateRequestedPrefabs();
     _scene->Update(deltaTime);
 }
 
 void SceneManager::Render(const float &deltaTime) const  {
+#ifndef NDEBUG
+#if DEBUG_ENGINE_SCENE_MANAGER_PROFILE
+    PROFILE_SCOPE("  SceneManager::Render");
+#endif
+#endif
+
     _scene->Render(deltaTime);
 }
 

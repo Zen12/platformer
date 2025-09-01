@@ -1,5 +1,6 @@
 #include "spine_collider.hpp"
 
+#define DEBUG_ENGINE_SPINE_COLLIDER_PROFILE 1
 
 void SpineColliderComponent::CreateColliderFixture(spine::Bone *bone, const std::weak_ptr<BoxCollider2DComponent> &collider) const {
     if (const auto entity = _entity.lock()) {
@@ -25,7 +26,7 @@ void SpineColliderComponent::CreateColliderFixture(spine::Bone *bone, const std:
 
                     // Half-extents
                     const float halfLength = length * 0.5f;
-                    const float halfThickness = 0.05f; // choose thickness you want
+                    const float halfThickness = 0.10f; // choose thickness you want
 
                     // Box2D polygon shape (box aligned with bone)
                     b2PolygonShape dynamicBox;
@@ -72,6 +73,11 @@ void SpineColliderComponent::SetRigidBody2d(const std::weak_ptr<Rigidbody2dCompo
 }
 
 void SpineColliderComponent::Update([[maybe_unused]] const float &deltaTime) {
+#ifndef NDEBUG
+#if DEBUG_ENGINE_SPINE_COLLIDER_PROFILE
+    PROFILE_SCOPE("    SpineColliderComponent::Update");
+#endif
+#endif
     if (const auto world = _physicsWorld.lock()) {
         if (const auto entity = _entity.lock()) {
             if (const auto render = _renderer.lock()) {

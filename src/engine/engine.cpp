@@ -1,6 +1,6 @@
 #include "engine.hpp"
 
-#include <thread>
+#define DEBUG_ENGINE_PROFILE 1
 
 Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectPath) {
 
@@ -45,6 +45,11 @@ Engine::~Engine() {
 }
 
 void Engine::Tick() {
+#ifndef NDEBUG
+#if DEBUG_ENGINE_PROFILE
+    PROFILE_SCOPE("Engine::Tick");
+#endif
+#endif
 
     const float deltaTime = _frameTimer.GetResetDelta();
     _frameTimer.Reset();

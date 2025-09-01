@@ -134,8 +134,8 @@ entities:
               - type: prefab_spawner
               - data:
                   - prefab_id: 0f2f4e2a-0197-4f47-be93-67a5f415360f
-                  - spawn_time: 4.0
-                  - max_spawn: -1
+                  - spawn_time: 1
+                  - max_spawn: 20
   - obj:
       - guid: light_2d
       - components:

@@ -1,6 +1,7 @@
 #include "physics_world.hpp"
 
-#define DEBUG_ENGINE_PHYSICS_WORLD 0
+#define DEBUG_ENGINE_RENDER_COLLIDERS 1
+#define DEBUG_ENGINE_PHYSICS_PROFLE 1
 
 void PhysicsWorld::Simulate(const float &deltaTime) const {
     _world->Step(deltaTime, velocityIterations, positionIterations);
@@ -9,14 +10,20 @@ void PhysicsWorld::Simulate(const float &deltaTime) const {
 }
 
 void PhysicsWorld::UpdateRigidBodies() const {
-    for (auto && body: _bodies) {
+#ifndef NDEBUG
+#if DEBUG_ENGINE_RENDER_COLLIDERS
+    PROFILE_SCOPE("  PhysicsWorld::Update");
+#endif
+#endif
+
+    for (auto &&body: _bodies) {
         if (const auto rig = body.first.lock()) {
             const auto pos = rig->GetEntity().lock()->GetComponent<Transform>().lock()->GetPosition();
             body.second->SetTransform(b2Vec2(pos.x, pos.y), 0.0f);
         }
     }
 #ifndef NDEBUG
-#if DEBUG_ENGINE_PHYSICS_WORLD
+#if DEBUG_ENGINE_RENDER_COLLIDERS
     for (auto && [_, fixture]: _fixtures) {
 
         auto poly = dynamic_cast<b2PolygonShape*>(fixture->GetShape());

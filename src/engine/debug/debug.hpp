@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <chrono>
+#include <iomanip>
 #include <string>
 #include <utility>
 #include "../render/line.hpp"
@@ -23,8 +24,11 @@ struct ScopedTimer {
 
     ~ScopedTimer() {
         const auto end = std::chrono::high_resolution_clock::now();
-        const double duration = std::chrono::duration<double>(end - start).count(); // seconds as double
-        std::cout << name << " took " << duration << " seconds\n";
+        const double durationMs = std::chrono::duration<double, std::milli>(end - start).count(); // milliseconds
+
+        std::cout << std::left << std::setw(20) << name << " took "
+                  << std::fixed << std::setprecision(2)
+                  << std::setw(15) << durationMs << " ms\n";
     }
 };
 

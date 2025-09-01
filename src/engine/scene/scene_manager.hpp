@@ -16,6 +16,9 @@
 #include "../system/input_system.hpp"
 #include "../system/guid_generator.hpp"
 
+#include "../asset/factories/component_factory.hpp"
+#include "../gameplay/character_controller.hpp"
+
 
 
 class SceneManager {

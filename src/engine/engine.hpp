@@ -10,6 +10,7 @@
 #include "system/input_system.hpp"
 #include "system/window.hpp"
 #include "asset/loaders/asset_loader.hpp"
+#include <thread>
 
 #include "components/entity.hpp"
 #include "components/sprite_renderer.hpp"

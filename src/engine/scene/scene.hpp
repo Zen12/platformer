@@ -48,8 +48,6 @@ private:
 
     std::vector<std::string> _entitiesToRemove{};
 
-
-
 public:
 
     std::vector<PrefabInstantiateData> PrefabRequestInstantiate{};
@@ -66,239 +64,49 @@ public:
         _renderPipeline->Init();
     }
 
-    [[nodiscard]] std::shared_ptr<RectTransformRoot> GetRoot() const {
-        return _root;
-    }
+    [[nodiscard]] std::shared_ptr<RectTransformRoot> GetRoot() const;
 
-    [[nodiscard]] std::weak_ptr<PhysicsWorld> GetPhysicsWorld() const noexcept {
-        return _physicsWorld;
-    }
+    [[nodiscard]] std::weak_ptr<PhysicsWorld> GetPhysicsWorld() const noexcept;
 
-    [[nodiscard]] std::weak_ptr<RenderPipeline> GetRenderPipeline() const noexcept {
-        return _renderPipeline;
-    }
+    [[nodiscard]] std::weak_ptr<RenderPipeline> GetRenderPipeline() const noexcept;
 
-    [[nodiscard]] std::weak_ptr<AssetManager> GetAssetManager() const noexcept {
-        return _assetManager;
-    }
+    [[nodiscard]] std::weak_ptr<AssetManager> GetAssetManager() const noexcept;
 
-    [[nodiscard]] std::weak_ptr<InputSystem> GetInputSystem() const noexcept {
-        return _inputSystem;
-    }
+    [[nodiscard]] std::weak_ptr<InputSystem> GetInputSystem() const noexcept;
 
-    [[nodiscard]] std::weak_ptr<Window> GetWindow() const noexcept {
-        return _window;
-    }
+    [[nodiscard]] std::weak_ptr<Window> GetWindow() const noexcept;
 
-    std::weak_ptr<Entity> CreateEntity(const EntitySerialization &entitySerialization) {
-        const auto newEntity = std::make_shared<Entity>();
-        newEntity->SetId(entitySerialization.Guid);
-        newEntity->SetTag(entitySerialization.Tag);
-        newEntity->SetSelf(newEntity);
-
-        Entities.push_back(newEntity);
-        return newEntity;
-    }
+    std::weak_ptr<Entity> CreateEntity(const EntitySerialization &entitySerialization);
 
 
-    [[nodiscard]] std::weak_ptr<Entity> GetEntityById(const std::string &id) const {
-        for (const auto &entity: Entities) {
-            if (entity->GetId() == id) {
-                return entity;
-            }
-        }
-        return {};
-    }
+    [[nodiscard]] std::weak_ptr<Entity> GetEntityById(const std::string &id) const;
 
-    [[nodiscard]] size_t GetEntityCount() const noexcept {
-        return Entities.size();
-    }
+    [[nodiscard]] size_t GetEntityCount() const noexcept;
 
-    [[nodiscard]] std::shared_ptr<Entity> GetEntityByIndex(const uint32_t& index) const noexcept {
-        if (index >= Entities.size()) {
-            return {};
-        }
-        return Entities[index];
-    }
+    [[nodiscard]] std::shared_ptr<Entity> GetEntityByIndex(const uint32_t& index) const noexcept;
 
-    void RemoveEntityById(const std::string &id) {
-        _entitiesToRemove.push_back(id);
-    }
+    void RemoveEntityById(const std::string &id);
 
-    void Update(const float &deltaTime) const {
-        for (const auto &entity: Entities) {
-            entity->Update(deltaTime);
-        }
-        _physicsWorld->UpdateRigidBodies();
-    }
+    void Update(const float &deltaTime) const;
 
-    void RemovePendingEntities() {
-        for (const auto & id: _entitiesToRemove) {
+    void RemovePendingEntities();
 
-            const auto it = std::find_if(Entities.begin(), Entities.end(),
-                [id](const std::shared_ptr<Entity> &entity) {
-                return entity->GetId() == id;
-                });
+    void Render(const float &deltaTime) const;
 
-            if (it != Entities.end()) {
-                _physicsWorld->RemoveRigidBody(it->get()->GetComponent<Rigidbody2dComponent>());
-                Entities.erase(it);
-            }
-        }
-    }
+    [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid);
 
-    void Render(const float &deltaTime) const {
+    [[nodiscard]] std::shared_ptr<Material> GetMaterial(const std::string &guid);
 
-        _renderPipeline->ClearFrame();
-        _renderPipeline->RenderMeshes(deltaTime);
-        _renderPipeline->RenderSprites(deltaTime);
-        _renderPipeline->RenderParticles(deltaTime);
-
-#ifndef NDEBUG
-        _renderPipeline->RenderDebugLines();
-#endif
-        _renderPipeline->RenderUI(deltaTime);
-    }
-
-    [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) {
-        if (const auto assetManager = _assetManager.lock()) {
-
-            if (_shaders.find(vertexGuid + fragmentGuid) == _shaders.end()) {
-                const auto vertexSource = assetManager->LoadSourceByGuid<std::string>(vertexGuid);
-                const auto fragmentSource = assetManager->LoadSourceByGuid<std::string>(fragmentGuid);
-                const auto shader = std::make_shared<Shader>(vertexSource, fragmentSource);
-                _shaders[vertexGuid + fragmentGuid] = shader;
-                return shader;
-            }
-
-            return _shaders[vertexGuid + fragmentGuid];
-        }
-
-        return {};
-    }
-
-    [[nodiscard]] std::shared_ptr<Material> GetMaterial(const std::string &guid) {
-        if (const auto assetManager = _assetManager.lock()) {
-            if (_materials.find(guid) == _materials.end()) {
-                const auto materialAsset = assetManager->LoadAssetByGuid<MaterialAsset>(guid);
-                const auto shader = GetShader(materialAsset.VertexShaderGuid, materialAsset.FragmentShaderGuid);
-                const auto material = std::make_shared<Material>(shader);
-
-                const auto font = GetFont(materialAsset.Font);
-                material->SetFont(font);
-
-                if (!materialAsset.Image.empty()) {
-                    const auto sprite = GetSprite(materialAsset.Image);
-                    material->AddSprite(sprite);
-                }
-
-                _materials[guid] = material;
-                return material;
-            }
-            return _materials[guid];
-        }
-
-        return {};
-    }
-
-    [[nodiscard]] std::shared_ptr<SpineData> LoadSpineData(const SpineAsset& asset) const {
-        if (auto assetManager = _assetManager.lock()) {
-            // Load atlas (Spine owns this pointer)
-            auto atlas = assetManager->LoadSourceByGuid<spine::Atlas*>(asset.atlas);
-
-            spine::SkeletonBinary binary(atlas);
-
-            // Load SkeletonData (Spine allocates it with new)
-            spine::SkeletonData* rawSkeletonData = binary.readSkeletonDataFile(
-                assetManager->GetPathFromGuid(asset.skeleton).c_str()
-            );
-
-            // Wrap in smart pointer so it's freed automatically
-            auto skeletonData = std::shared_ptr<spine::SkeletonData>(rawSkeletonData);
-
-            // Create AnimationStateData and wrap in smart pointer
-            auto stateData = std::make_shared<spine::AnimationStateData>(skeletonData.get());
-
-            // Create Skeleton and AnimationState
-            auto skeleton = std::make_shared<spine::Skeleton>(skeletonData.get());
-            auto animationState = std::make_shared<spine::AnimationState>(stateData.get());
-
-            // Store all in SpineData so nothing is destroyed prematurely
-            return std::make_shared<SpineData>(
-                skeletonData,
-                stateData,
-                skeleton,
-                animationState,
-                asset.moveAnimationName,
-                asset.jumpAnimationName,
-                asset.hitAnimationName,
-                asset.idleAnimationName
-            );
-        }
-
-        return {};
-    }
+    [[nodiscard]] std::shared_ptr<SpineData> LoadSpineData(const SpineAsset& asset) const;
 
 
-    [[nodiscard]] std::shared_ptr<SpineData> GetSpineData([[maybe_unused]] const std::string &guid, const SpineAsset& asset) {
+    [[nodiscard]] std::shared_ptr<SpineData> GetSpineData([[maybe_unused]] const std::string &guid, const SpineAsset& asset);
 
-        const auto spine = LoadSpineData(asset);
-        _spineDatas.push_back(spine);
-        return spine;
-        /*
-        if (const auto assetManager = _assetManager.lock()) {
-            if (_spineDatas.find(guid) == _spineDatas.end()) {
-                const auto spineData = LoadSpineData(asset);
-                _spineDatas[guid] = spineData;
-                return spineData;
-            }
-            return _spineDatas[guid];
-        }
-        return {};
-        */
-    }
+    [[nodiscard]] std::shared_ptr<Sprite> GetSprite(const std::string &guid);
 
-    [[nodiscard]] std::shared_ptr<Sprite> GetSprite(const std::string &guid) {
-        if (const auto assetManager = _assetManager.lock()) {
-            if (_sprites.find(guid) == _sprites.end()) {
-                const auto sprite = std::make_shared<Sprite>(assetManager->LoadSourceByGuid<Sprite>(guid));
-                _sprites[guid] = sprite;
-                return sprite;
-            }
-            return _sprites[guid];
-        }
-        return {};
-    }
+    [[nodiscard]] std::shared_ptr<Font> GetFont(const std::string &guid);
 
-    [[nodiscard]] std::shared_ptr<Font> GetFont(const std::string &guid) {
-        if (guid.empty())
-            return {};
+    [[nodiscard]] std::shared_ptr<Entity> GetEntity(const std::string &id) const;
 
-        if (const auto assetManager = _assetManager.lock()) {
-            if (_fonts.find(guid) == _fonts.end()) {
-                const auto fontFile = assetManager->LoadSourceByGuid<Font>(guid);
-                std::shared_ptr<Font> font = std::make_shared<Font>(fontFile);
-                _fonts[guid] = font;
-                return font;
-            }
-            return _fonts[guid];
-        }
-        return {};
-    }
-
-    [[nodiscard]] std::shared_ptr<Entity> GetEntity(const std::string &id) const {
-        for (const auto & entity: Entities) {
-            if (entity->GetId() == id)
-                return entity;
-        }
-        return {};
-    }
-
-    [[nodiscard]] std::weak_ptr<Entity> FindByTag(const std::string &tag) const {
-        for (const auto & entity: Entities) {
-            if (entity->GetTag() == tag)
-                return entity;
-        }
-        return {};
-    }
+    [[nodiscard]] std::weak_ptr<Entity> FindByTag(const std::string &tag) const;
 };
