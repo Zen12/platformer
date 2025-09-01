@@ -52,7 +52,7 @@ bool CharacterController::IsHitDir(glm::vec2 position, glm::vec2 dir, glm::vec2 
             const glm::vec3 pointA(position.x, position.y, 0);    // Start of ray
             const glm::vec3 pointB(position.x + dir.x, position.y + dir.y, 0);   // End of ray
 
-            const auto result = world->RayCast( pointA, pointB, std::vector<std::string>{"enemy"});
+            const auto result = world->RayCast( pointA, pointB, "enemy");
 
             hitPos = glm::vec2(result.Point.x, result.Point.y);
 
@@ -152,12 +152,11 @@ void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *in
         }
         _velocity.x = sign * absValue;
     }
-
+    auto scope = new ScopedTimer("   CharacterController::UpdateInternal 2");
     if (IsGrounded(hitPos)) {
         ResetJump();
 
-        const float diff = std::abs(hitPos.y - position.y);
-        if (diff > 0.01) {
+        if (const float diff = std::abs(hitPos.y - position.y); diff > 0.01) {
             position.y = hitPos.y;
         }
 
@@ -191,6 +190,8 @@ void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *in
             ResetJump();
         }
     }
+    delete scope;
+    scope = new ScopedTimer("   CharacterController::UpdateInternal 3");
 
     const auto mouseWorldPosition = GetMousePosition();
     _isRight = mouseWorldPosition.x > position.x;
@@ -209,6 +210,8 @@ void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *in
     if (input->IsMousePress(MouseButton::Left)) {
         Shoot(mouseWorldPosition);
     }
+
+    delete scope;
 
     transform->SetPosition(position + (_velocity * deltaTime));
     SetLookAt(mouseWorldPosition);

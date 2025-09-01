@@ -109,7 +109,7 @@ public:
     void UpdateColliders(const float& deltaTime) const;
 
     [[nodiscard]] const RayCastResult RayCast(const glm::vec3 &origin, const glm::vec3 &target);
-    [[nodiscard]] const RayCastResult RayCast(const glm::vec3& origin, const glm::vec3& target, const std::vector<std::string> &ignoreTags);
+    [[nodiscard]] const RayCastResult RayCast(const glm::vec3& origin, const glm::vec3& target, const std::string_view &ignoreTag);
 
     [[nodiscard]] std::weak_ptr<b2World> GetWorld() const;
 

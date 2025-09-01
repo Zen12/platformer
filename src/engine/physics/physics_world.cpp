@@ -1,7 +1,7 @@
 #include "physics_world.hpp"
 
 #define DEBUG_ENGINE_RENDER_COLLIDERS 1
-#define DEBUG_ENGINE_PHYSICS_PROFLE 1
+#define DEBUG_ENGINE_PHYSICS_PROFILE 1
 
 void PhysicsWorld::Simulate(const float &deltaTime) const {
     _world->Step(deltaTime, velocityIterations, positionIterations);
@@ -82,31 +82,26 @@ const RayCastResult PhysicsWorld::RayCast(const glm::vec3 &origin, const glm::ve
 const RayCastResult PhysicsWorld::RayCast(
     const glm::vec3 &origin,
     const glm::vec3 &target,
-    const std::vector<std::string> &ignoreTags) {
+    const std::string_view &ignoreTag) {
+#if DEBUG_ENGINE_PHYSICS_PROFILE
+    PROFILE_SCOPE("PhysicsWorld::RayCast::RayCast(3 args)");
+#endif
 
-    b2Vec2 pointA(origin.x, origin.y);    // Start of ray
-    b2Vec2 pointB(target.x, target.y);   // End of ray
+
+    const b2Vec2 pointA(origin.x, origin.y);    // Start of ray
+    const b2Vec2 pointB(target.x, target.y);   // End of ray
 
     _callback.Hit = false;
 
-    if (!ignoreTags.empty()) {
-        RayCastClosestCallback::FilterFn filter = [this, ignoreTags](const b2Fixture* fixture) {
-            for (const auto& [rig, fix] : _boxColliderToFixture ) {
-                if (fix == fixture) {
-                    if (const auto boxComponent = rig.lock()) {
-                        if (const auto entity = boxComponent->GetEntity().lock()) {
-                            return !(std::find(ignoreTags.begin(), ignoreTags.end(), entity->GetTag()) != ignoreTags.end());
-                        }
-                    }
-                }
+    const RayCastClosestCallback::FilterFn filter = [this, ignoreTag](b2Fixture* fixture) {
+        const auto collider = _fixtureToCollider[fixture];
+        if (const auto col = collider.lock()) {
+            if (const auto entity = col->GetEntity().lock()) {
+                return entity->GetTag() == ignoreTag;
             }
-
-            return true;
-        };
-
-    } else {
-        _callback.SetFilter(nullptr);
-    }
+        }
+        return false;
+    };
 
 
     _world->RayCast(&_callback, pointA, pointB);
@@ -116,17 +111,8 @@ const RayCastResult PhysicsWorld::RayCast(
     if (_callback.Hit) {
         _result.Point = glm::vec3(_callback.Point.x, _callback.Point.y, 0.0f);
         _result.Normal = glm::vec3(_callback.Normal.x, _callback.Normal.y, 0.0f);
-    }
-
-    for (const auto& component : _rigidBodyToCollider) {
-        const auto pair = component.second;
-        for (auto& collider : pair) {
-            if (_boxColliderToFixture[collider] == _callback.Fixture) {
-                _result.Rigidbody = _colliderToRigidBody[collider];
-                _result.BoxCollider = collider;
-                return _result;
-            }
-        }
+        _result.BoxCollider = _fixtureToCollider[_callback.Fixture];
+        _result.Rigidbody = _colliderToRigidBody[_result.BoxCollider];
     }
 
     return _result;
