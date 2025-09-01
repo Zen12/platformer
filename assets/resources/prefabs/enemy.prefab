@@ -1,6 +1,5 @@
 - name: "enemy"
 - obj:
-    - guid: alien-character
     - tag: "enemy"
     - components:
         - component:
@@ -45,16 +44,9 @@
             - data:
                 - isDynamic: false
         - component:
-            - type: box_collider
+            - type: spine_collider
             - data:
-                - translate:
-                    - x: 0.0
-                    - y: 0.5
-                    - z: 0.0
-                - size:
-                    - x: 1.0
-                    - y: 1.0
-                    - z: 0.0
+                - none: "none"
         - component:
             - type: health_component
             - data:

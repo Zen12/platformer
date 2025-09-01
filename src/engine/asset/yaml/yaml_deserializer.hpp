@@ -358,6 +358,14 @@ namespace YAML
     };
 
     template <>
+    struct convert<SpineColliderSerialization>
+    {
+        static bool decode([[maybe_unused]] const Node &node, [[maybe_unused]] SpineColliderSerialization &rhs) {
+            return true;
+        }
+    };
+
+    template <>
     struct convert<Rigidbody2dSerialization>
     {
         static bool decode(const Node &node, Rigidbody2dSerialization &rhs) {
@@ -426,6 +434,8 @@ namespace YAML
                 return Parse<PathFinderSerialization>(data);
             } else if (type == "particle_emitter") {
                 return Parse<ParticleEmitterSerialization>(data);
+            } else if (type == "spine_collider") {
+                return Parse<SpineColliderSerialization>(data);
             }
 
             throw std::runtime_error("Unknown component type: " + type);

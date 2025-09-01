@@ -13,6 +13,10 @@
 #include <string>
 #include <ranges>
 #include <iostream>
+#include "../components/sprite_renderer.hpp"
+#include "../components/transforms/transform.hpp"
+#include "../debug/debug.hpp"
+
 
 class RayCastClosestCallback final : public b2RayCastCallback {
 private:
@@ -93,6 +97,10 @@ public:
         const std::weak_ptr<Rigidbody2dComponent> &rigidBody,
         const std::weak_ptr<BoxCollider2DComponent> &collider,
         const b2FixtureDef &fixtureDef);
+
+    b2Fixture* GetFixtureByCollider(const std::weak_ptr<BoxCollider2DComponent> &collider) const noexcept;
+
+    b2Body *GetBody(const std::weak_ptr<Rigidbody2dComponent> &rigidBody) const noexcept;
 
     void AddRigidBodyComponent(const std::weak_ptr<Rigidbody2dComponent> &rigidBody, b2Body *body);
 

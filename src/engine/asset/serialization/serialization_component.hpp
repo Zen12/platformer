@@ -60,6 +60,10 @@ struct ParticleEmitterSerialization final : public ComponentSerialization {
     std::string materialGuid;
 };
 
+struct SpineColliderSerialization final : public ComponentSerialization {
+
+};
+
 struct GridSerialization final : public ComponentSerialization {
     std::vector<std::vector<int>> grid;
     glm::vec3 spawnOffset;

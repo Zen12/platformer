@@ -237,50 +237,52 @@ glm::vec3 CharacterController::GetMousePosition() const {
 
 void CharacterController::Shoot(const glm::vec3 &lookAt) const {
     if (const auto world = _world.lock()) {
-        const auto startPosition = _renderer.lock()->GetBonePosition("gun-tip");
-        const auto result = world->RayCast(startPosition, lookAt);
+        if (const auto render = _renderer.lock()) {
+            const auto startPosition = render->GetBonePosition("gun-tip");
+            const auto result = world->RayCast(startPosition, lookAt);
 
-        if (const auto particles = _particles.lock()) {
-            const glm::vec3 dir = lookAt - startPosition;
-            constexpr glm::vec3 axis(0.0f, 0.0f, 1.0f); // Z axis
-            constexpr float angle1 = glm::radians(30.0f);
-            constexpr float angle2 = glm::radians(-30.0f);
+            if (const auto particles = _particles.lock()) {
+                const glm::vec3 dir = lookAt - startPosition;
+                constexpr glm::vec3 axis(0.0f, 0.0f, 1.0f); // Z axis
+                constexpr float angle1 = glm::radians(30.0f);
+                constexpr float angle2 = glm::radians(-30.0f);
 
-            const glm::vec3 rotated1 = glm::rotate(dir, angle1, axis);
-            const glm::vec3 rotated2 = glm::rotate(dir, angle2, axis);
+                const glm::vec3 rotated1 = glm::rotate(dir, angle1, axis);
+                const glm::vec3 rotated2 = glm::rotate(dir, angle2, axis);
 
-            constexpr float speed = 1.0f;
+                constexpr float speed = 1.0f;
 
-            particles->OverrideDataVelocity(rotated1 * speed, rotated2 * speed);
-            particles->Emit(startPosition);
-        }
+                particles->OverrideDataVelocity(rotated1 * speed, rotated2 * speed);
+                particles->Emit(startPosition);
+            }
 
 #ifndef NDEBUG
 #if CHARACTER_CONTROLLER_DEBUG
-        DebugLines::AddLine(startPosition, lookAt);
+            DebugLines::AddLine(startPosition, lookAt);
 #endif
 #endif
 
-        if (result.IsHit) {
-            if (const auto rigid = result.Rigidbody.lock()) {
-                if (const auto entity = rigid->GetEntity().lock()) {
-                    if (const auto health = entity->GetComponent<HealthComponent>().lock()) {
-                        health->DecreaseHealth(_characterSettings.Damage);
+            if (result.IsHit) {
+                if (const auto rigid = result.Rigidbody.lock()) {
+                    if (const auto entity = rigid->GetEntity().lock()) {
+                        if (const auto health = entity->GetComponent<HealthComponent>().lock()) {
+                            health->DecreaseHealth(_characterSettings.Damage);
+                        }
                     }
-                }
-                if (const auto particles = _particles.lock()) {
-                    const glm::vec3 dir = result.Normal;
-                    constexpr glm::vec3 axis(0.0f, 0.0f, 1.0f); // Z axis
-                    constexpr float angle1 = glm::radians(30.0f);
-                    constexpr float angle2 = glm::radians(-30.0f);
+                    if (const auto particles = _particles.lock()) {
+                        const glm::vec3 dir = result.Normal;
+                        constexpr glm::vec3 axis(0.0f, 0.0f, 1.0f); // Z axis
+                        constexpr float angle1 = glm::radians(30.0f);
+                        constexpr float angle2 = glm::radians(-30.0f);
 
-                    const glm::vec3 rotated1 = glm::rotate(dir, angle1, axis);
-                    const glm::vec3 rotated2 = glm::rotate(dir, angle2, axis);
+                        const glm::vec3 rotated1 = glm::rotate(dir, angle1, axis);
+                        const glm::vec3 rotated2 = glm::rotate(dir, angle2, axis);
 
-                    constexpr float speed = 1.0f;
+                        constexpr float speed = 1.0f;
 
-                    particles->OverrideDataVelocity(rotated1 * speed, rotated2 * speed);
-                    particles->Emit(result.Point);
+                        particles->OverrideDataVelocity(rotated1 * speed, rotated2 * speed);
+                        particles->Emit(result.Point);
+                    }
                 }
             }
         }

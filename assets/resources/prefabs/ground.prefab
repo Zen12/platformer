@@ -1,6 +1,6 @@
 - name: "ground"
 - obj:
-    - guid: sprite-tile
+    - tag: "ground"
     - components:
         - component:
             - type: transform

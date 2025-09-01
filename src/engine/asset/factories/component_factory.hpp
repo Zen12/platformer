@@ -2,6 +2,7 @@
 #include <memory>
 
 #include "../../components/particle_emitter.hpp"
+#include "../../components/physics/spine_collider.hpp"
 #include "../../gameplay/ai_controller.hpp"
 #include "../../gameplay/grid_prefab_spawner.hpp"
 #include "../../gameplay/prefab_spawner.hpp"
@@ -236,24 +237,25 @@ protected:
         if (const auto scene = _scene.lock()) {
             if (const auto comp = component.lock()) {
                 if (const auto world = scene->GetPhysicsWorld().lock()) {
-                    b2PolygonShape dynamicBox;
-                    // Half extents, then offset, then angle
-                    dynamicBox.SetAsBox(
-                        serialization.scale.x / 2,             // half width
-                        serialization.scale.y / 2,             // half height
-                        b2Vec2(serialization.translate.x, serialization.translate.y), // offset upward by half its height
-                        0.0f                                   // rotation
-                    );
+                    if (const auto entity = _entity.lock()) {
 
-                    b2FixtureDef fixtureDef;
-                    fixtureDef.shape = &dynamicBox;
-                    fixtureDef.density = 1.0f; // TODO move to serialization
-                    fixtureDef.friction = 0.3f;  // TODO move to serialization
+                        b2PolygonShape dynamicBox;
+                        // Half extents, then offset, then angle
+                        dynamicBox.SetAsBox(
+                            serialization.scale.x / 2,             // half width
+                            serialization.scale.y / 2,             // half height
+                            b2Vec2(serialization.translate.x, serialization.translate.y), // offset upward by half its height
+                            0.0f                                   // rotation
+                        );
 
-                    const auto rigidBody = _entity.lock()->GetComponent<Rigidbody2dComponent>();
-                    const auto collider = _entity.lock()->AddComponent<BoxCollider2DComponent>();
-                    world->AddColliderComponent(rigidBody, collider, fixtureDef);
+                        b2FixtureDef fixtureDef;
+                        fixtureDef.shape = &dynamicBox;
+                        fixtureDef.density = 1.0f; // TODO move to serialization
+                        fixtureDef.friction = 0.3f;  // TODO move to serialization
 
+                        const auto rigidBody = entity->GetComponent<Rigidbody2dComponent>();
+                        world->AddColliderComponent(rigidBody, component, fixtureDef);
+                    }
                 }
             }
         }
@@ -288,8 +290,7 @@ protected:
 
                     body->SetLinearDamping(1.0f);
 
-                    std::weak_ptr<Rigidbody2dComponent> rigidComponent = _entity.lock()->AddComponent<Rigidbody2dComponent>();
-                    world->AddRigidBodyComponent(rigidComponent, body);
+                    world->AddRigidBodyComponent(component, body);
                 }
             }
         }
@@ -439,6 +440,22 @@ protected:
         }
     }
 };
+
+class SpineColliderComponentFactory final : public ComponentFactory<SpineColliderComponent, SpineColliderSerialization> {
+protected:
+    void FillComponent(const std::weak_ptr<SpineColliderComponent> &component,
+        [[maybe_unused]] const SpineColliderSerialization &serialization) override {
+        if (const auto scene = _scene.lock()) {
+            if (const auto entity = _entity.lock()) {
+                if (const auto comp = component.lock()) {
+                    comp->SetPhysicsWorld(scene->GetPhysicsWorld());
+                    comp->SetRenderer(entity->GetComponent<SpineRenderer>());
+                }
+            }
+        }
+    }
+};
+
 
 
 

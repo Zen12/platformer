@@ -112,7 +112,6 @@ TODO
 - Sound
 
 ## 🏃🏃🏃 TODO 🏃🏃🏃
-- [ ] Simple particles for walk and shoot(bullet)
 - [ ] Light2d better ray-detection
 - [ ] Health bars
 - [ ] UI buttons
