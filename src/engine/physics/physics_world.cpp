@@ -24,7 +24,7 @@ void PhysicsWorld::UpdateRigidBodies() const {
     }
 #ifndef NDEBUG
 #if DEBUG_ENGINE_RENDER_COLLIDERS
-    for (auto && [_, fixture]: _fixtures) {
+    for (auto && [_, fixture]: _boxColliderToFixture) {
 
         auto poly = dynamic_cast<b2PolygonShape*>(fixture->GetShape());
 
@@ -48,7 +48,7 @@ void PhysicsWorld::UpdateRigidBodies() const {
 }
 
 void PhysicsWorld::UpdateColliders(const float &deltaTime) const {
-    for (const auto& component : _colliders) {
+    for (const auto& component : _rigidBodyToCollider) {
         auto colliders = component.second;
         for (auto& collider : colliders) {
             if (auto col = collider.lock()) {
@@ -59,30 +59,21 @@ void PhysicsWorld::UpdateColliders(const float &deltaTime) const {
 }
 
 const RayCastResult PhysicsWorld::RayCast(const glm::vec3 &origin, const glm::vec3 &target) {
-    b2Vec2 pointA(origin.x, origin.y);    // Start of ray
-    b2Vec2 pointB(target.x, target.y);   // End of ray
+    const b2Vec2 pointA(origin.x, origin.y);    // Start of ray
+    const b2Vec2 pointB(target.x, target.y);   // End of ray
 
     _callback.Hit = false;
     _callback.SetFilter(nullptr);
 
     _world->RayCast(&_callback, pointA, pointB);
 
-    _result.IsHit =_callback.Hit;
+    _result.IsHit = _callback.Hit;
 
     if (_callback.Hit) {
         _result.Point = glm::vec3(_callback.Point.x, _callback.Point.y, 0.0f);
         _result.Normal = glm::vec3(_callback.Normal.x, _callback.Normal.y, 0.0f);
-    }
-
-    for (const auto& component : _colliders) {
-        const auto pair = component.second;
-        for (auto& collider : pair) {
-            if (_fixtures[collider] == _callback.Fixture) {
-                _result.Rigidbody = _rigidBodies[collider];
-                _result.BoxCollider = collider;
-                return _result;
-            }
-        }
+        _result.BoxCollider = _fixtureToCollider[_callback.Fixture];
+        _result.Rigidbody = _colliderToRigidBody[_result.BoxCollider];
     }
 
     return _result;
@@ -99,8 +90,8 @@ const RayCastResult PhysicsWorld::RayCast(
     _callback.Hit = false;
 
     if (!ignoreTags.empty()) {
-        RayCastClosestCallback::FilterFn filter = [this, ignoreTags](b2Fixture* fixture) {
-            for (const auto& [rig, fix] : _fixtures ) {
+        RayCastClosestCallback::FilterFn filter = [this, ignoreTags](const b2Fixture* fixture) {
+            for (const auto& [rig, fix] : _boxColliderToFixture ) {
                 if (fix == fixture) {
                     if (const auto boxComponent = rig.lock()) {
                         if (const auto entity = boxComponent->GetEntity().lock()) {
@@ -127,11 +118,11 @@ const RayCastResult PhysicsWorld::RayCast(
         _result.Normal = glm::vec3(_callback.Normal.x, _callback.Normal.y, 0.0f);
     }
 
-    for (const auto& component : _colliders) {
+    for (const auto& component : _rigidBodyToCollider) {
         const auto pair = component.second;
         for (auto& collider : pair) {
-            if (_fixtures[collider] == _callback.Fixture) {
-                _result.Rigidbody = _rigidBodies[collider];
+            if (_boxColliderToFixture[collider] == _callback.Fixture) {
+                _result.Rigidbody = _colliderToRigidBody[collider];
                 _result.BoxCollider = collider;
                 return _result;
             }
@@ -153,7 +144,7 @@ void PhysicsWorld::AddColliderComponent(
     const auto body = _bodies.at(rigidBody);
     const auto fixture = body->CreateFixture(&fixtureDef);
 
-    if (auto& vec = _colliders[rigidBody];
+    if (auto& vec = _rigidBodyToCollider[rigidBody];
         std::find_if(vec.begin(), vec.end(),
                      [&](const std::weak_ptr<BoxCollider2DComponent>& c) {
                          return !c.expired() && !collider.expired() &&
@@ -163,12 +154,13 @@ void PhysicsWorld::AddColliderComponent(
         vec.push_back(collider);
     }
 
-    _rigidBodies[collider] = rigidBody;
-    _fixtures[collider] = fixture;
+    _colliderToRigidBody[collider] = rigidBody;
+    _boxColliderToFixture[collider] = fixture;
+    _fixtureToCollider[fixture] = collider;
 }
 
 [[nodiscard]] b2Fixture* PhysicsWorld::GetFixtureByCollider(const std::weak_ptr<BoxCollider2DComponent> &collider) const noexcept {
-    return _fixtures.at(collider);
+    return _boxColliderToFixture.at(collider);
 }
 
 [[nodiscard]] b2Body* PhysicsWorld::GetBody(const std::weak_ptr<Rigidbody2dComponent> &rigidBody) const noexcept {
@@ -177,8 +169,8 @@ void PhysicsWorld::AddColliderComponent(
 
 void PhysicsWorld::AddRigidBodyComponent(const std::weak_ptr<Rigidbody2dComponent> &rigidBody, b2Body *body) {
 
-    if (_colliders.find(rigidBody) == _colliders.end()) {
-        _colliders[rigidBody] = std::vector<std::weak_ptr<BoxCollider2DComponent>>();
+    if (_rigidBodyToCollider.find(rigidBody) == _rigidBodyToCollider.end()) {
+        _rigidBodyToCollider[rigidBody] = std::vector<std::weak_ptr<BoxCollider2DComponent>>();
         _bodies[rigidBody] = body;
     }
 }
@@ -190,13 +182,13 @@ void PhysicsWorld::RemoveRigidBody(const std::weak_ptr<Rigidbody2dComponent> &ri
 
     _world->DestroyBody(_bodies[rigidBody]);
 
-    const auto colliders = _colliders[rigidBody];
+    const auto colliders = _rigidBodyToCollider[rigidBody];
     for (auto& collider : colliders) {
-        _rigidBodies.erase(collider);
-        _fixtures.erase(collider);
+        _colliderToRigidBody.erase(collider);
+        _boxColliderToFixture.erase(collider);
     }
 
-    _colliders.erase(rigidBody);
+    _rigidBodyToCollider.erase(rigidBody);
     _bodies.erase(rigidBody);
 
 }

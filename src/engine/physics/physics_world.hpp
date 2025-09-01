@@ -87,10 +87,13 @@ private:
     std::shared_ptr<b2World> _world{};
     const glm::int32 velocityIterations = 6;
     const glm::int32 positionIterations = 2;
-    std::map<std::weak_ptr<Rigidbody2dComponent>, std::vector<std::weak_ptr<BoxCollider2DComponent>>, WeakPtrCompare> _colliders{};
-    std::map<std::weak_ptr<BoxCollider2DComponent>, std::weak_ptr<Rigidbody2dComponent>, WeakPtrCompare> _rigidBodies{};
-    std::unordered_map<std::weak_ptr<BoxCollider2DComponent>, b2Fixture*, WeakPtrHash, WeakPtrEqual> _fixtures;
+
+    std::unordered_map<std::weak_ptr<BoxCollider2DComponent>, std::weak_ptr<Rigidbody2dComponent>, WeakPtrHash, WeakPtrEqual> _colliderToRigidBody{};
+    std::unordered_map<std::weak_ptr<BoxCollider2DComponent>, b2Fixture*, WeakPtrHash, WeakPtrEqual> _boxColliderToFixture;
+    std::unordered_map< b2Fixture*,std::weak_ptr<BoxCollider2DComponent>> _fixtureToCollider;
+
     std::map<std::weak_ptr<Rigidbody2dComponent>, b2Body*, WeakPtrCompare> _bodies{};
+    std::map<std::weak_ptr<Rigidbody2dComponent>, std::vector<std::weak_ptr<BoxCollider2DComponent>>, WeakPtrCompare> _rigidBodyToCollider{};
     RayCastClosestCallback _callback{};
     RayCastResult _result{};
 
