@@ -62,6 +62,21 @@ struct RayCastResult {
 
 class PhysicsWorld
 {
+    struct WeakPtrHash {
+        template <typename T>
+        std::size_t operator()(const std::weak_ptr<T>& wp) const noexcept {
+            auto sp = wp.lock();
+            return std::hash<T*>()(sp.get()); // hash the raw pointer
+        }
+    };
+
+    struct WeakPtrEqual {
+        template <typename T>
+        bool operator()(const std::weak_ptr<T>& a, const std::weak_ptr<T>& b) const noexcept {
+            return !a.owner_before(b) && !b.owner_before(a); // compare owner
+        }
+    };
+
     struct WeakPtrCompare {
         template <typename T>
         bool operator()(const std::weak_ptr<T>& lhs, const std::weak_ptr<T>& rhs) const {
@@ -74,7 +89,7 @@ private:
     const glm::int32 positionIterations = 2;
     std::map<std::weak_ptr<Rigidbody2dComponent>, std::vector<std::weak_ptr<BoxCollider2DComponent>>, WeakPtrCompare> _colliders{};
     std::map<std::weak_ptr<BoxCollider2DComponent>, std::weak_ptr<Rigidbody2dComponent>, WeakPtrCompare> _rigidBodies{};
-    std::map<std::weak_ptr<BoxCollider2DComponent>, b2Fixture*, WeakPtrCompare> _fixtures{};
+    std::unordered_map<std::weak_ptr<BoxCollider2DComponent>, b2Fixture*, WeakPtrHash, WeakPtrEqual> _fixtures;
     std::map<std::weak_ptr<Rigidbody2dComponent>, b2Body*, WeakPtrCompare> _bodies{};
     RayCastClosestCallback _callback{};
     RayCastResult _result{};
@@ -100,9 +115,9 @@ public:
         const std::weak_ptr<BoxCollider2DComponent> &collider,
         const b2FixtureDef &fixtureDef);
 
-    b2Fixture* GetFixtureByCollider(const std::weak_ptr<BoxCollider2DComponent> &collider) const noexcept;
+    [[nodiscard]] b2Fixture* GetFixtureByCollider(const std::weak_ptr<BoxCollider2DComponent> &collider) const noexcept;
 
-    b2Body *GetBody(const std::weak_ptr<Rigidbody2dComponent> &rigidBody) const noexcept;
+    [[nodiscard]] b2Body *GetBody(const std::weak_ptr<Rigidbody2dComponent> &rigidBody) const noexcept;
 
     void AddRigidBodyComponent(const std::weak_ptr<Rigidbody2dComponent> &rigidBody, b2Body *body);
 

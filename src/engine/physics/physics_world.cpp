@@ -59,7 +59,33 @@ void PhysicsWorld::UpdateColliders(const float &deltaTime) const {
 }
 
 const RayCastResult PhysicsWorld::RayCast(const glm::vec3 &origin, const glm::vec3 &target) {
-    return RayCast(origin, target, std::vector<std::string>{});
+    b2Vec2 pointA(origin.x, origin.y);    // Start of ray
+    b2Vec2 pointB(target.x, target.y);   // End of ray
+
+    _callback.Hit = false;
+    _callback.SetFilter(nullptr);
+
+    _world->RayCast(&_callback, pointA, pointB);
+
+    _result.IsHit =_callback.Hit;
+
+    if (_callback.Hit) {
+        _result.Point = glm::vec3(_callback.Point.x, _callback.Point.y, 0.0f);
+        _result.Normal = glm::vec3(_callback.Normal.x, _callback.Normal.y, 0.0f);
+    }
+
+    for (const auto& component : _colliders) {
+        const auto pair = component.second;
+        for (auto& collider : pair) {
+            if (_fixtures[collider] == _callback.Fixture) {
+                _result.Rigidbody = _rigidBodies[collider];
+                _result.BoxCollider = collider;
+                return _result;
+            }
+        }
+    }
+
+    return _result;
 }
 
 const RayCastResult PhysicsWorld::RayCast(

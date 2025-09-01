@@ -3,6 +3,7 @@
 #ifndef NDEBUG
 #include "../debug/debug.hpp"
 #define LIGHT_COMPONENT_DEBUG 0
+#define ENGINE_DEBUG_LIGHT_PROFILE 1
 #endif
 
 
@@ -35,9 +36,13 @@ void Light2dComponent::Update([[maybe_unused]] const float &deltaTime) {
                 float x = centerPosition.x + _radius * std::cos(angleRad);
                 float y = centerPosition.y + _radius * std::sin(angleRad);
 
+#if ENGINE_DEBUG_LIGHT_PROFILE
                 ScopedTimer *scoped = new ScopedTimer("     Light2dComponent::Update::Raycast");
+#endif
                 const auto result = world->RayCast(centerPosition, glm::vec3(x, y, 0));
+#if ENGINE_DEBUG_LIGHT_PROFILE
                 delete scoped;
+#endif
 
                 if (result.IsHit) {
                     x = result.Point.x;
