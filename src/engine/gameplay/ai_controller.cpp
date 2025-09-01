@@ -2,6 +2,20 @@
 
 #define DEBUG_AI_CONTROLLER 0
 
+void AiController::SetAnimation(const size_t &index, const std::string &animation, const bool &isLoop) {
+
+    if (_animationValue.find(index) != _animationValue.end()) {
+        if (_animationValue[index] == animation) {
+            return;
+        }
+    }
+
+    _animationValue[index] = animation;
+    if (const auto render = _renderer.lock()) {
+        render->SetAnimation(index, animation, isLoop, false);
+    }
+}
+
 void AiController::SetFaceRight(const bool &isFaceRight) {
     if (const auto render = _renderer.lock()) {
         render->SetFaceRight(isFaceRight);

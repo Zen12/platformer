@@ -58,11 +58,11 @@ void PhysicsWorld::UpdateColliders(const float &deltaTime) const {
     }
 }
 
-RayCastResult PhysicsWorld::RayCast(const glm::vec3 &origin, const glm::vec3 &target) {
+const RayCastResult PhysicsWorld::RayCast(const glm::vec3 &origin, const glm::vec3 &target) {
     return RayCast(origin, target, std::vector<std::string>{});
 }
 
-RayCastResult PhysicsWorld::RayCast(
+const RayCastResult PhysicsWorld::RayCast(
     const glm::vec3 &origin,
     const glm::vec3 &target,
     const std::vector<std::string> &ignoreTags) {
@@ -70,7 +70,7 @@ RayCastResult PhysicsWorld::RayCast(
     b2Vec2 pointA(origin.x, origin.y);    // Start of ray
     b2Vec2 pointB(target.x, target.y);   // End of ray
 
-    RayCastClosestCallback callback;
+    _callback.Hit = false;
 
     if (!ignoreTags.empty()) {
         RayCastClosestCallback::FilterFn filter = [this, ignoreTags](b2Fixture* fixture) {
@@ -87,32 +87,32 @@ RayCastResult PhysicsWorld::RayCast(
             return true;
         };
 
-        callback.SetFilter(filter);
+    } else {
+        _callback.SetFilter(nullptr);
     }
 
 
-    _world->RayCast(&callback, pointA, pointB);
+    _world->RayCast(&_callback, pointA, pointB);
 
-    RayCastResult result{};
+    _result.IsHit =_callback.Hit;
 
-    if (callback.Hit) {
-        result.IsHit = true;
-        result.Point = glm::vec3(callback.Point.x, callback.Point.y, 0.0f);
-        result.Normal = glm::vec3(callback.Normal.x, callback.Normal.y, 0.0f);
+    if (_callback.Hit) {
+        _result.Point = glm::vec3(_callback.Point.x, _callback.Point.y, 0.0f);
+        _result.Normal = glm::vec3(_callback.Normal.x, _callback.Normal.y, 0.0f);
     }
 
     for (const auto& component : _colliders) {
         const auto pair = component.second;
         for (auto& collider : pair) {
-            if (_fixtures[collider] == callback.Fixture) {
-                result.Rigidbody = _rigidBodies[collider];
-                result.BoxCollider = collider;
-                return result;
+            if (_fixtures[collider] == _callback.Fixture) {
+                _result.Rigidbody = _rigidBodies[collider];
+                _result.BoxCollider = collider;
+                return _result;
             }
         }
     }
 
-    return result;
+    return _result;
 }
 
 std::weak_ptr<b2World> PhysicsWorld::GetWorld() const {

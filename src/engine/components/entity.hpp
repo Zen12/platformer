@@ -8,6 +8,10 @@
 #include <vector>
 #include <algorithm>
 
+#include "../debug/debug.hpp"
+
+#define DEBUG_ENGINE_ENTITY_PROFILE 1
+
 class Entity;
 
 class Component
@@ -103,8 +107,14 @@ public:
 
     void Update(const float& deltaTime)
     {
-        for (auto& [type, comps] : _components) {
-            for (auto& comp : comps) {
+        for (const auto& [type, comps] : _components) {
+            for (const auto& comp : comps) {
+#ifndef NDEBUG
+#if DEBUG_ENGINE_ENTITY_PROFILE
+                std::string typeName = type.name();  // may be mangled
+                PROFILE_SCOPE("   "  + _self.lock()->GetId() + " " + typeName);
+#endif
+#endif
                 comp->Update(deltaTime);
             }
         }

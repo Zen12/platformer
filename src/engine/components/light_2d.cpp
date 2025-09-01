@@ -35,7 +35,9 @@ void Light2dComponent::Update([[maybe_unused]] const float &deltaTime) {
                 float x = centerPosition.x + _radius * std::cos(angleRad);
                 float y = centerPosition.y + _radius * std::sin(angleRad);
 
+                ScopedTimer *scoped = new ScopedTimer("     Light2dComponent::Update::Raycast");
                 const auto result = world->RayCast(centerPosition, glm::vec3(x, y, 0));
+                delete scoped;
 
                 if (result.IsHit) {
                     x = result.Point.x;

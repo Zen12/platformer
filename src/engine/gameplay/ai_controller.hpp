@@ -41,19 +41,7 @@ private:
 
 private:
 
-    void SetAnimation(const size_t &index, const std::string &animation, const bool &isLoop) {
-
-        if (_animationValue.find(index) != _animationValue.end()) {
-            if (_animationValue[index] == animation) {
-                return;
-            }
-        }
-
-        _animationValue[index] = animation;
-        if (const auto render = _renderer.lock()) {
-            render->SetAnimation(index, animation, isLoop, false);
-        }
-    }
+    void SetAnimation(const size_t &index, const std::string &animation, const bool &isLoop);
 
     void AppendAnimation(const size_t &index, const std::string &animation, const bool &isLoop) const {
         if (const auto render = _renderer.lock()) {

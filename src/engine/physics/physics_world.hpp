@@ -76,6 +76,8 @@ private:
     std::map<std::weak_ptr<BoxCollider2DComponent>, std::weak_ptr<Rigidbody2dComponent>, WeakPtrCompare> _rigidBodies{};
     std::map<std::weak_ptr<BoxCollider2DComponent>, b2Fixture*, WeakPtrCompare> _fixtures{};
     std::map<std::weak_ptr<Rigidbody2dComponent>, b2Body*, WeakPtrCompare> _bodies{};
+    RayCastClosestCallback _callback{};
+    RayCastResult _result{};
 
 public:
     explicit PhysicsWorld(b2Vec2 gravity)
@@ -88,8 +90,8 @@ public:
 
     void UpdateColliders(const float& deltaTime) const;
 
-    [[nodiscard]] RayCastResult RayCast(const glm::vec3& origin, const glm::vec3& target);
-    [[nodiscard]] RayCastResult RayCast(const glm::vec3& origin, const glm::vec3& target, const std::vector<std::string> &ignoreTags);
+    [[nodiscard]] const RayCastResult RayCast(const glm::vec3 &origin, const glm::vec3 &target);
+    [[nodiscard]] const RayCastResult RayCast(const glm::vec3& origin, const glm::vec3& target, const std::vector<std::string> &ignoreTags);
 
     [[nodiscard]] std::weak_ptr<b2World> GetWorld() const;
 

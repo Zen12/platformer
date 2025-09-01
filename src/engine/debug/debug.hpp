@@ -26,9 +26,20 @@ struct ScopedTimer {
         const auto end = std::chrono::high_resolution_clock::now();
         const double durationMs = std::chrono::duration<double, std::milli>(end - start).count(); // milliseconds
 
-        std::cout << std::left << std::setw(20) << name << " took "
-                  << std::fixed << std::setprecision(2)
-                  << std::setw(15) << durationMs << " ms\n";
+        if (durationMs < 0.001)
+            return; // ignore small numbers
+        // Columns widths
+        constexpr int nameWidth = 25;      // Timer name width
+        constexpr int durationWidth = 8;   // Duration width
+
+
+        std::cout
+            << std::right << std::setw(durationWidth)
+            << std::fixed << std::setprecision(2)
+            << durationMs
+            << " ms "
+            << std::left << std::setw(nameWidth) << name
+            << "\n";
     }
 };
 

@@ -1,6 +1,6 @@
 #include "spine_collider.hpp"
 
-#define DEBUG_ENGINE_SPINE_COLLIDER_PROFILE 1
+#define DEBUG_ENGINE_SPINE_COLLIDER_PROFILE 0
 
 void SpineColliderComponent::CreateColliderFixture(spine::Bone *bone, const std::weak_ptr<BoxCollider2DComponent> &collider) const {
     if (const auto entity = _entity.lock()) {
