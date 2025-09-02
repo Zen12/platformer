@@ -38,7 +38,7 @@ bool AiController::IsHitDir(glm::vec2 position, glm::vec2 dir, glm::vec2 &hitPos
         const glm::vec3 pointA(position.x, position.y, 0);    // Start of ray
         const glm::vec3 pointB(position.x + dir.x, position.y + dir.y, 0);   // End of ray
 
-        const auto result = world->RayCast( pointA, pointB);
+        const auto result = world->RayCast( pointA, pointB, "enemy");
 
         hitPos = glm::vec2(result.Point.x, result.Point.y);
 
@@ -159,7 +159,7 @@ void AiController::Update(const float &deltaTime) {
             }
 #endif
 #endif
-            if (result.size() == 0)
+            if (result.empty())
                 isTargetReachable = false;
 
             glm::vec2 hitPos{};
@@ -187,6 +187,8 @@ void AiController::Update(const float &deltaTime) {
                     position.y = hitPos.y;
                 }
                 _velocity.y = 0;
+                if (result.empty())
+                    return;
             } else {
                 _velocity.x *= _characterSettings.AirControl;
                 _velocity.y = -(_characterSettings.JumpHeigh / _characterSettings.JumpDuration) * _characterSettings.JumpDownMultiplier;

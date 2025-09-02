@@ -92,8 +92,7 @@ private:
     std::unordered_map<std::weak_ptr<BoxCollider2DComponent>, b2Fixture*, WeakPtrHash, WeakPtrEqual> _boxColliderToFixture;
     std::unordered_map< b2Fixture*,std::weak_ptr<BoxCollider2DComponent>> _fixtureToCollider;
 
-    std::map<std::weak_ptr<Rigidbody2dComponent>, b2Body*, WeakPtrCompare> _bodies{};
-    std::map<std::weak_ptr<Rigidbody2dComponent>, std::vector<std::weak_ptr<BoxCollider2DComponent>>, WeakPtrCompare> _rigidBodyToCollider{};
+    std::unordered_map<std::weak_ptr<Rigidbody2dComponent>, b2Body*,  WeakPtrHash, WeakPtrEqual> _bodies{};
     RayCastClosestCallback _callback{};
     RayCastResult _result{};
 
@@ -125,4 +124,5 @@ public:
     void AddRigidBodyComponent(const std::weak_ptr<Rigidbody2dComponent> &rigidBody, b2Body *body);
 
     void RemoveRigidBody(const std::weak_ptr<Rigidbody2dComponent> &rigidBody);
+    void RemoveCollider(const std::weak_ptr<BoxCollider2DComponent> &collider);
 };

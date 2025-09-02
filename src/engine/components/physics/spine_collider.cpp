@@ -3,6 +3,12 @@
 #define DEBUG_ENGINE_SPINE_COLLIDER_PROFILE 1
 
 void SpineColliderComponent::CreateColliderFixture(spine::Bone *bone, const std::weak_ptr<BoxCollider2DComponent> &collider) const {
+
+#ifndef NDEBUG
+#if DEBUG_ENGINE_SPINE_COLLIDER_PROFILE
+    PROFILE_SCOPE("    SpineColliderComponent::CreateColliderFixture");
+#endif
+#endif
     if (const auto entity = _entity.lock()) {
         if (const auto tr = entity->GetComponent<Transform>().lock()) {
             if (const auto world = _physicsWorld.lock()) {

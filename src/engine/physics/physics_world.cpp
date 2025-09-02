@@ -47,15 +47,8 @@ void PhysicsWorld::UpdateRigidBodies() const {
 
 }
 
-void PhysicsWorld::UpdateColliders(const float &deltaTime) const {
-    for (const auto& component : _rigidBodyToCollider) {
-        auto colliders = component.second;
-        for (auto& collider : colliders) {
-            if (auto col = collider.lock()) {
-                col->Update(deltaTime);
-            }
-        }
-    }
+void PhysicsWorld::UpdateColliders([[maybe_unused]] const float &deltaTime) const {
+
 }
 
 const RayCastResult PhysicsWorld::RayCast(const glm::vec3 &origin, const glm::vec3 &target) {
@@ -132,16 +125,6 @@ void PhysicsWorld::AddColliderComponent(
     const auto body = _bodies.at(rigidBody);
     const auto fixture = body->CreateFixture(&fixtureDef);
 
-    if (auto& vec = _rigidBodyToCollider[rigidBody];
-        std::find_if(vec.begin(), vec.end(),
-                     [&](const std::weak_ptr<BoxCollider2DComponent>& c) {
-                         return !c.expired() && !collider.expired() &&
-                                c.lock().get() == collider.lock().get();
-                     }) == vec.end())
-    {
-        vec.push_back(collider);
-    }
-
     _colliderToRigidBody[collider] = rigidBody;
     _boxColliderToFixture[collider] = fixture;
     _fixtureToCollider[fixture] = collider;
@@ -156,11 +139,7 @@ void PhysicsWorld::AddColliderComponent(
 }
 
 void PhysicsWorld::AddRigidBodyComponent(const std::weak_ptr<Rigidbody2dComponent> &rigidBody, b2Body *body) {
-
-    if (_rigidBodyToCollider.find(rigidBody) == _rigidBodyToCollider.end()) {
-        _rigidBodyToCollider[rigidBody] = std::vector<std::weak_ptr<BoxCollider2DComponent>>();
-        _bodies[rigidBody] = body;
-    }
+    _bodies[rigidBody] = body;
 }
 
 void PhysicsWorld::RemoveRigidBody(const std::weak_ptr<Rigidbody2dComponent> &rigidBody) {
@@ -170,13 +149,18 @@ void PhysicsWorld::RemoveRigidBody(const std::weak_ptr<Rigidbody2dComponent> &ri
 
     _world->DestroyBody(_bodies[rigidBody]);
 
-    const auto colliders = _rigidBodyToCollider[rigidBody];
-    for (auto& collider : colliders) {
-        _colliderToRigidBody.erase(collider);
-        _boxColliderToFixture.erase(collider);
+    for (auto it = _colliderToRigidBody.begin(); it != _colliderToRigidBody.end(); ) {
+        if (!it->second.expired() && it->second.lock() == rigidBody.lock()) {
+            RemoveCollider(it->first);
+            it = _colliderToRigidBody.erase(it);
+        } else {
+            ++it;
+        }
     }
 
-    _rigidBodyToCollider.erase(rigidBody);
     _bodies.erase(rigidBody);
+}
 
+void PhysicsWorld::RemoveCollider(const std::weak_ptr<BoxCollider2DComponent> &collider) {
+    _boxColliderToFixture.erase(collider);
 }

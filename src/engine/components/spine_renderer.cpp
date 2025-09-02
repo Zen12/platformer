@@ -61,17 +61,17 @@ std::pair<glm::vec3, glm::vec3> SpineRenderer::GetBoneEndpoints(spine::Bone* bon
     const glm::vec3 position = entityTransform ? entityTransform->GetPosition() : glm::vec3(0.0f);
 
     // Start point (joint position)
-    glm::vec3 start{
+    const glm::vec3 start{
         (bone->getWorldX() * _spineScale) * _direction + position.x,
         bone->getWorldY() * _spineScale + position.y,
         0.0f
     };
 
     // End point (tip of the bone)
-    float angleRad = glm::radians(bone->getWorldRotationX());
-    float length   = bone->getData().getLength() * bone->getWorldScaleX() * _spineScale;
+    const float angleRad = glm::radians(bone->getWorldRotationX());
+    const float length   = bone->getData().getLength() * bone->getWorldScaleX() * _spineScale;
 
-    glm::vec3 end{
+    const glm::vec3 end{
         start.x + std::cos(angleRad) * length * _direction,
         start.y + std::sin(angleRad) * length,
         0.0f

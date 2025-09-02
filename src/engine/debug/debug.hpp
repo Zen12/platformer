@@ -41,6 +41,8 @@ struct ScopedTimer {
             << std::left << std::setw(nameWidth) << name
             << "\n";
     }
+
+    ScopedTimer &operator=(int _cpp_par_);
 };
 
 

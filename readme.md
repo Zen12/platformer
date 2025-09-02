@@ -112,7 +112,6 @@ TODO
 - Sound
 
 ## 🏃🏃🏃 TODO 🏃🏃🏃
-- [ ] Light2d better ray-detection
 - [ ] Health bars
 - [ ] UI buttons
 - [ ] One level (art)

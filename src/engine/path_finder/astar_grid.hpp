@@ -1,88 +1,63 @@
 #include <vector>
 #include <queue>
-#include <unordered_map>
 #include <algorithm>
 #include <iostream>
 #include <glm/glm.hpp>
 
-// Hash + equality for glm::ivec2
-struct IVec2Hash {
-    std::size_t operator()(const glm::ivec2& v) const noexcept {
-        const std::size_t h1 = std::hash<int>()(v.x);
-        const std::size_t h2 = std::hash<int>()(v.y);
-        // combine hashes
-        return h1 ^ (h2 + 0x9e3779b97f4a7c15ULL + (h1 << 6) + (h1 >> 2));
-    }
-};
-struct IVec2Eq {
-    bool operator()(const glm::ivec2& a, const glm::ivec2& b) const noexcept {
-        return a.x == b.x && a.y == b.y;
-    }
-};
-
-
 struct Node {
-    glm::ivec2 pos;
-    int g, f;
-    glm::ivec2 parent;
+    glm::ivec2 pos{-1, -1};
+    int g{0};
+    int f{0};
+    glm::ivec2 parent{-1, -1};
 };
 
 class AStar {
-private:
-    std::vector<glm::ivec2> GetDirs(const bool &canJump) {
-        if (canJump) {
-            return { {1,0}, {-1,0}, {0,1}, {0,-1}};
-        }
-
-        return { {0,-1}, {1,0}, {0,1} };
-    }
 public:
-    AStar(int width, int height, const std::vector<std::vector<int>>& grid)
-        : width(width), height(height), grid(grid) {}
+    AStar(const int &width, const int &height, const std::vector<std::vector<int>>& grid)
+        : width(width), height(height), grid(grid),
+          nodes(height, std::vector<Node>(width)),
+          closed(height, std::vector<bool>(width, false)) {}
 
     std::vector<glm::ivec2> findPath(glm::ivec2 start, glm::ivec2 goal, bool canJump) {
         auto heuristic = [&](const glm::ivec2& a, const glm::ivec2& b) {
-            return abs(a.x - b.x) + abs(a.y - b.y); // Manhattan
+            return abs(a.x - b.x) + abs(a.y - b.y);
         };
 
         auto cmp = [](const Node& a, const Node& b) { return a.f > b.f; };
         std::priority_queue<Node, std::vector<Node>, decltype(cmp)> open(cmp);
 
-        std::unordered_map<glm::ivec2, Node, IVec2Hash, IVec2Eq> nodes;
-        std::unordered_map<glm::ivec2, bool, IVec2Hash, IVec2Eq> closed;
+        // Clear previous search
+        for (auto& row : nodes) for (auto& n : row) n = Node{};
+        for (auto& row : closed) std::fill(row.begin(), row.end(), false);
 
-        Node startNode{start, 0, heuristic(start, goal), {-1, -1}};
+        Node startNode{start, 0, heuristic(start, goal), {-1,-1}};
+        nodes[start.x][start.y] = startNode;
         open.push(startNode);
-        nodes[start] = startNode;
 
-        const std::vector<glm::ivec2> dirs =GetDirs(canJump);
-
+        const auto& dirs = GetDirs(canJump);
 
         while (!open.empty()) {
             Node current = open.top();
             open.pop();
 
             if (current.pos == goal) {
-                return reconstructPath(nodes, goal);
+                return ReconstructPath(goal);
             }
 
-            closed[current.pos] = true;
+            closed[current.pos.x][current.pos.y] = true;
 
             for (auto& d : dirs) {
                 glm::ivec2 next = current.pos + d;
 
-                if (!inBounds(next) || !isWalkable(next)) continue;
-                if (closed[next]) continue;
+                if (!InBounds(next) || closed[next.x][next.y] || !IsWalkable(next)) continue;
 
-                int newG = current.g + 1;
-                int h = heuristic(next, goal);
-                int f = newG + h;
+                const int newG = current.g + 1;
+                const int h = heuristic(next, goal);
+                const int f = newG + h;
 
-                auto it = nodes.find(next);
-                if (it == nodes.end() || newG < it->second.g) {
-                    Node neighbor{next, newG, f, current.pos};
-                    nodes[next] = neighbor;
-                    open.push(neighbor);
+                if (Node& neighborNode = nodes[next.x][next.y]; neighborNode.pos.x == -1 || newG < neighborNode.g) {
+                    neighborNode = {next, newG, f, current.pos};
+                    open.push(neighborNode);
                 }
             }
         }
@@ -93,29 +68,35 @@ public:
 private:
     int width, height;
     std::vector<std::vector<int>> grid;
+    std::vector<std::vector<Node>> nodes;
+    std::vector<std::vector<bool>> closed;
 
-    bool inBounds(const glm::ivec2& p) const {
+    [[nodiscard]] bool InBounds(const glm::ivec2& p) const {
         return p.x >= 0 && p.y >= 0 && p.x < height && p.y < width;
     }
 
-    bool isWalkable(const glm::ivec2& p) const {
-        return grid[p.x][p.y] == 0; // 0 = walkable, 1 = obstacle
+    [[nodiscard]] bool IsWalkable(const glm::ivec2& p) const {
+        return grid[p.x][p.y] == 0;
     }
 
-    std::vector<glm::ivec2> reconstructPath(
-        const std::unordered_map<glm::ivec2, Node, IVec2Hash, IVec2Eq>& nodes,
-        glm::ivec2 goal
-    ) {
+    [[nodiscard]] static const std::vector<glm::ivec2>& GetDirs(const bool &canJump) {
+        static std::vector<glm::ivec2> dirsJump{{1,0},{-1,0},{0,1},{0,-1}};
+        static std::vector<glm::ivec2> dirsNoJump{{0,-1},{1,0},{0,1}};
+        return canJump ? dirsJump : dirsNoJump;
+    }
+
+    [[nodiscard]] std::vector<glm::ivec2> ReconstructPath(const glm::ivec2& goal) const {
         std::vector<glm::ivec2> path;
         glm::ivec2 p = goal;
+
         while (true) {
             path.push_back(p);
-            auto it = nodes.find(p);
-            if (it == nodes.end() || it->second.parent.x < 0) break;
-            p = it->second.parent;
+            const Node& n = nodes[p.x][p.y];
+            if (n.parent.x == -1) break;
+            p = n.parent;
         }
+
         std::reverse(path.begin(), path.end());
         return path;
     }
-
 };
