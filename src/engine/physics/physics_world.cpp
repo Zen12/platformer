@@ -1,7 +1,7 @@
 #include "physics_world.hpp"
 
-#define DEBUG_ENGINE_RENDER_COLLIDERS 1
-#define DEBUG_ENGINE_PHYSICS_PROFILE 1
+#define DEBUG_ENGINE_RENDER_COLLIDERS 0
+#define DEBUG_ENGINE_PHYSICS_PROFILE 0
 
 void PhysicsWorld::Simulate(const float &deltaTime) const {
     _world->Step(deltaTime, velocityIterations, positionIterations);
