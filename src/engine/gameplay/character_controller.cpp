@@ -236,10 +236,10 @@ void CharacterController::Shoot(const glm::vec3 &lookAt) const {
     if (const auto world = _world.lock()) {
         if (const auto render = _renderer.lock()) {
             const auto startPosition = render->GetBonePosition("gun-tip");
-            const auto result = world->RayCast(startPosition, lookAt);
+            const auto dir = lookAt - startPosition;
+            const auto result = world->RayCast(startPosition, startPosition + dir * 1000.0f);
 
             if (const auto particles = _particles.lock()) {
-                const glm::vec3 dir = lookAt - startPosition;
                 constexpr glm::vec3 axis(0.0f, 0.0f, 1.0f); // Z axis
                 constexpr float angle1 = glm::radians(30.0f);
                 constexpr float angle2 = glm::radians(-30.0f);
