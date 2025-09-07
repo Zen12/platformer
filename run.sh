@@ -1,9 +1,15 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    echo "Running on macOS" &&
+    echo "Running on macOS"
     cmake -H. -Bbin/release/desktop -DPLATFORM=Desktop -DCMAKE_BUILD_TYPE=Release &&
-    cmake --build ./bin/release/desktop --target run
+    cmake --build bin/release/desktop --target run -- -j$(sysctl -n hw.ncpu)
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    echo "Running on Linux"
+    cmake -H. -Bbin/release/desktop -DPLATFORM=Desktop -DCMAKE_BUILD_TYPE=Release &&
+    cmake --build bin/release/desktop --target run -- -j$(nproc)
 elif [[ "$OSTYPE" == "msys"* || "$OSTYPE" == "cygwin"* || "$OSTYPE" == "win32" ]]; then
     echo "Running on Windows"
+    cmake -H. -Bbin/release/desktop -DPLATFORM=Desktop -DCMAKE_BUILD_TYPE=Release &&
+    cmake --build bin/release/desktop --target run -- /m
 else
     echo "Running on an unknown OS: $OSTYPE"
 fi

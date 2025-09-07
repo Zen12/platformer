@@ -1,6 +1,6 @@
 #include "scene_manager.hpp"
 
-#define DEBUG_ENGINE_SCENE_MANAGER_PROFILE 1
+#define DEBUG_ENGINE_SCENE_MANAGER_PROFILE 0
 
 
 template< typename TSerialization, typename TFactory>

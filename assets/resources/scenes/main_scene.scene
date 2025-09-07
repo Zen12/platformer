@@ -35,14 +35,16 @@ entities:
             - component:
                   - type: "rect_transform"
                   - data:
-                      - center_x:
-                          - value: 0
-                      - center_y:
-                          - value: 0
+                      - pixel_x:
+                          - value: 1
+                          - x: 100
+                      - pixel_y:
+                          - value: 1
+                          - y: 100
                       - pixel_width:
-                          - value: 100
+                          - value: 200
                       - pixel_height:
-                          - value: 100
+                          - value: 200
                       - pivot:
                           - x: 0.5
                           - y: 0.5
@@ -50,7 +52,7 @@ entities:
                   - type: "ui_image"
                   - data:
                         - material: f22681f4-45d1-4542-a838-99f854890a28
-                        - image: b7006ba6-f1bc-44dc-914d-60f1dc38af32
+                        - image: 126fb991-fe1c-45e0-ae0c-1649a2c65ae3
   - obj:
       - guid: main-camera
       - tag: main_camera

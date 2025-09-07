@@ -1,6 +1,6 @@
 #include "engine.hpp"
 
-#define DEBUG_ENGINE_PROFILE 1
+#define DEBUG_ENGINE_PROFILE 0
 
 Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectPath) {
 

@@ -28,9 +28,9 @@ private:
     std::vector<std::unique_ptr<Mesh>> _particles;
     const ParticleData _data;
     glm::vec3 _currentPosition;
-    glm::vec3 _currentScale;
-    glm::vec3 _velocity;
-    glm::vec4 _currentColor;
+    glm::vec3 _currentScale{};
+    glm::vec3 _velocity{};
+    glm::vec4 _currentColor{};
     float _duration{0};
     std::weak_ptr<Material> _material;
 

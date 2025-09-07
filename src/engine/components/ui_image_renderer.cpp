@@ -2,11 +2,6 @@
 
 void UiImageRenderer::Update([[maybe_unused]] const float& deltaTime)
 {
-    if (const auto material = _material.lock())
-    {
-        material->Bind();
-        _mesh.Bind();
-    }
 }
 
 void UiImageRenderer::SetSprite(const std::weak_ptr<Sprite> &sprite) const {
@@ -18,14 +13,23 @@ void UiImageRenderer::SetSprite(const std::weak_ptr<Sprite> &sprite) const {
 
 void UiImageRenderer::Render(const glm::mat4 &projection) const
 {
-    if (const auto material = _material.lock())
-    {
-        // ???
-        const auto model = GetEntity().lock()->GetComponent<RectTransform>().lock()->GetModel();
+    if (const auto entity = _entity.lock()) {
 
-        material->SetMat4("projection", projection);
-        material->SetMat4("model", model);
+        if (const auto transform = entity->GetComponent<RectTransform>().lock()) {
+
+            if (const auto material = _material.lock())
+            {
+                const auto model = transform->GetModel();
+
+                material->SetMat4("projection", projection);
+                material->SetMat4("model", model);
+
+                material->Bind();
+                _mesh.Bind();
+                glDrawElements(GL_TRIANGLES, static_cast<int32_t>(_mesh.GetIndicesCount()), GL_UNSIGNED_INT, nullptr);
+            }
+
+        }
     }
 
-    glDrawElements(GL_TRIANGLES, static_cast<int32_t>(_mesh.GetIndicesCount()), GL_UNSIGNED_INT, nullptr);
 }
