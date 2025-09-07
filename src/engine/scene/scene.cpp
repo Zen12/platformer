@@ -29,6 +29,7 @@ std::weak_ptr<Entity> Scene::CreateEntity(const EntitySerialization &entitySeria
     newEntity->SetId(entitySerialization.Guid);
     newEntity->SetTag(entitySerialization.Tag);
     newEntity->SetSelf(newEntity);
+    newEntity->SetCreator(entitySerialization.Creator);
 
     Entities.push_back(newEntity);
     return newEntity;
@@ -198,7 +199,7 @@ std::shared_ptr<Font> Scene::GetFont(const std::string &guid) {
     if (const auto assetManager = _assetManager.lock()) {
         if (_fonts.find(guid) == _fonts.end()) {
             const auto fontFile = assetManager->LoadSourceByGuid<Font>(guid);
-            std::shared_ptr<Font> font = std::make_shared<Font>(fontFile);
+            const auto font = std::make_shared<Font>(fontFile);
             _fonts[guid] = font;
             return font;
         }

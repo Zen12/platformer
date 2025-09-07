@@ -30,6 +30,18 @@ namespace YAML
 {
 
     template <>
+    struct convert<glm::vec2>
+    {
+        static bool decode(const Node &node, glm::vec2 &rhs)
+        {
+            const auto map = sequenceToMap(node);
+            rhs.x = map["x"].as<float>();
+            rhs.y = map["y"].as<float>();
+            return true;
+        }
+    };
+
+    template <>
     struct convert<glm::vec3>
     {
         static bool decode(const Node &node, glm::vec3 &rhs)
@@ -203,6 +215,8 @@ namespace YAML
             const auto map = sequenceToMap(node);
             rhs.MaterialGuid = map["material"].as<std::string>();
             rhs.SpriteGuid = map["image"].as<std::string>();
+            if (map["fill_amount"])
+                rhs.FillAmount = map["fill_amount"].as<float>();
             return true;
         }
     };
@@ -387,8 +401,7 @@ namespace YAML
             return std::make_unique<T>(comp);
         }
 
-        static  std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAML::Node &node)
-        {
+        static  std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAML::Node &node) {
             const auto nodeMap = sequenceToMap(node);
             const auto type = nodeMap["type"].as<std::string>();
             const YAML::Node &data = nodeMap["data"];
@@ -436,6 +449,10 @@ namespace YAML
                 return Parse<ParticleEmitterSerialization>(data);
             } else if (type == "spine_collider") {
                 return Parse<SpineColliderSerialization>(data);
+            } else if (type == "health_bar") {
+                return Parse<HealthBarComponentSerialization>(data);
+            } else if (type == "rect_transform_follower") {
+                return Parse<RectTransformFollowerSerialization>(data);
             }
 
             throw std::runtime_error("Unknown component type: " + type);
@@ -554,6 +571,31 @@ namespace YAML
             rhs.jumpAnimationName = node["jump_animation_name"].as<std::string>();
             rhs.hitAnimationName = node["hit_animation_name"].as<std::string>();
             rhs.idleAnimationName = node["idle_animation_name"].as<std::string>();
+            return true;
+        }
+    };
+
+    template <>
+    struct convert<HealthBarComponentSerialization>
+    {
+        static bool decode(const Node &node, HealthBarComponentSerialization &rhs)
+        {
+            const auto map = sequenceToMap(node);
+            rhs.UseCreator = map["use_creator"].as<bool>();
+            return true;
+        }
+    };
+
+    template <>
+    struct convert<RectTransformFollowerSerialization>
+    {
+        static bool decode(const Node &node, RectTransformFollowerSerialization &rhs)
+        {
+            const auto map = sequenceToMap(node);
+            rhs.UseCreator = map["use_creator"].as<bool>();
+            rhs.Offset = map["offset"].as<glm::vec2>();
+            if (node["target"])
+                rhs.Target = map["target"].as<std::string>();
             return true;
         }
     };

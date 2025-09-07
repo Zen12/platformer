@@ -10,13 +10,16 @@ private:
 
 private:
     void SpawnOnPosition(const glm::vec3 &position) const noexcept {
-        if (const auto scene = _scene.lock()) {
-            scene->PrefabRequestInstantiate.push_back({
-                .Id = _prefabId,
-                .Position = position,
-                .Rotation = glm::vec3(0.0f, 0.0f, 0.0f),
-                .Scale = glm::vec3(1.0f, 1.0f, 1.0f),
-            });
+        if (const auto entity = GetEntity().lock()) {
+            if (const auto scene = _scene.lock()) {
+                scene->PrefabRequestInstantiate.push_back({
+                    .Id = _prefabId,
+                    .Creator = entity->GetId(),
+                    .Position = position,
+                    .Rotation = glm::vec3(0.0f, 0.0f, 0.0f),
+                    .Scale = glm::vec3(1.0f, 1.0f, 1.0f),
+                });
+            }
         }
     }
 public:

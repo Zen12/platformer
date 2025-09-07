@@ -65,5 +65,5 @@ inline std::filesystem::path GetProjectRootPath() {
     if (const std::filesystem::path path = GetCommandLinePath(); !path.empty())
         return path;
 
-    return GetExecutablePath().parent_path().append("assets/");
+    return GetExecutablePath().parent_path().append("assets");
 }

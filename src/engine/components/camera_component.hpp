@@ -54,6 +54,24 @@ public:
         return glm::vec3(0.0f);
     }
 
+    [[nodiscard]] glm::vec3 WorldToScreenPoint(glm::vec3 worldPos) const {
+        if (const auto window = _window.lock()) {
+            if (const auto tr = _transform.lock()) {
+
+                const glm::vec4 viewport(0.0f, 0.0f, window->GetWidth(), window->GetHeight());
+
+                const auto view = tr->GetModel(); // careful: if this is actually "model" and not "view", see note below
+
+                // Project world -> screen
+                const glm::vec3 screenPos = glm::project(worldPos, view, GetProjection(), viewport);
+
+                return screenPos;
+            }
+        }
+        return glm::vec3(0.0f);
+    }
+
+
     [[nodiscard]] glm::vec3 ScreenToWorldPoint( glm::vec2 screenPos) const {
         return ScreenToWorldPoint(glm::vec3(screenPos.x, screenPos.y, 0));
     }

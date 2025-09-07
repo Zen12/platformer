@@ -35,6 +35,7 @@ private:
     std::unordered_map<std::type_index, std::vector<std::shared_ptr<Component>>> _components{};
     std::string _id{};
     std::string _tag{};
+    std::string _creator{};
     std::weak_ptr<Entity> _self{};
 
 public:
@@ -120,10 +121,12 @@ public:
         }
     }
 
-    void SetId(const std::string& id) { _id = id; }
-    void SetTag(const std::string& tag) { _tag = tag; }
-    void SetSelf(const std::shared_ptr<Entity>& self) { _self = self; }
+    void SetId(const std::string& id) noexcept { _id = id; }
+    void SetTag(const std::string& tag) noexcept { _tag = tag; }
+    void SetSelf(const std::shared_ptr<Entity>& self) noexcept { _self = self; }
+    void SetCreator(const std::string &creator) noexcept { _creator = creator; }
 
     [[nodiscard]] const std::string& GetId() const { return _id; }
     [[nodiscard]] const std::string& GetTag() const { return _tag; }
+    [[nodiscard]] const std::string& GetCreator() const { return _creator; }
 };

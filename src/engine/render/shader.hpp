@@ -37,4 +37,5 @@ public:
     void SetMat4(const int32_t &location, const glm::mat4 &mat) const noexcept;
 
     void SetInt(const int32_t &location, const int &x) const noexcept;
+    void SetFloat(const int32_t &location, const float &x) const noexcept;
 };

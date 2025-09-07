@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <yaml-cpp/yaml.h>
+#include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
@@ -12,6 +13,7 @@ struct ComponentSerialization
 
 struct EntitySerialization
 {
+    std::string Creator{};
     std::string Tag;
     std::string Guid;
     std::vector<std::shared_ptr<ComponentSerialization>> Components;
@@ -144,6 +146,7 @@ struct UiImageComponentSerialization final : public ComponentSerialization
 {
     std::string MaterialGuid;
     std::string SpriteGuid;
+    float FillAmount{1};
 };
 
 struct RectTransformComponentSerialization final : public ComponentSerialization
@@ -201,6 +204,16 @@ struct ShowFpsComponentSerialization final : public ComponentSerialization
 
 struct HealthComponentSerialization final : public ComponentSerialization {
     float Health;
+};
+
+struct HealthBarComponentSerialization final : public ComponentSerialization {
+    bool UseCreator;
+};
+
+struct RectTransformFollowerSerialization final : public ComponentSerialization {
+    bool UseCreator;
+    std::string Target;
+    glm::vec2 Offset{};
 };
 
 

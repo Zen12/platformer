@@ -20,7 +20,8 @@
 #include "../system/input_system.hpp"
 
 struct PrefabInstantiateData {
-    std::string Id;
+    std::string Id{};
+    std::string Creator{};
     glm::vec3 Position{glm::vec3(1)};
     glm::vec3 Rotation{glm::vec3(0)};
     glm::vec3 Scale{glm::vec3(1)};

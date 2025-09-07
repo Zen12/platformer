@@ -28,6 +28,10 @@ public:
     int32_t GetLocation(const std::string &key) const noexcept;
     void Bind() const;
 
+    void ClearSprites() noexcept {
+        _sprites.clear();
+    }
+
     void AddSprite(const std::weak_ptr<Sprite> &sprite) noexcept
     {
         _sprites.push_back(sprite);
@@ -94,6 +98,16 @@ public:
             shader->Use();
             const auto location = shader->GetLocation(name);
             shader->SetInt(location, value);
+        }
+    }
+
+    void SetFloat(const std::string &name, const float& value) const {
+
+        if (const auto shader = _shader.lock())
+        {
+            shader->Use();
+            const auto location = shader->GetLocation(name);
+            shader->SetFloat(location, value);
         }
     }
 };

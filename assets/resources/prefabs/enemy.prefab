@@ -51,3 +51,9 @@
             - type: health_component
             - data:
                 - health: 100
+        - component:
+              - type: prefab_spawner
+              - data:
+                    - prefab_id: 90b678d1-6ae9-4255-83da-9b1c9e3f86a3
+                    - spawn_time: 0.0
+                    - max_spawn: 1

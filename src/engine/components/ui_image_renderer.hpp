@@ -12,6 +12,8 @@ class UiImageRenderer final : public Component
 private:
     Mesh _mesh;
     std::weak_ptr<Material> _material;
+    std::weak_ptr<Sprite> _sprite;
+    float _fillAmount{1};
 
 public:
     UiImageRenderer() = delete;
@@ -29,6 +31,7 @@ public:
         _material = material;
     }
 
-    void SetSprite(const std::weak_ptr<Sprite> &sprite) const;
+    void SetFillAmount(const float& amount) noexcept;
+    void SetSprite(const std::weak_ptr<Sprite> &sprite) noexcept;
     void Render(const glm::mat4 &projection) const;
 };

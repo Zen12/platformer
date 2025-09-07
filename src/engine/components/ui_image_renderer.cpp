@@ -4,11 +4,12 @@ void UiImageRenderer::Update([[maybe_unused]] const float& deltaTime)
 {
 }
 
-void UiImageRenderer::SetSprite(const std::weak_ptr<Sprite> &sprite) const {
-    if (const auto material = _material.lock())
-    {
-        material->AddSprite(sprite);
-    }
+void UiImageRenderer::SetFillAmount(const float &amount) noexcept {
+    _fillAmount = amount;
+}
+
+void UiImageRenderer::SetSprite(const std::weak_ptr<Sprite> &sprite) noexcept {
+    _sprite = sprite;
 }
 
 void UiImageRenderer::Render(const glm::mat4 &projection) const
@@ -21,11 +22,16 @@ void UiImageRenderer::Render(const glm::mat4 &projection) const
             {
                 const auto model = transform->GetModel();
 
+                material->ClearSprites();
+                material->AddSprite(_sprite);
+
                 material->SetMat4("projection", projection);
                 material->SetMat4("model", model);
+                material->SetFloat("fillAmount", _fillAmount);
 
                 material->Bind();
                 _mesh.Bind();
+
                 glDrawElements(GL_TRIANGLES, static_cast<int32_t>(_mesh.GetIndicesCount()), GL_UNSIGNED_INT, nullptr);
             }
 

@@ -2,11 +2,13 @@
 #include <memory>
 
 #include "../../components/particle_emitter.hpp"
+#include "../../components/transforms/rect_transform_follower.hpp"
 #include "../../components/physics/spine_collider.hpp"
 #include "../../gameplay/ai_controller.hpp"
 #include "../../gameplay/grid_prefab_spawner.hpp"
 #include "../../gameplay/prefab_spawner.hpp"
 #include "../../gameplay/health_component.hpp"
+#include "../../gameplay/ui/heath_bar.hpp"
 #include "../../path_finder/astar_finder.hpp"
 #include "../../scene/scene.hpp"
 
@@ -163,6 +165,7 @@ protected:
 
                 uiImage->SetMaterial(material);
                 uiImage->SetSprite(sprite);
+                uiImage->SetFillAmount(serialization.FillAmount);
 
                 scene->GetRenderPipeline().lock()->AddRenderer(component);
             }
@@ -410,6 +413,7 @@ class HealthComponentFactory final : public ComponentFactory<HealthComponent, He
 protected:
     void FillComponent(const std::weak_ptr<HealthComponent> &component, const HealthComponentSerialization &serialization) override {
         if (const auto comp = component.lock()) {
+            comp->SetMaxHealth(serialization.Health);
             comp->SetHealth(serialization.Health);
             comp->SetScene(_scene.lock());
         }
@@ -450,6 +454,62 @@ protected:
                 if (const auto comp = component.lock()) {
                     comp->SetPhysicsWorld(scene->GetPhysicsWorld());
                     comp->SetRenderer(entity->GetComponent<SpineRenderer>());
+                }
+            }
+        }
+    }
+};
+
+class HealthBarComponentFactory final : public ComponentFactory<HealthBarComponent, HealthBarComponentSerialization> {
+protected:
+    void FillComponent(const std::weak_ptr<HealthBarComponent> &component,
+        const HealthBarComponentSerialization &serialization) override {
+        if (const auto scene = _scene.lock()) {
+            if (const auto entity = _entity.lock()) {
+                if (const auto comp = component.lock()) {
+                    const auto images = entity->GetComponents<UiImageRenderer>();
+                    comp->SetFillBar(images.back());
+
+                    if (serialization.UseCreator) {
+                        if (const auto creator = entity->GetCreator(); !creator.empty()) {
+                            const auto creatorEntity = scene->GetEntityById(creator);
+                            if (const auto e = creatorEntity.lock()) {
+                                comp->SetHealth(e->GetComponent<HealthComponent>());
+                            }
+                        }
+                    } else {
+                        comp->SetHealth(entity->GetComponent<HealthComponent>());
+                    }
+                }
+            }
+        }
+    }
+};
+
+class RectTransformFollowerFactory final : public ComponentFactory<RectTransformFollower, RectTransformFollowerSerialization> {
+protected:
+    void FillComponent(const std::weak_ptr<RectTransformFollower> &component,
+        const RectTransformFollowerSerialization &serialization) override {
+        if (const auto scene = _scene.lock()) {
+            if (const auto entity = _entity.lock()) {
+                if (const auto comp = component.lock()) {
+                    comp->SetTransform(entity->GetComponent<RectTransform>());
+                    comp->SetCamera(scene->FindByTag("main_camera").lock()->GetComponent<CameraComponent>().lock());
+                    comp->SetOffset(serialization.Offset);
+
+                    if (serialization.UseCreator) {
+                        if (const auto creator = entity->GetCreator(); !creator.empty()) {
+                            const auto creatorEntity = scene->GetEntityById(creator);
+                            if (const auto e = creatorEntity.lock()) {
+                                comp->SetFollowTarget(e->GetComponent<Transform>());
+                            }
+                        }
+                    } else {
+                        const auto target = scene->GetEntityById(serialization.Target);
+                        if (const auto e = target.lock()) {
+                            comp->SetFollowTarget(e->GetComponent<Transform>());
+                        }
+                    }
                 }
             }
         }

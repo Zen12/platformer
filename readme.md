@@ -112,7 +112,6 @@ TODO
 - Sound
 
 ## 🏃🏃🏃 TODO 🏃🏃🏃
-- [ ] Health bars
 - [ ] UI buttons
 - [ ] One level (art)
 - [ ] Character Controller balancing

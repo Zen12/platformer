@@ -109,7 +109,9 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
                 GridSerialization, GridFactory,
                 PathFinderSerialization, PathFinderFactory,
                 ParticleEmitterSerialization, ParticleEmitterComponentFactory,
-                SpineColliderSerialization, SpineColliderComponentFactory
+                SpineColliderSerialization, SpineColliderComponentFactory,
+                HealthBarComponentSerialization, HealthBarComponentFactory,
+                RectTransformFollowerSerialization, RectTransformFollowerFactory
             >(comp.get(), std::weak_ptr<Entity>(entityInstance))) {
                 std::cerr << "can't add component" << std::endl;
 #ifndef NDEBUG
@@ -133,6 +135,7 @@ void SceneManager::CreateRequestedPrefabs() const {
         for (const auto& prefabRequest: _scene->PrefabRequestInstantiate) {
             auto prefabAsset = assetManager->LoadAssetByGuid<PrefabAsset>(prefabRequest.Id);
             prefabAsset.Obj.Guid = GuidGenerator::GenerateGuid();
+            prefabAsset.Obj.Creator = prefabRequest.Creator;
             for (auto &component : prefabAsset.Obj.Components) {
 
                 if (auto *tr = dynamic_cast<TransformComponentSerialization *>(component.get()); tr != nullptr) {
