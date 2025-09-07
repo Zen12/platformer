@@ -1,6 +1,6 @@
 #pragma once
 
-#include "entity.hpp"
+#include "../entity.hpp"
 #include "ui_text_renderer.hpp"
 
 class ShowFpsComponent final : public Component {

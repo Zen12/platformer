@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../render/font.hpp"
-#include "../render/mesh.hpp"
-#include "../render/material.hpp"
-#include "transforms/transform.hpp"
-#include "transforms/rect_transform.hpp"
-#include "entity.hpp"
+#include "../../render/font.hpp"
+#include "../../render/mesh.hpp"
+#include "../../render/material.hpp"
+#include "../transforms/transform.hpp"
+#include "../transforms/rect_transform.hpp"
+#include "../entity.hpp"
 
 class UiImageRenderer final : public Component
 {

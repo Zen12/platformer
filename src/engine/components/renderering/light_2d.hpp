@@ -1,11 +1,11 @@
 #pragma once
 #include <utility>
 
-#include "entity.hpp"
+#include "../entity.hpp"
 #include "mesh_renderer.hpp"
-#include "../render/material.hpp"
-#include "../physics/physics_world.hpp"
-#include "transforms/transform.hpp"
+#include "../../render/material.hpp"
+#include "../../physics/physics_world.hpp"
+#include "../transforms/transform.hpp"
 
 
 class Light2dComponent final : public Component {

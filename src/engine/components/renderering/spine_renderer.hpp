@@ -1,9 +1,9 @@
 #pragma once
 
-#include "entity.hpp"
+#include "../entity.hpp"
 #include "mesh_renderer.hpp"
-#include "../render/material.hpp"
-#include "../render/spine/spine_data.hpp"
+#include "../../render/material.hpp"
+#include "../../render/spine/spine_data.hpp"
 
 
 

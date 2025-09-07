@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include <vector>
 #include "../components/entity.hpp"
-#include "../components/ui_show_fps.hpp"
+#include "../components/ui/ui_show_fps.hpp"
 
 #include "../components/transforms/rect_transform_root.hpp"
 #include "../render/shader.hpp"
@@ -11,9 +11,9 @@
 #include "../render_pipeline/render_pipeline.hpp"
 #include "../asset/asset_manager.hpp"
 #include "../physics/physics_world.hpp"
-#include "../components/light_2d.hpp"
+#include "../components/renderering/light_2d.hpp"
 #include "../gameplay/character_controller.hpp"
-#include "../components/spine_renderer.hpp"
+#include "../components/renderering/spine_renderer.hpp"
 #include "../components/physics/box_collider2d_component.hpp"
 #include "../components/physics/rigidbody2d_component.hpp"
 #include "../debug/debug.hpp"

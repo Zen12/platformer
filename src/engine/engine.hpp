@@ -13,12 +13,12 @@
 #include <thread>
 
 #include "components/entity.hpp"
-#include "components/sprite_renderer.hpp"
+#include "components/renderering/sprite_renderer.hpp"
 #include "components/transforms/transform.hpp"
 #include "components/transforms/rect_transform.hpp"
 #include "components/transforms/rect_transform_root.hpp"
-#include "components/camera_component.hpp"
-#include "components/ui_text_renderer.hpp"
+#include "components/renderering/camera_component.hpp"
+#include "components/ui/ui_text_renderer.hpp"
 #include "components/physics/box_collider2d_component.hpp"
 #include "components/physics/rigidbody2d_component.hpp"
 

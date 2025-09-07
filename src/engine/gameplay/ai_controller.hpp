@@ -7,7 +7,7 @@
 #include "../components/transforms/transform.hpp"
 #include "../system/input_system.hpp"
 #include "../physics/physics_world.hpp"
-#include "../components/spine_renderer.hpp"
+#include "../components/renderering/spine_renderer.hpp"
 #include "../path_finder/astar_finder.hpp"
 
 

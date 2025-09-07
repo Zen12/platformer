@@ -1,7 +1,7 @@
 #include "light_2d.hpp"
 
 #ifndef NDEBUG
-#include "../debug/debug.hpp"
+#include "../../debug/debug.hpp"
 #define LIGHT_COMPONENT_DEBUG 0
 #define ENGINE_DEBUG_LIGHT_PROFILE 0
 #endif

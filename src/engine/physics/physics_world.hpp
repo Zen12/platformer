@@ -13,7 +13,7 @@
 #include <string>
 #include <ranges>
 #include <iostream>
-#include "../components/sprite_renderer.hpp"
+#include "../components/renderering/sprite_renderer.hpp"
 #include "../components/transforms/transform.hpp"
 #include "../debug/debug.hpp"
 

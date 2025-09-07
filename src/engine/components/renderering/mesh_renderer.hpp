@@ -1,10 +1,10 @@
 #pragma once
-#include "entity.hpp"
-#include "../debug/debug.hpp"
-#include "../render/material.hpp"
-#include "../render/mesh.hpp"
-#include "../render/line.hpp"
-#include "transforms/transform.hpp"
+#include "../entity.hpp"
+#include "../../debug/debug.hpp"
+#include "../../render/material.hpp"
+#include "../../render/mesh.hpp"
+#include "../../render/line.hpp"
+#include "../transforms/transform.hpp"
 
 #define DEBUG_ENGINE_MESH_RENDERER 1
 

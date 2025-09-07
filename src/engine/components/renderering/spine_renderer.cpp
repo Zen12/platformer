@@ -1,6 +1,6 @@
 #include "spine_renderer.hpp"
 
-#include "../debug/debug.hpp"
+#include "../../debug/debug.hpp"
 #define DEBUG_SPINE_RENDERER 0
 
 void SpineRenderer::LookAt(const glm::vec3 &lookAt, const std::string &boneName) const {

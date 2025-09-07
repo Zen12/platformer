@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../spine_renderer.hpp"
+#include "../renderering/spine_renderer.hpp"
 #include "../../physics/physics_world.hpp"
 
 

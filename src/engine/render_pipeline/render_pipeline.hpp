@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../components/sprite_renderer.hpp"
-#include "../components/ui_text_renderer.hpp"
-#include "../components/ui_image_renderer.hpp"
+#include "../components/renderering/sprite_renderer.hpp"
+#include "../components/ui/ui_text_renderer.hpp"
+#include "../components/ui/ui_image_renderer.hpp"
 #include "../system/window.hpp"
-#include  "../components/camera_component.hpp"
-#include "../components/particle_emitter.hpp"
-#include "../components/spine_renderer.hpp"
+#include "../components/renderering/camera_component.hpp"
+#include "../components/renderering/particle_emitter.hpp"
+#include "../components/renderering/spine_renderer.hpp"
 
 
 class RenderPipeline

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../render/material.hpp"
-#include "../asset/loaders/asset_loader.hpp"
-#include "entity.hpp"
-#include "transforms/rect_transform.hpp"
+#include "../../render/material.hpp"
+#include "../../asset/loaders/asset_loader.hpp"
+#include "../entity.hpp"
+#include "../transforms/rect_transform.hpp"
 
 
 #include <glm/glm.hpp>

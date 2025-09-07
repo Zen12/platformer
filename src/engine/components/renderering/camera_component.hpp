@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../render/camera.hpp"
-#include "entity.hpp"
+#include "../../render/camera.hpp"
+#include "../entity.hpp"
 #include <glm/glm.hpp>
 
 class CameraComponent final : public Component
