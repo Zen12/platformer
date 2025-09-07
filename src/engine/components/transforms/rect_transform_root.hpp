@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-class RectTransformRoot : public RectTransform
+class RectTransformRoot final : public RectTransform
 {
 private:
     std::weak_ptr<Window> _window;

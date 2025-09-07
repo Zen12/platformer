@@ -18,6 +18,7 @@
 #include "../components/physics/rigidbody2d_component.hpp"
 #include "../debug/debug.hpp"
 #include "../system/input_system.hpp"
+#include "../system/ui_desktop_raycast_system.hpp"
 
 struct PrefabInstantiateData {
     std::string Id{};
@@ -40,6 +41,7 @@ private:
     std::weak_ptr<Window> _window;
     std::weak_ptr<AssetManager> _assetManager;
     std::weak_ptr<InputSystem> _inputSystem;
+    std::shared_ptr<UiRaycastSystem> _uiRaycastSystem;
 
     std::shared_ptr<RectTransformRoot> _root;
 
@@ -62,6 +64,8 @@ public:
     {
         _root = std::make_shared<RectTransformRoot>(window);
         _renderPipeline = std::make_shared<RenderPipeline>(window);
+        _uiRaycastSystem = std::make_shared<UiDesktopRaycastSystem>();
+        _uiRaycastSystem->SetInputSystem(inputSystem);
         _renderPipeline->Init();
     }
 
@@ -110,4 +114,6 @@ public:
     [[nodiscard]] std::shared_ptr<Entity> GetEntity(const std::string &id) const;
 
     [[nodiscard]] std::weak_ptr<Entity> FindByTag(const std::string &tag) const;
+
+    [[nodiscard]] std::weak_ptr<UiRaycastSystem> GetUiRaycast() const;
 };

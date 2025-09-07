@@ -12,10 +12,10 @@ void SceneManager::AddComponent(std::weak_ptr<Entity> e, TSerialization *seriali
     static_assert(std::is_base_of_v<BaseComponentFactory, TFactory>,
           "TFactory must inherit from BaseComponentFactory");
 
-    auto cameraFactory = TFactory{};
-    cameraFactory.SetScene(_scene);
-    cameraFactory.SetEntity(e);
-    cameraFactory.AddComponent(e, *serialization);
+    auto factory = TFactory{};
+    factory.SetScene(_scene);
+    factory.SetEntity(e);
+    factory.AddComponent(e, *serialization);
 }
 
 template<typename TSerialization, typename TFactory>
@@ -112,7 +112,8 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
                 SpineColliderSerialization, SpineColliderComponentFactory,
                 HealthBarComponentSerialization, HealthBarComponentFactory,
                 RectTransformFollowerSerialization, RectTransformFollowerFactory,
-                DestroyWithCreatorComponentSerialization, DestroyWithCreatorComponentFactory
+                DestroyWithCreatorComponentSerialization, DestroyWithCreatorComponentFactory,
+                UiButtonComponentSerialization, UiButtonComponentFactory
             >(comp.get(), std::weak_ptr<Entity>(entityInstance))) {
                 std::cerr << "can't add component" << std::endl;
 #ifndef NDEBUG

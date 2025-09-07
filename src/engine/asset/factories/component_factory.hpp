@@ -5,6 +5,7 @@
 #include "../../components/renderering/particle_emitter.hpp"
 #include "../../components/transforms/rect_transform_follower.hpp"
 #include "../../components/physics/spine_collider.hpp"
+#include "../../components/ui/ui_button.hpp"
 #include "../../gameplay/ai_controller.hpp"
 #include "../../gameplay/grid_prefab_spawner.hpp"
 #include "../../gameplay/prefab_spawner.hpp"
@@ -524,6 +525,23 @@ protected:
 
         if (const auto comp = component.lock()) {
             comp->SetScene(_scene.lock());
+        }
+    }
+};
+
+class UiButtonComponentFactory final : public ComponentFactory<UiButton, UiButtonComponentSerialization> {
+protected:
+    void FillComponent(const std::weak_ptr<UiButton> &component,
+        [[maybe_unused]] const UiButtonComponentSerialization &serialization) override {
+
+        if (const auto scene = _scene.lock()) {
+            if (const auto entity = _entity.lock()) {
+                if (const auto comp = component.lock()) {
+                    comp->SetRectTransform(entity->GetComponent<RectTransform>());
+                    comp->SetSelf(component);
+                    comp->SetUiRaycastSystem(scene->GetUiRaycast());
+                }
+            }
         }
     }
 };

@@ -142,6 +142,10 @@ struct UiTextComponentSerialization final : public ComponentSerialization {
     std::string Text;
 };
 
+struct UiButtonComponentSerialization final : public ComponentSerialization {
+
+};
+
 struct UiImageComponentSerialization final : public ComponentSerialization
 {
     std::string MaterialGuid;

@@ -415,7 +415,9 @@ namespace YAML
                 return Parse<RectTransformComponentSerialization>(data);
             } else if (type == "ui_image") {
                 return Parse<UiImageComponentSerialization>(data);
-            } if (type == "ui_text") {
+            } else if (type == "ui_button") {
+                return Parse<UiButtonComponentSerialization>(data);
+            } else if (type == "ui_text") {
                 return Parse<UiTextComponentSerialization>(data);
             } else if (type == "sprite_renderer") {
                 return Parse<SpriteRenderComponentSerialization>(data);
@@ -606,6 +608,15 @@ namespace YAML
     struct convert<DestroyWithCreatorComponentSerialization>
     {
         static bool decode([[maybe_unused]] const Node &node, [[maybe_unused]]  DestroyWithCreatorComponentSerialization &rhs)
+        {
+            return true;
+        }
+    };
+
+    template <>
+    struct convert<UiButtonComponentSerialization>
+    {
+        static bool decode([[maybe_unused]] const Node &node, [[maybe_unused]]  UiButtonComponentSerialization &rhs)
         {
             return true;
         }

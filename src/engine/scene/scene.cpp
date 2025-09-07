@@ -63,6 +63,7 @@ void Scene::Update(const float &deltaTime) const {
     for (const auto &entity: Entities) {
         entity->Update(deltaTime);
     }
+    _uiRaycastSystem->UpdateState();
     _physicsWorld->UpdateRigidBodies();
 }
 
@@ -222,4 +223,8 @@ std::weak_ptr<Entity> Scene::FindByTag(const std::string &tag) const {
             return entity;
     }
     return {};
+}
+
+std::weak_ptr<UiRaycastSystem> Scene::GetUiRaycast() const {
+    return _uiRaycastSystem;
 }

@@ -42,9 +42,6 @@ public:
 
                 const glm::vec4 viewport(0.0f, 0.0f, window->GetWidth(), window->GetHeight());
 
-                // Flip Y since GLFW gives top-left origin, OpenGL uses bottom-left
-                screenPos.y = static_cast<float>(window->GetHeight()) - screenPos.y;
-
                 const auto view = tr->GetModel();
                 // Unproject
                 return glm::unProject(screenPos, view, GetProjection(), viewport);

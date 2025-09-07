@@ -84,7 +84,8 @@ glm::vec2 InputSystem::GetMouseScreenSpace() const noexcept {
     if (const auto window = _window.lock()) {
         const auto pos = GetMouseWindowPosition();
         const auto size = glm::vec2{static_cast<float>(pos.x), static_cast<float>(pos.y)};
-        return {(pos.x + size.x), (pos.y+ size.y)};
+        const auto mousePos = glm::vec2{(pos.x + size.x), (pos.y+ size.y)};
+        return {mousePos.x, window->GetHeight() - mousePos.y}; // flip Y because of GFLW
     }
 
     return glm::vec2(0.0f);

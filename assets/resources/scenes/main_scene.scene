@@ -30,6 +30,35 @@ entities:
               - data:
                   - none: ""
   - obj:
+        - guid: button
+        - components:
+              - component:
+                    - type: "rect_transform"
+                    - data:
+                          - pixel_x:
+                                - value: 1
+                                - x: 100
+                          - pixel_y:
+                                - value: 1
+                                - y: 100
+                          - pixel_width:
+                                - value: 200
+                          - pixel_height:
+                                - value: 200
+                          - pivot:
+                                - x: 0.5
+                                - y: 0.5
+              - component:
+                    - type: "ui_image"
+                    - data:
+                          - material: f22681f4-45d1-4542-a838-99f854890a28
+                          - image: 5c3778a6-4bd7-435a-8f7e-03b78cee910f
+              - component:
+                    - type: "ui_button"
+                    - data:
+                          - none: ""
+
+  - obj:
       - guid: main-camera
       - tag: main_camera
       - components:
