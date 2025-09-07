@@ -71,8 +71,7 @@ public:
         static_assert(std::is_base_of_v<Component, T>, "T must derive from Component");
 
         std::vector<std::weak_ptr<T>> result;
-        auto it = _components.find(typeid(T));
-        if (it != _components.end()) {
+        if (const auto it = _components.find(typeid(T)); it != _components.end()) {
             for (const auto& comp : it->second) {
                 result.push_back(std::dynamic_pointer_cast<T>(comp));
             }
@@ -92,8 +91,7 @@ public:
     {
         static_assert(std::is_base_of_v<Component, T>, "T must derive from Component");
 
-        auto it = _components.find(typeid(T));
-        if (it != _components.end()) {
+        if (const auto it = _components.find(typeid(T)); it != _components.end()) {
             auto& vec = it->second;
             vec.erase(std::remove_if(vec.begin(), vec.end(),
                                      [&](const std::shared_ptr<Component>& comp) {

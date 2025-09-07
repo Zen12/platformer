@@ -216,4 +216,7 @@ struct RectTransformFollowerSerialization final : public ComponentSerialization 
     glm::vec2 Offset{};
 };
 
+struct DestroyWithCreatorComponentSerialization final : public ComponentSerialization {
+};
+
 

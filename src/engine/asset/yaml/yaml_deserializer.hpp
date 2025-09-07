@@ -453,6 +453,8 @@ namespace YAML
                 return Parse<HealthBarComponentSerialization>(data);
             } else if (type == "rect_transform_follower") {
                 return Parse<RectTransformFollowerSerialization>(data);
+            } else if (type == "destroy_with_creator") {
+                return Parse<DestroyWithCreatorComponentSerialization>(data);
             }
 
             throw std::runtime_error("Unknown component type: " + type);
@@ -596,6 +598,15 @@ namespace YAML
             rhs.Offset = map["offset"].as<glm::vec2>();
             if (node["target"])
                 rhs.Target = map["target"].as<std::string>();
+            return true;
+        }
+    };
+
+    template <>
+    struct convert<DestroyWithCreatorComponentSerialization>
+    {
+        static bool decode([[maybe_unused]] const Node &node, [[maybe_unused]]  DestroyWithCreatorComponentSerialization &rhs)
+        {
             return true;
         }
     };

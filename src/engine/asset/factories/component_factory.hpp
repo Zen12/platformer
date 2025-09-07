@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 
+#include "../../components/destroy_with_creator.hpp"
 #include "../../components/particle_emitter.hpp"
 #include "../../components/transforms/rect_transform_follower.hpp"
 #include "../../components/physics/spine_collider.hpp"
@@ -515,6 +516,18 @@ protected:
         }
     }
 };
+
+class DestroyWithCreatorComponentFactory final : public ComponentFactory<DestroyWithCreatorComponent, DestroyWithCreatorComponentSerialization> {
+protected:
+    void FillComponent(const std::weak_ptr<DestroyWithCreatorComponent> &component,
+        const DestroyWithCreatorComponentSerialization &serialization) override {
+
+        if (const auto comp = component.lock()) {
+            comp->SetScene(_scene.lock());
+        }
+    }
+};
+
 
 
 

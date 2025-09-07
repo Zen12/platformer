@@ -111,7 +111,8 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
                 ParticleEmitterSerialization, ParticleEmitterComponentFactory,
                 SpineColliderSerialization, SpineColliderComponentFactory,
                 HealthBarComponentSerialization, HealthBarComponentFactory,
-                RectTransformFollowerSerialization, RectTransformFollowerFactory
+                RectTransformFollowerSerialization, RectTransformFollowerFactory,
+                DestroyWithCreatorComponentSerialization, DestroyWithCreatorComponentFactory
             >(comp.get(), std::weak_ptr<Entity>(entityInstance))) {
                 std::cerr << "can't add component" << std::endl;
 #ifndef NDEBUG
