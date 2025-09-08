@@ -159,6 +159,14 @@ void RenderPipeline::RenderUI([[maybe_unused]] const float& deltaTime) const
 
     const auto projection = _uiCamera.GetProjection();
 
+    for (const auto& value : _images)
+    {
+        if (const auto& image = value.lock())
+        {
+            image->Render(projection);
+        }
+    }
+
     for (const auto& value : _texts)
     {
         if (const auto& text = value.lock())
@@ -167,13 +175,6 @@ void RenderPipeline::RenderUI([[maybe_unused]] const float& deltaTime) const
         }
     }
 
-    for (const auto& value : _images)
-    {
-        if (const auto& image = value.lock())
-        {
-            image->Render(projection);
-        }
-    }
 }
 
 void RenderPipeline::Cleanup()

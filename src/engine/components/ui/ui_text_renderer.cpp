@@ -41,26 +41,42 @@ void UiTextRenderer::Render(const glm::mat4 &projection)
             material->SetMat4("projection", projection);
             material->SetMat4("model", model);
 
+
+            const auto modelScaleX = glm::length(glm::vec3(model[0]));
+            const auto modelScaleY = glm::length(glm::vec3(model[1]));
+
             // inject
             float x = 0.0f;
             float y = 0.0f;
 
-            const float scale = _fontSize;
+            const float scaleX = _fontSize / modelScaleX;
+            const float scaleY = _fontSize / modelScaleY;
 
             glActiveTexture(GL_TEXTURE0);
             glBindVertexArray(VAO);
+            float totalWidth = 0.0f;
+            float totalHeight = 0.0f;
+
+            for (char & c : _text) {
+                const Character ch = font->Characters.at(c);
+                totalWidth += static_cast<float>(ch.Advance >> 6) * scaleX;
+                totalHeight = static_cast<float>(ch.Size.y) * scaleY;
+            }
+
+            x = _fontSize / 2 - totalWidth / 2;
+            y = _fontSize / 2 - totalHeight / 2;
 
             for (char & c : _text)
             {
                 const Character ch = font->Characters.at(c);
 
-                const float xpos = x + ch.Bearing.x * scale;
-                const float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
+                const float xpos = x + static_cast<float>(ch.Bearing.x) * scaleX;
+                const float ypos = y - static_cast<float>(ch.Size.y - ch.Bearing.y) * scaleY;
 
-                float w = ch.Size.x * scale;
-                float h = ch.Size.y * scale;
+                const float w = static_cast<float>(ch.Size.x) * scaleX;
+                const float h = static_cast<float>(ch.Size.y) * scaleY;
                 // update VBO for each character
-                float vertices[6][4] = {
+                const float vertices[6][4] = {
                     {xpos, ypos + h, 0.0f, 0.0f},
                     {xpos, ypos, 0.0f, 1.0f},
                     {xpos + w, ypos, 1.0f, 1.0f},
@@ -77,7 +93,7 @@ void UiTextRenderer::Render(const glm::mat4 &projection)
                 // render quad
                 glDrawArrays(GL_TRIANGLES, 0, 6);
                 // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-                x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
+                x += static_cast<float>(ch.Advance >> 6) * scaleX; // bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
             }
             glBindVertexArray(0);
             glBindTexture(GL_TEXTURE_2D, 0);

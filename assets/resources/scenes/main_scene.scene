@@ -9,14 +9,14 @@ entities:
               - data:
                   - pixel_x:
                       - value: 0
-                      - x: 20
+                      - x: 0
                   - pixel_y:
                       - value: 1
-                      - y: 60
+                      - y: 0
                   - pixel_width:
-                      - value: 1
+                      - value: 60
                   - pixel_height:
-                      - value: 1
+                      - value: 60
                   - pivot:
                       - x: 0.0
                       - y: 1.0
@@ -37,14 +37,14 @@ entities:
                     - data:
                           - pixel_x:
                                 - value: 1
-                                - x: 100
+                                - x: 200
                           - pixel_y:
                                 - value: 1
                                 - y: 100
                           - pixel_width:
-                                - value: 200
+                                - value: 300
                           - pixel_height:
-                                - value: 200
+                                - value: 100
                           - pivot:
                                 - x: 0.5
                                 - y: 0.5
@@ -54,9 +54,15 @@ entities:
                           - material: f22681f4-45d1-4542-a838-99f854890a28
                           - image: 5c3778a6-4bd7-435a-8f7e-03b78cee910f
               - component:
+                  - type: "ui_text"
+                  - data:
+                      - material: f22681f4-45d1-4542-a838-99f854890c28
+                      - text: "Button"
+              - component:
                     - type: "ui_button"
                     - data:
                           - none: ""
+
 
   - obj:
       - guid: main-camera
