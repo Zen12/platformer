@@ -29,13 +29,17 @@ void Engine::LoadFirstScene() {
 }
 
 void Engine::WaitForTargetFrameRate() const {
-
     const float elapsed = _frameTimer.GetResetDelta();
-
     const float sleepTime = _targetFrameTime - elapsed;
 
     if (sleepTime > std::numeric_limits<float>::epsilon()) {
-        std::this_thread::sleep_for(std::chrono::duration<float>(sleepTime));
+        if (sleepTime > 0.002f) {
+            std::this_thread::sleep_for(std::chrono::duration<float>(sleepTime - 0.001f));
+        }
+
+        while (_frameTimer.GetResetDelta() < _targetFrameTime) {
+            // spin
+        }
     }
 }
 

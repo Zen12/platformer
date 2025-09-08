@@ -5,11 +5,13 @@
 #include "../../components/renderering/particle_emitter.hpp"
 #include "../../components/transforms/rect_transform_follower.hpp"
 #include "../../components/physics/spine_collider.hpp"
+#include "../../components/ui/on_click_scene_loader.hpp"
 #include "../../components/ui/ui_button.hpp"
 #include "../../gameplay/ai_controller.hpp"
 #include "../../gameplay/grid_prefab_spawner.hpp"
 #include "../../gameplay/prefab_spawner.hpp"
 #include "../../gameplay/health_component.hpp"
+#include "../../gameplay/idle_character.hpp"
 #include "../../gameplay/ui/heath_bar.hpp"
 #include "../../path_finder/astar_finder.hpp"
 #include "../../scene/scene.hpp"
@@ -186,6 +188,8 @@ protected:
 
                 comp->SetMaterial(material);
                 comp->SetText(serialization.Text);
+                comp->SetColor(serialization.Color);
+                comp->SetFontSize(serialization.FontSize);
 
                 scene->GetRenderPipeline().lock()->AddRenderer(comp);
             }
@@ -528,6 +532,37 @@ protected:
         }
     }
 };
+
+class IdleCharacterComponentFactor final : public ComponentFactory<IdleCharacter, IdleCharacterSerialization> {
+protected:
+    void FillComponent(const std::weak_ptr<IdleCharacter> &component,
+        [[maybe_unused]] const IdleCharacterSerialization &serialization) override {
+
+        if (const auto entity = _entity.lock()) {
+            if (const auto comp = component.lock()) {
+                comp->SetSpineRenderer(entity->GetComponent<SpineRenderer>());
+                comp->SetAnimation(serialization.IdleAnimation);
+            }
+        }
+    }
+};
+
+class OnClickSceneLoaderFactory final : public ComponentFactory<OnClickSceneLoader, OnClickSceneLoaderSerialization> {
+protected:
+    void FillComponent(const std::weak_ptr<OnClickSceneLoader> &component,
+        [[maybe_unused]] const OnClickSceneLoaderSerialization &serialization) override {
+
+        if (const auto entity = _entity.lock()) {
+            if (const auto comp = component.lock()) {
+                comp->SetScene(_scene);
+                comp->SetButton(entity->GetComponent<UiButton>());
+                comp->SetLoadScene(serialization.SceneGuid);
+            }
+        }
+    }
+};
+
+
 
 class UiButtonComponentFactory final : public ComponentFactory<UiButton, UiButtonComponentSerialization> {
 protected:

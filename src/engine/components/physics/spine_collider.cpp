@@ -31,8 +31,8 @@ void SpineColliderComponent::CreateColliderFixture(spine::Bone *bone, const std:
                     const float angle = atan2f(dir.y, dir.x);
 
                     // Half-extents
-                    const float halfLength = length * 0.5f;
-                    const float halfThickness = 0.10f; // choose thickness you want
+                    const float halfLength = length * 0.6f; // need a bit longer
+                    const float halfThickness = 0.10f;
 
                     // Box2D polygon shape (box aligned with bone)
                     b2PolygonShape dynamicBox;
@@ -93,9 +93,16 @@ void SpineColliderComponent::Update([[maybe_unused]] const float &deltaTime) {
         if (const auto entity = _entity.lock()) {
             if (const auto render = _renderer.lock()) {
                 const auto bones = render->GetBones();
-
                 for (size_t i = 0; i < bones.size(); i++) {
-                    if (const auto bone = bones[i]; _bonesColliders.find(bone) == _bonesColliders.end()) {
+                    const auto bone = bones[i];
+
+                    auto [start, end] = render->GetBoneEndpoints(bone);
+
+                    if (const b2Vec2 dir = b2Vec2(start.x, start.y) - b2Vec2(end.x, end.y); dir.Length() < 0.01)
+                        continue;
+
+
+                    if (_bonesColliders.find(bone) == _bonesColliders.end()) {
                         _bonesColliders[bone] =  CreateCollider(bone);;
                     } else {
 #ifndef NDEBUG

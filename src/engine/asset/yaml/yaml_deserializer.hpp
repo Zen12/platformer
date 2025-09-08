@@ -75,6 +75,8 @@ namespace YAML
             const auto map = sequenceToMap(node);
             rhs.MaterialGUID = map["material"].as<std::string>();
             rhs.Text = map["text"].as<std::string>();
+            rhs.Color = map["color"].as<glm::vec3>();
+            rhs.FontSize = map["font_size"].as<float>();
             return true;
         }
     };
@@ -457,6 +459,10 @@ namespace YAML
                 return Parse<RectTransformFollowerSerialization>(data);
             } else if (type == "destroy_with_creator") {
                 return Parse<DestroyWithCreatorComponentSerialization>(data);
+            } else if (type == "idle_character") {
+                return Parse<IdleCharacterSerialization>(data);
+            } else if (type == "on_click_scene_loader") {
+                return Parse<OnClickSceneLoaderSerialization>(data);
             }
 
             throw std::runtime_error("Unknown component type: " + type);
@@ -614,10 +620,32 @@ namespace YAML
     };
 
     template <>
+    struct convert<IdleCharacterSerialization>
+    {
+        static bool decode(const Node &node, IdleCharacterSerialization &rhs)
+        {
+            const auto map = sequenceToMap(node);
+            rhs.IdleAnimation = map["idle_animation"].as<std::string>();
+            return true;
+        }
+    };
+
+    template <>
     struct convert<UiButtonComponentSerialization>
     {
         static bool decode([[maybe_unused]] const Node &node, [[maybe_unused]]  UiButtonComponentSerialization &rhs)
         {
+            return true;
+        }
+    };
+
+    template <>
+    struct convert<OnClickSceneLoaderSerialization>
+    {
+        static bool decode(const Node &node, OnClickSceneLoaderSerialization &rhs)
+        {
+            const auto map = sequenceToMap(node);
+            rhs.SceneGuid = map["scene_guid"].as<std::string>();
             return true;
         }
     };

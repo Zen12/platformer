@@ -140,6 +140,8 @@ struct MaterialComponentSerialization final : public ComponentSerialization
 struct UiTextComponentSerialization final : public ComponentSerialization {
     std::string MaterialGUID;
     std::string Text;
+    glm::vec3 Color;
+    float FontSize;
 };
 
 struct UiButtonComponentSerialization final : public ComponentSerialization {
@@ -223,4 +225,11 @@ struct RectTransformFollowerSerialization final : public ComponentSerialization 
 struct DestroyWithCreatorComponentSerialization final : public ComponentSerialization {
 };
 
+struct IdleCharacterSerialization final : public ComponentSerialization {
+    std::string IdleAnimation;
+};
+
+struct OnClickSceneLoaderSerialization final : public ComponentSerialization {
+    std::string SceneGuid;
+};
 

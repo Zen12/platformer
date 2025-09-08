@@ -21,19 +21,15 @@ UiTextRenderer::UiTextRenderer(const std::weak_ptr<Entity> &entity) : Component(
 
 void UiTextRenderer::Update([[maybe_unused]] const float& deltaTime)
 {
-    if (auto material = _material.lock())
-    {
-        constexpr glm::vec3 color = glm::vec3(0.5, 0.8f, 0.2f);
-
-        material->Bind();
-        material->SetVec3("textColor", color.x, color.y, color.z);
-    }
 }
 
 void UiTextRenderer::Render(const glm::mat4 &projection)
 {
-    if (const auto material = _material.lock())
+    if (const auto &material = _material.lock())
     {
+        material->Bind();
+        material->SetVec3("textColor", _color.x, _color.y, _color.z);
+
         if (const auto font = material->GetFont().lock())
         {
             const auto model = GetEntity().lock()->GetComponent<RectTransform>().lock()->GetModel();
@@ -63,10 +59,10 @@ void UiTextRenderer::Render(const glm::mat4 &projection)
                 totalHeight = static_cast<float>(ch.Size.y) * scaleY;
             }
 
-            x = _fontSize / 2 - totalWidth / 2;
-            y = _fontSize / 2 - totalHeight / 2;
+            x = 0.5f - totalWidth / 2;
+            y = 0.5f - totalHeight / 2;
 
-            for (char & c : _text)
+            for (const char &c : _text)
             {
                 const Character ch = font->Characters.at(c);
 

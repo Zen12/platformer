@@ -25,17 +25,20 @@ class SceneManager {
 
     std::shared_ptr<Scene> _scene;
     std::weak_ptr<AssetManager> _assetManager;
+    std::weak_ptr<Window> _window;
+    std::weak_ptr<InputSystem> _inputSystem;
 
 public:
     SceneManager(
         const std::weak_ptr<Window> &window,
         const std::weak_ptr<AssetManager> &assetManager,
-        const std::weak_ptr<InputSystem> &inputSystem)
-        : _scene(std::make_shared<Scene>(window, assetManager, inputSystem)) {
+        const std::weak_ptr<InputSystem> &inputSystem) {
         _assetManager = assetManager;
+        _window = window;
+        _inputSystem = inputSystem;
     }
 
-    void LoadScene(const SceneAsset& serialization) const;
+    void LoadScene(const SceneAsset& serialization);
     void LoadEntities(const std::vector<EntitySerialization> &serialization) const;
 
     [[nodiscard]] std::weak_ptr<PhysicsWorld> GetPhysicsWorld() const {
@@ -46,7 +49,7 @@ public:
 
     void CreateRequestedPrefabs() const;
 
-    void Update(const float& deltaTime) const;
+    void Update(const float& deltaTime);
 
     void Render(const float &deltaTime) const;
 

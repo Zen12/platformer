@@ -54,14 +54,16 @@ bool SceneManager::TryToAddComponents(ComponentSerialization* comp, std::weak_pt
 }
 
 
-void SceneManager::LoadScene(const SceneAsset &sceneAsset) const {
+void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
 #ifndef NDEBUG
 #if DEBUG_ENGINE_SCENE_MANAGER_PROFILE
     PROFILE_SCOPE("Loading of scene " + sceneAsset.Name);
 #endif
 #endif
 
-    if (const auto assetManager = _scene->GetAssetManager().lock()) {
+
+    if (const auto assetManager = _assetManager.lock()) {
+        _scene = std::make_shared<Scene> (_window,_assetManager, _inputSystem);
 
         LoadEntities(sceneAsset.Entities);
 
@@ -113,7 +115,9 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
                 HealthBarComponentSerialization, HealthBarComponentFactory,
                 RectTransformFollowerSerialization, RectTransformFollowerFactory,
                 DestroyWithCreatorComponentSerialization, DestroyWithCreatorComponentFactory,
-                UiButtonComponentSerialization, UiButtonComponentFactory
+                UiButtonComponentSerialization, UiButtonComponentFactory,
+                IdleCharacterSerialization, IdleCharacterComponentFactor,
+                OnClickSceneLoaderSerialization, OnClickSceneLoaderFactory
             >(comp.get(), std::weak_ptr<Entity>(entityInstance))) {
                 std::cerr << "can't add component" << std::endl;
 #ifndef NDEBUG
@@ -157,12 +161,21 @@ void SceneManager::CreateRequestedPrefabs() const {
     _scene->PrefabRequestInstantiate.clear();
 }
 
-void SceneManager::Update(const float &deltaTime) const {
+void SceneManager::Update(const float &deltaTime) {
 #ifndef NDEBUG
 #if DEBUG_ENGINE_SCENE_MANAGER_PROFILE
     PROFILE_SCOPE("  SceneManager::Update");
 #endif
 #endif
+
+    if (!_scene->GetLoadSceneRequestGuid().empty()) {
+        if (const auto assetManager = _assetManager.lock()) {
+            const auto scene = assetManager->LoadAssetByGuid<SceneAsset>(_scene->GetLoadSceneRequestGuid());
+            LoadScene(scene);
+            return;
+        }
+
+    }
 
     _scene->RemovePendingEntities();
     CreateRequestedPrefabs();

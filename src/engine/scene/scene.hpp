@@ -50,6 +50,7 @@ private:
     std::vector<std::shared_ptr<Entity>> Entities;
 
     std::vector<std::string> _entitiesToRemove{};
+    std::string _requestToLoadScene{};
 
 public:
 
@@ -116,4 +117,12 @@ public:
     [[nodiscard]] std::weak_ptr<Entity> FindByTag(const std::string &tag) const;
 
     [[nodiscard]] std::weak_ptr<UiRaycastSystem> GetUiRaycast() const;
+
+    void RequestToLoadScene(const std::string &sceneGuid) noexcept {
+        _requestToLoadScene = sceneGuid;
+    }
+
+    [[nodiscard]] std::string GetLoadSceneRequestGuid() const noexcept {
+        return _requestToLoadScene;
+    }
 };

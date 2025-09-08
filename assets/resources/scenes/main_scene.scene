@@ -25,45 +25,47 @@ entities:
               - data:
                   - material: f22681f4-45d1-4542-a838-99f854890c28
                   - text: "FPS text"
+                  - font_size: 1
+                  - color:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 0.0
           - component:
               - type: "ui_show_fps"
               - data:
                   - none: ""
   - obj:
-        - guid: button
+        - guid: restart
         - components:
               - component:
                     - type: "rect_transform"
                     - data:
                           - pixel_x:
                                 - value: 1
-                                - x: 200
+                                - x: 120
                           - pixel_y:
                                 - value: 1
-                                - y: 100
+                                - y: 20
                           - pixel_width:
-                                - value: 300
+                                - value: 100
                           - pixel_height:
                                 - value: 100
                           - pivot:
-                                - x: 0.5
-                                - y: 0.5
+                                - x: 0.0
+                                - y: 1.0
               - component:
                     - type: "ui_image"
                     - data:
                           - material: f22681f4-45d1-4542-a838-99f854890a28
-                          - image: 5c3778a6-4bd7-435a-8f7e-03b78cee910f
+                          - image: a6520b1f-4843-46bd-bb97-cc06f35077be
               - component:
-                  - type: "ui_text"
+                  - type: "ui_button"
                   - data:
-                      - material: f22681f4-45d1-4542-a838-99f854890c28
-                      - text: "Button"
+                      - none: ""
               - component:
-                    - type: "ui_button"
+                    - type: "on_click_scene_loader"
                     - data:
-                          - none: ""
-
-
+                          - scene_guid: "d0677c93-a26f-4793-9eb7-5232d99378d1"
   - obj:
       - guid: main-camera
       - tag: main_camera

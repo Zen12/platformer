@@ -19,6 +19,7 @@ private:
     uint32_t VAO{}, VBO{};
     float _fontSize = 1;
     std::weak_ptr<Material> _material{};
+    glm::vec3 _color{};
 
 public:
     explicit UiTextRenderer(const std::weak_ptr<Entity> &entity);
@@ -30,6 +31,14 @@ public:
     void SetMaterial(const std::weak_ptr<Material> &material)
     {
         _material = material;
+    }
+
+    void SetColor(const glm::vec3 &color) {
+        _color = color;
+    }
+
+    void SetFontSize(const float& fontSize) {
+        _fontSize = fontSize;
     }
 
     void Update([[maybe_unused]] const float& deltaTime) override;

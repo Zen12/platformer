@@ -112,12 +112,13 @@ TODO
 - Sound
 
 ## 🏃🏃🏃 TODO 🏃🏃🏃
-- [ ] UI buttons
-- [ ] One level (art)
-- [ ] Character Controller balancing
 - [ ] Win/Lose state
-- [ ] Restart level
 - [ ] Webgl build
 - [ ] Windows build
+- [ ] One level (art), AI?
+- [ ] Transparency for loading textures
+- [ ] Character Controller balancing
+- [ ] Optimization of collider generator for spine-bones
+- [ ] Optimization of light raycast system, the vertex approach 
 
 🇲🇩

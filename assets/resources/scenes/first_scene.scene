@@ -1,0 +1,252 @@
+name: first_screen
+type: scene
+entities:
+  - obj:
+        - guid: button-play
+        - components:
+              - component:
+                    - type: "rect_transform"
+                    - data:
+                          - center_x:
+                              - value: 0
+                          - pixel_y:
+                                - value: 0
+                                - y: 200
+                          - pixel_width:
+                                - value: 400
+                          - pixel_height:
+                                - value: 130
+                          - pivot:
+                                - x: 0.5
+                                - y: 0.5
+              - component:
+                    - type: "ui_image"
+                    - data:
+                          - material: f22681f4-45d1-4542-a838-99f854890a28
+                          - image: 55e690b3-66ac-42bb-8144-e7cc7acf3b90
+              - component:
+                  - type: "ui_text"
+                  - data:
+                      - material: f22681f4-45d1-4542-a838-99f854890c28
+                      - color:
+                          - x: 1.0
+                          - y: 1.0
+                          - z: 0.0
+                      - font_size: 1.2
+                      - text: "Play"
+              - component:
+                    - type: "ui_button"
+                    - data:
+                          - none: ""
+              - component:
+                  - type: "on_click_scene_loader"
+                  - data:
+                      - scene_guid: "d0677c93-a26f-4793-9eb7-5232d99378d1"
+  - obj:
+      - guid: main-camera
+      - tag: main_camera
+      - components:
+          - component:
+              - type: "transform"
+              - data:
+                  - position:
+                      - x: 0.0
+                      - y: 1.55
+                      - z: 0.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+          - component:
+              - type: "camera"
+              - data:
+                  - aspectPower: 70.0
+                  - isPerspective: false
+  - obj:
+      - tag: "grid"
+      - components:
+          - component:
+              - type: grid
+              - data:
+                  - spawn_step:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 0.0
+                  - spawn_offset:
+                      - x: -8.0
+                      - y: -10.0
+                      - z: 1.0
+                  - grid:
+                      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
+                      - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+                      - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+                      - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+                      - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+                      - [ 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1 ]
+                      - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+                      - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+                      - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+                      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
+  - obj:
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+          - component:
+              - type: grid_prefab_spawner
+              - data:
+                  - prefab_id: 2d05d2a1-2265-42a9-91a2-0774777518f0
+                  - grid_tag: grid
+  - obj:
+      - tag: "main-character"
+      - guid: main-character
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: -0.7
+                      - y: 1.5
+                      - z: 0.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+          - component:
+              - type: mesh_renderer
+              - data:
+                  - material: 5faecd48-398f-46db-889f-ba4199c2636f
+          - component:
+              - type: spine_renderer
+              - data:
+                  - spine_data: 6c51e080-77d1-440c-bdc0-47169c111e20
+          - component:
+              - type: idle_character
+              - data:
+                  - idle_animation: "idle"
+          - component:
+              - type: rigidbody2d
+              - data:
+                  - isDynamic: false
+          - component:
+              - type: spine_collider
+              - data:
+                  - none: "none"
+  - obj:
+        - tag: fly1
+        - guid: fly1
+        - components:
+              - component:
+                    - type: transform
+                    - data:
+                          - position:
+                                - x: 3.0
+                                - y: 3.5
+                                - z: 0.0
+                          - rotation:
+                                - x: 0.0
+                                - y: 0.0
+                                - z: 0.0
+                          - scale:
+                                - x: 1.0
+                                - y: 1.0
+                                - z: 1.0
+  - obj:
+      - guid: light_2d
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: -10.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+          - component:
+              - type: mesh_renderer
+              - data:
+                  - material: b1604380-8385-4912-9f2b-178103120328
+          - component:
+              - type: light_2d
+              - data:
+                  - center: fly1
+                  - offset:
+                      - x: 0.0
+                      - y: 1.7
+                      - z: -1.0
+  - obj:
+      - tag: fly2
+      - guid: fly2
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: -3.0
+                      - y: 3.5
+                      - z: 0.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+  - obj:
+      - guid: light_2d_2
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: -10.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+          - component:
+              - type: mesh_renderer
+              - data:
+                  - material: b1604380-8385-4912-9f2b-178103120328
+          - component:
+              - type: light_2d
+              - data:
+                  - center: fly2
+                  - offset:
+                      - x: 0.0
+                      - y: 1.7
+                      - z: -1.0

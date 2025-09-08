@@ -18,7 +18,9 @@ public:
 
     void Update([[maybe_unused]] const float &deltaTime) override {
         if (_state.IsPressUp) {
-            std::cout << "Pressed up" << std::endl;
+            for (const auto &callback: _callbacks) {
+                callback.second();
+            }
         }
     }
 
