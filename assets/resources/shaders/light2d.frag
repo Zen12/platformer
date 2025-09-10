@@ -1,11 +1,12 @@
 #version 330 core
 out vec4 FragColor;
 
+in vec3 localPosition;
+uniform vec3 center;
 
 void main()
 {
-    //float dist = distance(localPosition, vec3(0,0,0));
-    //float transperent = 1.0 - (dist * 0.09);
-    //transperent = clamp(transperent, 0.01, 0.30) + 0.01; // a bit of light for far-far distance
-    FragColor = vec4(1.0, 1.0, 0, 0.2);
+    float dist = distance(localPosition, center);
+    float alpha = (1 - dist / 7) - 0.3;
+    FragColor = vec4(1.0,1.0, 0, alpha);
 }

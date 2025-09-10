@@ -6,7 +6,7 @@
 #include "../../render/line.hpp"
 #include "../transforms/transform.hpp"
 
-#define DEBUG_ENGINE_MESH_RENDERER 1
+#define DEBUG_ENGINE_MESH_RENDERER 0
 
 
 class MeshRenderer final : public Component {
@@ -16,6 +16,7 @@ private:
     std::weak_ptr<Material> _material{};
     std::weak_ptr<Sprite> _sprite{};
     std::weak_ptr<Transform> _transform{};
+    std::unordered_map<std::string, glm::vec3> _vec3Cache;
 
 public:
     explicit MeshRenderer(const std::weak_ptr<Entity> &entity)
@@ -38,25 +39,36 @@ public:
         }
     }
 
+    void SetUniformVec3(const std::string& name, const glm::vec3 &value) noexcept {
+        _vec3Cache [name] = value;
+    }
+
 
     void SetMaterial(std::weak_ptr<Material> material) {
         _material = std::move( material);
     }
 
     void Update([[maybe_unused]] const float& deltaTime) override {
+
+    }
+
+    void Render() const noexcept {
+
         if (const auto material = _material.lock()) {
             if (const auto sprite = _sprite.lock()) {
                 sprite->Bind();
             }
             material->Bind();
             _mesh.Bind();
-        }
-    }
 
-    void Render() const noexcept {
-        if (const auto material = _material.lock()) {
+            for (const auto &[name, value] : _vec3Cache) {
+                material->SetVec3(name, value.x, value.y, value.z);
+            }
+
             glDrawElements(GL_TRIANGLES, static_cast<int32_t>(_mesh.GetIndicesCount()), GL_UNSIGNED_INT, nullptr);
         }
+
+
     }
 
     [[nodiscard]] float GetZOrder() const noexcept {

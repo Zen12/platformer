@@ -203,6 +203,10 @@ entities:
                       - x: 0.0
                       - y: 1.7
                       - z: -1.0
+                  - radius: 20
+                  - start_angle: 0
+                  - max_angle: 360
+                  - segments: 600
   - obj:
         - tag: "grid"
         - components:

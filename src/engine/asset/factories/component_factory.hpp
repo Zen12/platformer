@@ -12,6 +12,7 @@
 #include "../../gameplay/prefab_spawner.hpp"
 #include "../../gameplay/health_component.hpp"
 #include "../../gameplay/idle_character.hpp"
+#include "../../gameplay/path_mover.hpp"
 #include "../../gameplay/ui/heath_bar.hpp"
 #include "../../path_finder/astar_finder.hpp"
 #include "../../scene/scene.hpp"
@@ -320,7 +321,13 @@ protected:
 
                 comp->SetPhysicsWorld(scene->GetPhysicsWorld());
                 comp->SetMeshRenderer(_entity.lock()->GetComponent<MeshRenderer>());
-                comp->SetOffset(serialization.Offset);
+                comp->SetSettings(Light2dSettings{
+                    .Segments = serialization.Segments,
+                    .Radius = serialization.Radius,
+                    .Offset = serialization.Offset,
+                    .MaxAngle = serialization.MaxAngle,
+                    .StartAngle = serialization.StartAngle,
+                });
             }
         }
     }
@@ -339,6 +346,24 @@ protected:
         }
     }
 };
+
+class PathMoverComponentFactor final : public ComponentFactory<PathMover, PathMoverComponentSerialization> {
+protected:
+    void FillComponent(const std::weak_ptr<PathMover> &component, const PathMoverComponentSerialization &serialization) override {
+
+        if (const auto entity = _entity.lock()) {
+            if (const auto scene = _scene.lock()) {
+                if (const auto comp = component.lock()) {
+
+                    comp->SetTransform(entity->GetComponent<Transform>());
+                    comp->SetPoints(serialization.Positions);
+                    comp->SetSpeed(serialization.Speed);
+                }
+            }
+        }
+    }
+};
+
 
 class CharacterControllerFactory final : public ComponentFactory<CharacterController, CharacterControllerComponentSerialization> {
 protected:

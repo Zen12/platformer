@@ -8,6 +8,17 @@
 #include "../transforms/transform.hpp"
 
 
+class Light2dSettings {
+    public:
+    float Radius = 1;
+    int Segments = 500;
+    glm::vec3 Offset = glm::vec3{0.0f, 2.0f, 0.0f};
+
+    float MaxAngle = 360;
+    float StartAngle = 0;
+};
+
+
 class Light2dComponent final : public Component {
 private:
     std::weak_ptr<Transform> _center;
@@ -15,12 +26,7 @@ private:
     std::weak_ptr<PhysicsWorld> _physicsWorld;
     std::weak_ptr<MeshRenderer> _meshRenderer;
 
-    const float _radius = 20.0f;
-    const int _segments = 500;
-
-    glm::vec3 _offset =  glm::vec3{0.0f, 2.0f, 0.0f};
-
-
+    Light2dSettings _settings{};
 
 public:
 
@@ -42,8 +48,8 @@ public:
         _physicsWorld = std::move(physicsWorld);
     }
 
-    void SetOffset(const glm::vec3 &offset) noexcept {
-        _offset = offset;
+    void SetSettings(const Light2dSettings &settings) noexcept {
+        _settings = settings;
     }
 
 private:

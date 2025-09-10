@@ -120,6 +120,17 @@ struct Light2dComponentSerialization final : public ComponentSerialization
 {
     std::string CenterTransform;
     glm::vec3 Offset;
+
+    float Radius = 20;
+    int Segments = 500;
+
+    float MaxAngle = 360;
+    float StartAngle = 0;
+};
+
+struct PathMoverComponentSerialization final : public ComponentSerialization {
+    std::vector<glm::vec3> Positions;
+    float Speed;
 };
 
 struct SpriteComponentSerialization final : public ComponentSerialization

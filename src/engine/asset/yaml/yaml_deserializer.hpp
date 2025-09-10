@@ -193,11 +193,36 @@ namespace YAML
     {
         static bool decode(const Node &node, Light2dComponentSerialization &rhs) {
             const auto map = sequenceToMap(node);
+
             rhs.CenterTransform = map["center"].as<std::string>();
             rhs.Offset = map["offset"].as<glm::vec3>();
+            rhs.Radius = map["radius"].as<float>();
+            rhs.Segments = map["segments"].as<int>();
+            rhs.MaxAngle = map["max_angle"].as<float>();
+            rhs.StartAngle = map["start_angle"].as<float>();
+
             return true;
         }
     };
+
+    template <>
+    struct convert<PathMoverComponentSerialization>
+    {
+        static bool decode(const Node &node, PathMoverComponentSerialization &rhs) {
+            const auto map = sequenceToMap(node);
+
+            rhs.Positions = std::vector<glm::vec3>();
+
+            for (const auto &path : map["positions"]) {
+                rhs.Positions.push_back(path["position"].as<glm::vec3>());
+            }
+
+            rhs.Speed = map["speed"].as<float>();
+
+            return true;
+        }
+    };
+
 
     template <>
     struct convert<SpriteRenderComponentSerialization>
@@ -463,6 +488,8 @@ namespace YAML
                 return Parse<IdleCharacterSerialization>(data);
             } else if (type == "on_click_scene_loader") {
                 return Parse<OnClickSceneLoaderSerialization>(data);
+            } else if (type == "path_mover") {
+                return Parse<PathMoverComponentSerialization>(data);
             }
 
             throw std::runtime_error("Unknown component type: " + type);
