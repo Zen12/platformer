@@ -34,6 +34,8 @@ struct MaterialAsset : Asset
     std::string FragmentShaderGuid{};
     std::string Font{};
     std::string Image{};
+    int BlendMode = 0;
+    bool IsCulling = false;
 };
 
 struct ProjectAsset : Asset

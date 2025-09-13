@@ -9,12 +9,21 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+
+enum class BlendMode {
+    None = 0,
+    AlphaAdditive = 1,
+    ColorAdditive = 2,
+};
+
 class Material
 {
 private:
     std::weak_ptr<Shader> _shader{};
     std::weak_ptr<Font> _font{};
     std::vector<std::weak_ptr<Sprite>> _sprites{};
+    bool _isFaceCulled{};
+    BlendMode _blendMode{};
 
 
 public:
@@ -25,7 +34,8 @@ public:
     {
     }
 
-    int32_t GetLocation(const std::string &key) const noexcept;
+    [[nodiscard]] int32_t GetLocation(const std::string &key) const noexcept;
+
     void Bind() const;
 
     void ClearSprites() noexcept {
@@ -44,6 +54,22 @@ public:
     void SetFont(const std::weak_ptr<Font> &font) noexcept
     {
         _font = font;
+    }
+
+    void SetBlendMode(const BlendMode &blendMode) noexcept {
+        _blendMode = blendMode;
+    }
+
+    [[nodiscard]] BlendMode GetBlendMode() const noexcept {
+        return _blendMode;
+    }
+
+    void SetCulling(const bool &culling) noexcept {
+        _isFaceCulled = culling;
+    }
+
+    [[nodiscard]] bool GetCulling() const noexcept {
+        return _isFaceCulled;
     }
 
     [[nodiscard]] int32_t GetShaderId() const noexcept

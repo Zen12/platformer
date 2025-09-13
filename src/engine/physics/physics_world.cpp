@@ -16,7 +16,7 @@ void PhysicsWorld::UpdateRigidBodies() const {
 #endif
 #endif
 
-    for (auto &&body: _bodies) {
+    for (const auto &body: _bodies) {
         if (const auto rig = body.first.lock()) {
             const auto pos = rig->GetEntity().lock()->GetComponent<Transform>().lock()->GetPosition();
             body.second->SetTransform(b2Vec2(pos.x, pos.y), 0.0f);
@@ -75,7 +75,7 @@ const RayCastResult PhysicsWorld::RayCast(const glm::vec3 &origin, const glm::ve
 const RayCastResult PhysicsWorld::RayCast(
     const glm::vec3 &origin,
     const glm::vec3 &target,
-    const std::string_view &ignoreTag) {
+    const int &ignoreLayers) {
 #if DEBUG_ENGINE_PHYSICS_PROFILE
     PROFILE_SCOPE("PhysicsWorld::RayCast::RayCast(3 args)");
 #endif
@@ -86,11 +86,13 @@ const RayCastResult PhysicsWorld::RayCast(
 
     _callback.Hit = false;
 
-    const RayCastClosestCallback::FilterFn filter = [this, ignoreTag](b2Fixture* fixture) {
+    const RayCastClosestCallback::FilterFn filter = [this, ignoreLayers](b2Fixture* fixture) {
         const auto collider = _fixtureToCollider[fixture];
         if (const auto col = collider.lock()) {
             if (const auto entity = col->GetEntity().lock()) {
-                return entity->GetTag() != ignoreTag;
+                const int layer = entity->GetLayer();
+                const auto compare = layer & ignoreLayers;
+                return compare == 0;
             }
         }
         return true;

@@ -2,3 +2,5 @@ name: light
 shader:
   vertex: 2393a055-6180-48bd-86b4-b55e9dd71399
   fragment: 92753bd6-f179-483a-8433-83545be85848
+is_culling: false
+blend_mode: 1

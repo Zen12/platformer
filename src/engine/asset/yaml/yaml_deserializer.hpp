@@ -196,6 +196,7 @@ namespace YAML
 
             rhs.CenterTransform = map["center"].as<std::string>();
             rhs.Offset = map["offset"].as<glm::vec3>();
+            rhs.Color = map["color"].as<glm::vec3>();
             rhs.Radius = map["radius"].as<float>();
             rhs.Segments = map["segments"].as<int>();
             rhs.MaxAngle = map["max_angle"].as<float>();
@@ -503,9 +504,10 @@ namespace YAML
 
                 if (nodeMap["guid"])
                     rhs.Guid = nodeMap["guid"].as<std::string>();
-                if (nodeMap["tag"]) {
+                if (nodeMap["tag"])
                     rhs.Tag = nodeMap["tag"].as<std::string>();
-                }
+                if (nodeMap["layer"])
+                    rhs.Layer = nodeMap["layer"].as<int>();
 
                 for (const auto &compNode : nodeMap["components"])
                 {
@@ -563,6 +565,9 @@ namespace YAML
         static bool decode(const Node &node, MaterialAsset &rhs)
         {
             rhs.Name = node["name"].as<std::string>();
+            rhs.BlendMode = node["blend_mode"].as<int>();
+            rhs.IsCulling = node["is_culling"].as<bool>();
+
             if (const auto shaderNode = node["shader"]) {
                 rhs.VertexShaderGuid = shaderNode["vertex"].as<std::string>();
                 rhs.FragmentShaderGuid = shaderNode["fragment"].as<std::string>();

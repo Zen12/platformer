@@ -79,6 +79,8 @@ void Light2dComponent::Update([[maybe_unused]] const float &deltaTime) {
                 meshRenderer->GetEntity().lock()->GetComponent<Transform>().lock()->SetPosition(centerPosition);
                 meshRenderer->UpdateMesh(meshVert, meshIndex);
                 meshRenderer->SetUniformVec3("center", centerPosition);
+                meshRenderer->SetUniformVec3("color", _settings.Color);
+                meshRenderer->SetUniformFloat("radius", _settings.Radius);
 #ifndef NDEBUG
 #if LIGHT_COMPONENT_DEBUG
                 meshRenderer->DrawDebug();

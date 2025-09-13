@@ -16,6 +16,7 @@ struct EntitySerialization
     std::string Creator{};
     std::string Tag;
     std::string Guid;
+    int Layer;
     std::vector<std::shared_ptr<ComponentSerialization>> Components;
 };
 
@@ -119,6 +120,7 @@ struct MeshRendererComponentSerialization final : public ComponentSerialization
 struct Light2dComponentSerialization final : public ComponentSerialization
 {
     std::string CenterTransform;
+    glm::vec3 Color;
     glm::vec3 Offset;
 
     float Radius = 20;

@@ -17,6 +17,7 @@ private:
     std::weak_ptr<Sprite> _sprite{};
     std::weak_ptr<Transform> _transform{};
     std::unordered_map<std::string, glm::vec3> _vec3Cache;
+    std::unordered_map<std::string, float> _floatCache;
 
 public:
     explicit MeshRenderer(const std::weak_ptr<Entity> &entity)
@@ -43,6 +44,10 @@ public:
         _vec3Cache [name] = value;
     }
 
+    void SetUniformFloat(const std::string& name, const float &value) noexcept {
+        _floatCache [name] = value;
+    }
+
 
     void SetMaterial(std::weak_ptr<Material> material) {
         _material = std::move( material);
@@ -63,6 +68,9 @@ public:
 
             for (const auto &[name, value] : _vec3Cache) {
                 material->SetVec3(name, value.x, value.y, value.z);
+            }
+            for (const auto &[name, value] : _floatCache) {
+                material->SetFloat(name, value);
             }
 
             glDrawElements(GL_TRIANGLES, static_cast<int32_t>(_mesh.GetIndicesCount()), GL_UNSIGNED_INT, nullptr);

@@ -35,6 +35,7 @@ private:
 
 
     glm::vec3 _velocity{0};
+    float _hitCooldown{0};
 
     std::map<size_t, std::string> _animationValue;
 
@@ -62,6 +63,8 @@ private:
     [[nodiscard]] bool IsHitRight(glm::vec2 &hitPos) const;
 
     [[nodiscard]] bool IsGrounded( glm::vec2 &hitPos) const;
+
+    bool TryToHit();
 
 
     void SetLookAt(const glm::vec3 &lookAt) const;

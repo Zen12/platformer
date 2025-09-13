@@ -28,6 +28,7 @@ std::weak_ptr<Entity> Scene::CreateEntity(const EntitySerialization &entitySeria
     const auto newEntity = std::make_shared<Entity>();
     newEntity->SetId(entitySerialization.Guid);
     newEntity->SetTag(entitySerialization.Tag);
+    newEntity->SetLayer(entitySerialization.Layer);
     newEntity->SetSelf(newEntity);
     newEntity->SetCreator(entitySerialization.Creator);
 
@@ -121,6 +122,8 @@ std::shared_ptr<Material> Scene::GetMaterial(const std::string &guid) {
 
             const auto font = GetFont(materialAsset.Font);
             material->SetFont(font);
+            material->SetBlendMode(static_cast<BlendMode>(materialAsset.BlendMode));
+            material->SetCulling(materialAsset.IsCulling);
 
             if (!materialAsset.Image.empty()) {
                 const auto sprite = GetSprite(materialAsset.Image);

@@ -323,6 +323,7 @@ protected:
                 comp->SetMeshRenderer(_entity.lock()->GetComponent<MeshRenderer>());
                 comp->SetSettings(Light2dSettings{
                     .Segments = serialization.Segments,
+                    .Color = serialization.Color,
                     .Radius = serialization.Radius,
                     .Offset = serialization.Offset,
                     .MaxAngle = serialization.MaxAngle,

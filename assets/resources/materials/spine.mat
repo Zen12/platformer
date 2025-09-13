@@ -2,3 +2,5 @@ name: spine
 shader:
   vertex: 3de5944b-6900-4478-8e73-731a1a01a1e1
   fragment: f5fdf229-9d6d-4382-af40-30a5542ca0b8
+is_culling: false
+blend_mode: 1

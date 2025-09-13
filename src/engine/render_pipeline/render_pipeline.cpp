@@ -31,8 +31,6 @@ void RenderPipeline::RenderSprites(const float& deltaTime) const
 
 void RenderPipeline::RenderMeshes(const float& deltaTime) {
 
-    glDisable(GL_CULL_FACE); // spine runtime requires
-
     std::sort(_meshRenderers.begin(), _meshRenderers.end(),
         [](const std::weak_ptr<MeshRenderer>& a, const std::weak_ptr<MeshRenderer>& b) {
             const auto sa = a.lock();

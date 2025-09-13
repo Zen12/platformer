@@ -12,6 +12,8 @@ class Light2dSettings {
     public:
     float Radius = 1;
     int Segments = 500;
+
+    glm::vec3 Color = glm::vec3(1, 1, 1);
     glm::vec3 Offset = glm::vec3{0.0f, 2.0f, 0.0f};
 
     float MaxAngle = 360;

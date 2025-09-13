@@ -1,5 +1,8 @@
 #include "ai_controller.hpp"
 
+#include "health_component.hpp"
+#include "ui/heath_bar.hpp"
+
 #define DEBUG_AI_CONTROLLER 0
 
 void AiController::SetAnimation(const size_t &index, const std::string &animation, const bool &isLoop) {
@@ -38,7 +41,7 @@ bool AiController::IsHitDir(glm::vec2 position, glm::vec2 dir, glm::vec2 &hitPos
         const glm::vec3 pointA(position.x, position.y, 0);    // Start of ray
         const glm::vec3 pointB(position.x + dir.x, position.y + dir.y, 0);   // End of ray
 
-        const auto result = world->RayCast( pointA, pointB, "enemy");
+        const auto result = world->RayCast( pointA, pointB, 1);
 
         hitPos = glm::vec2(result.Point.x, result.Point.y);
 
@@ -116,6 +119,17 @@ bool AiController::IsGrounded(glm::vec2 &hitPos) const {
     return false;
 }
 
+bool AiController::TryToHit() {
+
+    if (_hitCooldown > 0)
+        return false;
+
+    _target.lock()->GetEntity().lock()->GetComponent<HealthComponent>()
+    .lock()->DecreaseHealth(10);
+    _hitCooldown = 10;
+    return true;
+}
+
 AiController::AiController(const std::weak_ptr<Entity> &entity): Component(entity) {
     _transform = _entity.lock()->GetComponent<Transform>();
 }
@@ -132,6 +146,7 @@ void AiController::SetSpineRenderer(const std::weak_ptr<SpineRenderer> &spineRen
 }
 
 void AiController::Update(const float &deltaTime) {
+    _hitCooldown-= deltaTime;
     if (const auto &finder = _astarFinder.lock()) {
         if (const auto grip = _gridComponent.lock()) {
             auto position = _transform.lock()->GetPosition();
@@ -141,7 +156,7 @@ void AiController::Update(const float &deltaTime) {
             const auto result = finder->GetPath(position + glm::vec3(0, _fourthPartCharacterSize.y, 0),
                 targetPos + glm::vec3(0,  _fourthPartCharacterSize.y, 0), false);
 
-            for (const auto & point: result) {
+            for (const auto &point: result) {
                 const auto pointPos = grip->GetPositionFromIndex(point.x, point.y);
                 if (const auto dif = glm::distance(position, pointPos); dif > 1) {
                     targetPos = pointPos;
@@ -206,11 +221,14 @@ void AiController::Update(const float &deltaTime) {
             }
 
 
-            if (glm::distance(targetPos, position) < 1) {
+            if (glm::distance(targetPos, position) < _characterSize.x) {
                 if (isTargetReachable) {
-                    SetAnimation(0, _renderer.lock()->GetHitAnimation(), true);
+                    if (TryToHit()) {
+                        SetAnimation(0, _renderer.lock()->GetHitAnimation(), true);
+                    }
                 }
                 _velocity = glm::vec3(0, 0, 0);
+
             }  else {
                 SetAnimation(0,  _renderer.lock()->GetMoveAnimation(), true);
             }

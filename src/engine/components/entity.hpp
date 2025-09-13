@@ -37,6 +37,7 @@ private:
     std::string _tag{};
     std::string _creator{};
     std::weak_ptr<Entity> _self{};
+    int _layer{0};
 
 public:
     Entity() = default;
@@ -122,9 +123,11 @@ public:
     void SetId(const std::string& id) noexcept { _id = id; }
     void SetTag(const std::string& tag) noexcept { _tag = tag; }
     void SetSelf(const std::shared_ptr<Entity>& self) noexcept { _self = self; }
+    void SetLayer(const int layer) noexcept { _layer = layer; }
     void SetCreator(const std::string &creator) noexcept { _creator = creator; }
 
     [[nodiscard]] const std::string& GetId() const { return _id; }
     [[nodiscard]] const std::string& GetTag() const { return _tag; }
+    [[nodiscard]] int GetLayer() const { return _layer; }
     [[nodiscard]] const std::string& GetCreator() const { return _creator; }
 };
