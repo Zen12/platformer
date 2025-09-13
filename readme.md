@@ -112,7 +112,6 @@ TODO
 - Sound
 
 ## 🏃🏃🏃 TODO 🏃🏃🏃
-- [ ] Transparency for loading textures
 - [ ] Optimization of light raycast system, the vertex approach
 - [ ] One level (art), AI?
 - [ ] Webgl build

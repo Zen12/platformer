@@ -64,7 +64,7 @@ uint32_t AssetTextureLoader::load_sprite(const std::string &path) {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _x, _y, 0, GL_RGB, GL_UNSIGNED_BYTE, dataPtr);
             break;
         case 4:
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, _x, _y, 0, GL_RGBA, GL_UNSIGNED_BYTE, dataPtr);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _x, _y, 0, GL_RGBA, GL_UNSIGNED_BYTE, dataPtr);
             break;
         default:
             std::cerr << "No support for channel: " << _channels << std::endl;
