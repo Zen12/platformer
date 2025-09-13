@@ -79,7 +79,7 @@ TODO
 
 ### 🔦 Rendering
 - Only 2d support
-- Call order: ```Engine``` -> ```RenderPipeline``` -> ```RenderComponent``` -> Binding ```Mesh```/```Material```/```Asset```
+- Call order: ```Engine``` -> ```RenderPipeline``` -> ```RenderComponent``` ->  ```Mesh```/```Material```/```Asset```
 - Each render type has it's own camera. They should be as considered independent concepts 
 - ```Renderers``` has only one ```material```. ```Material``` is data + ```Shader```
 - Some renderers can have data separate from Material
@@ -98,7 +98,7 @@ TODO
 - World coordinates:
   - UI
     - ```Projection``` is Camera ortho based of window size
-    - ```UiLayouts``` alter the ```Model``` matrix. It is for screen responsive
+    - ```UiLayouts``` alter the ```Model``` matrix for screen responsiveness
   - 3d World:
     - Model-View-Projection
     - ```RenderPipline``` orders by Z only ```MeshRenderers```
@@ -114,9 +114,8 @@ TODO
 ## 🏃🏃🏃 TODO 🏃🏃🏃
 - [ ] Transparency for loading textures
 - [ ] Optimization of light raycast system, the vertex approach
+- [ ] One level (art), AI?
 - [ ] Webgl build
 - [ ] Windows build
-- [ ] One level (art), AI?
-- [ ] Character Controller balancing
 
 🇲🇩
