@@ -6,10 +6,18 @@ uniform vec3 center;
 uniform vec3 color;
 uniform float radius = 0.2;
 
+float easeInExpo(float t) {
+    return t <= 0.0 ? 0.0 : pow(2.0, 10.0 * (t - 1.0));
+}
+
+float easeOutCubic(float t) {
+    return 1.0 - pow(1.0 - t, 3.0);
+}
+
 void main()
 {
     float dist = distance(localPosition, center);
-    float transperent = 1 - dist / radius;
-    transperent = clamp(transperent, 0.00, 1.0);
-    FragColor = vec4(color.xyz, transperent);
+    float transperent = dist / radius;
+    transperent = easeOutCubic(transperent);
+    FragColor = vec4(color.xyz, 1 - transperent);
 }

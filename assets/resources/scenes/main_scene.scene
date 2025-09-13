@@ -250,9 +250,9 @@ entities:
               - data:
                   - center: light_2d_1_center
                   - color:
-                      - x: 1.0
+                      - x: 0.0
                       - y: 1.0
-                      - z: 0.0
+                      - z: 1.0
                   - offset:
                       - x: 0.0
                       - y: 0.0
@@ -307,8 +307,8 @@ entities:
                   - center: light_2d_2_center
                   - color:
                       - x: 1.0
-                      - y: 1.0
-                      - z: 0.0
+                      - y: 0.0
+                      - z: 1.0
                   - offset:
                       - x: 0.0
                       - y: 0.0
@@ -418,9 +418,9 @@ entities:
                     - data:
                           - center: light_2d_4_center
                           - color:
-                                - x: 1.0
+                                - x: 0.0
                                 - y: 1.0
-                                - z: 0.0
+                                - z: 1.0
                           - offset:
                                 - x: 0.0
                                 - y: 0.0
@@ -475,8 +475,8 @@ entities:
                   - center: light_2d_5_center
                   - color:
                       - x: 1.0
-                      - y: 1.0
-                      - z: 0.0
+                      - y: 0.0
+                      - z: 1.0
                   - offset:
                       - x: 0.0
                       - y: 0.0
@@ -511,7 +511,7 @@ entities:
               - data:
                   - position:
                       - x: 0.0
-                      - y: -.0
+                      - y: 0.0
                       - z: -10.0
                   - rotation:
                       - x: 0.0
@@ -529,6 +529,174 @@ entities:
               - type: light_2d
               - data:
                   - center: light_2d_6_center
+                  - color:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 0.0
+                  - offset:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: -1.0
+                  - radius: 6
+                  - start_angle: 225
+                  - max_angle: 90
+                  - segments: 80
+  - obj:
+      - guid: light_2d_7_center
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: 5.0
+                      - y: -6.5
+                      - z: 0.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+  - obj:
+      - guid: light_2d_7
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: -10.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+          - component:
+              - type: mesh_renderer
+              - data:
+                  - material: b1604380-8385-4912-9f2b-178103120328
+          - component:
+              - type: light_2d
+              - data:
+                  - center: light_2d_7_center
+                  - color:
+                      - x: 0.0
+                      - y: -2.0
+                      - z: 1.0
+                  - offset:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: -1.0
+                  - radius: 6
+                  - start_angle: 225
+                  - max_angle: 90
+                  - segments: 80
+  - obj:
+      - guid: light_2d_8_center
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: 0.0
+                      - y: -2.5
+                      - z: 0.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+  - obj:
+      - guid: light_2d_8
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: -10.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+          - component:
+              - type: mesh_renderer
+              - data:
+                  - material: b1604380-8385-4912-9f2b-178103120328
+          - component:
+              - type: light_2d
+              - data:
+                  - center: light_2d_8_center
+                  - color:
+                      - x: 1.0
+                      - y: 0.0
+                      - z: 1.0
+                  - offset:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: -1.0
+                  - radius: 6
+                  - start_angle: 225
+                  - max_angle: 90
+                  - segments: 80
+  - obj:
+      - guid: light_2d_9_center
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: -5.0
+                      - y: -2.5
+                      - z: 0.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+  - obj:
+      - guid: light_2d_9
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: -10.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+          - component:
+              - type: mesh_renderer
+              - data:
+                  - material: b1604380-8385-4912-9f2b-178103120328
+          - component:
+              - type: light_2d
+              - data:
+                  - center: light_2d_9_center
                   - color:
                       - x: 1.0
                       - y: 1.0
