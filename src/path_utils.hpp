@@ -1,5 +1,12 @@
 #pragma once
 
+#include <filesystem>
+#include <string>
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 #ifdef _WIN32
 #include <windows.h>
 #elif __APPLE__
@@ -8,25 +15,25 @@
 #else
 #include <unistd.h>
 #include <limits.h>
+#include <fstream>
 #endif
-#include <filesystem>
-
 
 inline std::filesystem::path GetCommandLinePath() {
-#ifdef _WIN32
+#ifdef __EMSCRIPTEN__
+    // Web: ignore command line, return empty
+    return {};
+#elif _WIN32
     int argc;
     LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
     std::filesystem::path result;
     if (argc > 1) result = argv[1]; // first argument
     LocalFree(argv);
     return result;
-
 #elif __APPLE__
     int argc = *_NSGetArgc();
     char** argv = *_NSGetArgv();
     if (argc > 1) return argv[1];
     return {};
-
 #else // Linux
     std::ifstream cmdline("/proc/self/cmdline", std::ios::binary);
     std::string s;
@@ -37,11 +44,11 @@ inline std::filesystem::path GetCommandLinePath() {
 #endif
 }
 
-
 inline std::filesystem::path GetExecutablePath() {
-
-
-#ifdef _WIN32
+#ifdef __EMSCRIPTEN__
+    // Web: executable path not available, return current directory
+    return std::filesystem::current_path();
+#elif _WIN32
     char buffer[MAX_PATH];
     DWORD size = GetModuleFileNameA(NULL, buffer, MAX_PATH);
     if (size == 0) throw std::runtime_error("Cannot get executable path");
@@ -62,8 +69,13 @@ inline std::filesystem::path GetExecutablePath() {
 }
 
 inline std::filesystem::path GetProjectRootPath() {
+#ifdef __EMSCRIPTEN__
+    // Web: assume assets are preloaded to /assets
+    return "/assets";
+#else
     if (const std::filesystem::path path = GetCommandLinePath(); !path.empty())
         return path;
 
     return GetExecutablePath().parent_path().append("assets");
+#endif
 }

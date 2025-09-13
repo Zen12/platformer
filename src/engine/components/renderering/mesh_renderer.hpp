@@ -88,7 +88,6 @@ public:
     }
 
 #ifndef NDEBUG
-#if DEBUG_ENGINE_MESH_RENDERER
     void DrawDebug() {
         const auto verts = _mesh.GetVertices();
         for (int i=0; i< verts.size(); i+=5) {
@@ -97,7 +96,6 @@ public:
         }
     }
 
-#endif
 #endif
 
     [[nodiscard]] glm::mat4 GetModel() const noexcept {

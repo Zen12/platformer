@@ -30,6 +30,8 @@ private:
 
     Light2dSettings _settings{};
 
+    int FindNexClosesVertex(b2Fixture* fixture, b2PolygonShape *shape, glm::vec2 center, glm::vec2 point);
+
 public:
 
     Light2dComponent() = delete;
