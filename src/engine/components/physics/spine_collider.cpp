@@ -2,7 +2,7 @@
 
 #define DEBUG_ENGINE_SPINE_COLLIDER_PROFILE 0
 
-void SpineColliderComponent::CreateColliderFixture(spine::Bone *bone, const std::weak_ptr<BoxCollider2DComponent> &collider) const {
+void SpineColliderComponent::CreateColliderFixture(const std::weak_ptr<BoxCollider2DComponent> &collider) const {
 
 #ifndef NDEBUG
 #if DEBUG_ENGINE_SPINE_COLLIDER_PROFILE
@@ -25,7 +25,7 @@ void SpineColliderComponent::CreateColliderFixture(spine::Bone *bone, const std:
     }
 }
 
-std::weak_ptr<BoxCollider2DComponent> SpineColliderComponent::CreateCollider(spine::Bone *bone) const {
+std::weak_ptr<BoxCollider2DComponent> SpineColliderComponent::CreateCollider() const {
 #ifndef NDEBUG
 #if DEBUG_ENGINE_SPINE_COLLIDER_PROFILE
     PROFILE_SCOPE("    SpineColliderComponent::CreateCollider");
@@ -33,7 +33,7 @@ std::weak_ptr<BoxCollider2DComponent> SpineColliderComponent::CreateCollider(spi
 #endif
     if (const auto entity = _entity.lock()) {
         const auto collider = entity->AddComponent<BoxCollider2DComponent>();
-        CreateColliderFixture(bone, collider);
+        CreateColliderFixture(collider);
         return collider;
     }
     return {};
@@ -73,7 +73,7 @@ void SpineColliderComponent::Update([[maybe_unused]] const float &deltaTime) {
 
 
                         if (_bonesColliders.find(bone) == _bonesColliders.end()) {
-                            _bonesColliders[bone] =  CreateCollider(bone);;
+                            _bonesColliders[bone] =  CreateCollider();
                         }
 #ifndef NDEBUG
 #if DEBUG_ENGINE_SPINE_COLLIDER_PROFILE

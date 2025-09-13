@@ -13,8 +13,8 @@ private:
     std::unordered_map<spine::Bone *, std::weak_ptr<BoxCollider2DComponent>> _bonesColliders{};
 
 private:
-    void CreateColliderFixture(spine::Bone *bone, const std::weak_ptr<BoxCollider2DComponent> &collider) const;
-    std::weak_ptr<BoxCollider2DComponent> CreateCollider(spine::Bone *bone) const;
+    void CreateColliderFixture(const std::weak_ptr<BoxCollider2DComponent> &collider) const;
+    [[nodiscard]] std::weak_ptr<BoxCollider2DComponent> CreateCollider() const;
 
 public:
     explicit SpineColliderComponent(const std::weak_ptr<Entity> &entity)
