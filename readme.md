@@ -65,7 +65,7 @@ TODO
 - ```file_name.cpp/hpp```
 - ```folder_name```
 - ```serialized_file_in_yaml```
-- ```//comments``` means hack-description or todo
+- ```//comments``` means hack-description/todo or created by AI
 
 ## 🛠️ Architecture
 ### 📀 Memory management
@@ -112,13 +112,12 @@ TODO
 - Sound
 
 ## 🏃🏃🏃 TODO 🏃🏃🏃
-- [ ] Win/Lose state
+- [ ] Optimization of collider generator for spine-bones
+- [ ] Transparency for loading textures
+- [ ] Optimization of light raycast system, the vertex approach
 - [ ] Webgl build
 - [ ] Windows build
 - [ ] One level (art), AI?
-- [ ] Transparency for loading textures
 - [ ] Character Controller balancing
-- [ ] Optimization of collider generator for spine-bones
-- [ ] Optimization of light raycast system, the vertex approach 
 
 🇲🇩

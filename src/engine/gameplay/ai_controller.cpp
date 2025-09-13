@@ -19,7 +19,7 @@ void AiController::SetAnimation(const size_t &index, const std::string &animatio
     }
 }
 
-void AiController::SetFaceRight(const bool &isFaceRight) {
+void AiController::SetFaceRight(const bool &isFaceRight) const {
     if (const auto render = _renderer.lock()) {
         render->SetFaceRight(isFaceRight);
     }
@@ -124,9 +124,14 @@ bool AiController::TryToHit() {
     if (_hitCooldown > 0)
         return false;
 
-    _target.lock()->GetEntity().lock()->GetComponent<HealthComponent>()
-    .lock()->DecreaseHealth(10);
-    _hitCooldown = 10;
+    if (const auto target = _target.lock()) {
+        if (const auto entity = target->GetEntity().lock()) {
+            if (const auto health = entity->GetComponent<HealthComponent>().lock()) {
+                health->DecreaseHealth(10);
+                 _hitCooldown = 10;
+            }
+        }
+    }
     return true;
 }
 
@@ -147,93 +152,101 @@ void AiController::SetSpineRenderer(const std::weak_ptr<SpineRenderer> &spineRen
 
 void AiController::Update(const float &deltaTime) {
     _hitCooldown-= deltaTime;
-    if (const auto &finder = _astarFinder.lock()) {
-        if (const auto grip = _gridComponent.lock()) {
-            auto position = _transform.lock()->GetPosition();
-            auto targetPos = _target.lock()->GetPosition();
-            auto isTargetReachable = true;
 
-            const auto result = finder->GetPath(position + glm::vec3(0, _fourthPartCharacterSize.y, 0),
-                targetPos + glm::vec3(0,  _fourthPartCharacterSize.y, 0), false);
+    if (const auto transform = _transform.lock()) {
+        if (const auto render = _renderer.lock()) {
+            if (const auto target = _target.lock()) {
+                if (const auto &finder = _astarFinder.lock()) {
+                    if (const auto grip = _gridComponent.lock()) {
 
-            for (const auto &point: result) {
-                const auto pointPos = grip->GetPositionFromIndex(point.x, point.y);
-                if (const auto dif = glm::distance(position, pointPos); dif > 1) {
-                    targetPos = pointPos;
-                    isTargetReachable = false;
-                    break;
-                }
-            }
+                        auto position = transform->GetPosition();
+                        auto targetPos = target->GetPosition();
+                        auto isTargetReachable = true;
+
+                        const auto result = finder->GetPath(position + glm::vec3(0, _fourthPartCharacterSize.y, 0),
+                            targetPos + glm::vec3(0,  _fourthPartCharacterSize.y, 0), false);
+
+                        for (const auto &point: result) {
+                            const auto pointPos = grip->GetPositionFromIndex(point.x, point.y);
+                            if (const auto dif = glm::distance(position, pointPos); dif > 1) {
+                                targetPos = pointPos;
+                                isTargetReachable = false;
+                                break;
+                            }
+                        }
 #ifndef NDEBUG
 #if DEBUG_AI_CONTROLLER
-            auto previousPos = position;
-            for (const auto & point: result) {
-                const auto pointPos = grip->GetPositionFromIndex(point.x, point.y);
-                DebugLines::AddLine(previousPos, pointPos);
-                previousPos = pointPos;
-            }
+                        auto previousPos = position;
+                        for (const auto & point: result) {
+                            const auto pointPos = grip->GetPositionFromIndex(point.x, point.y);
+                            DebugLines::AddLine(previousPos, pointPos);
+                            previousPos = pointPos;
+                        }
 #endif
 #endif
-            if (result.empty())
-                isTargetReachable = false;
+                        if (result.empty())
+                            isTargetReachable = false;
 
-            glm::vec2 hitPos{};
-
-
-            if (std::abs(targetPos.x - position.x) > 0.1f) {
-                if (targetPos.x < position.x) {
-                    _velocity.x += -_characterSettings.AccelerationSpeed;
-                    if (_velocity.x < -_characterSettings.MaxMovementSpeed)
-                        _velocity.x = -_characterSettings.MaxMovementSpeed;
-                    SetFaceRight(false);
-
-                } else  {
-                    _velocity.x += _characterSettings.AccelerationSpeed;
-                    if (_velocity.x > _characterSettings.MaxMovementSpeed)
-                        _velocity.x = _characterSettings.MaxMovementSpeed;
-                    SetFaceRight(true);
-                }
-            }
-
-            if (IsGrounded(hitPos)) {
-
-                const float diff = std::abs(hitPos.y - position.y);
-                if (diff > 0.01) {
-                    position.y = hitPos.y;
-                }
-                _velocity.y = 0;
-                if (result.empty())
-                    return;
-            } else {
-                _velocity.x *= _characterSettings.AirControl;
-                _velocity.y = -(_characterSettings.JumpHeigh / _characterSettings.JumpDuration) * _characterSettings.JumpDownMultiplier;
-            }
+                        glm::vec2 hitPos{};
 
 
-            if (IsHitLeft(hitPos)) {
-                if (_velocity.x < 0)
-                    _velocity.x = 0;
-            }
+                        if (std::abs(targetPos.x - position.x) > 0.1f) {
+                            if (targetPos.x < position.x) {
+                                _velocity.x += -_characterSettings.AccelerationSpeed;
+                                if (_velocity.x < -_characterSettings.MaxMovementSpeed)
+                                    _velocity.x = -_characterSettings.MaxMovementSpeed;
+                                SetFaceRight(false);
 
-            if (IsHitRight(hitPos)) {
-                if (_velocity.x > 0)
-                    _velocity.x = 0;
-            }
+                            } else  {
+                                _velocity.x += _characterSettings.AccelerationSpeed;
+                                if (_velocity.x > _characterSettings.MaxMovementSpeed)
+                                    _velocity.x = _characterSettings.MaxMovementSpeed;
+                                SetFaceRight(true);
+                            }
+                        }
+
+                        if (IsGrounded(hitPos)) {
+
+                            const float diff = std::abs(hitPos.y - position.y);
+                            if (diff > 0.01) {
+                                position.y = hitPos.y;
+                            }
+                            _velocity.y = 0;
+                            if (result.empty())
+                                return;
+                        } else {
+                            _velocity.x *= _characterSettings.AirControl;
+                            _velocity.y = -(_characterSettings.JumpHeigh / _characterSettings.JumpDuration) * _characterSettings.JumpDownMultiplier;
+                        }
 
 
-            if (glm::distance(targetPos, position) < _characterSize.x) {
-                if (isTargetReachable) {
-                    if (TryToHit()) {
-                        SetAnimation(0, _renderer.lock()->GetHitAnimation(), true);
+                        if (IsHitLeft(hitPos)) {
+                            if (_velocity.x < 0)
+                                _velocity.x = 0;
+                        }
+
+                        if (IsHitRight(hitPos)) {
+                            if (_velocity.x > 0)
+                                _velocity.x = 0;
+                        }
+
+
+                        if (glm::distance(targetPos, position) < _characterSize.x) {
+                            if (isTargetReachable) {
+                                if (TryToHit()) {
+                                    SetAnimation(0, render->GetHitAnimation(), true);
+                                }
+                            }
+                            _velocity = glm::vec3(0, 0, 0);
+
+                        }  else {
+                            SetAnimation(0,  render->GetMoveAnimation(), true);
+                        }
+
+                        transform->SetPosition(position + (_velocity * deltaTime));
                     }
                 }
-                _velocity = glm::vec3(0, 0, 0);
-
-            }  else {
-                SetAnimation(0,  _renderer.lock()->GetMoveAnimation(), true);
             }
-
-            _transform.lock()->SetPosition(position + (_velocity * deltaTime));
         }
     }
 }

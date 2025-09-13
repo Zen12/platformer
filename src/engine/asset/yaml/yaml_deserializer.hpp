@@ -491,6 +491,10 @@ namespace YAML
                 return Parse<OnClickSceneLoaderSerialization>(data);
             } else if (type == "path_mover") {
                 return Parse<PathMoverComponentSerialization>(data);
+            } else if (type == "game_state") {
+                return Parse<GameStateData>(data);
+            } else if (type == "team") {
+                return Parse<TeamSerialization>(data);
             }
 
             throw std::runtime_error("Unknown component type: " + type);
@@ -678,6 +682,29 @@ namespace YAML
         {
             const auto map = sequenceToMap(node);
             rhs.SceneGuid = map["scene_guid"].as<std::string>();
+            return true;
+        }
+    };
+
+    template <>
+    struct convert<TeamSerialization>
+    {
+        static bool decode(const Node &node, TeamSerialization &rhs)
+        {
+            const auto map = sequenceToMap(node);
+            rhs.Team = map["team"].as<int>();
+            return true;
+        }
+    };
+
+    template <>
+    struct convert<GameStateData>
+    {
+        static bool decode(const Node &node, GameStateData &rhs)
+        {
+            const auto map = sequenceToMap(node);
+            rhs.WinScene = map["win_scene"].as<std::string>();
+            rhs.LooseScene = map["lose_scene"].as<std::string>();
             return true;
         }
     };

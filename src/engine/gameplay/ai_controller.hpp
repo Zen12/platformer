@@ -50,7 +50,7 @@ private:
         }
     }
 
-    void SetFaceRight(const bool& isFaceRight);
+    void SetFaceRight(const bool& isFaceRight) const;
 
     [[nodiscard]] glm::vec2 GetCenter() const noexcept;
 

@@ -246,3 +246,12 @@ struct OnClickSceneLoaderSerialization final : public ComponentSerialization {
     std::string SceneGuid;
 };
 
+struct GameStateData final : public ComponentSerialization {
+    std::string WinScene;
+    std::string LooseScene;
+};
+
+struct TeamSerialization final : public ComponentSerialization {
+    int Team;
+};
+

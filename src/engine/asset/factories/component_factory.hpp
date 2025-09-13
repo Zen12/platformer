@@ -13,6 +13,8 @@
 #include "../../gameplay/health_component.hpp"
 #include "../../gameplay/idle_character.hpp"
 #include "../../gameplay/path_mover.hpp"
+#include "../../gameplay/game_state/game_state_controller.hpp"
+#include "../../gameplay/game_state/team_component.hpp"
 #include "../../gameplay/ui/heath_bar.hpp"
 #include "../../path_finder/astar_finder.hpp"
 #include "../../scene/scene.hpp"
@@ -601,6 +603,40 @@ protected:
                     comp->SetRectTransform(entity->GetComponent<RectTransform>());
                     comp->SetSelf(component);
                     comp->SetUiRaycastSystem(scene->GetUiRaycast());
+                }
+            }
+        }
+    }
+};
+
+class GameStateFactory final : public ComponentFactory<GameStateController, GameStateData> {
+protected:
+    void FillComponent(const std::weak_ptr<GameStateController> &component,
+        const GameStateData &serialization) override {
+
+        if (const auto comp = component.lock()) {
+            comp->SetLoseSceneId(serialization.LooseScene);
+            comp->SetWinSceneId(serialization.WinScene);
+            comp->SetScene(_scene);
+        }
+    }
+};
+
+class TeamComponentFactory final : public ComponentFactory<TeamComponent, TeamSerialization> {
+protected:
+    void FillComponent(const std::weak_ptr<TeamComponent> &component,
+        const TeamSerialization &serialization) override
+    {
+        if (const auto &scene = _scene.lock()) {
+            const auto gameStateEntity = scene->FindByTag("game_state"); //temp, need FSM
+
+            if (const auto stateEntity = gameStateEntity.lock()) {
+                if (const auto stateController = stateEntity->GetComponent<GameStateController>().lock()) {
+
+                    if (const auto comp = component.lock()) {
+                        comp->SetTeamRepository(stateController->GetTeamRepository());
+                        comp->SetTeam(static_cast<Team>(serialization.Team));
+                    }
                 }
             }
         }

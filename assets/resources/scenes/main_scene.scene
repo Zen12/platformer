@@ -2,6 +2,15 @@ name: main_screen
 type: scene
 entities:
   - obj:
+      - guid: game_state
+      - tag: game_state
+      - components:
+          - component:
+              - type: game_state
+              - data:
+                  - win_scene: "993c601d-92e7-4678-bf0e-d8c1ac63dae6"
+                  - lose_scene: "ce68ff1f-0cd0-4a02-9142-336cc7e9a66f"
+  - obj:
       - guid: text-fps
       - components:
           - component:
@@ -67,7 +76,6 @@ entities:
                     - data:
                           - scene_guid: "d0677c93-a26f-4793-9eb7-5232d99378d1"
   - obj:
-      - layer: 1 # 0001
       - guid: main-camera
       - tag: main_camera
       - components:
@@ -92,6 +100,7 @@ entities:
                   - aspectPower: 70.0
                   - isPerspective: false
   - obj:
+      - layer: 1 # 0001
       - tag: "main-character"
       - guid: main-character
       - components:
@@ -110,6 +119,10 @@ entities:
                       - x: 1.0
                       - y: 1.0
                       - z: 1.0
+          - component:
+              - type: team
+              - data:
+                  - team: 0
           - component:
               - type: particle_emitter
               - data:
