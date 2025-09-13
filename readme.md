@@ -112,7 +112,6 @@ TODO
 - Sound
 
 ## 🏃🏃🏃 TODO 🏃🏃🏃
-- [ ] Optimization of collider generator for spine-bones
 - [ ] Transparency for loading textures
 - [ ] Optimization of light raycast system, the vertex approach
 - [ ] Webgl build

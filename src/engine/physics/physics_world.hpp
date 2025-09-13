@@ -27,7 +27,7 @@ public:
     b2Vec2 Normal;
     float Fraction = 1.0f;
     bool Hit = false;
-    b2Fixture *Fixture;
+    b2Fixture *Fixture{};
     using FilterFn = std::function<bool(b2Fixture*)>;
 
 
