@@ -18,10 +18,9 @@ public:
     }
 
     void load(spine::AtlasPage &page, const spine::String &path) override {
-        page.texture = (void *) (uintptr_t) load_sprite(path.buffer());
+        page.texture = (void *) (uintptr_t) texture_load(path.buffer());
     }
 
-    uint32_t load_sprite(const std::string &path);
 
     void unload(void *texture) override {
         texture_dispose((unsigned int) (uintptr_t) texture);

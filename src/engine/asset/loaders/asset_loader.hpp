@@ -46,7 +46,7 @@ public:
     template<>
     Sprite LoadFromPath<Sprite>(const std::string &path) {
         auto loader = _textureLoader();
-        return Sprite(loader->load_sprite(path));
+        return Sprite(loader->texture_load(path.c_str()));
     }
 
     template<>
