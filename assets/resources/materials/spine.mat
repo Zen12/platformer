@@ -1,6 +1,9 @@
 name: spine
-shader:
+shader_opengl:
   vertex: 3de5944b-6900-4478-8e73-731a1a01a1e1
   fragment: f5fdf229-9d6d-4382-af40-30a5542ca0b8
+shader_gles:
+  vertex: 7fbcb239-5a9c-40f6-9748-97b4cdf2afbe
+  fragment: 08efc10a-c0e2-4e9f-a9f0-f1975f4a0869
 is_culling: false
 blend_mode: 1

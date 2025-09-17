@@ -572,10 +572,18 @@ namespace YAML
             rhs.BlendMode = node["blend_mode"].as<int>();
             rhs.IsCulling = node["is_culling"].as<bool>();
 
-            if (const auto shaderNode = node["shader"]) {
+#ifdef __EMSCRIPTEN__
+            if (const auto shaderNode = node["shader_gles"]) {
                 rhs.VertexShaderGuid = shaderNode["vertex"].as<std::string>();
                 rhs.FragmentShaderGuid = shaderNode["fragment"].as<std::string>();
             }
+#else
+            if (const auto shaderNode = node["shader_opengl"]) {
+                rhs.VertexShaderGuid = shaderNode["vertex"].as<std::string>();
+                rhs.FragmentShaderGuid = shaderNode["fragment"].as<std::string>();
+            }
+#endif
+
 
             if (node["font"] && node["font"].IsScalar()) {
                 rhs.Font = node["font"].as<std::string>();

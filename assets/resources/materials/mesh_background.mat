@@ -1,7 +1,0 @@
-name: mesh
-shader:
-  vertex: 79445870-71ce-4f77-aa7f-e8003933421e
-  fragment: 81c8f433-60ca-4485-9664-3ec62b0bebe0
-image: f22681f4-45d0-4542-a838-99f854890c18
-is_culling: true
-blend_mode: 0

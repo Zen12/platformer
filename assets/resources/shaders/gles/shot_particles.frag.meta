@@ -1,0 +1,4 @@
+name: shot_particles
+guid: 26e3de78-a370-4a03-a9e4-5a65b34a2c6a
+extension: .frag
+type: fragment-shader

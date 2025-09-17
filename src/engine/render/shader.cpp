@@ -16,10 +16,9 @@ Shader::Shader(const std::string &vertexSource, const std::string &fragmentSourc
     {
         char infoLog[512];
         glGetShaderInfoLog(_vertexShader, 512, NULL, infoLog);
-#ifndef NDEBUG
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n"
+                  << vertexSource
                   << infoLog << std::endl;
-#endif
     }
 
     const GLchar *fragmentArray[] = {fragmentSource.c_str()}; // stack-alloc array, RAII delete
@@ -33,10 +32,9 @@ Shader::Shader(const std::string &vertexSource, const std::string &fragmentSourc
     {
         char infoLog[512];
         glGetShaderInfoLog(_fragmentShader, 512, NULL, infoLog);
-#ifndef NDEBUG
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n"
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n"
+                  << fragmentSource
                   << infoLog << std::endl;
-#endif
     }
 
     _shaderProgram = glCreateProgram();

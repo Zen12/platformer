@@ -1,0 +1,4 @@
+name: shot_particles
+guid: 1c88a6a1-b7de-408c-9c34-6c8675569b37
+extension: .vert
+type: vertex-shader

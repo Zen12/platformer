@@ -1,7 +1,10 @@
 name: shot_particles
-shader:
+shader_opengl:
   vertex: fbc4207a-56fa-4d0d-9f1b-343c64e516ee
   fragment: ba80da37-99b7-4fa5-b6be-366643ebd3cd
+shader_gles:
+  vertex: 1c88a6a1-b7de-408c-9c34-6c8675569b37
+  fragment: 26e3de78-a370-4a03-a9e4-5a65b34a2c6a
 image: b7006ba6-f1bc-44dc-914d-60f1dc38af32
 is_culling: true
 blend_mode: 2

@@ -1,0 +1,4 @@
+name: spine
+guid: 08efc10a-c0e2-4e9f-a9f0-f1975f4a0869
+extension: .frag
+type: fragment-shader

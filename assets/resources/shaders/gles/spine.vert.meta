@@ -1,0 +1,4 @@
+name: spine
+guid: 7fbcb239-5a9c-40f6-9748-97b4cdf2afbe
+extension: .vert
+type: vertex-shader

@@ -1,0 +1,4 @@
+name: sprite
+guid: 22132622-1d08-4b2b-982c-8ee823b7095b
+extension: .vert
+type: vertex-shader

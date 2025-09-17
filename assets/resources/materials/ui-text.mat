@@ -1,7 +1,10 @@
 name: ui
-shader:
+shader_opengl:
   vertex: 0b21d35e-7857-4ada-b4cc-32a6c471e93e
   fragment: 8b8071de-2bf1-478d-bba4-fdb86174c3ad
+shader_gles:
+  vertex: 25f1d494-684c-4bba-b773-6b413d135d1d
+  fragment: 9191db4b-3436-44da-be5a-1285b8a75269
 font: 77eb8614-c887-413d-a6c5-77c6df83c499
 is_culling: true
 blend_mode: 2

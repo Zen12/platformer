@@ -6,7 +6,7 @@
 #define ENGINE_DEBUG_LIGHT_PROFILE 0
 #endif
 
-
+/*
 int Light2dComponent::FindNexClosesVertex(b2Fixture* fixture, b2PolygonShape *poly, glm::vec2 center, glm::vec2 point) {
 
     int index = 0;
@@ -22,6 +22,7 @@ int Light2dComponent::FindNexClosesVertex(b2Fixture* fixture, b2PolygonShape *po
 
     return -1;
 }
+*/
 
 void Light2dComponent::Update([[maybe_unused]] const float &deltaTime) {
     if (const auto world = _physicsWorld.lock()) {
@@ -65,23 +66,23 @@ void Light2dComponent::Update([[maybe_unused]] const float &deltaTime) {
                     x = result.Point.x;
                     y = result.Point.y;
 
-                    const auto fixture = world->GetFixtureByCollider(result.BoxCollider);
+                    //const auto fixture = world->GetFixtureByCollider(result.BoxCollider);
 
-                    const auto poly = dynamic_cast<b2PolygonShape*>(fixture->GetShape());
+                    //const auto poly = dynamic_cast<b2PolygonShape*>(fixture->GetShape());
 
-                    int nextRay = FindNexClosesVertex(fixture, poly, glm::vec2(centerPosition.x, centerPosition.y), glm::vec2(x, y));
+                    //int nextRay = FindNexClosesVertex(fixture, poly, glm::vec2(centerPosition.x, centerPosition.y), glm::vec2(x, y));
 
-                    if (nextRay > poly->m_count) {
-                        nextRay = 0;
-                    }
+                    //if (nextRay > poly->m_count) {
+                      //  nextRay = 0;
+                    //}
 
-                    const auto nextVertPos = poly->m_vertices[nextRay];
+                   // const auto nextVertPos = poly->m_vertices[nextRay];
 
-                    float angleToNewVert = atan2(centerPosition.y, centerPosition.x) - atan2(nextVertPos.y, nextVertPos.x);
+                    //float angleToNewVert = atan2(centerPosition.y, centerPosition.x) - atan2(nextVertPos.y, nextVertPos.x);
 
-                    if (angleRad < angleToNewVert) {
-                        i+=10;
-                    }
+                    //if (angleRad < angleToNewVert) {
+                    //    i+=10;
+                    //}
 
                     uvX = 1;
                     uvY = 1;

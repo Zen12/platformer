@@ -1,0 +1,4 @@
+name: light2d
+guid: cb7c7b55-0fc9-4152-a014-e5ee2582a007
+extension: .frag
+type: fragment-shader
