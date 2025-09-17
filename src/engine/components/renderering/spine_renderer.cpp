@@ -4,11 +4,9 @@
 #define DEBUG_SPINE_RENDERER 0
 
 void SpineRenderer::LookAt(const glm::vec3 &lookAt, const std::string &boneName) const {
-#ifndef NDEBUG
 #if DEBUG_SPINE_RENDERER
         // Draw debug direction
         DebugLines::AddLine(lookAt, lookAt + glm::vec3(0, 1, 0));
-#endif
 #endif
     // Lock spine instance
     const auto spinePtr = _spine.lock();

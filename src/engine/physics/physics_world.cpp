@@ -22,7 +22,6 @@ void PhysicsWorld::UpdateRigidBodies() const {
             body.second->SetTransform(b2Vec2(pos.x, pos.y), 0.0f);
         }
     }
-#ifndef NDEBUG
 #if DEBUG_ENGINE_RENDER_COLLIDERS
     for (auto && [_, fixture]: _boxColliderToFixture) {
 
@@ -42,7 +41,6 @@ void PhysicsWorld::UpdateRigidBodies() const {
         DebugLines::AddLine(glm::vec2(previous.x, previous.y), glm::vec2(first.x, first.y));
 
     }
-#endif
 #endif
 
 }

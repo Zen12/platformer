@@ -68,9 +68,7 @@ public:
     [[nodiscard]] glm::vec3 ScreenToWorldPoint( const glm::vec3 &screenPos) const;
 
     [[nodiscard]] std::weak_ptr<CameraComponent> Get3dCamera() const { return _camera3d; }
-#ifndef NDEBUG
     void RenderDebugLines() const;
-#endif
 
     void Cleanup();
 };

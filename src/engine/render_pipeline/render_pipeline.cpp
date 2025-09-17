@@ -121,7 +121,6 @@ glm::vec3 RenderPipeline::ScreenToWorldPoint(const glm::vec3 &screenPos) const {
     return glm::vec3(0.0f);
 }
 
-#ifndef NDEBUG
 void RenderPipeline::RenderDebugLines() const {
     glEnable(GL_CULL_FACE);
 
@@ -129,20 +128,19 @@ void RenderPipeline::RenderDebugLines() const {
     const auto view = _cameraTransform3d.lock()->GetModel();
 
     DebugLines::UpdateViewProjection(view, projection);
+
     DebugLines::DrawLines();
+
     DebugLines::Clear();
 }
 
-#endif
 
 
 void RenderPipeline::Init() const noexcept {
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-#ifndef NDEBUG
     DebugLines::Init();
-#endif
 }
 
 void RenderPipeline::ClearFrame() const noexcept {

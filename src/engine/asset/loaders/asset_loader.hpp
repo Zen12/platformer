@@ -160,7 +160,30 @@ public:
 
     template<>
     spine::Atlas* LoadFromPath<spine::Atlas*>(const std::string &path) {
-        auto loader = _textureLoader();
-        return new spine::Atlas(path.c_str(), loader.get());
+        const auto loader = _textureLoader();
+
+        // Load file into std::string
+        std::ifstream file(path, std::ios::binary);
+        if (!file) {
+            throw std::runtime_error("Failed to open atlas file: " + path);
+        }
+        std::string buffer((std::istreambuf_iterator<char>(file)),
+                            std::istreambuf_iterator<char>());
+
+        // Extract directory from path
+        std::string dir;
+        size_t lastSlash = path.find_last_of("/\\");
+        if (lastSlash != std::string::npos) {
+            dir = path.substr(0, lastSlash); // folder containing the atlas
+        } else {
+            dir = "."; // current directory if no slash
+        }
+
+        // Create atlas from memory
+        auto* atlas = new spine::Atlas(buffer.data(), static_cast<int>(buffer.size()), dir.c_str(), loader.get(), true);
+
+        return atlas;
     }
+
+
 };

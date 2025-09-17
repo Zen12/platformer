@@ -2,18 +2,14 @@
 
 #include "../render/material.hpp"
 
-#ifndef NDEBUG
 
+static std::vector<std::shared_ptr<Line>> g_lines{};
+static std::shared_ptr<Shader> g_shader;
+static std::shared_ptr<Material> g_material;
+static glm::mat4 g_projection;
+static glm::mat4 g_view;
 
-static std::vector<std::shared_ptr<Line>> _lines;
-static std::shared_ptr<Shader> _shader;
-static std::shared_ptr<Material> _material;
-static glm::mat4 _projection;
-static glm::mat4 _view;
-
-const std::string vertexSource = R"(
-
-#version 330 core
+const std::string g_vertexSource_opengl = R"(#version 330 core
 
 layout(location = 0) in vec3 aPos;
 layout(location = 1) in vec3 aColor;
@@ -31,9 +27,40 @@ void main() {
 
 )";
 
-const std::string fragmentSource = R"(
+const std::string g_fragmentSource_opengl = R"(#version 330 core
 
-#version 330 core
+out vec4 FragColor;
+
+in vec3 color;
+
+void main() {
+    FragColor = vec4(color.x, color.y, color.z, 1.0);
+}
+
+)";
+
+const std::string g_vertexSource_gles = R"(#version 300 es
+
+precision mediump float;
+
+layout(location = 0) in vec3 aPos;
+layout(location = 1) in vec3 aColor;
+
+uniform mat4 projection;
+uniform mat4 view;
+
+out vec3 color;
+
+void main() {
+    color = aColor;
+    gl_Position = projection * view * vec4(aPos, 1.0);
+}
+
+)";
+
+const std::string g_fragmentSource_gles = R"(#version 300 es
+
+precision mediump float;
 
 out vec4 FragColor;
 
@@ -47,15 +74,18 @@ void main() {
 
 void DebugLines::Init() {
     Clear();
-    _lines.reserve(1024);
-
-    _shader = std::make_shared<Shader>(vertexSource, fragmentSource);
-    _material = std::make_shared<Material>(_shader);
+    g_lines.reserve(1024);
+#ifdef __EMSCRIPTEN__
+    g_shader = std::make_shared<Shader>(g_vertexSource_gles, g_fragmentSource_gles);
+#else
+    g_shader = std::make_shared<Shader>(g_vertexSource_opengl, g_fragmentSource_opengl);
+#endif
+    g_material = std::make_shared<Material>(g_shader);
 }
 
 void DebugLines::UpdateViewProjection(const glm::mat4 &view, const glm::mat4 &projection) {
-    _projection = projection;
-    _view = view;
+    g_projection = projection;
+    g_view = view;
 }
 
 void DebugLines::AddLine(const glm::vec3 &start, const glm::vec3 &end) {
@@ -68,23 +98,22 @@ void DebugLines::AddLine(const glm::vec2 &start, const glm::vec2 &end) {
 
 void DebugLines::AddLine(const glm::vec3 &start, const glm::vec3 &end, const glm::vec3 &color) {
     const auto lines = Line::GenerateLine(start, end, color);
-    _lines.push_back(lines);
+    g_lines.push_back(lines);
 }
 
 void DebugLines::DrawLines() {
 
-    for (const auto &line: _lines) {
-        _material->Bind();
+    for (const auto &line: g_lines) {
+        g_material->Bind();
         line->Bind();
 
-        _material->SetMat4("view", _view);
-        _material->SetMat4("projection", _projection);
+        g_material->SetMat4("view", g_view);
+        g_material->SetMat4("projection", g_projection);
         glDrawElements(GL_TRIANGLES, static_cast<int32_t>(line->GetIndicesCount()), GL_UNSIGNED_INT, nullptr);
     }
 }
 
 void DebugLines::Clear() {
-    _lines.clear();
+    g_lines.clear();
 }
 
-#endif

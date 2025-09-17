@@ -45,11 +45,11 @@ public:
 
     void SetMeshRenderer(std::weak_ptr<MeshRenderer> material) noexcept;
 
-    std::string GetMoveAnimation() const;
+    [[nodiscard]] std::string GetMoveAnimation() const;
 
-    std::string GetJumpAnimation() const;
+    [[nodiscard]] std::string GetJumpAnimation() const;
 
-    std::string GetHitAnimation() const;
+    [[nodiscard]] std::string GetHitAnimation() const;
 
-    std::string GetIdleAnimation() const;
+    [[nodiscard]] std::string GetIdleAnimation() const;
 };

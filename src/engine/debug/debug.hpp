@@ -45,6 +45,7 @@ struct ScopedTimer {
     ScopedTimer &operator=(int _cpp_par_);
 };
 
+#endif
 
 struct DebugLines {
 public:
@@ -61,5 +62,4 @@ public:
     static void Clear();
 };
 
-#endif
 

@@ -90,9 +90,7 @@ void Scene::Render(const float &deltaTime) const {
     _renderPipeline->RenderSprites(deltaTime);
     _renderPipeline->RenderParticles(deltaTime);
 
-#ifndef NDEBUG
     _renderPipeline->RenderDebugLines();
-#endif
     _renderPipeline->RenderUI(deltaTime);
 }
 
@@ -144,15 +142,30 @@ std::shared_ptr<SpineData> Scene::LoadSpineData(const SpineAsset &asset) const {
         // Load atlas (Spine owns this pointer)
         auto atlas = assetManager->LoadSourceByGuid<spine::Atlas*>(asset.atlas);
 
+        if (atlas && atlas->getPages().size() > 0) {
+            std::cout << "Atlas is valid. Pages: " << atlas->getPages().size() << std::endl;
+        } else {
+            std::cerr << "Atlas failed to load or is empty!" << std::endl;
+        }
+
         spine::SkeletonBinary binary(atlas);
 
-        // Load SkeletonData (Spine allocates it with new)
-        spine::SkeletonData* rawSkeletonData = binary.readSkeletonDataFile(
-            assetManager->GetPathFromGuid(asset.skeleton).c_str()
-        );
+        std::ifstream file(assetManager->GetPathFromGuid(asset.skeleton), std::ios::binary);
 
+        std::string buffer((std::istreambuf_iterator<char>(file)),
+                    std::istreambuf_iterator<char>());
+
+        const unsigned char* skelData = reinterpret_cast<const unsigned char*>(buffer.data());
+        size_t skelSize = buffer.size();
+
+        spine::SkeletonData* skeletonDataRaw = binary.readSkeletonData(skelData, skelSize);
+
+        if (!skeletonDataRaw) {
+            std::cerr << "Failed to load skeleton from memory!" << std::endl;
+            return nullptr;
+        }
         // Wrap in smart pointer so it's freed automatically
-        auto skeletonData = std::shared_ptr<spine::SkeletonData>(rawSkeletonData);
+        auto skeletonData = std::shared_ptr<spine::SkeletonData>(skeletonDataRaw);
 
         // Create AnimationStateData and wrap in smart pointer
         auto stateData = std::make_shared<spine::AnimationStateData>(skeletonData.get());

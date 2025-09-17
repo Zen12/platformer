@@ -113,7 +113,8 @@ TODO
 
 # 🏃 Roadmap
 ## 0.1.0 Working MVP
-- [ ] Webgl build
+- [ ] Fix webgl input system
+- [ ] Refactor spine loader
 - [ ] New background art, new ground art, new lantern art
 - [ ] Refactor AIController and CharacterController
 
