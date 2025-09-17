@@ -4,6 +4,10 @@
 #include <glm/glm.hpp>
 #include <GLFW/glfw3.h>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten/html5.h>
+#endif
+
 GLFWwindow *window;
 
 // c-like callback from GLFW for input
@@ -46,7 +50,7 @@ Window::Window(const uint16_t &width, const uint16_t &height, const std::string 
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    window = glfwCreateWindow(width, height, windowName.c_str(), nullptr, nullptr);
+    window = glfwCreateWindow(_width, _height, windowName.c_str(), nullptr, nullptr);
     if (!window)
     {
         std::cerr << "Failed to create window\n";
@@ -63,12 +67,23 @@ Window::Window(const uint16_t &width, const uint16_t &height, const std::string 
         return;
     }
 
-    // need this because of Mac issue
+#ifdef __EMSCRIPTEN__
     int fbWidth, fbHeight;
     glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
-    _width = fbWidth;
-    _height = fbHeight;
+    _width = static_cast<uint16_t>(fbWidth);
+    _height = static_cast<uint16_t>(fbHeight);
+#endif
 
+
+
+#ifdef __APPLE__
+    // need this because of Mac retina thing
+    int fbWidth, fbHeight;
+    glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+    if (fbWidth != _width || fbHeight != _height) {
+        glfwSetWindowSize(window, _width / 2, _height / 2);
+    }
+#endif
     // input
     glfwSetKeyCallback(window, key_callback);
     glfwSetMouseButtonCallback(window, mouse_button_callback);
@@ -141,4 +156,9 @@ bool Window::IsFocus() const noexcept {
 
 void Window::GetMousePosition(double *x, double *y) const noexcept {
     glfwGetCursorPos(window, x, y);
+    // find a better way to handle physical and logical pixels for emscripten to not adapt mouse position to it
+#ifdef __EMSCRIPTEN__
+    *x /= 2.0;
+    *y /= 2.0;
+#endif
 }
