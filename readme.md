@@ -1,8 +1,8 @@
 ## 📋 Requirements
 - 🧠 ```C++17```
 - 🛠️ ```Cmake``` 3.28 (<4.0)
-- 🛠️ ```FetchContent_Declare``` is used as package manager
 - ⚙️ ```[optional]``` Python used for editor tools
+- 🛠️ ```[optional]``` Emscripten used for webgl build
 ## 👋 Getting started 🤞
 ### 🍎 macOS 
 - 🏃```run.sh``` 
@@ -111,10 +111,34 @@ TODO
 - Proper FSM for App-State management and animation state behaviour
 - Sound
 
-## 🏃🏃🏃 TODO 🏃🏃🏃
-- [ ] Optimization of light raycast system, the vertex approach
-- [ ] One level (art), AI?
+# 🏃 Roadmap
+## 0.1.0 Working MVP
 - [ ] Webgl build
-- [ ] Windows build
+- [ ] New background art, new ground art, new lantern art
+- [ ] Refactor AIController and CharacterController
+
+## 0.1.1 Refactor + Optimization
+- [ ] Optimization of light raycast system, the vertex approach
+- [ ] Proper fix retina issue on webgl and macOS
+- [ ] Test build on windows and linux
+- [ ] Reorganize factory/serializable classes 
+
+## 0.1.2 FSM
+- [ ] FSM for animation and app-state 
+- [ ] Create AnimationComponent 
+- [ ] Create renderer base class and unify all renderers
+- [ ] Move Update from Component to IUpdatable
+
+## 0.1.2 Hot reload
+- [ ] Split into 2 cmake project (app + engine)
+- [ ] Compile engine into dll/so 
+- [ ] Implement hot-reload (swapping dll and reloading it)
+
+## 0.1.3 First Editor
+- [ ] Create new cmake project (editor)
+- [ ] Refactor engine to render into render-texture
+- [ ] ImGUI for editor + rendering into render-texture
+- [ ] Basic serialization viewer
+
 
 🇲🇩

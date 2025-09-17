@@ -6,24 +6,6 @@
 #define ENGINE_DEBUG_LIGHT_PROFILE 0
 #endif
 
-/*
-int Light2dComponent::FindNexClosesVertex(b2Fixture* fixture, b2PolygonShape *poly, glm::vec2 center, glm::vec2 point) {
-
-    int index = 0;
-    const b2Transform& xf = fixture->GetBody()->GetTransform();
-
-
-    for (int i = 0; i < poly->m_count; i++)
-    {
-        b2Vec2 worldVertex = b2Mul(xf, poly->m_vertices[i]);
-        const auto point = glm::vec2(worldVertex.x, worldVertex.y);
-
-    }
-
-    return -1;
-}
-*/
-
 void Light2dComponent::Update([[maybe_unused]] const float &deltaTime) {
     if (const auto world = _physicsWorld.lock()) {
         if (const auto center = _center.lock()) {
