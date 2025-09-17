@@ -324,9 +324,9 @@ protected:
                 comp->SetPhysicsWorld(scene->GetPhysicsWorld());
                 comp->SetMeshRenderer(_entity.lock()->GetComponent<MeshRenderer>());
                 comp->SetSettings(Light2dSettings{
+                    .Radius = serialization.Radius,
                     .Segments = serialization.Segments,
                     .Color = serialization.Color,
-                    .Radius = serialization.Radius,
                     .Offset = serialization.Offset,
                     .MaxAngle = serialization.MaxAngle,
                     .StartAngle = serialization.StartAngle,

@@ -21,8 +21,8 @@ public:
             };
 
             constexpr auto notSelectedState = UIInteractableState{
-                .IsPressUp = false,
                 .IsPressDown = false,
+                .IsPressUp = false,
                 .IsHovered = false,
             };
 
