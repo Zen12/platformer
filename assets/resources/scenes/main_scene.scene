@@ -100,6 +100,321 @@ entities:
                   - aspectPower: 70.0
                   - isPerspective: false
   - obj:
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: -0.03
+                      - y: 0.2
+                      - z: -12.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 16.0
+                      - y: 8.0
+                      - z: 1.0
+          - component:
+              - type: sprite_renderer
+              - data:
+                  - material: f22681f4-45d1-4542-a838-99f854890c18
+                  - image: 2c45b2e3-8a3a-47d0-bad9-b767994cfc3d
+  - obj:
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: -0.03
+                      - y: -0.8
+                      - z: -12.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 16.0
+                      - y: 8.0
+                      - z: 1.0
+          - component:
+              - type: sprite_renderer
+              - data:
+                  - material: f22681f4-45d1-4542-a838-99f854890c18
+                  - image: 2c45b2e3-8a3a-47d0-bad9-b767994cfc3d
+  - obj:
+      - guid: light_2d_3_center
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: -4.7
+                      - y: 4.5
+                      - z: 0.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+  - name: "buildings_background_1"
+  - obj:
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: 1.0
+                      - y: 1.2
+                      - z: -13.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 4.5
+                      - y: 3.0
+                      - z: 1.0
+          - component:
+              - type: sprite_renderer
+              - data:
+                  - material: f22681f4-45d1-4542-a838-99f854890c18
+                  - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+  - name: "buildings_background_2"
+  - obj:
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: 0.2
+                      - y: 1.2
+                      - z: -13.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 4.5
+                      - y: 3.0
+                      - z: 1.0
+          - component:
+              - type: sprite_renderer
+              - data:
+                  - material: f22681f4-45d1-4542-a838-99f854890c18
+                  - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+  - name: "buildings_background_3"
+  - obj:
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: -0.6
+                      - y: 1.2
+                      - z: -13.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 4.5
+                      - y: 3.0
+                      - z: 1.0
+          - component:
+              - type: sprite_renderer
+              - data:
+                  - material: f22681f4-45d1-4542-a838-99f854890c18
+                  - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+  - name: "buildings_background_4"
+  - obj:
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: -0.6
+                      - y: -0.1
+                      - z: -13.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 4.5
+                      - y: 3.0
+                      - z: 1.0
+          - component:
+              - type: sprite_renderer
+              - data:
+                  - material: f22681f4-45d1-4542-a838-99f854890c18
+                  - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+  - name: "buildings_background_5"
+  - obj:
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: 0.2
+                      - y: -0.1
+                      - z: -13.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 4.5
+                      - y: 3.0
+                      - z: 1.0
+          - component:
+              - type: sprite_renderer
+              - data:
+                  - material: f22681f4-45d1-4542-a838-99f854890c18
+                  - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+  - name: "buildings_background_6"
+  - obj:
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: 1.0
+                      - y: -1.45
+                      - z: -13.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 4.5
+                      - y: 3.0
+                      - z: 1.0
+          - component:
+              - type: sprite_renderer
+              - data:
+                  - material: f22681f4-45d1-4542-a838-99f854890c18
+                  - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+  - name: "buildings_background_7"
+  - obj:
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: 0.2
+                      - y: -1.45
+                      - z: -13.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 4.5
+                      - y: 3.0
+                      - z: 1.0
+          - component:
+              - type: sprite_renderer
+              - data:
+                  - material: f22681f4-45d1-4542-a838-99f854890c18
+                  - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+  - name: "buildings_background_8"
+  - obj:
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: -0.6
+                      - y: -1.45
+                      - z: -13.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 4.5
+                      - y: 3.0
+                      - z: 1.0
+          - component:
+              - type: sprite_renderer
+              - data:
+                  - material: f22681f4-45d1-4542-a838-99f854890c18
+                  - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+  - name: "buildings_background_9"
+  - obj:
+        - components:
+              - component:
+                    - type: transform
+                    - data:
+                          - position:
+                                - x: 1.0
+                                - y: -2.8
+                                - z: -13.0
+                          - rotation:
+                                - x: 0.0
+                                - y: 0.0
+                                - z: 0.0
+                          - scale:
+                                - x: 4.5
+                                - y: 3.0
+                                - z: 1.0
+              - component:
+                    - type: sprite_renderer
+                    - data:
+                          - material: f22681f4-45d1-4542-a838-99f854890c18
+                          - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+  - name: "buildings_background_10"
+  - obj:
+        - components:
+              - component:
+                    - type: transform
+                    - data:
+                          - position:
+                                - x: 0.2
+                                - y: -2.8
+                                - z: -13.0
+                          - rotation:
+                                - x: 0.0
+                                - y: 0.0
+                                - z: 0.0
+                          - scale:
+                                - x: 4.5
+                                - y: 3.0
+                                - z: 1.0
+              - component:
+                    - type: sprite_renderer
+                    - data:
+                          - material: f22681f4-45d1-4542-a838-99f854890c18
+                          - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+  - name: "buildings_background_11"
+  - obj:
+        - components:
+              - component:
+                    - type: transform
+                    - data:
+                          - position:
+                                - x: -0.6
+                                - y: -2.8
+                                - z: -13.0
+                          - rotation:
+                                - x: 0.0
+                                - y: 0.0
+                                - z: 0.0
+                          - scale:
+                                - x: 4.5
+                                - y: 3.0
+                                - z: 1.0
+              - component:
+                    - type: sprite_renderer
+                    - data:
+                          - material: f22681f4-45d1-4542-a838-99f854890c18
+                          - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+  - obj:
       - layer: 1 # 0001
       - tag: "main-character"
       - guid: main-character
@@ -205,62 +520,29 @@ entities:
                   - prefab_id: 0f2f4e2a-0197-4f47-be93-67a5f415360f
                   - spawn_time: 0.5
                   - max_spawn: 10
+  - name: "light_street_2"
   - obj:
-      - guid: light_2d_1_center
       - components:
           - component:
               - type: transform
               - data:
                   - position:
-                      - x: 5.0
-                      - y: 5.5
-                      - z: 0.0
+                      - x: -0.12
+                      - y: 1.25
+                      - z: -11.0
                   - rotation:
                       - x: 0.0
                       - y: 0.0
                       - z: 0.0
                   - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-  - obj:
-      - guid: light_2d_1
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -10.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
+                      - x: 2.5
+                      - y: 3.0
                       - z: 1.0
           - component:
-              - type: mesh_renderer
+              - type: sprite_renderer
               - data:
-                  - material: b1604380-8385-4912-9f2b-178103120328
-          - component:
-              - type: light_2d
-              - data:
-                  - center: light_2d_1_center
-                  - color:
-                      - x: 0.0
-                      - y: 1.0
-                      - z: 1.0
-                  - offset:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -1.0
-                  - radius: 6
-                  - start_angle: 225
-                  - max_angle: 90
-                  - segments: 80
+                  - material: f22681f4-45d1-4542-a838-99f854890c18
+                  - image: fcd06406-41c1-4cea-a549-bd15194010b3
   - obj:
       - guid: light_2d_2_center
       - components:
@@ -269,7 +551,7 @@ entities:
               - data:
                   - position:
                       - x: 0.0
-                      - y: 5.5
+                      - y: 4.5
                       - z: 0.0
                   - rotation:
                       - x: 0.0
@@ -317,6 +599,29 @@ entities:
                   - start_angle: 225
                   - max_angle: 90
                   - segments: 80
+  - name: "light_street_2"
+  - obj:
+      - components:
+          - component:
+              - type: transform
+              - data:
+                  - position:
+                      - x: -2.01
+                      - y: 1.25
+                      - z: -11.0
+                  - rotation:
+                      - x: 0.0
+                      - y: 0.0
+                      - z: 0.0
+                  - scale:
+                      - x: 2.5
+                      - y: 3.0
+                      - z: 1.0
+          - component:
+              - type: sprite_renderer
+              - data:
+                  - material: f22681f4-45d1-4542-a838-99f854890c18
+                  - image: fcd06406-41c1-4cea-a549-bd15194010b3
   - obj:
       - guid: light_2d_3_center
       - components:
@@ -324,8 +629,8 @@ entities:
               - type: transform
               - data:
                   - position:
-                      - x: -5.0
-                      - y: 5.5
+                      - x: -4.7
+                      - y: 4.5
                       - z: 0.0
                   - rotation:
                       - x: 0.0

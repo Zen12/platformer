@@ -1,6 +1,6 @@
 - name: "enemy"
 - obj:
-    - layer: 1 # 0001
+    - layer: 2 # 0010
     - tag: "enemy"
     - components:
         - component:

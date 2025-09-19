@@ -237,7 +237,7 @@ void CharacterController::Shoot(const glm::vec3 &lookAt) const {
         if (const auto render = _renderer.lock()) {
             const auto startPosition = render->GetBonePosition("gun-tip");
             const auto dir = lookAt - startPosition;
-            const auto result = world->RayCast(startPosition, startPosition + dir * 1000.0f);
+            const auto result = world->RayCast(startPosition, startPosition + dir * 1000.0f, 1);
 
             if (const auto particles = _particles.lock()) {
                 constexpr glm::vec3 axis(0.0f, 0.0f, 1.0f); // Z axis

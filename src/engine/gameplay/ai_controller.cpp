@@ -41,7 +41,7 @@ bool AiController::IsHitDir(glm::vec2 position, glm::vec2 dir, glm::vec2 &hitPos
         const glm::vec3 pointA(position.x, position.y, 0);    // Start of ray
         const glm::vec3 pointB(position.x + dir.x, position.y + dir.y, 0);   // End of ray
 
-        const auto result = world->RayCast( pointA, pointB, 1);
+        const auto result = world->RayCast( pointA, pointB, 3);//0011
 
         hitPos = glm::vec2(result.Point.x, result.Point.y);
 
@@ -128,7 +128,7 @@ bool AiController::TryToHit() {
         if (const auto entity = target->GetEntity().lock()) {
             if (const auto health = entity->GetComponent<HealthComponent>().lock()) {
                 health->DecreaseHealth(10);
-                 _hitCooldown = 10;
+                 _hitCooldown = 3;
             }
         }
     }

@@ -115,7 +115,8 @@ TODO
 # 🏃 Roadmap
 ## 0.1.0 Working MVP
 - [x] Fix webgl input system
-- [ ] New background art, new ground art, new lantern art
+- [x] New background art, new ground art, new lantern art
+- [ ] Hover button effect
 
 ## 0.1.1 Refactor + Optimization
 - [ ] Refactor spine loader

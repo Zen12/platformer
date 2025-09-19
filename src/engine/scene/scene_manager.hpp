@@ -53,6 +53,11 @@ public:
 
     void Render(const float &deltaTime) const;
 
+    [[nodiscard]] bool IsRequestToLoadScene() const;
+
+    void LoadRequestedScene();
+
+
 private:
     [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) const;
 

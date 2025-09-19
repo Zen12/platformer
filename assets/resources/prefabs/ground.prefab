@@ -21,7 +21,7 @@
             - type: sprite_renderer
             - data:
                 - material: f22681f4-45d1-4542-a838-99f854890c18
-                - image: 3d0040e7-ee77-477b-b7d8-863fd45ac38c
+                - image: 2f83f88b-7454-4694-9cd9-cb9f7875f23e
         - component:
             - type: rigidbody2d
             - data:

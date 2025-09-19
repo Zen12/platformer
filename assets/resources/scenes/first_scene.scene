@@ -76,6 +76,28 @@ entities:
                   - data:
                       - scene_guid: "d0677c93-a26f-4793-9eb7-5232d99378d1"
   - obj:
+        - components:
+              - component:
+                    - type: transform
+                    - data:
+                          - position:
+                                - x: -0.03
+                                - y: 0.15
+                                - z: -12.0
+                          - rotation:
+                                - x: 0.0
+                                - y: 0.0
+                                - z: 0.0
+                          - scale:
+                                - x: 16.0
+                                - y: 9.0
+                                - z: 1.0
+              - component:
+                    - type: sprite_renderer
+                    - data:
+                          - material: f22681f4-45d1-4542-a838-99f854890c18
+                          - image: 2c45b2e3-8a3a-47d0-bad9-b767994cfc3d
+  - obj:
       - guid: main-camera
       - tag: main_camera
       - components:

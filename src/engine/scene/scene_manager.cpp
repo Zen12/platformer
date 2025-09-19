@@ -171,15 +171,6 @@ void SceneManager::Update(const float &deltaTime) {
 #endif
 #endif
 
-    if (!_scene->GetLoadSceneRequestGuid().empty()) {
-        if (const auto assetManager = _assetManager.lock()) {
-            const auto scene = assetManager->LoadAssetByGuid<SceneAsset>(_scene->GetLoadSceneRequestGuid());
-            LoadScene(scene);
-            return;
-        }
-
-    }
-
     _scene->RemovePendingEntities();
     CreateRequestedPrefabs();
     _scene->Update(deltaTime);
@@ -210,6 +201,19 @@ std::shared_ptr<SpineData> SceneManager::LoadSpineData(const SpineAsset& asset) 
 
 std::shared_ptr<SpineData> SceneManager::GetSpineData(const std::string &guid, const SpineAsset& asset) const {
     return _scene->GetSpineData(guid, asset);
+}
+
+bool SceneManager::IsRequestToLoadScene() const {
+    return !_scene->GetLoadSceneRequestGuid().empty();
+}
+
+void SceneManager::LoadRequestedScene() {
+    if (!_scene->GetLoadSceneRequestGuid().empty()) {
+        if (const auto assetManager = _assetManager.lock()) {
+            const auto scene = assetManager->LoadAssetByGuid<SceneAsset>(_scene->GetLoadSceneRequestGuid());
+            LoadScene(scene);
+        }
+    }
 }
 
 std::shared_ptr<Sprite> SceneManager::GetSprite(const std::string &guid) const {

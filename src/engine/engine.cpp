@@ -55,6 +55,10 @@ void Engine::Tick() {
 #endif
 #endif
 
+    if (_sceneManager->IsRequestToLoadScene()) {
+        _sceneManager->LoadRequestedScene();
+    }
+
     const float deltaTime = _frameTimer.GetResetDelta();
     _frameTimer.Reset();
     _inputSystem->Update();

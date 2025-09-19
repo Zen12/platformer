@@ -6,4 +6,4 @@ shader_gles:
   vertex: 45eb7a93-7c9a-47da-a4e2-c1d0faabe3a7
   fragment: c8626fb3-34ef-4f48-ab0e-a203b117025a
 is_culling: true
-blend_mode: 0
+blend_mode: 1

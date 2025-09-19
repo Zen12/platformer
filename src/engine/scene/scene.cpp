@@ -86,9 +86,9 @@ void Scene::RemovePendingEntities() {
 void Scene::Render(const float &deltaTime) const {
 
     _renderPipeline->ClearFrame();
-    _renderPipeline->RenderMeshes(deltaTime);
     _renderPipeline->RenderSprites(deltaTime);
     _renderPipeline->RenderParticles(deltaTime);
+    _renderPipeline->RenderMeshes(deltaTime);
 
     _renderPipeline->RenderDebugLines();
     _renderPipeline->RenderUI(deltaTime);
