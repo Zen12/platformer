@@ -117,6 +117,7 @@ TODO
 - [x] Fix webgl input system
 - [x] New background art, new ground art, new lantern art
 - [ ] Hover button effect
+- [ ] Update UI art
 
 ## 0.1.1 Refactor + Optimization
 - [ ] Refactor spine loader
