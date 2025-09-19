@@ -39,8 +39,9 @@ TODO
         ├─ 📁 renderers
         ├─ 📁 render_pipiline
         └─ 📁 system
-🚀 run.sh               # release build script
-🚀 run_debug.sh         # debug build script
+🚀 run.sh               # release build desktop
+🚀 run_debug.sh         # debug build desktop
+🚀 run_web.sh           # release build webgl
 ⚙️ CMakeLists.txt
 📘 readme.md
  ``` 
