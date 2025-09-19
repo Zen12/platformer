@@ -142,12 +142,13 @@ std::shared_ptr<SpineData> Scene::LoadSpineData(const SpineAsset &asset) const {
         // Load atlas (Spine owns this pointer)
         auto atlas = assetManager->LoadSourceByGuid<spine::Atlas*>(asset.atlas);
 
+#ifndef NDEBUG
         if (atlas && atlas->getPages().size() > 0) {
             std::cout << "Atlas is valid. Pages: " << atlas->getPages().size() << std::endl;
         } else {
             std::cerr << "Atlas failed to load or is empty!" << std::endl;
         }
-
+#endif
         spine::SkeletonBinary binary(atlas);
 
         std::ifstream file(assetManager->GetPathFromGuid(asset.skeleton), std::ios::binary);

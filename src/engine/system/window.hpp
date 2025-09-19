@@ -11,6 +11,11 @@ private:
 
     std::unordered_map<int, int> _keyboardCodes;
     std::unordered_map<int, int> _mouseCodes;
+#ifdef __EMSCRIPTEN__
+    std::unordered_map<int, int> _keyboardCodesCached;
+    std::unordered_map<int, int> _mouseCodesCached;
+#endif
+
 
 public:
     Window(const uint16_t &width, const uint16_t &height, const std::string &windowName);
@@ -19,7 +24,7 @@ public:
     [[nodiscard]] bool IsOpen() const noexcept;
     void Destroy() const noexcept;
     void SwapBuffers() const noexcept;
-    void PullEvent() const noexcept;
+    void PullEvent() noexcept;
 
     void ClearWithValue(const int &value) noexcept;
 
@@ -47,16 +52,27 @@ public:
     }
 
     void OnKeyCode(const int &code, const int &mode) noexcept {
-#ifndef NDEBUG
 #if DEBUG_ENGINE_WINDOW
         std::cout << code << " " << mode << std::endl;
 #endif
-#endif
+
+#if __EMSCRIPTEN__
+        _keyboardCodesCached[code] = mode;
+#else
         _keyboardCodes[code] = mode;
+#endif
     }
 
     void OnMouse(const int &code, const int &mode) noexcept {
+#if DEBUG_ENGINE_WINDOW
+        std::cout << code << " " << mode << std::endl;
+#endif
+
+#if __EMSCRIPTEN__
+        _mouseCodesCached[code] = mode;
+#else
         _mouseCodes[code] =  mode;
+#endif
     }
 
     [[nodiscard]] bool IsFocus() const noexcept;

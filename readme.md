@@ -113,12 +113,12 @@ TODO
 
 # 🏃 Roadmap
 ## 0.1.0 Working MVP
-- [ ] Fix webgl input system
-- [ ] Refactor spine loader
+- [x] Fix webgl input system
 - [ ] New background art, new ground art, new lantern art
-- [ ] Refactor AIController and CharacterController
 
 ## 0.1.1 Refactor + Optimization
+- [ ] Refactor spine loader
+- [ ] Refactor AIController and CharacterController
 - [ ] Optimization of light raycast system, the vertex approach
 - [ ] Proper fix retina issue on webgl and macOS
 - [ ] Test build on windows and linux

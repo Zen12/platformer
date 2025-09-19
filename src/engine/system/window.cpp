@@ -108,8 +108,23 @@ void Window::SwapBuffers() const noexcept {
     glfwSwapBuffers(window);
 }
 
-void Window::PullEvent() const noexcept {
+void Window::PullEvent() noexcept {
+
+    // emscripten doesn't control the poll events, so they are been cached
+#ifdef __EMSCRIPTEN__
+    for (const auto &[key, value] : _keyboardCodesCached) {
+        _keyboardCodes[key] = value;
+    }
+    _keyboardCodesCached.clear();
+
+    for (const auto &[key, value] : _mouseCodesCached) {
+        _mouseCodes[key] = value;
+    }
+    _mouseCodesCached.clear();
+
+#else
     glfwPollEvents();
+#endif
 }
 
 void Window::ClearWithValue(const int &value) noexcept {

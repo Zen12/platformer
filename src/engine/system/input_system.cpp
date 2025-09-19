@@ -2,10 +2,8 @@
 
 void InputSystem::Update() {
     if (const auto window = _window.lock()) {
-#ifndef __EMSCRIPTEN__
         window->SwapWithValue(INPUT_PRESS, INPUT_REPEAT);
         window->ClearWithValue(INPUT_RELEASE);
-#endif
         window->PullEvent();
         _keyCodes = window->GetKeyboardCodes();
         _mouseCodes = window->GetMouseCodes();
