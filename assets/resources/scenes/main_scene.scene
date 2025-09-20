@@ -490,7 +490,7 @@ entities:
           - component:
               - type: health_component
               - data:
-                  - health: 100
+                  - health: 200
           - component:
               - type: prefab_spawner
               - data:

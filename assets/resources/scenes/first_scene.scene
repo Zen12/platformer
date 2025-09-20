@@ -35,6 +35,93 @@ entities:
               - data:
                   - none: ""
   - obj:
+      - guid: test-hint-1
+      - components:
+          - component:
+              - type: "rect_transform"
+              - data:
+                  - center_x:
+                      - value: 0
+                      - x: 0
+                  - pixel_y:
+                      - value: 0
+                      - y: 420
+                  - pixel_width:
+                      - value: 60
+                  - pixel_height:
+                      - value: 60
+                  - pivot:
+                      - x: 0.5
+                      - y: 0.5
+          - component:
+              - type: "ui_text"
+              - data:
+                  - material: f22681f4-45d1-4542-a838-99f854890c28
+                  - text: "A - move left"
+                  - font_size: 1
+                  - color:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 0.0
+  - obj:
+        - guid: test-hint-2
+        - components:
+              - component:
+                    - type: "rect_transform"
+                    - data:
+                          - center_x:
+                                - value: 0
+                                - x: 0
+                          - pixel_y:
+                                - value: 0
+                                - y: 320
+                          - pixel_width:
+                                - value: 60
+                          - pixel_height:
+                                - value: 60
+                          - pivot:
+                                - x: 0.5
+                                - y: 0.5
+              - component:
+                    - type: "ui_text"
+                    - data:
+                          - material: f22681f4-45d1-4542-a838-99f854890c28
+                          - text: "D - move right"
+                          - font_size: 1
+                          - color:
+                                - x: 1.0
+                                - y: 1.0
+                                - z: 0.0
+  - obj:
+        - guid: test-hint-2
+        - components:
+              - component:
+                    - type: "rect_transform"
+                    - data:
+                          - center_x:
+                                - value: 0
+                                - x: 0
+                          - pixel_y:
+                                - value: 0
+                                - y: 220
+                          - pixel_width:
+                                - value: 60
+                          - pixel_height:
+                                - value: 60
+                          - pivot:
+                                - x: 0.5
+                                - y: 0.5
+              - component:
+                    - type: "ui_text"
+                    - data:
+                          - material: f22681f4-45d1-4542-a838-99f854890c28
+                          - text: "Mouse - shot"
+                          - font_size: 1
+                          - color:
+                                - x: 1.0
+                                - y: 1.0
+                                - z: 0.0
+  - obj:
         - guid: button-play
         - components:
               - component:
@@ -44,7 +131,7 @@ entities:
                               - value: 0
                           - pixel_y:
                                 - value: 0
-                                - y: 200
+                                - y: 120
                           - pixel_width:
                                 - value: 400
                           - pixel_height:
@@ -173,6 +260,7 @@ entities:
                   - prefab_id: 2d05d2a1-2265-42a9-91a2-0774777518f0
                   - grid_tag: grid
   - obj:
+      - layer: 1 # 0001
       - tag: "main-character"
       - guid: main-character
       - components:
@@ -180,8 +268,8 @@ entities:
               - type: transform
               - data:
                   - position:
-                      - x: -0.7
-                      - y: 1.5
+                      - x: 0.0
+                      - y: 2.0
                       - z: 0.0
                   - rotation:
                       - x: 0.0
@@ -192,6 +280,32 @@ entities:
                       - y: 1.0
                       - z: 1.0
           - component:
+              - type: team
+              - data:
+                  - team: 0
+          - component:
+              - type: particle_emitter
+              - data:
+                  - duration: 0.05
+                  - count: 3
+                  - start_scale: 0.1
+                  - end_scale: 0.8
+                  - start_color: [1.0, 1.0, 0.0, 1.0]
+                  - end_color: [1.0, 0.0, 0.0, 1.0]
+                  - end_color:
+                      - x: 1.0
+                      - y: 1.0
+                      - z: 1.0
+                  - start_velocity:
+                      - x: 3.0
+                      - y: 3.0
+                      - z: 3.0
+                  - end_velocity:
+                      - x: 3.0
+                      - y: 3.0
+                      - z: 3.0
+                  - material_guid: "19d137a9-0bc4-415a-af16-1740ef25c8b2"
+          - component:
               - type: mesh_renderer
               - data:
                   - material: 5faecd48-398f-46db-889f-ba4199c2636f
@@ -200,9 +314,16 @@ entities:
               - data:
                   - spine_data: 6c51e080-77d1-440c-bdc0-47169c111e20
           - component:
-              - type: idle_character
+              - type: character_controller
               - data:
-                  - idle_animation: "idle"
+                  - max_movement_speed: 5.0
+                  - acceleration_speed: 0.8
+                  - deceleration_speed: 1.0
+                  - jump_heigh: 5
+                  - jump_duration: 0.5
+                  - jump_down_multiplier: 1.2
+                  - air_control: 0.8
+                  - damage: 10
           - component:
               - type: rigidbody2d
               - data:
@@ -211,6 +332,16 @@ entities:
               - type: spine_collider
               - data:
                   - none: "none"
+          - component:
+              - type: health_component
+              - data:
+                  - health: 100
+          - component:
+              - type: prefab_spawner
+              - data:
+                  - prefab_id: aa0e5f29-2533-474b-8b88-07cb2adb9d11
+                  - spawn_time: 0.0
+                  - max_spawn: 1
   - obj:
         - tag: fly1
         - guid: fly1
