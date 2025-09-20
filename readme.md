@@ -10,6 +10,8 @@
 TODO
 ### 🐧 Linux 
 TODO
+### 🛠️ Webgl build
+https://andreigusan.itch.io/platformer-demo
 
 ## 🔨 Project structure 
 
@@ -44,9 +46,7 @@ TODO
 🚀 run_web.sh           # release build webgl
 ⚙️ CMakeLists.txt
 📘 readme.md
- ``` 
-
-
+ ```
 
 ## 🦾 Features
 - 🏢 macOS, windows, web
@@ -125,6 +125,7 @@ TODO
 - [ ] Proper fix retina issue on webgl and macOS
 - [ ] Test build on windows and linux
 - [ ] Reorganize factory/serializable classes 
+- [ ] Fix model matrix, multiplication order
 
 ## 0.1.2 FSM
 - [ ] FSM for animation and app-state 
@@ -132,16 +133,24 @@ TODO
 - [ ] Create renderer base class and unify all renderers
 - [ ] Move Update from Component to IUpdatable
 
-## 0.1.2 Hot reload
+## 0.1.3 Hot reload
 - [ ] Split into 2 cmake project (app + engine)
 - [ ] Compile engine into dll/so 
 - [ ] Implement hot-reload (swapping dll and reloading it)
+- [ ] Split Engine logic and game logic
 
-## 0.1.3 First Editor
+## 0.1.4 First Editor
 - [ ] Create new cmake project (editor)
 - [ ] Refactor engine to render into render-texture
 - [ ] ImGUI for editor + rendering into render-texture
-- [ ] Basic serialization viewer
+- [ ] Basic serialization viewer with play button 
 
+## 0.1.5 Editor second pass
+- [ ] Undo/Redo system
+- [ ] Gizmo
+
+## 0.1.6 From OOP to data oriented(DOD)
+- [ ] Basic system 
+- [ ] Redo components 
 
 🇲🇩
