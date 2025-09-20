@@ -57,7 +57,7 @@ entities:
               - type: "ui_text"
               - data:
                   - material: f22681f4-45d1-4542-a838-99f854890c28
-                  - text: "A - move left"
+                  - text: "A and D- move left and right"
                   - font_size: 1
                   - color:
                       - x: 1.0
@@ -86,7 +86,7 @@ entities:
                     - type: "ui_text"
                     - data:
                           - material: f22681f4-45d1-4542-a838-99f854890c28
-                          - text: "D - move right"
+                          - text: "Space - jump"
                           - font_size: 1
                           - color:
                                 - x: 1.0
