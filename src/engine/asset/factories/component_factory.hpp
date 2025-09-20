@@ -643,6 +643,20 @@ protected:
     }
 };
 
+class UiButtonEffectFactory final : public ComponentFactory<UiButtonEffect, UiButtonEffectSerialization> {
+protected:
+    void FillComponent(const std::weak_ptr<UiButtonEffect> &component,
+        const UiButtonEffectSerialization &serialization) override
+    {
+        if (const auto entity = _entity.lock()) {
+            if (const auto &comp = component.lock()) {
+                comp->SetButton(entity->GetComponent<UiButton>());
+                comp->SetTarget(entity->GetComponent<UiImageRenderer>());
+            }
+        }
+    }
+};
+
 
 
 

@@ -29,14 +29,7 @@ entities:
                                 - z: 0.0
                           - font_size: 1.2
                           - text: "You Lose"
-              - component:
-                    - type: "ui_button"
-                    - data:
-                          - none: ""
-              - component:
-                    - type: "on_click_scene_loader"
-                    - data:
-                          - scene_guid: "d0677c93-a26f-4793-9eb7-5232d99378d1"
+
   - obj:
         - guid: button-restart
         - components:
@@ -78,6 +71,10 @@ entities:
                   - type: "on_click_scene_loader"
                   - data:
                       - scene_guid: "d0677c93-a26f-4793-9eb7-5232d99378d1"
+              - component:
+                  - type: "ui_button_effect"
+                  - data:
+                      - "none"
   - obj:
       - guid: main-camera
       - tag: main_camera

@@ -9,7 +9,9 @@
 class UiButton final : public UiInteractable {
 private:
     int _nextId = 0;
-    std::vector<std::pair<int, std::function<void()>>> _callbacks;
+    std::vector<std::pair<int, std::function<void()>>> _onClickCallbacks;
+    std::vector<std::pair<int, std::function<void()>>> _onHoverCallbacks;
+    std::vector<std::pair<int, std::function<void()>>> _onDeselectCallbacks;
 
 public:
     explicit UiButton(const std::weak_ptr<Entity>& entity)
@@ -17,15 +19,17 @@ public:
     }
 
     void Update([[maybe_unused]] const float &deltaTime) override {
-        if (_state.IsPressUp) {
-            for (const auto &callback: _callbacks) {
-                callback.second();
-            }
-        }
     }
 
-    int AddCallback(const std::function<void()>& callback);
+    int AddOnClickCallback(const std::function<void()>& callback);
+    int AddOnHoverCallback(const std::function<void()>& callback);
+    int AddOnDeselectCallback(const std::function<void()>& callback);
 
-    void RemoveCallback(int id);
+    void RemoveOnClickCallback(int id);
+    void RemoveOnHoverCallback(int id);
+    void RemoveOnDeselectCallback(int id);
+
+protected:
+    void OnUpdatedState() override;
 };
 

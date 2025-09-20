@@ -35,7 +35,7 @@ public:
     void SetButton(const std::weak_ptr<UiButton> &button) noexcept {
         _button = button;
         if (const auto b = _button.lock()) {
-            _subscribeId = b->AddCallback([this]() {
+            _subscribeId = b->AddOnClickCallback([this]() {
                 this->OnClick();
             });
         }
@@ -43,7 +43,7 @@ public:
 
     ~OnClickSceneLoader() noexcept override {
         if (const auto b = _button.lock()) {
-            b->RemoveCallback(_subscribeId);
+            b->RemoveOnClickCallback(_subscribeId);
         }
     }
 

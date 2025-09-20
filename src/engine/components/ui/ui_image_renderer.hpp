@@ -14,6 +14,7 @@ private:
     std::weak_ptr<Material> _material;
     std::weak_ptr<Sprite> _sprite;
     float _fillAmount{1};
+    glm::vec4 _tint{1, 1, 1, 1};
 
 public:
     UiImageRenderer() = delete;
@@ -32,6 +33,7 @@ public:
     }
 
     void SetFillAmount(const float& amount) noexcept;
+    void SetTint(const glm::vec4& color);
     void SetSprite(const std::weak_ptr<Sprite> &sprite) noexcept;
     void Render(const glm::mat4 &projection) const;
 };

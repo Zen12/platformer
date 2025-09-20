@@ -8,6 +8,7 @@ struct UIInteractableState {
     bool IsPressDown{};
     bool IsPressUp{};
     bool IsHovered{};
+    bool IsDeselected{};
 };
 
 class UiInteractable : public Component {
@@ -17,6 +18,7 @@ private:
 protected:
     std::weak_ptr<RectTransform> _rectTransform;
     UIInteractableState _state{};
+    virtual void OnUpdatedState() = 0;
 
 public:
     explicit UiInteractable(const std::weak_ptr<Entity> &entity)
@@ -40,6 +42,7 @@ public:
 
     void SetState(const UIInteractableState &state) noexcept {
         _state = state;
+        OnUpdatedState();
     }
 
     void SetSelf(const std::weak_ptr<UiInteractable> &self) noexcept {

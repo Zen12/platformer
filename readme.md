@@ -116,8 +116,7 @@ TODO
 ## 0.1.0 Working MVP
 - [x] Fix webgl input system
 - [x] New background art, new ground art, new lantern art
-- [ ] Hover button effect
-- [ ] Update UI art
+- [x] Hover button effect
 
 ## 0.1.1 Refactor + Optimization
 - [ ] Refactor spine loader

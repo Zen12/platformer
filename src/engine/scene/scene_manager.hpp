@@ -9,6 +9,7 @@
 #include "../asset/asset_manager.hpp"
 #include "../physics/physics_world.hpp"
 #include "../components/renderering/light_2d.hpp"
+#include "../components/ui/ui_button_effect.hpp"
 #include "../components/renderering/spine_renderer.hpp"
 #include "../components/physics/box_collider2d_component.hpp"
 #include "../components/physics/rigidbody2d_component.hpp"

@@ -495,6 +495,8 @@ namespace YAML
                 return Parse<GameStateData>(data);
             } else if (type == "team") {
                 return Parse<TeamSerialization>(data);
+            } else if (type == "ui_button_effect") {
+                return Parse<UiButtonEffectSerialization>(data);
             }
 
             throw std::runtime_error("Unknown component type: " + type);
@@ -713,6 +715,15 @@ namespace YAML
             const auto map = sequenceToMap(node);
             rhs.WinScene = map["win_scene"].as<std::string>();
             rhs.LooseScene = map["lose_scene"].as<std::string>();
+            return true;
+        }
+    };
+
+    template <>
+    struct convert<UiButtonEffectSerialization>
+    {
+        static bool decode([[maybe_unused]]const Node &node, [[maybe_unused]] UiButtonEffectSerialization &rhs)
+        {
             return true;
         }
     };

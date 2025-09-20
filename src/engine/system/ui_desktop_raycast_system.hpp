@@ -9,6 +9,14 @@
 class UiDesktopRaycastSystem final : public UiRaycastSystem {
 private:
 
+    struct WeakPtrCompare {
+        bool operator()(const std::weak_ptr<UiInteractable>& a,
+                        const std::weak_ptr<UiInteractable>& b) const noexcept {
+            return a.owner_before(b);
+        }
+    };
+
+    std::set<std::weak_ptr<UiInteractable>, WeakPtrCompare> _lastSelected;
 public:
     void UpdateState() override {
 
@@ -18,12 +26,21 @@ public:
                 .IsPressDown = input->IsMousePressing(MouseButton::Left),
                 .IsPressUp = input->IsMouseUp(MouseButton::Left),
                 .IsHovered = !input->IsMousePressing(MouseButton::Left) && !input->IsMouseUp(MouseButton::Left),
+                .IsDeselected = false
             };
 
             constexpr auto notSelectedState = UIInteractableState{
                 .IsPressDown = false,
                 .IsPressUp = false,
                 .IsHovered = false,
+                .IsDeselected = false
+            };
+
+            constexpr auto deSelectedState = UIInteractableState{
+                .IsPressDown = false,
+                .IsPressUp = false,
+                .IsHovered = false,
+                .IsDeselected = true
             };
 
 
@@ -32,8 +49,13 @@ public:
                     const auto mousePosition = input->GetMouseScreenSpace();
                     if (inter->IsPointInside(mousePosition)) {
                         inter->SetState(selectedState);
+                        _lastSelected.insert(inter);
                     } else {
-                        inter->SetState(notSelectedState);
+                        if (_lastSelected.erase(inter) > 0) {
+                            inter->SetState(deSelectedState);
+                        } else {
+                            inter->SetState(notSelectedState);
+                        }
                     }
                 }
             }

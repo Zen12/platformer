@@ -5,12 +5,12 @@
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
 
-// Global pointer for Emscripten loop
-static Engine* g_engine = nullptr;
+// Global smart pointer for Emscripten loop
+static std::unique_ptr<Engine> g_engine;
 
 void RunEngineWebGl() {
-    if (g_engine == nullptr) {
-        g_engine = new Engine(GetProjectRootPath());
+    if (!g_engine) {
+        g_engine = std::make_unique<Engine>(GetProjectRootPath());
         g_engine->LoadFirstScene();
     }
 
@@ -19,12 +19,10 @@ void RunEngineWebGl() {
         g_engine->WaitForTargetFrameRate();
     } else {
         if (g_engine->IsReloadRequested()) {
-            delete g_engine;
-            g_engine = nullptr;
+            g_engine.reset(); // destroys and sets to nullptr
         } else {
             emscripten_cancel_main_loop();
-            delete g_engine;
-            g_engine = nullptr;
+            g_engine.reset();
         }
     }
 }

@@ -8,6 +8,10 @@ void UiImageRenderer::SetFillAmount(const float &amount) noexcept {
     _fillAmount = amount;
 }
 
+void UiImageRenderer::SetTint(const glm::vec4& color) {
+    _tint = color;
+}
+
 void UiImageRenderer::SetSprite(const std::weak_ptr<Sprite> &sprite) noexcept {
     _sprite = sprite;
 }
@@ -28,6 +32,7 @@ void UiImageRenderer::Render(const glm::mat4 &projection) const
                 material->SetMat4("projection", projection);
                 material->SetMat4("model", model);
                 material->SetFloat("fillAmount", _fillAmount);
+                material->SetVec4("tint", _tint);
 
                 material->Bind();
                 _mesh.Bind();

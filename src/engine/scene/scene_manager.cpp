@@ -120,7 +120,8 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
                 OnClickSceneLoaderSerialization, OnClickSceneLoaderFactory,
                 PathMoverComponentSerialization, PathMoverComponentFactor,
                 GameStateData, GameStateFactory,
-                TeamSerialization, TeamComponentFactory
+                TeamSerialization, TeamComponentFactory,
+                UiButtonEffectSerialization, UiButtonEffectFactory
             >(comp.get(), std::weak_ptr<Entity>(entityInstance))) {
                 std::cerr << "can't add component" << std::endl;
 #ifndef NDEBUG
