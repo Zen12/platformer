@@ -429,74 +429,50 @@ namespace YAML
             return std::make_unique<T>(comp);
         }
 
-        static  std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAML::Node &node) {
+        static std::unique_ptr<ComponentSerialization>
+        createComponentFromYAML(const YAML::Node& node) {
             const auto nodeMap = sequenceToMap(node);
             const auto type = nodeMap["type"].as<std::string>();
-            const YAML::Node &data = nodeMap["data"];
-            const auto map = sequenceToMap(data);
+            const YAML::Node& data = nodeMap["data"];
 
-            if (type == "camera") {
-                return Parse<CameraComponentSerialization>(data);
-            } else if (type == "transform") {
-                return Parse<TransformComponentSerialization>(data);
-            } else if (type == "rect_transform") {
-                return Parse<RectTransformComponentSerialization>(data);
-            } else if (type == "ui_image") {
-                return Parse<UiImageComponentSerialization>(data);
-            } else if (type == "ui_button") {
-                return Parse<UiButtonComponentSerialization>(data);
-            } else if (type == "ui_text") {
-                return Parse<UiTextComponentSerialization>(data);
-            } else if (type == "sprite_renderer") {
-                return Parse<SpriteRenderComponentSerialization>(data);
-            } else if (type == "box_collider") {
-                return Parse<Box2dColliderSerialization>(data);
-            } else if (type == "rigidbody2d") {
-                return Parse<Rigidbody2dSerialization>(data);
-            } else if (type == "light_2d") {
-                return Parse<Light2dComponentSerialization>(data);
-            } if (type == "mesh_renderer") {
-                return Parse<MeshRendererComponentSerialization>(data);
-            } if (type == "spine_renderer") {
-                return Parse<SpineRenderComponentSerialization>(data);
-            } if (type == "character_controller") {
-                return Parse<CharacterControllerComponentSerialization>(data);
-            } else if (type == "ai_controller") {
-                return Parse<AiControllerComponentSerialization>(data);
-            } else if (type == "ui_show_fps") {
-                return Parse<ShowFpsComponentSerialization>(data);
-            } else if (type == "health_component") {
-                return Parse<HealthComponentSerialization>(data);
-            } else if (type == "prefab_spawner") {
-                return Parse<PrefabSpawnerSerialization>(data);
-            }else if (type == "grid_prefab_spawner") {
-                return Parse<GridPrefabSpawnerSerialization>(data);
-            } else if (type == "grid") {
-                return Parse<GridSerialization>(data);
-            } else if (type == "astar_path_finder") {
-                return Parse<PathFinderSerialization>(data);
-            } else if (type == "particle_emitter") {
-                return Parse<ParticleEmitterSerialization>(data);
-            } else if (type == "spine_collider") {
-                return Parse<SpineColliderSerialization>(data);
-            } else if (type == "health_bar") {
-                return Parse<HealthBarComponentSerialization>(data);
-            } else if (type == "rect_transform_follower") {
-                return Parse<RectTransformFollowerSerialization>(data);
-            } else if (type == "destroy_with_creator") {
-                return Parse<DestroyWithCreatorComponentSerialization>(data);
-            } else if (type == "idle_character") {
-                return Parse<IdleCharacterSerialization>(data);
-            } else if (type == "on_click_scene_loader") {
-                return Parse<OnClickSceneLoaderSerialization>(data);
-            } else if (type == "path_mover") {
-                return Parse<PathMoverComponentSerialization>(data);
-            } else if (type == "game_state") {
-                return Parse<GameStateData>(data);
-            } else if (type == "team") {
-                return Parse<TeamSerialization>(data);
-            } else if (type == "ui_button_effect") {
-                return Parse<UiButtonEffectSerialization>(data);
+            using Factory = std::function<std::unique_ptr<ComponentSerialization>(const YAML::Node&)>;
+            static const std::unordered_map<std::string, Factory> factories = {
+                { "camera",                [](const YAML::Node& n){ return Parse<CameraComponentSerialization>(n); } },
+                { "transform",             [](const YAML::Node& n){ return Parse<TransformComponentSerialization>(n); } },
+                { "rect_transform",        [](const YAML::Node& n){ return Parse<RectTransformComponentSerialization>(n); } },
+                { "ui_image",              [](const YAML::Node& n){ return Parse<UiImageComponentSerialization>(n); } },
+                { "ui_button",             [](const YAML::Node& n){ return Parse<UiButtonComponentSerialization>(n); } },
+                { "ui_text",               [](const YAML::Node& n){ return Parse<UiTextComponentSerialization>(n); } },
+                { "sprite_renderer",       [](const YAML::Node& n){ return Parse<SpriteRenderComponentSerialization>(n); } },
+                { "box_collider",          [](const YAML::Node& n){ return Parse<Box2dColliderSerialization>(n); } },
+                { "rigidbody2d",           [](const YAML::Node& n){ return Parse<Rigidbody2dSerialization>(n); } },
+                { "light_2d",              [](const YAML::Node& n){ return Parse<Light2dComponentSerialization>(n); } },
+                { "mesh_renderer",         [](const YAML::Node& n){ return Parse<MeshRendererComponentSerialization>(n); } },
+                { "spine_renderer",        [](const YAML::Node& n){ return Parse<SpineRenderComponentSerialization>(n); } },
+                { "character_controller",  [](const YAML::Node& n){ return Parse<CharacterControllerComponentSerialization>(n); } },
+                { "ai_controller",         [](const YAML::Node& n){ return Parse<AiControllerComponentSerialization>(n); } },
+                { "ui_show_fps",           [](const YAML::Node& n){ return Parse<ShowFpsComponentSerialization>(n); } },
+                { "health_component",      [](const YAML::Node& n){ return Parse<HealthComponentSerialization>(n); } },
+                { "prefab_spawner",        [](const YAML::Node& n){ return Parse<PrefabSpawnerSerialization>(n); } },
+                { "grid_prefab_spawner",   [](const YAML::Node& n){ return Parse<GridPrefabSpawnerSerialization>(n); } },
+                { "grid",                  [](const YAML::Node& n){ return Parse<GridSerialization>(n); } },
+                { "astar_path_finder",     [](const YAML::Node& n){ return Parse<PathFinderSerialization>(n); } },
+                { "particle_emitter",      [](const YAML::Node& n){ return Parse<ParticleEmitterSerialization>(n); } },
+                { "spine_collider",        [](const YAML::Node& n){ return Parse<SpineColliderSerialization>(n); } },
+                { "health_bar",            [](const YAML::Node& n){ return Parse<HealthBarComponentSerialization>(n); } },
+                { "rect_transform_follower",[](const YAML::Node& n){ return Parse<RectTransformFollowerSerialization>(n); } },
+                { "destroy_with_creator",  [](const YAML::Node& n){ return Parse<DestroyWithCreatorComponentSerialization>(n); } },
+                { "idle_character",        [](const YAML::Node& n){ return Parse<IdleCharacterSerialization>(n); } },
+                { "on_click_scene_loader", [](const YAML::Node& n){ return Parse<OnClickSceneLoaderSerialization>(n); } },
+                { "path_mover",            [](const YAML::Node& n){ return Parse<PathMoverComponentSerialization>(n); } },
+                { "game_state",            [](const YAML::Node& n){ return Parse<GameStateData>(n); } },
+                { "team",                  [](const YAML::Node& n){ return Parse<TeamSerialization>(n); } },
+                { "ui_button_effect",      [](const YAML::Node& n){ return Parse<UiButtonEffectSerialization>(n); } },
+            };
+
+            const auto it = factories.find(type);
+            if (it != factories.end()) {
+                return it->second(data);
             }
 
             throw std::runtime_error("Unknown component type: " + type);
