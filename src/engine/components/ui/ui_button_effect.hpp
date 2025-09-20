@@ -43,11 +43,9 @@ public:
     }
 
     void SetButton(const std::weak_ptr<UiButton> &button) noexcept {
-            std::cout << "Here1!" << std::endl;
 
         _button = button;
         if (const auto b = _button.lock()) {
-            std::cout << "Here!" << std::endl;
             _subscribeIdClick = b->AddOnClickCallback([this]() {
                 this->OnClick();
             });

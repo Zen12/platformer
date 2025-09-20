@@ -594,7 +594,7 @@ protected:
 
 class UiButtonComponentFactory final : public ComponentFactory<UiButton, UiButtonComponentSerialization> {
 protected:
-    void FillComponent(const std::weak_ptr<UiButton> &component,
+    void FillComponent([[maybe_unused]] const std::weak_ptr<UiButton> &component,
         [[maybe_unused]] const UiButtonComponentSerialization &serialization) override {
 
         if (const auto scene = _scene.lock()) {
@@ -646,7 +646,7 @@ protected:
 class UiButtonEffectFactory final : public ComponentFactory<UiButtonEffect, UiButtonEffectSerialization> {
 protected:
     void FillComponent(const std::weak_ptr<UiButtonEffect> &component,
-        const UiButtonEffectSerialization &serialization) override
+        [[maybe_unused]] const UiButtonEffectSerialization &serialization) override
     {
         if (const auto entity = _entity.lock()) {
             if (const auto &comp = component.lock()) {
