@@ -124,30 +124,29 @@ https://andreigusan.itch.io/platformer-demo
 - [ ] Test build on windows and linux
 - [ ] Fix model matrix, multiplication order
 
-## 0.1.2 FSM
+## 0.1.2 From OOP to data oriented(DOD)
+- [ ] Set Entt
+- [ ] Redo components to Entt
+- [ ] Redo systems (rendering, physics, etc...)
+
+## 0.1.3 FSM
 - [ ] FSM for animation and app-state 
 - [ ] Create AnimationComponent 
 - [ ] Create renderer base class and unify all renderers
-- [ ] Move Update from Component to IUpdatable
+- [ ] Create appstate flow 
 
-## 0.1.3 Hot reload
+## 0.1.4 Hot reload
 - [ ] Split into 2 cmake project (app + engine)
-- [ ] Compile engine into dll/so 
+- [ ] Compile engine into dll/so
 - [ ] Implement hot-reload (swapping dll and reloading it)
 - [ ] Split Engine logic and game logic
 
-## 0.1.4 First Editor
+## 0.1.5 First Editor
 - [ ] Create new cmake project (editor)
 - [ ] Refactor engine to render into render-texture
 - [ ] ImGUI for editor + rendering into render-texture
 - [ ] Basic serialization viewer with play button 
 
-## 0.1.5 Editor second pass
-- [ ] Undo/Redo system
-- [ ] Gizmo
 
-## 0.1.6 From OOP to data oriented(DOD)
-- [ ] Basic system 
-- [ ] Redo components 
 
 🇲🇩
