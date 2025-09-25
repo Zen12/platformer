@@ -1,64 +1,34 @@
-- name: "enemy"
-- obj:
-    - layer: 2 # 0010
-    - tag: "enemy"
-    - components:
-        - component:
-            - type: transform
-            - data:
-                - position:
-                    - x: 0.0
-                    - y: 0.0
-                    - z: 0.0
-                - rotation:
-                    - x: 0.0
-                    - y: 0.0
-                    - z: 0.0
-                - scale:
-                    - x: 1.0
-                    - y: 1.0
-                    - z: 1.0
-        - component:
-            - type: mesh_renderer
-            - data:
-                - material: 5faecd48-398f-46db-889f-ba4199c2636f
-        - component:
-            - type: spine_renderer
-            - data:
-                - spine_data: db5158b5-addf-4898-80d3-bfdeaf886d47
-        - component:
-            - type: ai_controller
-            - data:
-                - max_movement_speed: 2.0
-                - acceleration_speed: 0.8
-                - deceleration_speed: 1.0
-                - jump_heigh: 5
-                - jump_duration: 0.5
-                - jump_down_multiplier: 1.2
-                - air_control: 0.8
-                - damage : 1
-                - ai_target_transform_tag: "main-character"
-                - path_finder_tag : "path_finder"
-                - grid_tag: "grid"
-        - component:
-            - type: rigidbody2d
-            - data:
-                - isDynamic: false
-        - component:
-            - type: spine_collider
-            - data:
-                - none: "none"
-        - component:
-            - type: health_component
-            - data:
-                - health: 100
-        - component:
-              - type: prefab_spawner
-              - data:
-                    - prefab_id: 90b678d1-6ae9-4255-83da-9b1c9e3f86a3
-                    - spawn_time: 0.0
-                    - max_spawn: 1
-        - component:
-              - type: team
-              - data:
-                    - team: 1
+layer: 2 # 0010
+tag: enemy
+components:
+    - type: transform
+      position: [0.0, 0.0, 0.0]
+      rotation: [0.0, 0.0, 0.0]
+      scale: [1.0, 1.0, 1.0]
+    - type: mesh_renderer
+      material: 5faecd48-398f-46db-889f-ba4199c2636f
+    - type: spine_renderer
+      spine_data: db5158b5-addf-4898-80d3-bfdeaf886d47
+    - type: ai_controller
+      max_movement_speed: 2.0
+      acceleration_speed: 0.8
+      deceleration_speed: 1.0
+      jump_heigh: 5
+      jump_duration: 0.5
+      jump_down_multiplier: 1.2
+      air_control: 0.8
+      damage: 1
+      ai_target_transform_tag: main-character
+      path_finder_tag: path_finder
+      grid_tag: grid
+    - type: rigidbody2d
+      isDynamic: false
+    - type: spine_collider
+    - type: health_component
+      health: 100
+    - type: prefab_spawner
+      prefab_id: 90b678d1-6ae9-4255-83da-9b1c9e3f86a3
+      spawn_time: 0.0
+      max_spawn: 1
+    - type: team
+      team: 1

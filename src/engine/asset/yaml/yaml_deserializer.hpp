@@ -9,23 +9,6 @@
 #include "../serialization/serialization_component.hpp"
 #include "../serialization/serialization_asset.hpp"
 
-// Helper to extract a map from a YAML node that is a sequence of single-key maps
-inline YAML::Node sequenceToMap(const YAML::Node &seq)
-{
-    YAML::Node result(YAML::NodeType::Map);
-    for (const auto &item : seq)
-    {
-        if (item.IsMap() && item.size() == 1)
-        {
-            for (const auto &kv : item)
-            {
-                result[kv.first] = kv.second;
-            }
-        }
-    }
-    return result;
-}
-
 namespace YAML
 {
 
@@ -34,9 +17,8 @@ namespace YAML
     {
         static bool decode(const Node &node, glm::vec2 &rhs)
         {
-            const auto map = sequenceToMap(node);
-            rhs.x = map["x"].as<float>();
-            rhs.y = map["y"].as<float>();
+            rhs.x = node[0].as<float>();
+            rhs.y = node[1].as<float>();
             return true;
         }
     };
@@ -46,10 +28,9 @@ namespace YAML
     {
         static bool decode(const Node &node, glm::vec3 &rhs)
         {
-            const auto map = sequenceToMap(node);
-            rhs.x = map["x"].as<float>();
-            rhs.y = map["y"].as<float>();
-            rhs.z = map["z"].as<float>();
+            rhs.x = node[0].as<float>();
+            rhs.y = node[1].as<float>();
+            rhs.z = node[2].as<float>();
             return true;
         }
     };
@@ -72,11 +53,10 @@ namespace YAML
     {
         static bool decode(const Node &node, UiTextComponentSerialization &rhs)
         {
-            const auto map = sequenceToMap(node);
-            rhs.MaterialGUID = map["material"].as<std::string>();
-            rhs.Text = map["text"].as<std::string>();
-            rhs.Color = map["color"].as<glm::vec3>();
-            rhs.FontSize = map["font_size"].as<float>();
+            rhs.MaterialGUID = node["material"].as<std::string>();
+            rhs.Text = node["text"].as<std::string>();
+            rhs.Color = node["color"].as<glm::vec3>();
+            rhs.FontSize = node["font_size"].as<float>();
             return true;
         }
     };
@@ -86,15 +66,14 @@ namespace YAML
     {
         static bool decode(const Node &node, CharacterControllerComponentSerialization &rhs)
         {
-            const auto map = sequenceToMap(node);
-            rhs.MaxMovementSpeed = map["max_movement_speed"].as<float>();
-            rhs.AccelerationSpeed = map["acceleration_speed"].as<float>();
-            rhs.DecelerationSpeed = map["deceleration_speed"].as<float>();
-            rhs.JumpHeigh = map["jump_heigh"].as<float>();
-            rhs.JumpDuration = map["jump_duration"].as<float>();
-            rhs.JumpDownMultiplier = map["jump_down_multiplier"].as<float>();
-            rhs.AirControl = map["air_control"].as<float>();
-            rhs.Damage = map["damage"].as<float>();
+            rhs.MaxMovementSpeed = node["max_movement_speed"].as<float>();
+            rhs.AccelerationSpeed = node["acceleration_speed"].as<float>();
+            rhs.DecelerationSpeed = node["deceleration_speed"].as<float>();
+            rhs.JumpHeigh = node["jump_heigh"].as<float>();
+            rhs.JumpDuration = node["jump_duration"].as<float>();
+            rhs.JumpDownMultiplier = node["jump_down_multiplier"].as<float>();
+            rhs.AirControl = node["air_control"].as<float>();
+            rhs.Damage = node["damage"].as<float>();
             return true;
         }
     };
@@ -104,18 +83,17 @@ namespace YAML
     {
         static bool decode(const Node &node, AiControllerComponentSerialization &rhs)
         {
-            const auto map = sequenceToMap(node);
-            rhs.MaxMovementSpeed = map["max_movement_speed"].as<float>();
-            rhs.AccelerationSpeed = map["acceleration_speed"].as<float>();
-            rhs.DecelerationSpeed = map["deceleration_speed"].as<float>();
-            rhs.JumpHeigh = map["jump_heigh"].as<float>();
-            rhs.JumpDuration = map["jump_duration"].as<float>();
-            rhs.JumpDownMultiplier = map["jump_down_multiplier"].as<float>();
-            rhs.AirControl = map["air_control"].as<float>();
-            rhs.Damage = map["damage"].as<float>();
-            rhs.AiTargetTransformTag = map["ai_target_transform_tag"].as<std::string>();
-            rhs.PathFinderTag = map["path_finder_tag"].as<std::string>();
-            rhs.GridTag = map["grid_tag"].as<std::string>();
+            rhs.MaxMovementSpeed = node["max_movement_speed"].as<float>();
+            rhs.AccelerationSpeed = node["acceleration_speed"].as<float>();
+            rhs.DecelerationSpeed = node["deceleration_speed"].as<float>();
+            rhs.JumpHeigh = node["jump_heigh"].as<float>();
+            rhs.JumpDuration = node["jump_duration"].as<float>();
+            rhs.JumpDownMultiplier = node["jump_down_multiplier"].as<float>();
+            rhs.AirControl = node["air_control"].as<float>();
+            rhs.Damage = node["damage"].as<float>();
+            rhs.AiTargetTransformTag = node["ai_target_transform_tag"].as<std::string>();
+            rhs.PathFinderTag = node["path_finder_tag"].as<std::string>();
+            rhs.GridTag = node["grid_tag"].as<std::string>();
             return true;
         }
     };
@@ -125,9 +103,7 @@ namespace YAML
     {
         static bool decode([[maybe_unused]] const Node &node, [[maybe_unused]] HealthComponentSerialization &rhs)
         {
-            const auto map = sequenceToMap(node);
-            rhs.Health = map["health"].as<float>();
-
+            rhs.Health = node["health"].as<float>();
             return true;
         }
     };
@@ -146,9 +122,8 @@ namespace YAML
     {
         static bool decode(const Node &node, CameraComponentSerialization &rhs)
         {
-            const auto map = sequenceToMap(node);
-            rhs.aspectPower = map["aspectPower"].as<float>();
-            rhs.isPerspective = map["isPerspective"].as<bool>();
+            rhs.aspectPower = node["aspectPower"].as<float>();
+            rhs.isPerspective = node["isPerspective"].as<bool>();
             return true;
         }
     };
@@ -158,10 +133,9 @@ namespace YAML
     {
         static bool decode(const Node &node, TransformComponentSerialization &rhs)
         {
-            const auto map = sequenceToMap(node);
-            rhs.position = map["position"].as<glm::vec3>();
-            rhs.rotation = map["rotation"].as<glm::vec3>();
-            rhs.scale = map["scale"].as<glm::vec3>();
+            rhs.position = node["position"].as<glm::vec3>();
+            rhs.rotation = node["rotation"].as<glm::vec3>();
+            rhs.scale = node["scale"].as<glm::vec3>();
             return true;
         }
     };
@@ -171,8 +145,7 @@ namespace YAML
     {
         static bool decode(const Node &node, SpineRenderComponentSerialization &rhs)
         {
-            const auto map = sequenceToMap(node);
-            rhs.SpineGuid = map["spine_data"].as<std::string>();
+            rhs.SpineGuid = node["spine_data"].as<std::string>();
             return true;
         }
     };
@@ -182,8 +155,7 @@ namespace YAML
     {
         static bool decode(const Node &node, MeshRendererComponentSerialization &rhs)
         {
-            const auto map = sequenceToMap(node);
-            rhs.MaterialGuid = map["material"].as<std::string>();
+            rhs.MaterialGuid = node["material"].as<std::string>();
             return true;
         }
     };
@@ -192,15 +164,14 @@ namespace YAML
     struct convert<Light2dComponentSerialization>
     {
         static bool decode(const Node &node, Light2dComponentSerialization &rhs) {
-            const auto map = sequenceToMap(node);
 
-            rhs.CenterTransform = map["center"].as<std::string>();
-            rhs.Offset = map["offset"].as<glm::vec3>();
-            rhs.Color = map["color"].as<glm::vec3>();
-            rhs.Radius = map["radius"].as<float>();
-            rhs.Segments = map["segments"].as<int>();
-            rhs.MaxAngle = map["max_angle"].as<float>();
-            rhs.StartAngle = map["start_angle"].as<float>();
+            rhs.CenterTransform = node["center"].as<std::string>();
+            rhs.Offset = node["offset"].as<glm::vec3>();
+            rhs.Color = node["color"].as<glm::vec3>();
+            rhs.Radius = node["radius"].as<float>();
+            rhs.Segments = node["segments"].as<int>();
+            rhs.MaxAngle = node["max_angle"].as<float>();
+            rhs.StartAngle = node["start_angle"].as<float>();
 
             return true;
         }
@@ -210,15 +181,14 @@ namespace YAML
     struct convert<PathMoverComponentSerialization>
     {
         static bool decode(const Node &node, PathMoverComponentSerialization &rhs) {
-            const auto map = sequenceToMap(node);
 
             rhs.Positions = std::vector<glm::vec3>();
 
-            for (const auto &path : map["positions"]) {
-                rhs.Positions.push_back(path["position"].as<glm::vec3>());
+            for (const auto &path : node["positions"]) {
+                rhs.Positions.push_back(path.as<glm::vec3>());
             }
 
-            rhs.Speed = map["speed"].as<float>();
+            rhs.Speed = node["speed"].as<float>();
 
             return true;
         }
@@ -229,9 +199,8 @@ namespace YAML
     struct convert<SpriteRenderComponentSerialization>
     {
         static bool decode(const Node &node, SpriteRenderComponentSerialization &rhs) {
-            const auto map = sequenceToMap(node);
-            rhs.MaterialGuid = map["material"].as<std::string>();
-            rhs.SpriteGuid = map["image"].as<std::string>();
+            rhs.MaterialGuid = node["material"].as<std::string>();
+            rhs.SpriteGuid = node["image"].as<std::string>();
             return true;
         }
     };
@@ -240,11 +209,10 @@ namespace YAML
     struct convert<UiImageComponentSerialization>
     {
         static bool decode(const Node &node, UiImageComponentSerialization &rhs) {
-            const auto map = sequenceToMap(node);
-            rhs.MaterialGuid = map["material"].as<std::string>();
-            rhs.SpriteGuid = map["image"].as<std::string>();
-            if (map["fill_amount"])
-                rhs.FillAmount = map["fill_amount"].as<float>();
+            rhs.MaterialGuid = node["material"].as<std::string>();
+            rhs.SpriteGuid = node["image"].as<std::string>();
+            if (node["fill_amount"])
+                rhs.FillAmount = node["fill_amount"].as<float>();
             return true;
         }
     };
@@ -252,33 +220,43 @@ namespace YAML
     template <>
     struct convert<RectTransformComponentSerialization>
     {
-        static bool decode(const Node &node, RectTransformComponentSerialization &rhs) {
-
-            const auto map = sequenceToMap(node);
-
-            if (!map.IsMap())
-            {
-                std::cerr << "Expected a map node.\n";
-                return false;
+        static void decodeLayout(const std::string& key, const Node &node, RectTransformComponentSerialization &rhs) {
+            auto x = 0.0f;
+            auto y = 0.0f;
+            auto value =  0.0f;
+            for (const auto &item : node[key]) {
+                x = item["x"] ? item["x"].as<float>() : x;
+                y = item["y"] ? item["y"].as<float>() : y;
+                value = item["value"] ? item["value"].as<float>() : value;
             }
 
+            rhs.Layouts.emplace_back(key, value, x, y);
+        }
 
-            for (const auto &kv : map)
-            {
-                const auto key = kv.first.as<std::string>();
-                YAML::Node list = kv.second;
+        static bool decode(const Node &node, RectTransformComponentSerialization &rhs) {
 
-                auto x = 0.0f;
-                auto y = 0.0f;
-                auto value =  0.0f;
+            if (const auto nodeValue = node["pixel_x"]) {
+                decodeLayout("pixel_x", node, rhs);
+            }
 
-                for (const auto &item : list) {
-                    x = item["x"] ? item["x"].as<float>() : x;
-                    y = item["y"] ? item["y"].as<float>() : y;
-                    value = item["value"] ? item["value"].as<float>() : value;
-                }
+            if (const auto nodeValue = node["pixel_y"]) {
+                decodeLayout("pixel_y", node, rhs);
+            }
 
-                rhs.Layouts.emplace_back(key, value, x, y);
+            if (const auto nodeValue = node["center_x"]) {
+                decodeLayout("center_x", node, rhs);
+            }
+            if (const auto nodeValue = node["center_y"]) {
+                decodeLayout("center_y", node, rhs);
+            }
+            if (const auto nodeValue = node["pixel_width"]) {
+                decodeLayout("pixel_width", node, rhs);
+            }
+            if (const auto nodeValue = node["pixel_height"]) {
+                decodeLayout("pixel_height", node, rhs);
+            }
+            if (const auto nodeValue = node["pivot"]) {
+                decodeLayout("pivot", node, rhs);
             }
 
             return true;
@@ -289,8 +267,7 @@ namespace YAML
     struct convert<SpriteComponentSerialization>
     {
         static bool decode(const Node &node, SpriteComponentSerialization &rhs) {
-            const auto map = sequenceToMap(node);
-            rhs.Path = map["path"].as<std::string>();
+            rhs.Path = node["path"].as<std::string>();
             return true;
         }
     };
@@ -299,10 +276,9 @@ namespace YAML
     struct convert<Box2dColliderSerialization>
     {
         static bool decode(const Node &node, Box2dColliderSerialization &rhs) {
-            const auto map = sequenceToMap(node);
-            rhs.scale = map["size"].as<glm::vec3>();
-            if (map["translate"].IsDefined())
-                rhs.translate = map["translate"].as<glm::vec3>();
+            rhs.scale = node["size"].as<glm::vec3>();
+            if (node["translate"].IsDefined())
+                rhs.translate = node["translate"].as<glm::vec3>();
 
             return true;
         }
@@ -312,12 +288,11 @@ namespace YAML
     template <>
     struct convert<GridSerialization> {
         static bool decode(const Node &node, GridSerialization &rhs) {
-            const auto map = sequenceToMap(node);
-            rhs.spawnOffset = map["spawn_offset"].as<glm::vec3>();
-            rhs.spawnStep = map["spawn_step"].as<glm::vec3>();
+            rhs.spawnOffset = node["spawn_offset"].as<glm::vec3>();
+            rhs.spawnStep = node["spawn_step"].as<glm::vec3>();
             rhs.grid = std::vector<std::vector<int>>();
-            if (map["grid"]) {
-                const auto grid = map["grid"];
+            if (node["grid"]) {
+                const auto grid = node["grid"];
 
                 for (const auto &position : grid) {
                     std::vector<int> vec;
@@ -339,9 +314,8 @@ namespace YAML
     struct convert<GridPrefabSpawnerSerialization>
     {
         static bool decode(const Node &node, GridPrefabSpawnerSerialization &rhs) {
-            const auto map = sequenceToMap(node);
-            rhs.prefabId = map["prefab_id"].as<std::string>();
-            rhs.gridTag = map["grid_tag"].as<std::string>();
+            rhs.prefabId = node["prefab_id"].as<std::string>();
+            rhs.gridTag = node["grid_tag"].as<std::string>();
             return true;
         }
     };
@@ -350,8 +324,7 @@ namespace YAML
     struct convert<PathFinderSerialization>
     {
         static bool decode(const Node &node, PathFinderSerialization &rhs) {
-            const auto map = sequenceToMap(node);
-            rhs.gridTag = map["grid_tag"].as<std::string>();
+            rhs.gridTag = node["grid_tag"].as<std::string>();
             return true;
         }
     };
@@ -361,13 +334,12 @@ namespace YAML
     struct convert<PrefabSpawnerSerialization>
     {
         static bool decode(const Node &node, PrefabSpawnerSerialization &rhs) {
-            const auto map = sequenceToMap(node);
-            rhs.prefabId = map["prefab_id"].as<std::string>();
-            rhs.spawnTime = map["spawn_time"].as<float>();
-            rhs.maxSpawn = map["max_spawn"].as<int>();
+            rhs.prefabId = node["prefab_id"].as<std::string>();
+            rhs.spawnTime = node["spawn_time"].as<float>();
+            rhs.maxSpawn = node["max_spawn"].as<int>();
             rhs.positions = std::vector<glm::vec3>();
-            if (map["positions"]) {
-                auto positions = map["positions"];
+            if (node["positions"]) {
+                auto positions = node["positions"];
 
                 for (const auto &position : positions) {
                     const auto x = position[0].as<float>();
@@ -385,16 +357,15 @@ namespace YAML
     struct convert<ParticleEmitterSerialization>
     {
         static bool decode(const Node &node, ParticleEmitterSerialization &rhs) {
-            const auto map = sequenceToMap(node);
-            rhs.count = map["count"].as<size_t>();
-            rhs.startVelocity = map["start_velocity"].as<glm::vec3>();
-            rhs.endVelocity = map["end_velocity"].as<glm::vec3>();
-            rhs.duration = map["duration"].as<float>();
-            rhs.materialGuid = map["material_guid"].as<std::string>();
-            rhs.startScale = map["start_scale"].as<float>();
-            rhs.endScale = map["end_scale"].as<float>();
-            rhs.startColor = map["start_color"].as<glm::vec4>();
-            rhs.endColor = map["end_color"].as<glm::vec4>();
+            rhs.count = node["count"].as<size_t>();
+            rhs.startVelocity = node["start_velocity"].as<glm::vec3>();
+            rhs.endVelocity = node["end_velocity"].as<glm::vec3>();
+            rhs.duration = node["duration"].as<float>();
+            rhs.materialGuid = node["material_guid"].as<std::string>();
+            rhs.startScale = node["start_scale"].as<float>();
+            rhs.endScale = node["end_scale"].as<float>();
+            rhs.startColor = node["start_color"].as<glm::vec4>();
+            rhs.endColor = node["end_color"].as<glm::vec4>();
             return true;
         }
     };
@@ -411,8 +382,7 @@ namespace YAML
     struct convert<Rigidbody2dSerialization>
     {
         static bool decode(const Node &node, Rigidbody2dSerialization &rhs) {
-            const auto map = sequenceToMap(node);
-            rhs.isDynamic = map["isDynamic"].as<bool>();
+            rhs.isDynamic = node["isDynamic"].as<bool>();
             return true;
         }
     };
@@ -431,9 +401,8 @@ namespace YAML
 
         static std::unique_ptr<ComponentSerialization>
         createComponentFromYAML(const YAML::Node& node) {
-            const auto nodeMap = sequenceToMap(node);
-            const auto type = nodeMap["type"].as<std::string>();
-            const YAML::Node& data = nodeMap["data"];
+
+            const auto type = node["type"].as<std::string>();
 
             using Factory = std::function<std::unique_ptr<ComponentSerialization>(const YAML::Node&)>;
             static const std::unordered_map<std::string, Factory> factories = {
@@ -470,34 +439,24 @@ namespace YAML
                 { "ui_button_effect",      [](const YAML::Node& n){ return Parse<UiButtonEffectSerialization>(n); } },
             };
 
-            const auto it = factories.find(type);
-            if (it != factories.end()) {
-                return it->second(data);
+            if (const auto it = factories.find(type); it != factories.end()) {
+                return it->second(node);
             }
 
             throw std::runtime_error("Unknown component type: " + type);
         }
 
-        static bool decode(const Node &node, EntitySerialization &rhs)
-        {
-            if (const auto objNode = node["obj"])
+        static bool decode(const Node &node, EntitySerialization &rhs) {
+            if (node["guid"])
+                rhs.Guid = node["guid"].as<std::string>();
+            if (node["tag"])
+                rhs.Tag = node["tag"].as<std::string>();
+            if (node["layer"])
+                rhs.Layer = node["layer"].as<int>();
+
+            for (const auto &compNode : node["components"])
             {
-                const auto nodeMap = sequenceToMap(objNode);
-
-                if (nodeMap["guid"])
-                    rhs.Guid = nodeMap["guid"].as<std::string>();
-                if (nodeMap["tag"])
-                    rhs.Tag = nodeMap["tag"].as<std::string>();
-                if (nodeMap["layer"])
-                    rhs.Layer = nodeMap["layer"].as<int>();
-
-                for (const auto &compNode : nodeMap["components"])
-                {
-                    if (const auto componentNode = compNode["component"])
-                    {
-                        rhs.Components.push_back(createComponentFromYAML(componentNode));
-                    }
-                }
+                rhs.Components.push_back(createComponentFromYAML(compNode));
             }
             return true;
         }
@@ -508,9 +467,7 @@ namespace YAML
     {
         static bool decode(const Node &node, PrefabAsset &rhs)
         {
-            const auto nodeMap = sequenceToMap(node);
-            rhs.Name = nodeMap["name"].as<std::string>();
-            rhs.Obj = nodeMap.as<EntitySerialization>();
+            rhs.Obj = node.as<EntitySerialization>();
             return true;
         }
     };
@@ -612,8 +569,7 @@ namespace YAML
     {
         static bool decode(const Node &node, HealthBarComponentSerialization &rhs)
         {
-            const auto map = sequenceToMap(node);
-            rhs.UseCreator = map["use_creator"].as<bool>();
+            rhs.UseCreator = node["use_creator"].as<bool>();
             return true;
         }
     };
@@ -623,11 +579,10 @@ namespace YAML
     {
         static bool decode(const Node &node, RectTransformFollowerSerialization &rhs)
         {
-            const auto map = sequenceToMap(node);
-            rhs.UseCreator = map["use_creator"].as<bool>();
-            rhs.Offset = map["offset"].as<glm::vec2>();
+            rhs.UseCreator = node["use_creator"].as<bool>();
+            rhs.Offset = node["offset"].as<glm::vec2>();
             if (node["target"])
-                rhs.Target = map["target"].as<std::string>();
+                rhs.Target = node["target"].as<std::string>();
             return true;
         }
     };
@@ -646,8 +601,7 @@ namespace YAML
     {
         static bool decode(const Node &node, IdleCharacterSerialization &rhs)
         {
-            const auto map = sequenceToMap(node);
-            rhs.IdleAnimation = map["idle_animation"].as<std::string>();
+            rhs.IdleAnimation = node["idle_animation"].as<std::string>();
             return true;
         }
     };
@@ -666,8 +620,7 @@ namespace YAML
     {
         static bool decode(const Node &node, OnClickSceneLoaderSerialization &rhs)
         {
-            const auto map = sequenceToMap(node);
-            rhs.SceneGuid = map["scene_guid"].as<std::string>();
+            rhs.SceneGuid = node["scene_guid"].as<std::string>();
             return true;
         }
     };
@@ -677,8 +630,7 @@ namespace YAML
     {
         static bool decode(const Node &node, TeamSerialization &rhs)
         {
-            const auto map = sequenceToMap(node);
-            rhs.Team = map["team"].as<int>();
+            rhs.Team = node["team"].as<int>();
             return true;
         }
     };
@@ -688,9 +640,8 @@ namespace YAML
     {
         static bool decode(const Node &node, GameStateData &rhs)
         {
-            const auto map = sequenceToMap(node);
-            rhs.WinScene = map["win_scene"].as<std::string>();
-            rhs.LooseScene = map["lose_scene"].as<std::string>();
+            rhs.WinScene = node["win_scene"].as<std::string>();
+            rhs.LooseScene = node["lose_scene"].as<std::string>();
             return true;
         }
     };

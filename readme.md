@@ -113,18 +113,15 @@ https://andreigusan.itch.io/platformer-demo
 - Sound
 
 # 🏃 Roadmap
-## 0.1.0 Working MVP
-- [x] Fix webgl input system
-- [x] New background art, new ground art, new lantern art
-- [x] Hover button effect
 
 ## 0.1.1 Refactor + Optimization
+- [x] Simplified yaml
+- [ ] Reorganize factory/serializable classes
 - [ ] Refactor spine loader
 - [ ] Refactor AIController and CharacterController
 - [ ] Optimization of light raycast system, the vertex approach
 - [ ] Proper fix retina issue on webgl and macOS
 - [ ] Test build on windows and linux
-- [ ] Reorganize factory/serializable classes 
 - [ ] Fix model matrix, multiplication order
 
 ## 0.1.2 FSM

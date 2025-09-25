@@ -1,35 +1,13 @@
-- name: "ground"
-- obj:
-    - tag: "ground"
-    - components:
-        - component:
-            - type: transform
-            - data:
-                - position:
-                    - x: -8.0
-                    - y: -7.0
-                    - z: 0.0
-                - rotation:
-                    - x: 0.0
-                    - y: 0.0
-                    - z: 0.0
-                - scale:
-                    - x: 1.0
-                    - y: 1.0
-                    - z: 1.0
-        - component:
-            - type: sprite_renderer
-            - data:
-                - material: f22681f4-45d1-4542-a838-99f854890c18
-                - image: 2f83f88b-7454-4694-9cd9-cb9f7875f23e
-        - component:
-            - type: rigidbody2d
-            - data:
-                - isDynamic: false
-        - component:
-            - type: box_collider
-            - data:
-                - size:
-                    - x: 1.0
-                    - y: 1.0
-                    - z: 0.0
+tag: ground
+components:
+    - type: transform
+      position: [-8.0, -7.0, 0.0]
+      rotation: [0.0, 0.0, 0.0]
+      scale: [1.0, 1.0, 1.0]
+    - type: sprite_renderer
+      material: f22681f4-45d1-4542-a838-99f854890c18
+      image: 2f83f88b-7454-4694-9cd9-cb9f7875f23e
+    - type: rigidbody2d
+      isDynamic: false
+    - type: box_collider
+      size: [1.0, 1.0, 0.0]

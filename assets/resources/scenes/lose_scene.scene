@@ -1,101 +1,69 @@
 name: first_screen
 type: scene
 entities:
-  - obj:
-        - guid: label
-        - components:
-              - component:
-                    - type: "rect_transform"
-                    - data:
-                          - center_x:
-                                - value: 0
-                          - pixel_y:
-                                - value: 1
-                                - y: 200
-                          - pixel_width:
-                                - value: 400
-                          - pixel_height:
-                                - value: 130
-                          - pivot:
-                                - x: 0.5
-                                - y: 0.5
-              - component:
-                    - type: "ui_text"
-                    - data:
-                          - material: f22681f4-45d1-4542-a838-99f854890c28
-                          - color:
-                                - x: 1.0
-                                - y: 1.0
-                                - z: 0.0
-                          - font_size: 1.2
-                          - text: "You Lose"
+  - guid: label
+    components:
+      - type: rect_transform
+        center_x:
+          - value: 0
+        pixel_y:
+          - value: 1
+          - y: 200
+        pixel_width:
+          - value: 400
+        pixel_height:
+          - value: 130
+        pivot:
+          - x: 0.5
+          - y: 0.5
 
-  - obj:
-        - guid: button-restart
-        - components:
-              - component:
-                    - type: "rect_transform"
-                    - data:
-                          - center_x:
-                              - value: 0
-                          - pixel_y:
-                                - value: 0
-                                - y: 200
-                          - pixel_width:
-                                - value: 400
-                          - pixel_height:
-                                - value: 130
-                          - pivot:
-                                - x: 0.5
-                                - y: 0.5
-              - component:
-                    - type: "ui_image"
-                    - data:
-                          - material: f22681f4-45d1-4542-a838-99f854890a28
-                          - image: 55e690b3-66ac-42bb-8144-e7cc7acf3b90
-              - component:
-                  - type: "ui_text"
-                  - data:
-                      - material: f22681f4-45d1-4542-a838-99f854890c28
-                      - color:
-                          - x: 1.0
-                          - y: 1.0
-                          - z: 0.0
-                      - font_size: 1.2
-                      - text: "Restart"
-              - component:
-                    - type: "ui_button"
-                    - data:
-                          - none: ""
-              - component:
-                  - type: "on_click_scene_loader"
-                  - data:
-                      - scene_guid: "d0677c93-a26f-4793-9eb7-5232d99378d1"
-              - component:
-                  - type: "ui_button_effect"
-                  - data:
-                      - "none"
-  - obj:
-      - guid: main-camera
-      - tag: main_camera
-      - components:
-          - component:
-              - type: "transform"
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 1.55
-                      - z: 0.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: "camera"
-              - data:
-                  - aspectPower: 70.0
-                  - isPerspective: false
+      - type: ui_text
+        material: f22681f4-45d1-4542-a838-99f854890c28
+        color: [1.0, 1.0, 0.0]
+        font_size: 1.2
+        text: "You Lose"
+
+  - guid: button-restart
+    components:
+      - type: rect_transform
+        center_x:
+          - value: 0
+        pixel_y:
+          - value: 0
+          - y: 200
+        pixel_width:
+          - value: 400
+        pixel_height:
+          - value: 130
+        pivot:
+          - x: 0.5
+          - y: 0.5
+
+      - type: ui_image
+        material: f22681f4-45d1-4542-a838-99f854890a28
+        image: 55e690b3-66ac-42bb-8144-e7cc7acf3b90
+
+      - type: ui_text
+        material: f22681f4-45d1-4542-a838-99f854890c28
+        color: [1.0, 1.0, 0.0]
+        font_size: 1.2
+        text: "Restart"
+
+      - type: ui_button
+
+      - type: on_click_scene_loader
+        scene_guid: d0677c93-a26f-4793-9eb7-5232d99378d1
+
+      - type: ui_button_effect
+
+  - guid: main-camera
+    tag: main_camera
+    components:
+      - type: transform
+        position: [0.0, 1.55, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+
+      - type: camera
+        aspectPower: 70.0
+        isPerspective: false

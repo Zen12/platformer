@@ -1,582 +1,302 @@
 name: first_screen
 type: scene
 entities:
-  - obj:
-      - guid: text-fps
-      - components:
-          - component:
-              - type: "rect_transform"
-              - data:
-                  - pixel_x:
-                      - value: 0
-                      - x: 0
-                  - pixel_y:
-                      - value: 1
-                      - y: 0
-                  - pixel_width:
-                      - value: 60
-                  - pixel_height:
-                      - value: 60
-                  - pivot:
-                      - x: 0.0
-                      - y: 1.0
-          - component:
-              - type: "ui_text"
-              - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c28
-                  - text: "FPS text"
-                  - font_size: 1
-                  - color:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 0.0
-          - component:
-              - type: "ui_show_fps"
-              - data:
-                  - none: ""
-  - obj:
-      - guid: test-hint-1
-      - components:
-          - component:
-              - type: "rect_transform"
-              - data:
-                  - center_x:
-                      - value: 0
-                      - x: 0
-                  - pixel_y:
-                      - value: 0
-                      - y: 420
-                  - pixel_width:
-                      - value: 60
-                  - pixel_height:
-                      - value: 60
-                  - pivot:
-                      - x: 0.5
-                      - y: 0.5
-          - component:
-              - type: "ui_text"
-              - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c28
-                  - text: "A and D- move left and right"
-                  - font_size: 1
-                  - color:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 0.0
-  - obj:
-        - guid: test-hint-2
-        - components:
-              - component:
-                    - type: "rect_transform"
-                    - data:
-                          - center_x:
-                                - value: 0
-                                - x: 0
-                          - pixel_y:
-                                - value: 0
-                                - y: 320
-                          - pixel_width:
-                                - value: 60
-                          - pixel_height:
-                                - value: 60
-                          - pivot:
-                                - x: 0.5
-                                - y: 0.5
-              - component:
-                    - type: "ui_text"
-                    - data:
-                          - material: f22681f4-45d1-4542-a838-99f854890c28
-                          - text: "Space - jump"
-                          - font_size: 1
-                          - color:
-                                - x: 1.0
-                                - y: 1.0
-                                - z: 0.0
-  - obj:
-        - guid: test-hint-2
-        - components:
-              - component:
-                    - type: "rect_transform"
-                    - data:
-                          - center_x:
-                                - value: 0
-                                - x: 0
-                          - pixel_y:
-                                - value: 0
-                                - y: 220
-                          - pixel_width:
-                                - value: 60
-                          - pixel_height:
-                                - value: 60
-                          - pivot:
-                                - x: 0.5
-                                - y: 0.5
-              - component:
-                    - type: "ui_text"
-                    - data:
-                          - material: f22681f4-45d1-4542-a838-99f854890c28
-                          - text: "Mouse - shot"
-                          - font_size: 1
-                          - color:
-                                - x: 1.0
-                                - y: 1.0
-                                - z: 0.0
-  - obj:
-        - guid: button-play
-        - components:
-              - component:
-                    - type: "rect_transform"
-                    - data:
-                          - center_x:
-                              - value: 0
-                          - pixel_y:
-                                - value: 0
-                                - y: 120
-                          - pixel_width:
-                                - value: 400
-                          - pixel_height:
-                                - value: 130
-                          - pivot:
-                                - x: 0.5
-                                - y: 0.5
-              - component:
-                    - type: "ui_image"
-                    - data:
-                          - material: f22681f4-45d1-4542-a838-99f854890a28
-                          - image: 55e690b3-66ac-42bb-8144-e7cc7acf3b90
-              - component:
-                  - type: "ui_text"
-                  - data:
-                      - material: f22681f4-45d1-4542-a838-99f854890c28
-                      - color:
-                          - x: 1.0
-                          - y: 1.0
-                          - z: 0.0
-                      - font_size: 1.2
-                      - text: "Play"
-              - component:
-                    - type: "ui_button"
-                    - data:
-                          - none: ""
-              - component:
-                  - type: "on_click_scene_loader"
-                  - data:
-                      - scene_guid: "d0677c93-a26f-4793-9eb7-5232d99378d1"
-              - component:
-                  - type: "ui_button_effect"
-                  - data:
-                      - "none"
-  - obj:
-        - components:
-              - component:
-                    - type: transform
-                    - data:
-                          - position:
-                                - x: -0.03
-                                - y: 0.15
-                                - z: -12.0
-                          - rotation:
-                                - x: 0.0
-                                - y: 0.0
-                                - z: 0.0
-                          - scale:
-                                - x: 16.0
-                                - y: 9.0
-                                - z: 1.0
-              - component:
-                    - type: sprite_renderer
-                    - data:
-                          - material: f22681f4-45d1-4542-a838-99f854890c18
-                          - image: 2c45b2e3-8a3a-47d0-bad9-b767994cfc3d
-  - obj:
-      - guid: main-camera
-      - tag: main_camera
-      - components:
-          - component:
-              - type: "transform"
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 1.55
-                      - z: 0.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: "camera"
-              - data:
-                  - aspectPower: 70.0
-                  - isPerspective: false
-  - obj:
-      - tag: "grid"
-      - components:
-          - component:
-              - type: grid
-              - data:
-                  - spawn_step:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 0.0
-                  - spawn_offset:
-                      - x: -8.0
-                      - y: -10.0
-                      - z: 1.0
-                  - grid:
-                      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
-                      - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                      - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                      - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                      - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                      - [ 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1 ]
-                      - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                      - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                      - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                      - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
-  - obj:
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: grid_prefab_spawner
-              - data:
-                  - prefab_id: 2d05d2a1-2265-42a9-91a2-0774777518f0
-                  - grid_tag: grid
-  - obj:
-      - layer: 1 # 0001
-      - tag: "main-character"
-      - guid: main-character
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 2.0
-                      - z: 0.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: team
-              - data:
-                  - team: 0
-          - component:
-              - type: particle_emitter
-              - data:
-                  - duration: 0.05
-                  - count: 3
-                  - start_scale: 0.1
-                  - end_scale: 0.8
-                  - start_color: [1.0, 1.0, 0.0, 1.0]
-                  - end_color: [1.0, 0.0, 0.0, 1.0]
-                  - end_color:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-                  - start_velocity:
-                      - x: 3.0
-                      - y: 3.0
-                      - z: 3.0
-                  - end_velocity:
-                      - x: 3.0
-                      - y: 3.0
-                      - z: 3.0
-                  - material_guid: "19d137a9-0bc4-415a-af16-1740ef25c8b2"
-          - component:
-              - type: mesh_renderer
-              - data:
-                  - material: 5faecd48-398f-46db-889f-ba4199c2636f
-          - component:
-              - type: spine_renderer
-              - data:
-                  - spine_data: 6c51e080-77d1-440c-bdc0-47169c111e20
-          - component:
-              - type: character_controller
-              - data:
-                  - max_movement_speed: 5.0
-                  - acceleration_speed: 0.8
-                  - deceleration_speed: 1.0
-                  - jump_heigh: 5
-                  - jump_duration: 0.5
-                  - jump_down_multiplier: 1.2
-                  - air_control: 0.8
-                  - damage: 10
-          - component:
-              - type: rigidbody2d
-              - data:
-                  - isDynamic: false
-          - component:
-              - type: spine_collider
-              - data:
-                  - none: "none"
-          - component:
-              - type: health_component
-              - data:
-                  - health: 100
-          - component:
-              - type: prefab_spawner
-              - data:
-                  - prefab_id: aa0e5f29-2533-474b-8b88-07cb2adb9d11
-                  - spawn_time: 0.0
-                  - max_spawn: 1
-  - obj:
-        - tag: fly1
-        - guid: fly1
-        - components:
-              - component:
-                    - type: transform
-                    - data:
-                          - position:
-                                - x: -5
-                                - y: 4
-                                - z: -1
-                          - rotation:
-                                - x: 0.0
-                                - y: 0.0
-                                - z: 0.0
-                          - scale:
-                                - x: 1.0
-                                - y: 1.0
-                                - z: 1.0
-              - component:
-                  - type: path_mover
-                  - data:
-                      - speed: 4
-                      - positions:
-                          - position:
-                              - x: -5
-                              - y: 4
-                              - z: -1
-                          - position:
-                              - x: -5
-                              - y: -1
-                              - z: -1
-                          - position:
-                              - x: 5
-                              - y: -1
-                              - z: -1
-                          - position:
-                              - x: 5
-                              - y: 4
-                              - z: -1
+  - guid: text-fps
+    components:
+      - type: rect_transform
+        pixel_x:
+          - value: 0
+          - x: 0
+        pixel_y:
+          - value: 1
+          - y: 0
+        pixel_width:
+          - value: 60
+        pixel_height:
+          - value: 60
+        pivot:
+          - x: 0.0
+          - y: 1.0
+      - type: ui_text
+        material: f22681f4-45d1-4542-a838-99f854890c28
+        text: "FPS text"
+        font_size: 1
+        color: [1.0, 1.0, 0.0]
+      - type: ui_show_fps
 
-  - obj:
-      - guid: light_2d
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -10.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: mesh_renderer
-              - data:
-                  - material: b1604380-8385-4912-9f2b-178103120328
-          - component:
-              - type: light_2d
-              - data:
-                  - center: fly1
-                  - color:
-                        - x: 0.0
-                        - y: 1.0
-                        - z: 0.0
-                  - offset:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - radius: 5
-                  - start_angle: 0
-                  - max_angle: 360
-                  - segments: 400
-                  - dist_power: 0.21
-  - obj:
-      - tag: fly2
-      - guid: fly2
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 5
-                      - y: 4
-                      - z: -10.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: path_mover
-              - data:
-                  - speed: 4
-                  - positions:
-                      - position:
-                          - x: 5
-                          - y: 4
-                          - z: -10
-                      - position:
-                          - x: -5
-                          - y: 4
-                          - z: -10
-                      - position:
-                            - x: -5
-                            - y: -1
-                            - z: -10
-                      - position:
-                            - x: 5
-                            - y: -1
-                            - z: -10
-  - obj:
-      - guid: light_2d_2
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -10.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: mesh_renderer
-              - data:
-                  - material: b1604380-8385-4912-9f2b-178103120328
-          - component:
-              - type: light_2d
-              - data:
-                  - center: fly2
-                  - color:
-                        - x: 1.0
-                        - y: 0.0
-                        - z: 0.0
-                  - offset:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - radius: 5
-                  - start_angle: 0
-                  - max_angle: 360
-                  - segments: 400
-                  - dist_power: 0.21
-  - obj:
-      - tag: fly3
-      - guid: fly3
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: -5
-                      - y: -1
-                      - z: -10
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: path_mover
-              - data:
-                  - speed: 8
-                  - positions:
-                      - position:
-                          - x: -5
-                          - y: -1
-                          - z: -10
-                      - position:
-                          - x: 5
-                          - y: -1
-                          - z: -10
-                      - position:
-                          - x: 5
-                          - y: 4
-                          - z: -10
-                      - position:
-                            - x: -5
-                            - y: 4
-                            - z: -10
-  - obj:
-      - guid: light_2d_3
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -10.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: mesh_renderer
-              - data:
-                  - material: b1604380-8385-4912-9f2b-178103120328
-          - component:
-              - type: light_2d
-              - data:
-                  - center: fly3
-                  - color:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 1.0
-                  - offset:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - radius: 5
-                  - start_angle: 0
-                  - max_angle: 360
-                  - segments: 400
-                  - dist_power: 0.21
+  - guid: test-hint-1
+    components:
+      - type: rect_transform
+        center_x:
+          - value: 0
+          - x: 0
+        pixel_y:
+          - value: 0
+          - y: 420
+        pixel_width:
+          - value: 60
+        pixel_height:
+          - value: 60
+        pivot:
+          - x: 0.5
+          - y: 0.5
+      - type: ui_text
+        material: f22681f4-45d1-4542-a838-99f854890c28
+        text: "A and D - move left and right"
+        font_size: 1
+        color: [1.0, 1.0, 0.0]
+
+  - guid: test-hint-2
+    components:
+      - type: rect_transform
+        center_x:
+          - value: 0
+          - x: 0
+        pixel_y:
+          - value: 0
+          - y: 320
+        pixel_width:
+          - value: 60
+        pixel_height:
+          - value: 60
+        pivot:
+          - x: 0.5
+          - y: 0.5
+      - type: ui_text
+        material: f22681f4-45d1-4542-a838-99f854890c28
+        text: "Space - jump"
+        font_size: 1
+        color: [1.0, 1.0, 0.0]
+
+  - guid: test-hint-3
+    components:
+      - type: rect_transform
+        center_x:
+          - value: 0
+          - x: 0
+        pixel_y:
+          - value: 0
+          - y: 220
+        pixel_width:
+          - value: 60
+        pixel_height:
+          - value: 60
+        pivot:
+          - x: 0.5
+          - y: 0.5
+      - type: ui_text
+        material: f22681f4-45d1-4542-a838-99f854890c28
+        text: "Mouse - shoot"
+        font_size: 1
+        color: [1.0, 1.0, 0.0]
+
+  - guid: button-play
+    components:
+      - type: rect_transform
+        center_x:
+          - value: 0
+        pixel_y:
+          - value: 0
+          - y: 120
+        pixel_width:
+          - value: 400
+        pixel_height:
+          - value: 130
+        pivot:
+          - x: 0.5
+          - y: 0.5
+      - type: ui_image
+        material: f22681f4-45d1-4542-a838-99f854890a28
+        image: 55e690b3-66ac-42bb-8144-e7cc7acf3b90
+      - type: ui_text
+        material: f22681f4-45d1-4542-a838-99f854890c28
+        text: "Play"
+        font_size: 1.2
+        color: [1.0, 1.0, 0.0]
+      - type: ui_button
+      - type: on_click_scene_loader
+        scene_guid: d0677c93-a26f-4793-9eb7-5232d99378d1
+      - type: ui_button_effect
+
+  - components:
+      - type: transform
+        position: [-0.03, 0.15, -12.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [16.0, 9.0, 1.0]
+      - type: sprite_renderer
+        material: f22681f4-45d1-4542-a838-99f854890c18
+        image: 2c45b2e3-8a3a-47d0-bad9-b767994cfc3d
+
+  - guid: main-camera
+    tag: main_camera
+    components:
+      - type: transform
+        position: [0.0, 1.55, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: camera
+        aspectPower: 70.0
+        isPerspective: false
+
+  - tag: grid
+    components:
+      - type: grid
+        spawn_step: [1.0, 1.0, 0.0]
+        spawn_offset: [-8.0, -10.0, 1.0]
+        grid:
+          - [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+          - [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+          - [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+          - [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+          - [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+          - [1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1]
+          - [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+          - [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+          - [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]
+          - [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+
+  - components:
+      - type: transform
+        position: [0.0, 0.0, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: grid_prefab_spawner
+        prefab_id: 2d05d2a1-2265-42a9-91a2-0774777518f0
+        grid_tag: grid
+
+  - guid: main-character
+    tag: main-character
+    layer: 1
+    components:
+      - type: transform
+        position: [0.0, 2.0, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: team
+        team: 0
+      - type: particle_emitter
+        duration: 0.05
+        count: 3
+        start_scale: 0.1
+        end_scale: 0.8
+        start_color: [1.0, 1.0, 0.0, 1.0]
+        end_color: [1.0, 0.0, 0.0, 1.0]
+        start_velocity: [3.0, 3.0, 3.0]
+        end_velocity: [3.0, 3.0, 3.0]
+        material_guid: "19d137a9-0bc4-415a-af16-1740ef25c8b2"
+      - type: mesh_renderer
+        material: 5faecd48-398f-46db-889f-ba4199c2636f
+      - type: spine_renderer
+        spine_data: 6c51e080-77d1-440c-bdc0-47169c111e20
+      - type: character_controller
+        max_movement_speed: 5.0
+        acceleration_speed: 0.8
+        deceleration_speed: 1.0
+        jump_heigh: 5
+        jump_duration: 0.5
+        jump_down_multiplier: 1.2
+        air_control: 0.8
+        damage: 10
+      - type: rigidbody2d
+        isDynamic: false
+      - type: spine_collider
+      - type: health_component
+        health: 100
+  - guid: fly1
+    tag: fly1
+    components:
+      - type: transform
+        position: [-5, 4, -1]
+        rotation: [0, 0, 0]
+        scale: [1, 1, 1]
+      - type: path_mover
+        speed: 4
+        positions:
+          - [-5, 4, -1]
+          - [-5, -1, -1]
+          - [5, -1, -1]
+          - [5, 4, -1]
+
+  - guid: light_2d
+    components:
+      - type: transform
+        position: [0, 0, -10]
+        rotation: [0, 0, 0]
+        scale: [1, 1, 1]
+      - type: mesh_renderer
+        material: b1604380-8385-4912-9f2b-178103120328
+      - type: light_2d
+        center: fly1
+        color: [0.0, 1.0, 0.0]
+        offset: [0, 0, 0]
+        radius: 5
+        start_angle: 0
+        max_angle: 360
+        segments: 400
+        dist_power: 0.21
+
+  - guid: fly2
+    tag: fly2
+    components:
+      - type: transform
+        position: [5, 4, -10]
+        rotation: [0, 0, 0]
+        scale: [1, 1, 1]
+      - type: path_mover
+        speed: 4
+        positions:
+          - [5, 4, -10]
+          - [-5, 4, -10]
+          - [-5, -1, -10]
+          - [5, -1, -10]
+
+  - guid: light_2d_2
+    components:
+      - type: transform
+        position: [0, 0, -10]
+        rotation: [0, 0, 0]
+        scale: [1, 1, 1]
+      - type: mesh_renderer
+        material: b1604380-8385-4912-9f2b-178103120328
+      - type: light_2d
+        center: fly2
+        color: [1.0, 0.0, 0.0]
+        offset: [0, 0, 0]
+        radius: 5
+        start_angle: 0
+        max_angle: 360
+        segments: 400
+        dist_power: 0.21
+
+  - guid: fly3
+    tag: fly3
+    components:
+      - type: transform
+        position: [-5, -1, -10]
+        rotation: [0, 0, 0]
+        scale: [1, 1, 1]
+      - type: path_mover
+        speed: 8
+        positions:
+          - [-5, -1, -10]
+          - [5, -1, -10]
+          - [5, 4, -10]
+          - [-5, 4, -10]
+
+  - guid: light_2d_3
+    components:
+      - type: transform
+        position: [0, 0, -10]
+        rotation: [0, 0, 0]
+        scale: [1, 1, 1]
+      - type: mesh_renderer
+        material: b1604380-8385-4912-9f2b-178103120328
+      - type: light_2d
+        center: fly3
+        color: [0.0, 0.0, 1.0]
+        offset: [0, 0, 0]
+        radius: 5
+        start_angle: 0
+        max_angle: 360
+        segments: 400
+        dist_power: 0.21

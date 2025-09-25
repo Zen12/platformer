@@ -1,38 +1,21 @@
-- name: "health_bar"
-- obj:
-    - components:
-        - component:
-            - type: "rect_transform"
-            - data:
-                - pixel_width:
-                    - value: 70
-                - pixel_height:
-                    - value: 10
-                - pivot:
-                    - x: 0.5
-                    - y: 0.5
-        - component:
-              - type: "ui_image"
-              - data:
-                    - material: f22681f4-45d1-4542-a838-99f854890a28
-                    - image: 4978e374-83a8-4fbe-be47-ac9985ecc109
-        - component:
-            - type: "ui_image"
-            - data:
-                - material: f22681f4-45d1-4542-a838-99f854890a28
-                - image: 5c3778a6-4bd7-435a-8f7e-03b78cee910f
-        - component:
-              - type: "health_bar"
-              - data:
-                - use_creator: true
-        - component:
-            - type: "rect_transform_follower"
-            - data:
-                - use_creator: true
-                - offset:
-                    - x: 0.0
-                    - y: 150.0
-        - component:
-            - type: "destroy_with_creator"
-            - data:
-                - none: ""
+components:
+    - type: rect_transform
+      pixel_width:
+        - value: 70
+      pixel_height:
+        - value: 10
+      pivot:
+        - x: 0.5
+        - y: 0.5
+    - type: ui_image
+      material: f22681f4-45d1-4542-a838-99f854890a28
+      image: 4978e374-83a8-4fbe-be47-ac9985ecc109
+    - type: ui_image
+      material: f22681f4-45d1-4542-a838-99f854890a28
+      image: 5c3778a6-4bd7-435a-8f7e-03b78cee910f
+    - type: health_bar
+      use_creator: true
+    - type: rect_transform_follower
+      use_creator: true
+      offset: [0.0, 150.0]
+    - type: destroy_with_creator

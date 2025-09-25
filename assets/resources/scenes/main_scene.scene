@@ -1,1092 +1,508 @@
 name: main_screen
 type: scene
 entities:
-  - obj:
-      - guid: game_state
-      - tag: game_state
-      - components:
-          - component:
-              - type: game_state
-              - data:
-                  - win_scene: "993c601d-92e7-4678-bf0e-d8c1ac63dae6"
-                  - lose_scene: "ce68ff1f-0cd0-4a02-9142-336cc7e9a66f"
-  - obj:
-      - guid: text-fps
-      - components:
-          - component:
-              - type: "rect_transform"
-              - data:
-                  - pixel_x:
-                      - value: 0
-                      - x: 0
-                  - pixel_y:
-                      - value: 1
-                      - y: 0
-                  - pixel_width:
-                      - value: 60
-                  - pixel_height:
-                      - value: 60
-                  - pivot:
-                      - x: 0.0
-                      - y: 1.0
-          - component:
-              - type: "ui_text"
-              - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c28
-                  - text: "FPS text"
-                  - font_size: 1
-                  - color:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 0.0
-          - component:
-              - type: "ui_show_fps"
-              - data:
-                  - none: ""
-  - obj:
-        - guid: restart
-        - components:
-              - component:
-                    - type: "rect_transform"
-                    - data:
-                          - pixel_x:
-                                - value: 1
-                                - x: 120
-                          - pixel_y:
-                                - value: 1
-                                - y: 20
-                          - pixel_width:
-                                - value: 100
-                          - pixel_height:
-                                - value: 100
-                          - pivot:
-                                - x: 0.0
-                                - y: 1.0
-              - component:
-                    - type: "ui_image"
-                    - data:
-                          - material: f22681f4-45d1-4542-a838-99f854890a28
-                          - image: a6520b1f-4843-46bd-bb97-cc06f35077be
-              - component:
-                  - type: "ui_button"
-                  - data:
-                      - none: ""
-              - component:
-                    - type: "on_click_scene_loader"
-                    - data:
-                          - scene_guid: "d0677c93-a26f-4793-9eb7-5232d99378d1"
-  - obj:
-      - guid: main-camera
-      - tag: main_camera
-      - components:
-          - component:
-              - type: "transform"
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 2.0
-                      - z: 0.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: "camera"
-              - data:
-                  - aspectPower: 70.0
-                  - isPerspective: false
-  - obj:
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: -0.03
-                      - y: 0.2
-                      - z: -12.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 16.0
-                      - y: 8.0
-                      - z: 1.0
-          - component:
-              - type: sprite_renderer
-              - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c18
-                  - image: 2c45b2e3-8a3a-47d0-bad9-b767994cfc3d
-  - obj:
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: -0.03
-                      - y: -0.8
-                      - z: -12.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 16.0
-                      - y: 8.0
-                      - z: 1.0
-          - component:
-              - type: sprite_renderer
-              - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c18
-                  - image: 2c45b2e3-8a3a-47d0-bad9-b767994cfc3d
-  - obj:
-      - guid: light_2d_3_center
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: -4.7
-                      - y: 4.5
-                      - z: 0.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-  - name: "buildings_background_1"
-  - obj:
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 1.0
-                      - y: 1.2
-                      - z: -13.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 4.5
-                      - y: 3.0
-                      - z: 1.0
-          - component:
-              - type: sprite_renderer
-              - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c18
-                  - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
-  - name: "buildings_background_2"
-  - obj:
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.2
-                      - y: 1.2
-                      - z: -13.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 4.5
-                      - y: 3.0
-                      - z: 1.0
-          - component:
-              - type: sprite_renderer
-              - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c18
-                  - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
-  - name: "buildings_background_3"
-  - obj:
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: -0.6
-                      - y: 1.2
-                      - z: -13.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 4.5
-                      - y: 3.0
-                      - z: 1.0
-          - component:
-              - type: sprite_renderer
-              - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c18
-                  - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
-  - name: "buildings_background_4"
-  - obj:
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: -0.6
-                      - y: -0.1
-                      - z: -13.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 4.5
-                      - y: 3.0
-                      - z: 1.0
-          - component:
-              - type: sprite_renderer
-              - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c18
-                  - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
-  - name: "buildings_background_5"
-  - obj:
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.2
-                      - y: -0.1
-                      - z: -13.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 4.5
-                      - y: 3.0
-                      - z: 1.0
-          - component:
-              - type: sprite_renderer
-              - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c18
-                  - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
-  - name: "buildings_background_6"
-  - obj:
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 1.0
-                      - y: -1.45
-                      - z: -13.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 4.5
-                      - y: 3.0
-                      - z: 1.0
-          - component:
-              - type: sprite_renderer
-              - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c18
-                  - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
-  - name: "buildings_background_7"
-  - obj:
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.2
-                      - y: -1.45
-                      - z: -13.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 4.5
-                      - y: 3.0
-                      - z: 1.0
-          - component:
-              - type: sprite_renderer
-              - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c18
-                  - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
-  - name: "buildings_background_8"
-  - obj:
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: -0.6
-                      - y: -1.45
-                      - z: -13.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 4.5
-                      - y: 3.0
-                      - z: 1.0
-          - component:
-              - type: sprite_renderer
-              - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c18
-                  - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
-  - name: "buildings_background_9"
-  - obj:
-        - components:
-              - component:
-                    - type: transform
-                    - data:
-                          - position:
-                                - x: 1.0
-                                - y: -2.8
-                                - z: -13.0
-                          - rotation:
-                                - x: 0.0
-                                - y: 0.0
-                                - z: 0.0
-                          - scale:
-                                - x: 4.5
-                                - y: 3.0
-                                - z: 1.0
-              - component:
-                    - type: sprite_renderer
-                    - data:
-                          - material: f22681f4-45d1-4542-a838-99f854890c18
-                          - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
-  - name: "buildings_background_10"
-  - obj:
-        - components:
-              - component:
-                    - type: transform
-                    - data:
-                          - position:
-                                - x: 0.2
-                                - y: -2.8
-                                - z: -13.0
-                          - rotation:
-                                - x: 0.0
-                                - y: 0.0
-                                - z: 0.0
-                          - scale:
-                                - x: 4.5
-                                - y: 3.0
-                                - z: 1.0
-              - component:
-                    - type: sprite_renderer
-                    - data:
-                          - material: f22681f4-45d1-4542-a838-99f854890c18
-                          - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
-  - name: "buildings_background_11"
-  - obj:
-        - components:
-              - component:
-                    - type: transform
-                    - data:
-                          - position:
-                                - x: -0.6
-                                - y: -2.8
-                                - z: -13.0
-                          - rotation:
-                                - x: 0.0
-                                - y: 0.0
-                                - z: 0.0
-                          - scale:
-                                - x: 4.5
-                                - y: 3.0
-                                - z: 1.0
-              - component:
-                    - type: sprite_renderer
-                    - data:
-                          - material: f22681f4-45d1-4542-a838-99f854890c18
-                          - image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
-  - obj:
-      - layer: 1 # 0001
-      - tag: "main-character"
-      - guid: main-character
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 2.0
-                      - z: 0.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: team
-              - data:
-                  - team: 0
-          - component:
-              - type: particle_emitter
-              - data:
-                  - duration: 0.05
-                  - count: 3
-                  - start_scale: 0.1
-                  - end_scale: 0.8
-                  - start_color: [1.0, 1.0, 0.0, 1.0]
-                  - end_color: [1.0, 0.0, 0.0, 1.0]
-                  - end_color:
-                        - x: 1.0
-                        - y: 1.0
-                        - z: 1.0
-                  - start_velocity:
-                        - x: 3.0
-                        - y: 3.0
-                        - z: 3.0
-                  - end_velocity:
-                      - x: 3.0
-                      - y: 3.0
-                      - z: 3.0
-                  - material_guid: "19d137a9-0bc4-415a-af16-1740ef25c8b2"
-          - component:
-                - type: mesh_renderer
-                - data:
-                      - material: 5faecd48-398f-46db-889f-ba4199c2636f
-          - component:
-              - type: spine_renderer
-              - data:
-                  - spine_data: 6c51e080-77d1-440c-bdc0-47169c111e20
-          - component:
-              - type: character_controller
-              - data:
-                  - max_movement_speed: 5.0
-                  - acceleration_speed: 0.8
-                  - deceleration_speed: 1.0
-                  - jump_heigh: 5
-                  - jump_duration: 0.5
-                  - jump_down_multiplier: 1.2
-                  - air_control: 0.8
-                  - damage: 10
-          - component:
-              - type: rigidbody2d
-              - data:
-                  - isDynamic: false
-          - component:
-              - type: spine_collider
-              - data:
-                  - none: "none"
-          - component:
-              - type: health_component
-              - data:
-                  - health: 200
-          - component:
-              - type: prefab_spawner
-              - data:
-                  - prefab_id: aa0e5f29-2533-474b-8b88-07cb2adb9d11
-                  - spawn_time: 0.0
-                  - max_spawn: 1
-  - obj:
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 5.0
-                      - y: 4.0
-                      - z: 0.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: prefab_spawner
-              - data:
-                  - prefab_id: 0f2f4e2a-0197-4f47-be93-67a5f415360f
-                  - spawn_time: 0.5
-                  - max_spawn: 10
-  - name: "light_street_2"
-  - obj:
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: -0.12
-                      - y: 1.25
-                      - z: -11.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 2.5
-                      - y: 3.0
-                      - z: 1.0
-          - component:
-              - type: sprite_renderer
-              - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c18
-                  - image: fcd06406-41c1-4cea-a549-bd15194010b3
-  - obj:
-      - guid: light_2d_2_center
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 4.5
-                      - z: 0.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-  - obj:
-      - guid: light_2d_2
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -10.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: mesh_renderer
-              - data:
-                  - material: b1604380-8385-4912-9f2b-178103120328
-          - component:
-              - type: light_2d
-              - data:
-                  - center: light_2d_2_center
-                  - color:
-                      - x: 1.0
-                      - y: 0.0
-                      - z: 1.0
-                  - offset:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -1.0
-                  - radius: 6
-                  - start_angle: 225
-                  - max_angle: 90
-                  - segments: 80
-  - name: "light_street_2"
-  - obj:
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: -2.01
-                      - y: 1.25
-                      - z: -11.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 2.5
-                      - y: 3.0
-                      - z: 1.0
-          - component:
-              - type: sprite_renderer
-              - data:
-                  - material: f22681f4-45d1-4542-a838-99f854890c18
-                  - image: fcd06406-41c1-4cea-a549-bd15194010b3
-  - obj:
-      - guid: light_2d_3_center
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: -4.7
-                      - y: 4.5
-                      - z: 0.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-  - obj:
-      - guid: light_2d_3
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -10.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: mesh_renderer
-              - data:
-                  - material: b1604380-8385-4912-9f2b-178103120328
-          - component:
-              - type: light_2d
-              - data:
-                  - center: light_2d_3_center
-                  - color:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 0.0
-                  - offset:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -1.0
-                  - radius: 6
-                  - start_angle: 225
-                  - max_angle: 90
-                  - segments: 80
-  - obj:
-        - guid: light_2d_4_center
-        - components:
-              - component:
-                    - type: transform
-                    - data:
-                          - position:
-                                - x: -5.0
-                                - y: 1.5
-                                - z: 0.0
-                          - rotation:
-                                - x: 0.0
-                                - y: 0.0
-                                - z: 0.0
-                          - scale:
-                                - x: 1.0
-                                - y: 1.0
-                                - z: 1.0
-  - obj:
-        - guid: light_2d_4
-        - components:
-              - component:
-                    - type: transform
-                    - data:
-                          - position:
-                                - x: 0.0
-                                - y: -3.0
-                                - z: -10.0
-                          - rotation:
-                                - x: 0.0
-                                - y: 0.0
-                                - z: 0.0
-                          - scale:
-                                - x: 1.0
-                                - y: 1.0
-                                - z: 1.0
-              - component:
-                    - type: mesh_renderer
-                    - data:
-                          - material: b1604380-8385-4912-9f2b-178103120328
-              - component:
-                    - type: light_2d
-                    - data:
-                          - center: light_2d_4_center
-                          - color:
-                                - x: 0.0
-                                - y: 1.0
-                                - z: 1.0
-                          - offset:
-                                - x: 0.0
-                                - y: 0.0
-                                - z: -1.0
-                          - radius: 6
-                          - start_angle: 225
-                          - max_angle: 90
-                          - segments: 80
-  - obj:
-      - guid: light_2d_5_center
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 5.0
-                      - y: 1.5
-                      - z: 0.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-  - obj:
-      - guid: light_2d_5
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -10.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: mesh_renderer
-              - data:
-                  - material: b1604380-8385-4912-9f2b-178103120328
-          - component:
-              - type: light_2d
-              - data:
-                  - center: light_2d_5_center
-                  - color:
-                      - x: 1.0
-                      - y: 0.0
-                      - z: 1.0
-                  - offset:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -1.0
-                  - radius: 6
-                  - start_angle: 225
-                  - max_angle: 90
-                  - segments: 80
-  - obj:
-      - guid: light_2d_6_center
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 1.5
-                      - z: 0.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-  - obj:
-      - guid: light_2d_6
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -10.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: mesh_renderer
-              - data:
-                  - material: b1604380-8385-4912-9f2b-178103120328
-          - component:
-              - type: light_2d
-              - data:
-                  - center: light_2d_6_center
-                  - color:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 0.0
-                  - offset:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -1.0
-                  - radius: 6
-                  - start_angle: 225
-                  - max_angle: 90
-                  - segments: 80
-  - obj:
-      - guid: light_2d_7_center
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 5.0
-                      - y: -6.5
-                      - z: 0.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-  - obj:
-      - guid: light_2d_7
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -10.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: mesh_renderer
-              - data:
-                  - material: b1604380-8385-4912-9f2b-178103120328
-          - component:
-              - type: light_2d
-              - data:
-                  - center: light_2d_7_center
-                  - color:
-                      - x: 0.0
-                      - y: -2.0
-                      - z: 1.0
-                  - offset:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -1.0
-                  - radius: 6
-                  - start_angle: 225
-                  - max_angle: 90
-                  - segments: 80
-  - obj:
-      - guid: light_2d_8_center
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: -2.5
-                      - z: 0.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-  - obj:
-      - guid: light_2d_8
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -10.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: mesh_renderer
-              - data:
-                  - material: b1604380-8385-4912-9f2b-178103120328
-          - component:
-              - type: light_2d
-              - data:
-                  - center: light_2d_8_center
-                  - color:
-                      - x: 1.0
-                      - y: 0.0
-                      - z: 1.0
-                  - offset:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -1.0
-                  - radius: 6
-                  - start_angle: 225
-                  - max_angle: 90
-                  - segments: 80
-  - obj:
-      - guid: light_2d_9_center
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: -5.0
-                      - y: -2.5
-                      - z: 0.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-  - obj:
-      - guid: light_2d_9
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -10.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: mesh_renderer
-              - data:
-                  - material: b1604380-8385-4912-9f2b-178103120328
-          - component:
-              - type: light_2d
-              - data:
-                  - center: light_2d_9_center
-                  - color:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 0.0
-                  - offset:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: -1.0
-                  - radius: 6
-                  - start_angle: 225
-                  - max_angle: 90
-                  - segments: 80
-  - obj:
-        - tag: "grid"
-        - components:
-              - component:
-                    - type: grid
-                    - data:
-                          - spawn_step:
-                                - x: 1.0
-                                - y: 1.0
-                                - z: 0.0
-                          - spawn_offset:
-                                - x: -8.0
-                                - y: -10.0
-                                - z: 1.0
-                          - grid:
-                                - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
-                                - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                                - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                                - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                                - [ 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
-                                - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                                - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                                - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                                - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1 ]
-                                - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                                - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                                - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                                - [ 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
-                                - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                                - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                                - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
-                                - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
-  - obj:
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: grid_prefab_spawner
-              - data:
-                  - prefab_id: 2d05d2a1-2265-42a9-91a2-0774777518f0
-                  - grid_tag: grid
-  - obj:
-      - tag: "path_finder"
-      - components:
-          - component:
-              - type: transform
-              - data:
-                  - position:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - rotation:
-                      - x: 0.0
-                      - y: 0.0
-                      - z: 0.0
-                  - scale:
-                      - x: 1.0
-                      - y: 1.0
-                      - z: 1.0
-          - component:
-              - type: astar_path_finder
-              - data:
-                  - grid_tag: grid
+  - guid: game_state
+    tag: game_state
+    components:
+      - type: game_state
+        win_scene: "993c601d-92e7-4678-bf0e-d8c1ac63dae6"
+        lose_scene: "ce68ff1f-0cd0-4a02-9142-336cc7e9a66f"
+
+  - guid: text-fps
+    components:
+      - type: rect_transform
+        pixel_x:
+          - value: 0
+          - x: 0
+        pixel_y:
+          - value: 1
+          - y: 0
+        pixel_width:
+          - value: 60
+        pixel_height:
+          - value: 60
+        pivot:
+          - x: 0.0
+          - y: 1.0
+      - type: ui_text
+        material: f22681f4-45d1-4542-a838-99f854890c28
+        text: "FPS text"
+        font_size: 1
+        color: [1.0, 1.0, 0.0]
+      - type: ui_show_fps
+
+  - guid: restart
+    components:
+      - type: rect_transform
+        pixel_x:
+          - value: 1
+          - x: 120
+        pixel_y:
+          - value: 1
+          - y: 20
+        pixel_width:
+          - value: 100
+        pixel_height:
+          - value: 100
+        pivot:
+          - x: 0.0
+          - y: 1.0
+      - type: ui_image
+        material: f22681f4-45d1-4542-a838-99f854890a28
+        image: a6520b1f-4843-46bd-bb97-cc06f35077be
+      - type: ui_button
+      - type: on_click_scene_loader
+        scene_guid: "d0677c93-a26f-4793-9eb7-5232d99378d1"
+
+  - guid: main-camera
+    tag: main_camera
+    components:
+      - type: transform
+        position: [0.0, 2.0, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: camera
+        aspectPower: 70.0
+        isPerspective: false
+
+  - components:
+      - type: transform
+        position: [-0.03, 0.2, -12.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [16.0, 8.0, 1.0]
+      - type: sprite_renderer
+        material: f22681f4-45d1-4542-a838-99f854890c18
+        image: 2c45b2e3-8a3a-47d0-bad9-b767994cfc3d
+
+  - components:
+      - type: transform
+        position: [-0.03, -0.8, -12.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [16.0, 8.0, 1.0]
+      - type: sprite_renderer
+        material: f22681f4-45d1-4542-a838-99f854890c18
+        image: 2c45b2e3-8a3a-47d0-bad9-b767994cfc3d
+
+  - guid: light_2d_3_center
+    components:
+      - type: transform
+        position: [-4.7, 4.5, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+
+  - name: buildings_background_1
+    components:
+      - type: transform
+        position: [1.0, 1.2, -13.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [4.5, 3.0, 1.0]
+      - type: sprite_renderer
+        material: f22681f4-45d1-4542-a838-99f854890c18
+        image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+
+  - name: buildings_background_2
+    components:
+      - type: transform
+        position: [0.2, 1.2, -13.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [4.5, 3.0, 1.0]
+      - type: sprite_renderer
+        material: f22681f4-45d1-4542-a838-99f854890c18
+        image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+
+  - name: buildings_background_3
+    components:
+      - type: transform
+        position: [-0.6, 1.2, -13.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [4.5, 3.0, 1.0]
+      - type: sprite_renderer
+        material: f22681f4-45d1-4542-a838-99f854890c18
+        image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+
+  - name: buildings_background_4
+    components:
+      - type: transform
+        position: [-0.6, -0.1, -13.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [4.5, 3.0, 1.0]
+      - type: sprite_renderer
+        material: f22681f4-45d1-4542-a838-99f854890c18
+        image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+
+  - name: buildings_background_5
+    components:
+      - type: transform
+        position: [0.2, -0.1, -13.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [4.5, 3.0, 1.0]
+      - type: sprite_renderer
+        material: f22681f4-45d1-4542-a838-99f854890c18
+        image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+
+  - name: buildings_background_6
+    components:
+      - type: transform
+        position: [1.0, -1.45, -13.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [4.5, 3.0, 1.0]
+      - type: sprite_renderer
+        material: f22681f4-45d1-4542-a838-99f854890c18
+        image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+
+  - name: buildings_background_7
+    components:
+      - type: transform
+        position: [0.2, -1.45, -13.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [4.5, 3.0, 1.0]
+      - type: sprite_renderer
+        material: f22681f4-45d1-4542-a838-99f854890c18
+        image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+
+  - name: buildings_background_8
+    components:
+      - type: transform
+        position: [-0.6, -1.45, -13.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [4.5, 3.0, 1.0]
+      - type: sprite_renderer
+        material: f22681f4-45d1-4542-a838-99f854890c18
+        image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+
+  - name: buildings_background_9
+    components:
+      - type: transform
+        position: [1.0, -2.8, -13.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [4.5, 3.0, 1.0]
+      - type: sprite_renderer
+        material: f22681f4-45d1-4542-a838-99f854890c18
+        image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+
+  - name: buildings_background_10
+    components:
+      - type: transform
+        position: [0.2, -2.8, -13.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [4.5, 3.0, 1.0]
+      - type: sprite_renderer
+        material: f22681f4-45d1-4542-a838-99f854890c18
+        image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+
+  - name: buildings_background_11
+    components:
+      - type: transform
+        position: [-0.6, -2.8, -13.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [4.5, 3.0, 1.0]
+      - type: sprite_renderer
+        material: f22681f4-45d1-4542-a838-99f854890c18
+        image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+
+  - layer: 1 # 0001
+    tag: main-character
+    guid: main-character
+    components:
+      - type: transform
+        position: [0.0, 2.0, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: team
+        team: 0
+      - type: particle_emitter
+        duration: 0.05
+        count: 3
+        start_scale: 0.1
+        end_scale: 0.8
+        start_color: [1.0, 1.0, 0.0, 1.0]
+        end_color: [1.0, 0.0, 0.0, 1.0]
+        start_velocity: [3.0, 3.0, 3.0]
+        end_velocity: [3.0, 3.0, 3.0]
+        material_guid: "19d137a9-0bc4-415a-af16-1740ef25c8b2"
+      - type: mesh_renderer
+        material: 5faecd48-398f-46db-889f-ba4199c2636f
+      - type: spine_renderer
+        spine_data: 6c51e080-77d1-440c-bdc0-47169c111e20
+      - type: character_controller
+        max_movement_speed: 5.0
+        acceleration_speed: 0.8
+        deceleration_speed: 1.0
+        jump_heigh: 5
+        jump_duration: 0.5
+        jump_down_multiplier: 1.2
+        air_control: 0.8
+        damage: 10
+      - type: rigidbody2d
+        isDynamic: false
+      - type: spine_collider
+      - type: health_component
+        health: 200
+      - type: prefab_spawner
+        prefab_id: aa0e5f29-2533-474b-8b88-07cb2adb9d11
+        spawn_time: 0.0
+        max_spawn: 1
+
+  - components:
+      - type: transform
+        position: [5.0, 4.0, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: prefab_spawner
+        prefab_id: 0f2f4e2a-0197-4f47-be93-67a5f415360f
+        spawn_time: 0.5
+        max_spawn: 10
+
+  - name: light_street_2
+    components:
+      - type: transform
+        position: [-0.12, 1.25, -11.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [2.5, 3.0, 1.0]
+      - type: sprite_renderer
+        material: f22681f4-45d1-4542-a838-99f854890c18
+        image: fcd06406-41c1-4cea-a549-bd15194010b3
+
+  - guid: light_2d_2_center
+    components:
+      - type: transform
+        position: [0.0, 4.5, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+
+  - guid: light_2d_2
+    components:
+      - type: transform
+        position: [0.0, 0.0, -10.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: mesh_renderer
+        material: b1604380-8385-4912-9f2b-178103120328
+      - type: light_2d
+        center: light_2d_2_center
+        color: [1.0, 0.0, 1.0]
+        offset: [0.0, 0.0, -1.0]
+        radius: 6
+        start_angle: 225
+        max_angle: 90
+        segments: 80
+
+  - name: light_street_2
+    components:
+      - type: transform
+        position: [-2.01, 1.25, -11.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [2.5, 3.0, 1.0]
+      - type: sprite_renderer
+        material: f22681f4-45d1-4542-a838-99f854890c18
+        image: fcd06406-41c1-4cea-a549-bd15194010b3
+
+  - guid: light_2d_3_center
+    components:
+      - type: transform
+        position: [-4.7, 4.5, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+
+  - guid: light_2d_3
+    components:
+      - type: transform
+        position: [0.0, 0.0, -10.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: mesh_renderer
+        material: b1604380-8385-4912-9f2b-178103120328
+      - type: light_2d
+        center: light_2d_3_center
+        color: [1.0, 1.0, 0.0]
+        offset: [0.0, 0.0, -1.0]
+        radius: 6
+        start_angle: 225
+        max_angle: 90
+        segments: 80
+
+  - guid: light_2d_4_center
+    components:
+      - type: transform
+        position: [-5.0, 1.5, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+
+  - guid: light_2d_4
+    components:
+      - type: transform
+        position: [0.0, -3.0, -10.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: mesh_renderer
+        material: b1604380-8385-4912-9f2b-178103120328
+      - type: light_2d
+        center: light_2d_4_center
+        color: [0.0, 1.0, 1.0]
+        offset: [0.0, 0.0, -1.0]
+        radius: 6
+        start_angle: 225
+        max_angle: 90
+        segments: 80
+
+  - guid: light_2d_5_center
+    components:
+      - type: transform
+        position: [5.0, 1.5, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+
+  - guid: light_2d_5
+    components:
+      - type: transform
+        position: [0.0, 0.0, -10.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: mesh_renderer
+        material: b1604380-8385-4912-9f2b-178103120328
+      - type: light_2d
+        center: light_2d_5_center
+        color: [1.0, 0.0, 1.0]
+        offset: [0.0, 0.0, -1.0]
+        radius: 6
+        start_angle: 225
+        max_angle: 90
+        segments: 80
+
+  - guid: light_2d_6_center
+    components:
+      - type: transform
+        position: [0.0, 1.5, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+
+  - guid: light_2d_6
+    components:
+      - type: transform
+        position: [0.0, 0.0, -10.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: mesh_renderer
+        material: b1604380-8385-4912-9f2b-178103120328
+      - type: light_2d
+        center: light_2d_6_center
+        color: [1.0, 1.0, 0.0]
+        offset: [0.0, 0.0, -1.0]
+        radius: 6
+        start_angle: 225
+        max_angle: 90
+        segments: 80
+
+  - guid: light_2d_7_center
+    components:
+      - type: transform
+        position: [5.0, -6.5, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+
+  - guid: light_2d_7
+    components:
+      - type: transform
+        position: [0.0, 0.0, -10.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: mesh_renderer
+        material: b1604380-8385-4912-9f2b-178103120328
+      - type: light_2d
+        center: light_2d_7_center
+        color: [0.0, -2.0, 1.0]
+        offset: [0.0, 0.0, -1.0]
+        radius: 6
+        start_angle: 225
+        max_angle: 90
+        segments: 80
+
+  - guid: light_2d_8_center
+    components:
+      - type: transform
+        position: [0.0, -2.5, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+
+  - guid: light_2d_8
+    components:
+      - type: transform
+        position: [0.0, 0.0, -10.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: mesh_renderer
+        material: b1604380-8385-4912-9f2b-178103120328
+      - type: light_2d
+        center: light_2d_8_center
+        color: [1.0, 0.0, 1.0]
+        offset: [0.0, 0.0, -1.0]
+        radius: 6
+        start_angle: 225
+        max_angle: 90
+        segments: 80
+
+  - guid: light_2d_9_center
+    components:
+      - type: transform
+        position: [-5.0, -2.5, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+
+  - guid: light_2d_9
+    components:
+      - type: transform
+        position: [0.0, 0.0, -10.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: mesh_renderer
+        material: b1604380-8385-4912-9f2b-178103120328
+      - type: light_2d
+        center: light_2d_9_center
+        color: [1.0, 1.0, 0.0]
+        offset: [0.0, 0.0, -1.0]
+        radius: 6
+        start_angle: 225
+        max_angle: 90
+        segments: 80
+
+  - tag: grid
+    components:
+      - type: grid
+        spawn_step: [1.0, 1.0, 0.0]
+        spawn_offset: [-8.0, -10.0, 1.0]
+        grid:
+          - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
+          - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+          - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+          - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+          - [ 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
+          - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+          - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+          - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+          - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1 ]
+          - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+          - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+          - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+          - [ 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
+          - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+          - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+          - [ 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 ]
+          - [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ]
+
+  - components:
+      - type: transform
+        position: [0.0, 0.0, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: grid_prefab_spawner
+        prefab_id: 2d05d2a1-2265-42a9-91a2-0774777518f0
+        grid_tag: grid
+
+  - tag: path_finder
+    components:
+      - type: transform
+        position: [0.0, 0.0, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: astar_path_finder
+        grid_tag: grid
