@@ -5,7 +5,6 @@
 #include "../../components/renderering/particle_emitter.hpp"
 #include "../../components/transforms/rect_transform_follower.hpp"
 #include "../../components/physics/spine_collider.hpp"
-#include "../../components/ui/on_click_scene_loader.hpp"
 #include "../../ui/button/button_component.hpp"
 #include "../../gameplay/ai_controller.hpp"
 #include "../../gameplay/grid_prefab_spawner.hpp"
@@ -511,20 +510,6 @@ protected:
     }
 };
 
-class OnClickSceneLoaderFactory final : public ComponentFactory<OnClickSceneLoader, OnClickSceneLoaderSerialization> {
-protected:
-    void FillComponent(const std::weak_ptr<OnClickSceneLoader> &component,
-        [[maybe_unused]] const OnClickSceneLoaderSerialization &serialization) override {
-
-        if (const auto entity = _entity.lock()) {
-            if (const auto comp = component.lock()) {
-                comp->SetScene(_scene);
-                comp->SetButton(entity->GetComponent<UiButtonComponent>());
-                comp->SetLoadScene(serialization.SceneGuid);
-            }
-        }
-    }
-};
 
 class GameStateFactory final : public ComponentFactory<GameStateController, GameStateData> {
 protected:

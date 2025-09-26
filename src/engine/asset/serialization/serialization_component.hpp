@@ -221,9 +221,6 @@ struct IdleCharacterSerialization final : public ComponentSerialization {
     std::string IdleAnimation;
 };
 
-struct OnClickSceneLoaderSerialization final : public ComponentSerialization {
-    std::string SceneGuid;
-};
 
 struct GameStateData final : public ComponentSerialization {
     std::string WinScene;

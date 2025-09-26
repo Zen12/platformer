@@ -16,6 +16,8 @@
 #include "../../ui/image/image_renderer_component_serialization_yaml.hpp"
 #include "../../ui/button/button_component_serialization.hpp"
 #include "../../ui/button/button_component_serialization_yaml.hpp"
+#include "../../ui/on_click_scene_loader/on_click_scene_loader_serialization.hpp"
+#include "../../ui/on_click_scene_loader/on_click_scene_loader_serialization_yaml.hpp"
 
 namespace YAML
 {
@@ -579,15 +581,6 @@ namespace YAML
         }
     };
 
-    template <>
-    struct convert<OnClickSceneLoaderSerialization>
-    {
-        static bool decode(const Node &node, OnClickSceneLoaderSerialization &rhs)
-        {
-            rhs.SceneGuid = node["scene_guid"].as<std::string>();
-            return true;
-        }
-    };
 
     template <>
     struct convert<TeamSerialization>

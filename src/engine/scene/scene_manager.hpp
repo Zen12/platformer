@@ -23,6 +23,7 @@
 #include "../ui/text/text_renderer_component_factory.hpp"
 #include "../ui/image/image_renderer_component_factory.hpp"
 #include "../ui/button/button_component_factory.hpp"
+#include "../ui/on_click_scene_loader/on_click_scene_loader_factory.hpp"
 
 
 
