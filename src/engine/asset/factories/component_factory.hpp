@@ -6,7 +6,7 @@
 #include "../../components/transforms/rect_transform_follower.hpp"
 #include "../../components/physics/spine_collider.hpp"
 #include "../../components/ui/on_click_scene_loader.hpp"
-#include "../../components/ui/ui_button.hpp"
+#include "../../ui/button/button_component.hpp"
 #include "../../gameplay/ai_controller.hpp"
 #include "../../gameplay/grid_prefab_spawner.hpp"
 #include "../../gameplay/prefab_spawner.hpp"
@@ -519,27 +519,8 @@ protected:
         if (const auto entity = _entity.lock()) {
             if (const auto comp = component.lock()) {
                 comp->SetScene(_scene);
-                comp->SetButton(entity->GetComponent<UiButton>());
+                comp->SetButton(entity->GetComponent<UiButtonComponent>());
                 comp->SetLoadScene(serialization.SceneGuid);
-            }
-        }
-    }
-};
-
-
-
-class UiButtonComponentFactory final : public ComponentFactory<UiButton, UiButtonComponentSerialization> {
-protected:
-    void FillComponent([[maybe_unused]] const std::weak_ptr<UiButton> &component,
-        [[maybe_unused]] const UiButtonComponentSerialization &serialization) override {
-
-        if (const auto scene = _scene.lock()) {
-            if (const auto entity = _entity.lock()) {
-                if (const auto comp = component.lock()) {
-                    comp->SetRectTransform(entity->GetComponent<RectTransform>());
-                    comp->SetSelf(component);
-                    comp->SetUiRaycastSystem(scene->GetUiRaycast());
-                }
             }
         }
     }
@@ -586,7 +567,7 @@ protected:
     {
         if (const auto entity = _entity.lock()) {
             if (const auto &comp = component.lock()) {
-                comp->SetButton(entity->GetComponent<UiButton>());
+                comp->SetButton(entity->GetComponent<UiButtonComponent>());
                 comp->SetTarget(entity->GetComponent<UiImageRendererComponent>());
             }
         }

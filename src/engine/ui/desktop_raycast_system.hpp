@@ -2,21 +2,21 @@
 #include <vector>
 #include <memory>
 
-#include "input_system.hpp"
-#include "ui_raycast_system.hpp"
-#include "../components/ui/ui_interactable.hpp"
+#include "../system/input_system.hpp"
+#include "raycast_system.hpp"
+#include "interactable.hpp"
 
-class UiDesktopRaycastSystem final : public UiRaycastSystem {
+class UiDesktopRaycast final : public UiRaycastSystem {
 private:
 
     struct WeakPtrCompare {
-        bool operator()(const std::weak_ptr<UiInteractable>& a,
-                        const std::weak_ptr<UiInteractable>& b) const noexcept {
+        bool operator()(const std::weak_ptr<UiInteractableComponent>& a,
+                        const std::weak_ptr<UiInteractableComponent>& b) const noexcept {
             return a.owner_before(b);
         }
     };
 
-    std::set<std::weak_ptr<UiInteractable>, WeakPtrCompare> _lastSelected;
+    std::set<std::weak_ptr<UiInteractableComponent>, WeakPtrCompare> _lastSelected;
 public:
     void UpdateState() override {
 

@@ -22,6 +22,7 @@
 #include "../gameplay/health_bar/health_bar_component_factory.hpp"
 #include "../ui/text/text_renderer_component_factory.hpp"
 #include "../ui/image/image_renderer_component_factory.hpp"
+#include "../ui/button/button_component_factory.hpp"
 
 
 

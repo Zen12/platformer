@@ -1,12 +1,12 @@
 #pragma once
-#include "ui_interactable.hpp"
-#include "../entity.hpp"
+#include "../interactable.hpp"
+#include "../../components/entity.hpp"
 #include "../../render/camera.hpp"
-#include "../renderering/camera_component.hpp"
-#include "../transforms/rect_transform.hpp"
+#include "../../components/renderering/camera_component.hpp"
+#include "../../components/transforms/rect_transform.hpp"
 
 
-class UiButton final : public UiInteractable {
+class UiButtonComponent final : public UiInteractableComponent {
 private:
     int _nextId = 0;
     std::vector<std::pair<int, std::function<void()>>> _onClickCallbacks;
@@ -14,8 +14,8 @@ private:
     std::vector<std::pair<int, std::function<void()>>> _onDeselectCallbacks;
 
 public:
-    explicit UiButton(const std::weak_ptr<Entity>& entity)
-        : UiInteractable(entity) {
+    explicit UiButtonComponent(const std::weak_ptr<Entity>& entity)
+        : UiInteractableComponent(entity) {
     }
 
     void Update([[maybe_unused]] const float &deltaTime) override {

@@ -150,11 +150,6 @@ struct MaterialComponentSerialization final : public ComponentSerialization
     }
 };
 
-struct UiButtonComponentSerialization final : public ComponentSerialization {
-
-};
-
-
 
 struct RectTransformComponentSerialization final : public ComponentSerialization
 {

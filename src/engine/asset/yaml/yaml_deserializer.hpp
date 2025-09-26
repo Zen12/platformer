@@ -14,6 +14,8 @@
 #include "../../ui/text/text_renderer_component_serialization_yaml.hpp"
 #include "../../ui/image/image_renderer_component_serialization.hpp"
 #include "../../ui/image/image_renderer_component_serialization_yaml.hpp"
+#include "../../ui/button/button_component_serialization.hpp"
+#include "../../ui/button/button_component_serialization_yaml.hpp"
 
 namespace YAML
 {
@@ -573,15 +575,6 @@ namespace YAML
         static bool decode(const Node &node, IdleCharacterSerialization &rhs)
         {
             rhs.IdleAnimation = node["idle_animation"].as<std::string>();
-            return true;
-        }
-    };
-
-    template <>
-    struct convert<UiButtonComponentSerialization>
-    {
-        static bool decode([[maybe_unused]] const Node &node, [[maybe_unused]]  UiButtonComponentSerialization &rhs)
-        {
             return true;
         }
     };

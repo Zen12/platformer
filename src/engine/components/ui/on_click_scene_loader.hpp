@@ -1,12 +1,12 @@
 #pragma once
 
-#include "ui_button.hpp"
+#include "../../ui/button/button_component.hpp"
 #include "../entity.hpp"
 
 class OnClickSceneLoader final : public Component
 {
 private:
-    std::weak_ptr<UiButton> _button;
+    std::weak_ptr<UiButtonComponent> _button;
     std::string _sceneGuid;
     std::weak_ptr<Scene> _scene;
 
@@ -32,7 +32,7 @@ public:
         _sceneGuid = value;
     }
 
-    void SetButton(const std::weak_ptr<UiButton> &button) noexcept {
+    void SetButton(const std::weak_ptr<UiButtonComponent> &button) noexcept {
         _button = button;
         if (const auto b = _button.lock()) {
             _subscribeId = b->AddOnClickCallback([this]() {

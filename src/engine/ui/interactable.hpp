@@ -1,7 +1,7 @@
 #pragma once
-#include "../entity.hpp"
-#include "../../system/ui_raycast_system.hpp"
-#include "../transforms/rect_transform.hpp"
+#include "../components/entity.hpp"
+#include "raycast_system.hpp"
+#include "../components/transforms/rect_transform.hpp"
 
 
 struct UIInteractableState {
@@ -11,21 +11,21 @@ struct UIInteractableState {
     bool IsDeselected{};
 };
 
-class UiInteractable : public Component {
+class UiInteractableComponent : public Component {
 private:
     std::weak_ptr<UiRaycastSystem> _uiRaycastSystem;
-    std::weak_ptr<UiInteractable> _self;
+    std::weak_ptr<UiInteractableComponent> _self;
 protected:
     std::weak_ptr<RectTransform> _rectTransform;
     UIInteractableState _state{};
     virtual void OnUpdatedState() = 0;
 
 public:
-    explicit UiInteractable(const std::weak_ptr<Entity> &entity)
+    explicit UiInteractableComponent(const std::weak_ptr<Entity> &entity)
         : Component(entity) {
     }
 
-    ~UiInteractable() override {
+    ~UiInteractableComponent() override {
         if (const auto ray = _uiRaycastSystem.lock()) {
             ray->UnregisterInteractable(_self);
         }
@@ -45,7 +45,7 @@ public:
         OnUpdatedState();
     }
 
-    void SetSelf(const std::weak_ptr<UiInteractable> &self) noexcept {
+    void SetSelf(const std::weak_ptr<UiInteractableComponent> &self) noexcept {
         _self = self;
     }
 
