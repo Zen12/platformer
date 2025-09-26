@@ -231,7 +231,4 @@ struct TeamSerialization final : public ComponentSerialization {
     int Team;
 };
 
-struct UiButtonEffectSerialization final : public ComponentSerialization {
-
-};
 
