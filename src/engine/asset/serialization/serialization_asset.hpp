@@ -5,22 +5,18 @@
 #include "serialization_component.hpp"
 
 
-struct Asset {
-    std::string Name{};
-};
-
-struct SceneAsset : Asset
+struct SceneAsset
 {
     std::string Type;
     std::vector<EntitySerialization> Entities;
 };
 
-struct PrefabAsset : Asset
+struct PrefabAsset
 {
     EntitySerialization Obj;
 };
 
-struct MetaAsset : Asset
+struct MetaAsset
 {
     std::string Guid{};
     std::string Extension{};
@@ -28,7 +24,7 @@ struct MetaAsset : Asset
     std::string Path{};
 };
 
-struct MaterialAsset : Asset
+struct MaterialAsset
 {
     std::string VertexShaderGuid{};
     std::string FragmentShaderGuid{};
@@ -38,14 +34,16 @@ struct MaterialAsset : Asset
     bool IsCulling = false;
 };
 
-struct ProjectAsset : Asset
+struct ProjectAsset
 {
+    std::string Name{};
     std::vector<std::string> Scenes{};
     std::vector<int> Resolution{};
     float TargetFps{60.0f};
 };
 
-struct SpineAsset : Asset {
+struct SpineAsset
+{
     std::string skeleton;
     std::string atlas;
     std::string image;

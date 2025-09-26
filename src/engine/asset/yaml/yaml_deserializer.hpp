@@ -477,7 +477,6 @@ namespace YAML
     {
         static bool decode(const Node &node, SceneAsset &rhs)
         {
-            rhs.Name = node["name"].as<std::string>();
             rhs.Type = node["type"].as<std::string>();
             rhs.Entities = node["entities"].as<std::vector<EntitySerialization>>();
             return true;
@@ -489,7 +488,6 @@ namespace YAML
     {
         static bool decode(const Node &node, MetaAsset &rhs)
         {
-            rhs.Name = node["name"].as<std::string>();
             rhs.Guid = node["guid"].as<std::string>();
             rhs.Extension = node["extension"].as<std::string>();
             rhs.Type = node["type"].as<std::string>();
@@ -503,7 +501,6 @@ namespace YAML
     {
         static bool decode(const Node &node, MaterialAsset &rhs)
         {
-            rhs.Name = node["name"].as<std::string>();
             rhs.BlendMode = node["blend_mode"].as<int>();
             rhs.IsCulling = node["is_culling"].as<bool>();
 
@@ -550,7 +547,6 @@ namespace YAML
     {
         static bool decode(const Node &node, SpineAsset &rhs)
         {
-            rhs.Name = node["name"].as<std::string>();
             rhs.skeleton = node["skeleton"].as<std::string>();
             rhs.atlas = node["atlas"].as<std::string>();
             rhs.image = node["image"].as<std::string>();

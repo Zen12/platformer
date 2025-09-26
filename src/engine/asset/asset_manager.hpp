@@ -25,7 +25,7 @@ public:
 
     void Init();
 
-    template <typename T, std::enable_if_t<std::is_base_of_v<Asset, T>, int> = 0>
+    template <typename T>
     [[nodiscard]] T LoadAssetByGuid(const std::string& guid) const noexcept {
         const auto path = GetPathFromGuid(guid);
         return YAML::LoadFile(path).as<T>();
