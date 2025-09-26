@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include <vector>
 #include "../components/entity.hpp"
-#include "../components/ui/ui_show_fps.hpp"
+#include "../ui/show_fps/show_fps_component.hpp"
 
 #include "../components/transforms/rect_transform_root.hpp"
 #include "../render/shader.hpp"

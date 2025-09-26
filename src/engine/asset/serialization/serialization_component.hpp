@@ -199,10 +199,6 @@ struct AiControllerComponentSerialization final : public ComponentSerialization
     std::string GridTag{};
 };
 
-struct ShowFpsComponentSerialization final : public ComponentSerialization
-{
-
-};
 
 struct HealthComponentSerialization final : public ComponentSerialization {
     float Health;

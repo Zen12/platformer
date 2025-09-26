@@ -20,6 +20,8 @@
 #include "../../ui/on_click_scene_loader/on_click_scene_loader_serialization_yaml.hpp"
 #include "../../ui/button_effect/ui_button_effect_serialization.hpp"
 #include "../../ui/button_effect/ui_button_effect_serialization_yaml.hpp"
+#include "../../ui/show_fps/show_fps_component_serialization.hpp"
+#include "../../ui/show_fps/show_fps_component_serialization_yaml.hpp"
 
 namespace YAML
 {
@@ -109,14 +111,6 @@ namespace YAML
         }
     };
 
-    template <>
-    struct convert<ShowFpsComponentSerialization>
-    {
-        static bool decode([[maybe_unused]] const Node &node, [[maybe_unused]] ShowFpsComponentSerialization &rhs)
-        {
-            return true;
-        }
-    };
 
     template <>
     struct convert<CameraComponentSerialization>
