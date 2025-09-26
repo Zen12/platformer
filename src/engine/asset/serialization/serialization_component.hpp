@@ -85,11 +85,6 @@ struct Rigidbody2dSerialization final : public ComponentSerialization
 };
 
 
-struct CameraComponentSerialization final : public ComponentSerialization
-{
-    float aspectPower{};
-    bool isPerspective{};
-};
 
 struct ShaderComponentSerialization final : public ComponentSerialization
 {

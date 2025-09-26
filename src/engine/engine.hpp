@@ -17,7 +17,7 @@
 #include "components/transforms/transform.hpp"
 #include "components/transforms/rect_transform.hpp"
 #include "components/transforms/rect_transform_root.hpp"
-#include "components/renderering/camera_component.hpp"
+#include "camera/camera_component.hpp"
 #include "ui/text/text_renderer_component.hpp"
 #include "components/physics/box_collider2d_component.hpp"
 #include "components/physics/rigidbody2d_component.hpp"

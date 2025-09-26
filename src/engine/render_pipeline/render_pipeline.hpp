@@ -4,7 +4,7 @@
 #include "../ui/text/text_renderer_component.hpp"
 #include "../ui/image/image_renderer_component.hpp"
 #include "../system/window.hpp"
-#include "../components/renderering/camera_component.hpp"
+#include "../camera/camera_component.hpp"
 #include "../components/renderering/particle_emitter.hpp"
 #include "../components/renderering/spine_renderer.hpp"
 

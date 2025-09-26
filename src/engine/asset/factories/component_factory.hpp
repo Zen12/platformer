@@ -50,22 +50,6 @@ public:
 };
 
 
-class CameraComponentFactory final : public ComponentFactory<CameraComponent, CameraComponentSerialization> {
-
-protected:
-    void FillComponent(const std::weak_ptr<CameraComponent> &component, const CameraComponentSerialization &serialization)  override {
-        if (const auto camera = component.lock()) {
-            if (const auto scene = _scene.lock()) {
-                camera->SetCamera
-                        (Camera{serialization.aspectPower, false, serialization.isPerspective, _scene.lock()->GetWindow()});
-                camera->SetWindow(scene->GetWindow());
-            }
-        }
-    }
-
-};
-
-
 class TransformFactory final : public ComponentFactory<Transform, TransformComponentSerialization> {
     protected:
     void FillComponent(const std::weak_ptr<Transform> &component, const TransformComponentSerialization &serialization) override {

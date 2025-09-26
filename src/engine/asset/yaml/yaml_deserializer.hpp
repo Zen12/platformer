@@ -22,6 +22,8 @@
 #include "../../ui/button_effect/ui_button_effect_serialization_yaml.hpp"
 #include "../../ui/show_fps/show_fps_component_serialization.hpp"
 #include "../../ui/show_fps/show_fps_component_serialization_yaml.hpp"
+#include "../../camera/camera_component_serialization.hpp"
+#include "../../camera/camera_component_serialization_yaml.hpp"
 
 namespace YAML
 {
@@ -112,16 +114,6 @@ namespace YAML
     };
 
 
-    template <>
-    struct convert<CameraComponentSerialization>
-    {
-        static bool decode(const Node &node, CameraComponentSerialization &rhs)
-        {
-            rhs.aspectPower = node["aspectPower"].as<float>();
-            rhs.isPerspective = node["isPerspective"].as<bool>();
-            return true;
-        }
-    };
 
     template <>
     struct convert<TransformComponentSerialization>

@@ -25,6 +25,7 @@
 #include "../ui/on_click_scene_loader/on_click_scene_loader_factory.hpp"
 #include "../ui/button_effect/ui_button_effect_factory.hpp"
 #include "../ui/show_fps/show_fps_component_factory.hpp"
+#include "../camera/camera_component_factory.hpp"
 
 
 

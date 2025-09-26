@@ -3,7 +3,7 @@
 #include "../entity.hpp"
 #include "transform.hpp"
 #include "rect_transform.hpp"
-#include "../renderering/camera_component.hpp"
+#include "../../camera/camera_component.hpp"
 
 
 class RectTransformFollower final: public Component {
