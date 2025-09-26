@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../components/renderering/sprite_renderer.hpp"
-#include "../components/ui/ui_text_renderer.hpp"
+#include "../ui/text/text_renderer_component.hpp"
 #include "../components/ui/ui_image_renderer.hpp"
 #include "../system/window.hpp"
 #include "../components/renderering/camera_component.hpp"
@@ -20,7 +20,7 @@ private:
 
     std::vector<std::weak_ptr<SpriteRenderer>> _sprites;
     std::vector<std::weak_ptr<MeshRenderer>> _meshRenderers;
-    std::vector<std::weak_ptr<UiTextRenderer>> _texts;
+    std::vector<std::weak_ptr<UiTextRendererComponent>> _texts;
     std::vector<std::weak_ptr<UiImageRenderer>> _images;
     std::vector<std::weak_ptr<ParticleEmitterComponent>> _particles;
 
@@ -49,7 +49,7 @@ public:
     void AddRenderer(const std::weak_ptr<MeshRenderer> &meshRenderer) noexcept { _meshRenderers.push_back(meshRenderer); }
     void AddRenderer(const std::weak_ptr<SpriteRenderer> &sprite) noexcept { _sprites.push_back(sprite); }
 
-    void AddRenderer(const std::weak_ptr<UiTextRenderer> &text) noexcept { _texts.push_back(text); }
+    void AddRenderer(const std::weak_ptr<UiTextRendererComponent> &text) noexcept { _texts.push_back(text); }
     void AddRenderer(const std::weak_ptr<UiImageRenderer> &image) noexcept { _images.push_back(image); }
 
     void AddRenderer(const std::weak_ptr<ParticleEmitterComponent> &particle) noexcept {

@@ -179,26 +179,6 @@ protected:
     }
 };
 
-class UiTextComponentFactory final : public ComponentFactory<UiTextRenderer, UiTextComponentSerialization> {
-protected:
-    void FillComponent(const std::weak_ptr<UiTextRenderer> &component, const UiTextComponentSerialization &serialization) override {
-
-        if (const auto scene = _scene.lock()) {
-            if (const auto comp = component.lock()) {
-
-                const auto material = scene->GetMaterial(serialization.MaterialGUID);
-
-                comp->SetMaterial(material);
-                comp->SetText(serialization.Text);
-                comp->SetColor(serialization.Color);
-                comp->SetFontSize(serialization.FontSize);
-
-                scene->GetRenderPipeline().lock()->AddRenderer(comp);
-            }
-        }
-    }
-};
-
 class SpriteRendererFactory final : public ComponentFactory<SpriteRenderer, SpriteRenderComponentSerialization> {
 protected:
     void FillComponent(const std::weak_ptr<SpriteRenderer> &component, const SpriteRenderComponentSerialization &serialization) override {
@@ -436,7 +416,7 @@ protected:
     void FillComponent(const std::weak_ptr<ShowFpsComponent> &component, [[maybe_unused]] const ShowFpsComponentSerialization &serialization) override {
         if (const auto entity = _entity.lock()) {
             if (const auto comp = component.lock()) {
-                comp->SetText(entity->GetComponent<UiTextRenderer>());
+                comp->SetText(entity->GetComponent<UiTextRendererComponent>());
             }
         }
     }

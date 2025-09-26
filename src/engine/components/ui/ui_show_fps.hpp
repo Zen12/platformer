@@ -1,18 +1,18 @@
 #pragma once
 
 #include "../entity.hpp"
-#include "ui_text_renderer.hpp"
+#include "../../ui/text/text_renderer_component.hpp"
 
 class ShowFpsComponent final : public Component {
 
-    std::weak_ptr<UiTextRenderer> _text;
+    std::weak_ptr<UiTextRendererComponent> _text;
 
 public:
     explicit ShowFpsComponent(const std::weak_ptr<Entity> &entity)
         : Component(entity) {
     }
 
-    void SetText(const std::weak_ptr<UiTextRenderer> &text) {
+    void SetText(const std::weak_ptr<UiTextRendererComponent> &text) {
         _text = text;
     }
 

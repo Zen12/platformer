@@ -10,6 +10,8 @@
 #include "../serialization/serialization_asset.hpp"
 #include "../../gameplay/health_bar/health_bar_component_serialization.hpp"
 #include "../../gameplay/health_bar/health_bar_component_serialization_yaml.hpp"
+#include "../../ui/text/text_renderer_component_serialization.hpp"
+#include "../../ui/text/text_renderer_component_serialization_yaml.hpp"
 
 namespace YAML
 {
@@ -50,18 +52,7 @@ namespace YAML
         }
     };
 
-    template <>
-    struct convert<UiTextComponentSerialization>
-    {
-        static bool decode(const Node &node, UiTextComponentSerialization &rhs)
-        {
-            rhs.MaterialGUID = node["material"].as<std::string>();
-            rhs.Text = node["text"].as<std::string>();
-            rhs.Color = node["color"].as<glm::vec3>();
-            rhs.FontSize = node["font_size"].as<float>();
-            return true;
-        }
-    };
+
 
     template <>
     struct convert<CharacterControllerComponentSerialization>

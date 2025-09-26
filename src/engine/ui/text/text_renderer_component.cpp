@@ -1,7 +1,7 @@
-#include "ui_text_renderer.hpp"
+#include "text_renderer_component.hpp"
 
 
-void UiTextRenderer::Bind()
+void UiTextRendererComponent::Bind()
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -14,16 +14,16 @@ void UiTextRenderer::Bind()
     glBindVertexArray(0);
 }
 
-UiTextRenderer::UiTextRenderer(const std::weak_ptr<Entity> &entity) : Component(entity)
+UiTextRendererComponent::UiTextRendererComponent(const std::weak_ptr<Entity> &entity) : Component(entity)
 {
     Bind();
 }
 
-void UiTextRenderer::Update([[maybe_unused]] const float& deltaTime)
+void UiTextRendererComponent::Update([[maybe_unused]] const float& deltaTime)
 {
 }
 
-void UiTextRenderer::Render(const glm::mat4 &projection)
+void UiTextRendererComponent::Render(const glm::mat4 &projection)
 {
     if (const auto &material = _material.lock())
     {
