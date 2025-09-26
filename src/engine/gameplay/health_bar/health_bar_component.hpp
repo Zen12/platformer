@@ -4,10 +4,10 @@
 
 
 class HealthBarComponent final : public Component {
+
 private:
     std::weak_ptr<UiImageRenderer> _image;
     std::weak_ptr<HealthComponent> _health;
-
 
 public:
 
@@ -22,8 +22,6 @@ public:
                 image->SetFillAmount(health->GetPercentageHealth());
             }
         }
-
-
     }
 
     void SetFillBar(const std::weak_ptr<UiImageRenderer> &image) noexcept {
@@ -33,6 +31,4 @@ public:
     void SetHealth(const std::weak_ptr<HealthComponent> &health) noexcept {
         _health = health;
     }
-
-
 };

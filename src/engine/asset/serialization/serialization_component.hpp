@@ -225,10 +225,6 @@ struct HealthComponentSerialization final : public ComponentSerialization {
     float Health;
 };
 
-struct HealthBarComponentSerialization final : public ComponentSerialization {
-    bool UseCreator;
-};
-
 struct RectTransformFollowerSerialization final : public ComponentSerialization {
     bool UseCreator;
     std::string Target;

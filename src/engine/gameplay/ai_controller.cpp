@@ -1,7 +1,7 @@
 #include "ai_controller.hpp"
 
 #include "health_component.hpp"
-#include "ui/heath_bar.hpp"
+#include "health_bar/health_bar_component.hpp"
 
 #define DEBUG_AI_CONTROLLER 0
 

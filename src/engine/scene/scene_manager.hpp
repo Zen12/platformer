@@ -19,6 +19,7 @@
 
 #include "../asset/factories/component_factory.hpp"
 #include "../gameplay/character_controller.hpp"
+#include "../gameplay/health_bar/health_bar_component_factory.hpp"
 
 
 

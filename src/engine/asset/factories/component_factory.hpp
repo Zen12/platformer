@@ -15,7 +15,6 @@
 #include "../../gameplay/path_mover.hpp"
 #include "../../gameplay/game_state/game_state_controller.hpp"
 #include "../../gameplay/game_state/team_component.hpp"
-#include "../../gameplay/ui/heath_bar.hpp"
 #include "../../path_finder/astar_finder.hpp"
 #include "../../scene/scene.hpp"
 
@@ -494,31 +493,7 @@ protected:
     }
 };
 
-class HealthBarComponentFactory final : public ComponentFactory<HealthBarComponent, HealthBarComponentSerialization> {
-protected:
-    void FillComponent(const std::weak_ptr<HealthBarComponent> &component,
-        const HealthBarComponentSerialization &serialization) override {
-        if (const auto scene = _scene.lock()) {
-            if (const auto entity = _entity.lock()) {
-                if (const auto comp = component.lock()) {
-                    const auto images = entity->GetComponents<UiImageRenderer>();
-                    comp->SetFillBar(images.back());
 
-                    if (serialization.UseCreator) {
-                        if (const auto creator = entity->GetCreator(); !creator.empty()) {
-                            const auto creatorEntity = scene->GetEntityById(creator);
-                            if (const auto e = creatorEntity.lock()) {
-                                comp->SetHealth(e->GetComponent<HealthComponent>());
-                            }
-                        }
-                    } else {
-                        comp->SetHealth(entity->GetComponent<HealthComponent>());
-                    }
-                }
-            }
-        }
-    }
-};
 
 class RectTransformFollowerFactory final : public ComponentFactory<RectTransformFollower, RectTransformFollowerSerialization> {
 protected:
