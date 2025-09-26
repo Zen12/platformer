@@ -3,11 +3,11 @@
 #include "../../render/font.hpp"
 #include "../../render/mesh.hpp"
 #include "../../render/material.hpp"
-#include "../transforms/transform.hpp"
-#include "../transforms/rect_transform.hpp"
-#include "../entity.hpp"
+#include "../../components/transforms/transform.hpp"
+#include "../../components/transforms/rect_transform.hpp"
+#include "../../components/entity.hpp"
 
-class UiImageRenderer final : public Component
+class UiImageRendererComponent final : public Component
 {
 private:
     Mesh _mesh;
@@ -17,9 +17,9 @@ private:
     glm::vec4 _tint{1, 1, 1, 1};
 
 public:
-    UiImageRenderer() = delete;
+    UiImageRendererComponent() = delete;
 
-    explicit UiImageRenderer(const std::weak_ptr<Entity> &entity)
+    explicit UiImageRendererComponent(const std::weak_ptr<Entity> &entity)
         : Component(entity),
           _mesh(Mesh::GenerateUI())
     {

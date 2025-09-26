@@ -12,6 +12,8 @@
 #include "../../gameplay/health_bar/health_bar_component_serialization_yaml.hpp"
 #include "../../ui/text/text_renderer_component_serialization.hpp"
 #include "../../ui/text/text_renderer_component_serialization_yaml.hpp"
+#include "../../ui/image/image_renderer_component_serialization.hpp"
+#include "../../ui/image/image_renderer_component_serialization_yaml.hpp"
 
 namespace YAML
 {
@@ -198,17 +200,6 @@ namespace YAML
         }
     };
 
-    template <>
-    struct convert<UiImageComponentSerialization>
-    {
-        static bool decode(const Node &node, UiImageComponentSerialization &rhs) {
-            rhs.MaterialGuid = node["material"].as<std::string>();
-            rhs.SpriteGuid = node["image"].as<std::string>();
-            if (node["fill_amount"])
-                rhs.FillAmount = node["fill_amount"].as<float>();
-            return true;
-        }
-    };
 
     template <>
     struct convert<RectTransformComponentSerialization>

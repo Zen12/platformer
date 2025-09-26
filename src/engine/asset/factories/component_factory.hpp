@@ -160,25 +160,6 @@ protected:
     }
 };
 
-class UiImageFactory final : public ComponentFactory<UiImageRenderer, UiImageComponentSerialization> {
-protected:
-    void FillComponent(const std::weak_ptr<UiImageRenderer> &component, const UiImageComponentSerialization &serialization) override {
-
-        if (const auto scene = _scene.lock()) {
-            if (const auto uiImage = component.lock()) {
-                const auto material = scene->GetMaterial(serialization.MaterialGuid);
-                const auto sprite = scene->GetSprite(serialization.SpriteGuid);
-
-                uiImage->SetMaterial(material);
-                uiImage->SetSprite(sprite);
-                uiImage->SetFillAmount(serialization.FillAmount);
-
-                scene->GetRenderPipeline().lock()->AddRenderer(component);
-            }
-        }
-    }
-};
-
 class SpriteRendererFactory final : public ComponentFactory<SpriteRenderer, SpriteRenderComponentSerialization> {
 protected:
     void FillComponent(const std::weak_ptr<SpriteRenderer> &component, const SpriteRenderComponentSerialization &serialization) override {
@@ -606,7 +587,7 @@ protected:
         if (const auto entity = _entity.lock()) {
             if (const auto &comp = component.lock()) {
                 comp->SetButton(entity->GetComponent<UiButton>());
-                comp->SetTarget(entity->GetComponent<UiImageRenderer>());
+                comp->SetTarget(entity->GetComponent<UiImageRendererComponent>());
             }
         }
     }

@@ -3,7 +3,7 @@
 #include "health_bar_component.hpp"
 #include "health_bar_component_serialization.hpp"
 #include "../health_component.hpp"
-#include "../../components/ui/ui_image_renderer.hpp"
+#include "../../ui/image/image_renderer_component.hpp"
 
 template<typename TComponent, typename TSerialization>
 class ComponentFactory;
@@ -15,7 +15,7 @@ protected:
         if (const auto scene = _scene.lock()) {
             if (const auto entity = _entity.lock()) {
                 if (const auto comp = component.lock()) {
-                    const auto images = entity->GetComponents<UiImageRenderer>();
+                    const auto images = entity->GetComponents<UiImageRendererComponent>();
                     comp->SetFillBar(images.back());
 
                     if (serialization.UseCreator) {

@@ -1,12 +1,12 @@
 #pragma once
 #include "ui_button.hpp"
-#include "ui_image_renderer.hpp"
+#include "../../ui/image/image_renderer_component.hpp"
 
 
 class UiButtonEffect final : public Component {
 private:
     std::weak_ptr<UiButton> _button;
-    std::weak_ptr<UiImageRenderer> _image;
+    std::weak_ptr<UiImageRendererComponent> _image;
     int _subscribeIdClick{-1};
     int _subscribeIdHover{-1};
     int _subscribeIdDeselect{-1};
@@ -38,7 +38,7 @@ public:
         : Component(entity) {
     }
 
-    void SetTarget(const std::weak_ptr<UiImageRenderer> &uiImage) noexcept {
+    void SetTarget(const std::weak_ptr<UiImageRendererComponent> &uiImage) noexcept {
         _image = uiImage;
     }
 

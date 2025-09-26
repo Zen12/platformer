@@ -154,12 +154,7 @@ struct UiButtonComponentSerialization final : public ComponentSerialization {
 
 };
 
-struct UiImageComponentSerialization final : public ComponentSerialization
-{
-    std::string MaterialGuid;
-    std::string SpriteGuid;
-    float FillAmount{1};
-};
+
 
 struct RectTransformComponentSerialization final : public ComponentSerialization
 {

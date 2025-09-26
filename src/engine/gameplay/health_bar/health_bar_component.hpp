@@ -1,12 +1,12 @@
 #pragma once
 #include "../../components/entity.hpp"
-#include "../../components/ui/ui_image_renderer.hpp"
+#include "../../ui/image/image_renderer_component.hpp"
 
 
 class HealthBarComponent final : public Component {
 
 private:
-    std::weak_ptr<UiImageRenderer> _image;
+    std::weak_ptr<UiImageRendererComponent> _image;
     std::weak_ptr<HealthComponent> _health;
 
 public:
@@ -24,7 +24,7 @@ public:
         }
     }
 
-    void SetFillBar(const std::weak_ptr<UiImageRenderer> &image) noexcept {
+    void SetFillBar(const std::weak_ptr<UiImageRendererComponent> &image) noexcept {
         _image = image;
     }
 

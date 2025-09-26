@@ -2,7 +2,7 @@
 
 #include "../components/renderering/sprite_renderer.hpp"
 #include "../ui/text/text_renderer_component.hpp"
-#include "../components/ui/ui_image_renderer.hpp"
+#include "../ui/image/image_renderer_component.hpp"
 #include "../system/window.hpp"
 #include "../components/renderering/camera_component.hpp"
 #include "../components/renderering/particle_emitter.hpp"
@@ -21,7 +21,7 @@ private:
     std::vector<std::weak_ptr<SpriteRenderer>> _sprites;
     std::vector<std::weak_ptr<MeshRenderer>> _meshRenderers;
     std::vector<std::weak_ptr<UiTextRendererComponent>> _texts;
-    std::vector<std::weak_ptr<UiImageRenderer>> _images;
+    std::vector<std::weak_ptr<UiImageRendererComponent>> _images;
     std::vector<std::weak_ptr<ParticleEmitterComponent>> _particles;
 
 public:
@@ -50,7 +50,7 @@ public:
     void AddRenderer(const std::weak_ptr<SpriteRenderer> &sprite) noexcept { _sprites.push_back(sprite); }
 
     void AddRenderer(const std::weak_ptr<UiTextRendererComponent> &text) noexcept { _texts.push_back(text); }
-    void AddRenderer(const std::weak_ptr<UiImageRenderer> &image) noexcept { _images.push_back(image); }
+    void AddRenderer(const std::weak_ptr<UiImageRendererComponent> &image) noexcept { _images.push_back(image); }
 
     void AddRenderer(const std::weak_ptr<ParticleEmitterComponent> &particle) noexcept {
         _particles.push_back(particle);

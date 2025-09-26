@@ -1,22 +1,22 @@
-#include "ui_image_renderer.hpp"
+#include "image_renderer_component.hpp"
 
-void UiImageRenderer::Update([[maybe_unused]] const float& deltaTime)
+void UiImageRendererComponent::Update([[maybe_unused]] const float& deltaTime)
 {
 }
 
-void UiImageRenderer::SetFillAmount(const float &amount) noexcept {
+void UiImageRendererComponent::SetFillAmount(const float &amount) noexcept {
     _fillAmount = amount;
 }
 
-void UiImageRenderer::SetTint(const glm::vec4& color) {
+void UiImageRendererComponent::SetTint(const glm::vec4& color) {
     _tint = color;
 }
 
-void UiImageRenderer::SetSprite(const std::weak_ptr<Sprite> &sprite) noexcept {
+void UiImageRendererComponent::SetSprite(const std::weak_ptr<Sprite> &sprite) noexcept {
     _sprite = sprite;
 }
 
-void UiImageRenderer::Render(const glm::mat4 &projection) const
+void UiImageRendererComponent::Render(const glm::mat4 &projection) const
 {
     if (const auto entity = _entity.lock()) {
 
