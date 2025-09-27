@@ -12,7 +12,7 @@
 #include "../asset/asset_manager.hpp"
 #include "../physics/physics_world.hpp"
 #include "../components/renderering/light_2d.hpp"
-#include "../gameplay/character_controller.hpp"
+#include "../game/character_controller/character_controller_component.hpp"
 #include "../components/renderering/spine_renderer.hpp"
 #include "../components/physics/box_collider2d_component.hpp"
 #include "../components/physics/rigidbody2d_component.hpp"

@@ -119,10 +119,6 @@ https://andreigusan.itch.io/platformer-demo
 - [ ] Reorganize factory/serializable classes
 - [ ] Refactor spine loader
 - [ ] Refactor AIController and CharacterController
-- [ ] Optimization of light raycast system, the vertex approach
-- [ ] Proper fix retina issue on webgl and macOS
-- [ ] Test build on windows and linux
-- [ ] Fix model matrix, multiplication order
 
 ## 0.1.2 From OOP to data oriented(DOD)
 - [ ] Set Entt
@@ -142,11 +138,16 @@ https://andreigusan.itch.io/platformer-demo
 - [ ] Split Engine logic and game logic
 
 ## 0.1.5 First Editor
+- [ ] Fix model matrix, multiplication order
 - [ ] Create new cmake project (editor)
 - [ ] Refactor engine to render into render-texture
 - [ ] ImGUI for editor + rendering into render-texture
-- [ ] Basic serialization viewer with play button 
+- [ ] Basic serialization viewer with play button
+- [ ] Test build on windows and linux
+- [ ] Proper fix retina issue on webgl and macOS
 
+## Backlog
+- [ ] Optimization of light raycast system, the vertex approach
 
 
 🇲🇩

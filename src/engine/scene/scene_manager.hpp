@@ -17,7 +17,6 @@
 #include "../system/guid_generator.hpp"
 
 #include "../asset/factories/component_factory.hpp"
-#include "../gameplay/character_controller.hpp"
 #include "../gameplay/health_bar/health_bar_component_factory.hpp"
 #include "../ui/text/text_renderer_component_factory.hpp"
 #include "../ui/image/image_renderer_component_factory.hpp"
@@ -26,6 +25,18 @@
 #include "../ui/button_effect/ui_button_effect_factory.hpp"
 #include "../ui/show_fps/show_fps_component_factory.hpp"
 #include "../camera/camera_component_factory.hpp"
+#include "../game/destroy_with_creator/destroy_with_creator_component_factory.hpp"
+#include "../game/idle_character/idle_character_component_factory.hpp"
+#include "../game/game_state/game_state_component_factory.hpp"
+#include "../game/team/team_component_factory.hpp"
+#include "../game/prefab_spawner/prefab_spawner_component_factory.hpp"
+#include "../game/grid_prefab_spawner/grid_prefab_spawner_component_factory.hpp"
+#include "../game/grid/grid_component_factory.hpp"
+#include "../nav_mesh/astar_finder_component_factory.hpp"
+#include "../nav_mesh/path_mover_component_factory.hpp"
+#include "../game/health/health_component_factory.hpp"
+#include "../game/character_controller/character_controller_component_factory.hpp"
+#include "../game/ai_controller/ai_controller_component_factory.hpp"
 
 
 

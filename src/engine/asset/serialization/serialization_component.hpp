@@ -39,17 +39,7 @@ struct Box2dColliderSerialization final : public ComponentSerialization
     glm::vec3 translate{};
 };
 
-struct PrefabSpawnerSerialization final : public ComponentSerialization
-{
-    std::string prefabId;
-    float spawnTime = 0;
-    int maxSpawn;
-    std::vector<glm::vec3> positions;
-};
 
-struct PathFinderSerialization final : public ComponentSerialization {
-    std::string gridTag;
-};
 
 struct ParticleEmitterSerialization final : public ComponentSerialization {
     float duration;
@@ -67,17 +57,7 @@ struct SpineColliderSerialization final : public ComponentSerialization {
 
 };
 
-struct GridSerialization final : public ComponentSerialization {
-    std::vector<std::vector<int>> grid;
-    glm::vec3 spawnOffset;
-    glm::vec3 spawnStep;
-};
 
-struct GridPrefabSpawnerSerialization final : public ComponentSerialization
-{
-    std::string prefabId;
-    std::string gridTag;
-};
 
 struct Rigidbody2dSerialization final : public ComponentSerialization
 {
@@ -125,10 +105,6 @@ struct Light2dComponentSerialization final : public ComponentSerialization
     float StartAngle = 0;
 };
 
-struct PathMoverComponentSerialization final : public ComponentSerialization {
-    std::vector<glm::vec3> Positions;
-    float Speed;
-};
 
 struct SpriteComponentSerialization final : public ComponentSerialization
 {
@@ -158,46 +134,9 @@ struct TransformComponentSerialization final : public ComponentSerialization
     glm::vec3 scale{};
 };
 
-struct CharacterControllerComponentSerialization final : public ComponentSerialization
-{
-    // movement
-    float MaxMovementSpeed{1};
-    float AccelerationSpeed{1};
-    float DecelerationSpeed{1};
-
-    // jump
-    float JumpHeigh{1};
-    float JumpDuration{1};
-    float JumpDownMultiplier{1};
-    float AirControl{0.1};
-
-    float Damage{10};
-};
-
-struct AiControllerComponentSerialization final : public ComponentSerialization
-{
-    // movement
-    float MaxMovementSpeed{1};
-    float AccelerationSpeed{1};
-    float DecelerationSpeed{1};
-
-    // jump
-    float JumpHeigh{1};
-    float JumpDuration{1};
-    float JumpDownMultiplier{1};
-    float AirControl{0.1};
-
-    float Damage{10};
-
-    std::string AiTargetTransformTag{};
-    std::string PathFinderTag{};
-    std::string GridTag{};
-};
 
 
-struct HealthComponentSerialization final : public ComponentSerialization {
-    float Health;
-};
+
 
 struct RectTransformFollowerSerialization final : public ComponentSerialization {
     bool UseCreator;
@@ -205,21 +144,9 @@ struct RectTransformFollowerSerialization final : public ComponentSerialization 
     glm::vec2 Offset{};
 };
 
-struct DestroyWithCreatorComponentSerialization final : public ComponentSerialization {
-};
-
-struct IdleCharacterSerialization final : public ComponentSerialization {
-    std::string IdleAnimation;
-};
 
 
-struct GameStateData final : public ComponentSerialization {
-    std::string WinScene;
-    std::string LooseScene;
-};
 
-struct TeamSerialization final : public ComponentSerialization {
-    int Team;
-};
+
 
 

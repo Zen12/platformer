@@ -2,7 +2,7 @@
 
 #include "health_bar_component.hpp"
 #include "health_bar_component_serialization.hpp"
-#include "../health_component.hpp"
+#include "../../game/health/health_component.hpp"
 #include "../../ui/image/image_renderer_component.hpp"
 
 template<typename TComponent, typename TSerialization>

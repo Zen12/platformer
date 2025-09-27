@@ -24,6 +24,30 @@
 #include "../../ui/show_fps/show_fps_component_serialization_yaml.hpp"
 #include "../../camera/camera_component_serialization.hpp"
 #include "../../camera/camera_component_serialization_yaml.hpp"
+#include "../../game/destroy_with_creator/destroy_with_creator_component_serialization.hpp"
+#include "../../game/destroy_with_creator/destroy_with_creator_component_serialization_yaml.hpp"
+#include "../../game/idle_character/idle_character_component_serialization.hpp"
+#include "../../game/idle_character/idle_character_component_serialization_yaml.hpp"
+#include "../../game/game_state/game_state_component_serialization.hpp"
+#include "../../game/game_state/game_state_component_serialization_yaml.hpp"
+#include "../../game/team/team_component_serialization.hpp"
+#include "../../game/team/team_component_serialization_yaml.hpp"
+#include "../../game/prefab_spawner/prefab_spawner_component_serialization.hpp"
+#include "../../game/prefab_spawner/prefab_spawner_component_serialization_yaml.hpp"
+#include "../../game/grid_prefab_spawner/grid_prefab_spawner_component_serialization.hpp"
+#include "../../game/grid_prefab_spawner/grid_prefab_spawner_component_serialization_yaml.hpp"
+#include "../../game/grid/grid_component_serialization.hpp"
+#include "../../game/grid/grid_component_serialization_yaml.hpp"
+#include "../../nav_mesh/astar_finder_component_serialization.hpp"
+#include "../../nav_mesh/astar_finder_component_serialization_yaml.hpp"
+#include "../../nav_mesh/path_mover_component_serialization.hpp"
+#include "../../nav_mesh/path_mover_component_serialization_yaml.hpp"
+#include "../../game/health/health_component_serialization.hpp"
+#include "../../game/health/health_component_serialization_yaml.hpp"
+#include "../../game/character_controller/character_controller_component_serialization.hpp"
+#include "../../game/character_controller/character_controller_component_serialization_yaml.hpp"
+#include "../../game/ai_controller/ai_controller_component_serialization.hpp"
+#include "../../game/ai_controller/ai_controller_component_serialization_yaml.hpp"
 
 namespace YAML
 {
@@ -66,52 +90,8 @@ namespace YAML
 
 
 
-    template <>
-    struct convert<CharacterControllerComponentSerialization>
-    {
-        static bool decode(const Node &node, CharacterControllerComponentSerialization &rhs)
-        {
-            rhs.MaxMovementSpeed = node["max_movement_speed"].as<float>();
-            rhs.AccelerationSpeed = node["acceleration_speed"].as<float>();
-            rhs.DecelerationSpeed = node["deceleration_speed"].as<float>();
-            rhs.JumpHeigh = node["jump_heigh"].as<float>();
-            rhs.JumpDuration = node["jump_duration"].as<float>();
-            rhs.JumpDownMultiplier = node["jump_down_multiplier"].as<float>();
-            rhs.AirControl = node["air_control"].as<float>();
-            rhs.Damage = node["damage"].as<float>();
-            return true;
-        }
-    };
 
-    template <>
-    struct convert<AiControllerComponentSerialization>
-    {
-        static bool decode(const Node &node, AiControllerComponentSerialization &rhs)
-        {
-            rhs.MaxMovementSpeed = node["max_movement_speed"].as<float>();
-            rhs.AccelerationSpeed = node["acceleration_speed"].as<float>();
-            rhs.DecelerationSpeed = node["deceleration_speed"].as<float>();
-            rhs.JumpHeigh = node["jump_heigh"].as<float>();
-            rhs.JumpDuration = node["jump_duration"].as<float>();
-            rhs.JumpDownMultiplier = node["jump_down_multiplier"].as<float>();
-            rhs.AirControl = node["air_control"].as<float>();
-            rhs.Damage = node["damage"].as<float>();
-            rhs.AiTargetTransformTag = node["ai_target_transform_tag"].as<std::string>();
-            rhs.PathFinderTag = node["path_finder_tag"].as<std::string>();
-            rhs.GridTag = node["grid_tag"].as<std::string>();
-            return true;
-        }
-    };
 
-    template <>
-    struct convert<HealthComponentSerialization>
-    {
-        static bool decode([[maybe_unused]] const Node &node, [[maybe_unused]] HealthComponentSerialization &rhs)
-        {
-            rhs.Health = node["health"].as<float>();
-            return true;
-        }
-    };
 
 
 
@@ -164,22 +144,6 @@ namespace YAML
         }
     };
 
-    template <>
-    struct convert<PathMoverComponentSerialization>
-    {
-        static bool decode(const Node &node, PathMoverComponentSerialization &rhs) {
-
-            rhs.Positions = std::vector<glm::vec3>();
-
-            for (const auto &path : node["positions"]) {
-                rhs.Positions.push_back(path.as<glm::vec3>());
-            }
-
-            rhs.Speed = node["speed"].as<float>();
-
-            return true;
-        }
-    };
 
 
     template <>
@@ -260,74 +224,8 @@ namespace YAML
         }
     };
 
-    //grid_prefab_spawner
-    template <>
-    struct convert<GridSerialization> {
-        static bool decode(const Node &node, GridSerialization &rhs) {
-            rhs.spawnOffset = node["spawn_offset"].as<glm::vec3>();
-            rhs.spawnStep = node["spawn_step"].as<glm::vec3>();
-            rhs.grid = std::vector<std::vector<int>>();
-            if (node["grid"]) {
-                const auto grid = node["grid"];
 
-                for (const auto &position : grid) {
-                    std::vector<int> vec;
 
-                    for (const auto &item : position) {
-                        const auto value = item.as<int>();
-                        vec.push_back(value);
-                    }
-
-                    rhs.grid.emplace_back(vec);
-                }
-            }
-            return true;
-        }
-    };
-
-    //grid_prefab_spawner
-    template <>
-    struct convert<GridPrefabSpawnerSerialization>
-    {
-        static bool decode(const Node &node, GridPrefabSpawnerSerialization &rhs) {
-            rhs.prefabId = node["prefab_id"].as<std::string>();
-            rhs.gridTag = node["grid_tag"].as<std::string>();
-            return true;
-        }
-    };
-
-    template <>
-    struct convert<PathFinderSerialization>
-    {
-        static bool decode(const Node &node, PathFinderSerialization &rhs) {
-            rhs.gridTag = node["grid_tag"].as<std::string>();
-            return true;
-        }
-    };
-
-    //prefab_spawner
-    template <>
-    struct convert<PrefabSpawnerSerialization>
-    {
-        static bool decode(const Node &node, PrefabSpawnerSerialization &rhs) {
-            rhs.prefabId = node["prefab_id"].as<std::string>();
-            rhs.spawnTime = node["spawn_time"].as<float>();
-            rhs.maxSpawn = node["max_spawn"].as<int>();
-            rhs.positions = std::vector<glm::vec3>();
-            if (node["positions"]) {
-                auto positions = node["positions"];
-
-                for (const auto &position : positions) {
-                    const auto x = position[0].as<float>();
-                    const auto y = position[1].as<float>();
-                    const auto z = position[2].as<float>();
-                    rhs.positions.emplace_back(x, y, z);
-                }
-            }
-
-            return true;
-        }
-    };
 
     template <>
     struct convert<ParticleEmitterSerialization>
@@ -550,46 +448,10 @@ namespace YAML
         }
     };
 
-    template <>
-    struct convert<DestroyWithCreatorComponentSerialization>
-    {
-        static bool decode([[maybe_unused]] const Node &node, [[maybe_unused]]  DestroyWithCreatorComponentSerialization &rhs)
-        {
-            return true;
-        }
-    };
-
-    template <>
-    struct convert<IdleCharacterSerialization>
-    {
-        static bool decode(const Node &node, IdleCharacterSerialization &rhs)
-        {
-            rhs.IdleAnimation = node["idle_animation"].as<std::string>();
-            return true;
-        }
-    };
 
 
-    template <>
-    struct convert<TeamSerialization>
-    {
-        static bool decode(const Node &node, TeamSerialization &rhs)
-        {
-            rhs.Team = node["team"].as<int>();
-            return true;
-        }
-    };
 
-    template <>
-    struct convert<GameStateData>
-    {
-        static bool decode(const Node &node, GameStateData &rhs)
-        {
-            rhs.WinScene = node["win_scene"].as<std::string>();
-            rhs.LooseScene = node["lose_scene"].as<std::string>();
-            return true;
-        }
-    };
+
 
 
 } // namespace YAML

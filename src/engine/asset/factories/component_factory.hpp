@@ -1,20 +1,11 @@
 #pragma once
 #include <memory>
 
-#include "../../components/destroy_with_creator.hpp"
 #include "../../components/renderering/particle_emitter.hpp"
 #include "../../components/transforms/rect_transform_follower.hpp"
 #include "../../components/physics/spine_collider.hpp"
 #include "../../ui/button/button_component.hpp"
-#include "../../gameplay/ai_controller.hpp"
-#include "../../gameplay/grid_prefab_spawner.hpp"
-#include "../../gameplay/prefab_spawner.hpp"
-#include "../../gameplay/health_component.hpp"
-#include "../../gameplay/idle_character.hpp"
-#include "../../gameplay/path_mover.hpp"
-#include "../../gameplay/game_state/game_state_controller.hpp"
-#include "../../gameplay/game_state/team_component.hpp"
-#include "../../path_finder/astar_finder.hpp"
+#include "../../game/game_state/game_state_component.hpp"
 #include "../../scene/scene.hpp"
 
 class BaseComponentFactory {
@@ -62,56 +53,6 @@ class TransformFactory final : public ComponentFactory<Transform, TransformCompo
     }
 };
 
-class PathFinderFactory final : public ComponentFactory<AStarFinderComponent, PathFinderSerialization> {
-protected:
-    void FillComponent(const std::weak_ptr<AStarFinderComponent> &component, const PathFinderSerialization &serialization) override {
-        if (const auto comp = component.lock()) {
-            if (const auto scene = _scene.lock()) {
-                const auto entity = scene->FindByTag(serialization.gridTag);
-                comp->Initialize(entity.lock()->GetComponent<GridComponent>());
-            }
-        }
-    }
-};
-
-class GridFactory final : public ComponentFactory<GridComponent, GridSerialization> {
-protected:
-    void FillComponent(const std::weak_ptr<GridComponent> &component, const GridSerialization &serialization) override {
-        if (const auto comp = component.lock()) {
-            if (const auto scene = _scene.lock()) {
-                comp->SetGrid(serialization.grid);
-                comp->SetSpawnOffset(serialization.spawnOffset);
-                comp->SetSpawnStep(serialization.spawnStep);
-            }
-        }
-    }
-};
-
-class GridPrefabSpawnerFactor final : public ComponentFactory<GridPrefabSpawner, GridPrefabSpawnerSerialization> {
-protected:
-    void FillComponent(const std::weak_ptr<GridPrefabSpawner> &component, const GridPrefabSpawnerSerialization &serialization) override {
-        if (const auto comp = component.lock()) {
-            if (const auto scene = _scene.lock()) {
-                comp->SetPrefabId(serialization.prefabId);
-                comp->SetScene(_scene);
-                comp->Spawn(scene->FindByTag(serialization.gridTag).lock()->GetComponent<GridComponent>());
-            }
-        }
-    }
-};
-
-class PrefabSpawnerFactor final : public ComponentFactory<PrefabSpawner, PrefabSpawnerSerialization> {
-protected:
-    void FillComponent(const std::weak_ptr<PrefabSpawner> &component, const PrefabSpawnerSerialization &serialization) override {
-        if (const auto comp = component.lock()) {
-            comp->SetPrefabId(serialization.prefabId);
-            comp->SetScene(_scene);
-            comp->SetMaxCount(serialization.maxSpawn);
-            comp->SetSpawnTimer(serialization.spawnTime);
-            comp->SetPrefabPositions(serialization.positions);
-        }
-    }
-};
 
 class RectTransformFactory final : public ComponentFactory<RectTransform, RectTransformComponentSerialization> {
 protected:
@@ -293,100 +234,6 @@ protected:
     }
 };
 
-class PathMoverComponentFactor final : public ComponentFactory<PathMover, PathMoverComponentSerialization> {
-protected:
-    void FillComponent(const std::weak_ptr<PathMover> &component, const PathMoverComponentSerialization &serialization) override {
-
-        if (const auto entity = _entity.lock()) {
-            if (const auto scene = _scene.lock()) {
-                if (const auto comp = component.lock()) {
-
-                    comp->SetTransform(entity->GetComponent<Transform>());
-                    comp->SetPoints(serialization.Positions);
-                    comp->SetSpeed(serialization.Speed);
-                }
-            }
-        }
-    }
-};
-
-
-class CharacterControllerFactory final : public ComponentFactory<CharacterController, CharacterControllerComponentSerialization> {
-protected:
-    void FillComponent(const std::weak_ptr<CharacterController> &component, const CharacterControllerComponentSerialization &serialization) override {
-
-        if (const auto scene = _scene.lock()) {
-            if (const auto comp = component.lock()) {
-                if (const auto render = scene->GetRenderPipeline().lock()) {
-                    if (const auto entity = _entity.lock()) {
-                        const CharacterControllerSettings characterSettings =
-                            {
-                            serialization.MaxMovementSpeed,
-                            serialization.AccelerationSpeed,
-                            serialization.DecelerationSpeed,
-                            serialization.JumpHeigh,
-                            serialization.JumpDuration,
-                            serialization.JumpDownMultiplier,
-                            serialization.AirControl,
-                            serialization.Damage,
-                            std::string{}};
-
-                        comp->SetCharacterControllerSettings(characterSettings);
-                        comp->SetInputSystem(scene->GetInputSystem());
-                        comp->SetPhysicsWorld(scene->GetPhysicsWorld());
-                        comp->SetParticles(entity->GetComponent<ParticleEmitterComponent>());
-                        comp->SetRenderPipeline(render);
-                        comp->SetSpineRenderer(entity->GetComponent<SpineRenderer>());
-                    }
-                }
-            }
-        }
-    }
-};
-
-class AiControllerFactory final : public ComponentFactory<AiController, AiControllerComponentSerialization> {
-protected:
-    void FillComponent(const std::weak_ptr<AiController> &component, const AiControllerComponentSerialization &serialization) override {
-
-        if (const auto scene = _scene.lock()) {
-            if (const auto comp = component.lock()) {
-
-                const CharacterControllerSettings characterSettings =
-                    {
-                    serialization.MaxMovementSpeed,
-                    serialization.AccelerationSpeed,
-                    serialization.DecelerationSpeed,
-                    serialization.JumpHeigh,
-                    serialization.JumpDuration,
-                    serialization.JumpDownMultiplier,
-                    serialization.AirControl,
-                    serialization.Damage,
-                    serialization.AiTargetTransformTag};
-
-                comp->SetCharacterControllerSettings(characterSettings);
-                comp->SetInputSystem(scene->GetInputSystem());
-                comp->SetPhysicsWorld(scene->GetPhysicsWorld());
-                comp->SetSpineRenderer(_entity.lock()->GetComponent<SpineRenderer>());
-                comp->SetPathFinder(scene->FindByTag(serialization.PathFinderTag).lock()->GetComponent<AStarFinderComponent>());
-                comp->SetTarget(scene->FindByTag(characterSettings.AiTargetTransformTag).lock()->GetComponent<Transform>().lock());
-                comp->SetGrid(scene->FindByTag(serialization.GridTag).lock()->GetComponent<GridComponent>());
-            }
-        }
-    }
-};
-
-
-class HealthComponentFactory final : public ComponentFactory<HealthComponent, HealthComponentSerialization> {
-protected:
-    void FillComponent(const std::weak_ptr<HealthComponent> &component, const HealthComponentSerialization &serialization) override {
-        if (const auto comp = component.lock()) {
-            comp->SetMaxHealth(serialization.Health);
-            comp->SetHealth(serialization.Health);
-            comp->SetScene(_scene.lock());
-        }
-    }
-};
-
 class ParticleEmitterComponentFactory final : public ComponentFactory<ParticleEmitterComponent, ParticleEmitterSerialization> {
 protected:
     void FillComponent(const std::weak_ptr<ParticleEmitterComponent> &component, const ParticleEmitterSerialization &serialization) override {
@@ -459,65 +306,6 @@ protected:
     }
 };
 
-class DestroyWithCreatorComponentFactory final : public ComponentFactory<DestroyWithCreatorComponent, DestroyWithCreatorComponentSerialization> {
-protected:
-    void FillComponent(const std::weak_ptr<DestroyWithCreatorComponent> &component,
-        [[maybe_unused]] const DestroyWithCreatorComponentSerialization &serialization) override {
-
-        if (const auto comp = component.lock()) {
-            comp->SetScene(_scene.lock());
-        }
-    }
-};
-
-class IdleCharacterComponentFactor final : public ComponentFactory<IdleCharacter, IdleCharacterSerialization> {
-protected:
-    void FillComponent(const std::weak_ptr<IdleCharacter> &component,
-        [[maybe_unused]] const IdleCharacterSerialization &serialization) override {
-
-        if (const auto entity = _entity.lock()) {
-            if (const auto comp = component.lock()) {
-                comp->SetSpineRenderer(entity->GetComponent<SpineRenderer>());
-                comp->SetAnimation(serialization.IdleAnimation);
-            }
-        }
-    }
-};
-
-
-class GameStateFactory final : public ComponentFactory<GameStateController, GameStateData> {
-protected:
-    void FillComponent(const std::weak_ptr<GameStateController> &component,
-        const GameStateData &serialization) override {
-
-        if (const auto comp = component.lock()) {
-            comp->SetLoseSceneId(serialization.LooseScene);
-            comp->SetWinSceneId(serialization.WinScene);
-            comp->SetScene(_scene);
-        }
-    }
-};
-
-class TeamComponentFactory final : public ComponentFactory<TeamComponent, TeamSerialization> {
-protected:
-    void FillComponent(const std::weak_ptr<TeamComponent> &component,
-        const TeamSerialization &serialization) override
-    {
-        if (const auto &scene = _scene.lock()) {
-            const auto gameStateEntity = scene->FindByTag("game_state"); //temp, need FSM
-
-            if (const auto stateEntity = gameStateEntity.lock()) {
-                if (const auto stateController = stateEntity->GetComponent<GameStateController>().lock()) {
-
-                    if (const auto comp = component.lock()) {
-                        comp->SetTeamRepository(stateController->GetTeamRepository());
-                        comp->SetTeam(static_cast<Team>(serialization.Team));
-                    }
-                }
-            }
-        }
-    }
-};
 
 
 

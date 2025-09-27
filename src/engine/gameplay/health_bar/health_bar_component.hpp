@@ -1,6 +1,7 @@
 #pragma once
 #include "../../components/entity.hpp"
 #include "../../ui/image/image_renderer_component.hpp"
+#include "../../game/health/health_component.hpp"
 
 
 class HealthBarComponent final : public Component {
