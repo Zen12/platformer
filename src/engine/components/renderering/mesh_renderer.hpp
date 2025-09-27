@@ -4,7 +4,7 @@
 #include "../../render/material.hpp"
 #include "../../render/mesh.hpp"
 #include "../../render/line.hpp"
-#include "../transforms/transform.hpp"
+#include "../../renderer/transform/transform_component.hpp"
 
 #define DEBUG_ENGINE_MESH_RENDERER 0
 

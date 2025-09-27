@@ -23,6 +23,8 @@
 #include "../../ui/show_fps/show_fps_component_serialization.hpp"
 #include "../../ui/show_fps/show_fps_component_serialization_yaml.hpp"
 #include "../../ui/rect_transform/rect_transform_component_serialization_yaml.hpp"
+#include "../../renderer/transform/transform_component_serialization_yaml.hpp"
+#include "../../renderer/sprite/sprite_renderer_component_serialization_yaml.hpp"
 #include "../../camera/camera_component_serialization.hpp"
 #include "../../camera/camera_component_serialization_yaml.hpp"
 #include "../../game/destroy_with_creator/destroy_with_creator_component_serialization.hpp"
@@ -96,17 +98,6 @@ namespace YAML
 
 
 
-    template <>
-    struct convert<TransformComponentSerialization>
-    {
-        static bool decode(const Node &node, TransformComponentSerialization &rhs)
-        {
-            rhs.position = node["position"].as<glm::vec3>();
-            rhs.rotation = node["rotation"].as<glm::vec3>();
-            rhs.scale = node["scale"].as<glm::vec3>();
-            return true;
-        }
-    };
 
     template <>
     struct convert<SpineRenderComponentSerialization>
@@ -147,15 +138,6 @@ namespace YAML
 
 
 
-    template <>
-    struct convert<SpriteRenderComponentSerialization>
-    {
-        static bool decode(const Node &node, SpriteRenderComponentSerialization &rhs) {
-            rhs.MaterialGuid = node["material"].as<std::string>();
-            rhs.SpriteGuid = node["image"].as<std::string>();
-            return true;
-        }
-    };
 
 
 

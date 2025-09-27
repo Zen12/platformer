@@ -25,6 +25,8 @@
 #include "../ui/button_effect/ui_button_effect_factory.hpp"
 #include "../ui/show_fps/show_fps_component_factory.hpp"
 #include "../ui/rect_transform/rect_transform_component_factory.hpp"
+#include "../renderer/transform/transform_component_factory.hpp"
+#include "../renderer/sprite/sprite_renderer_component_factory.hpp"
 #include "../camera/camera_component_factory.hpp"
 #include "../game/destroy_with_creator/destroy_with_creator_component_factory.hpp"
 #include "../game/idle_character/idle_character_component_factory.hpp"

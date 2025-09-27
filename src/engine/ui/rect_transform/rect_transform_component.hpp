@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../components/transforms/transform.hpp"
+#include "../../renderer/transform/transform_component.hpp"
 #include "rect_transform_layout_options.hpp"
 
 #include <glm/glm.hpp>

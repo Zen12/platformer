@@ -1,6 +1,6 @@
 #pragma once
 #include "../components/entity.hpp"
-#include "../components/transforms/transform.hpp"
+#include "../renderer/transform/transform_component.hpp"
 
 
 class PathMover final : public Component {

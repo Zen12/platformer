@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/random.hpp>
 #include "../../utlis/engine_math.hpp"
-#include "../transforms/transform.hpp"
+#include "../../renderer/transform/transform_component.hpp"
 
 struct ParticleData {
 public:

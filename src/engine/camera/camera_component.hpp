@@ -2,7 +2,7 @@
 
 #include "../render/camera.hpp"
 #include "../components/entity.hpp"
-#include "../components/transforms/transform.hpp"
+#include "../renderer/transform/transform_component.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

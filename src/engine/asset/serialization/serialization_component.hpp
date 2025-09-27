@@ -69,11 +69,6 @@ struct SpineRenderComponentSerialization final : public ComponentSerialization
     std::string SpineGuid;
 };
 
-struct SpriteRenderComponentSerialization final : public ComponentSerialization
-{
-    std::string MaterialGuid;
-    std::string SpriteGuid;
-};
 
 struct MeshRendererComponentSerialization final : public ComponentSerialization
 {
@@ -111,12 +106,6 @@ struct MaterialComponentSerialization final : public ComponentSerialization
 
 
 
-struct TransformComponentSerialization final : public ComponentSerialization
-{
-    glm::vec3 position{};
-    glm::vec3 rotation{};
-    glm::vec3 scale{};
-};
 
 
 

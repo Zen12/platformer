@@ -13,8 +13,8 @@
 #include <thread>
 
 #include "components/entity.hpp"
-#include "components/renderering/sprite_renderer.hpp"
-#include "components/transforms/transform.hpp"
+#include "renderer/sprite/sprite_renderer_component.hpp"
+#include "renderer/transform/transform_component.hpp"
 #include "ui/rect_transform/rect_transform_component.hpp"
 #include "components/transforms/rect_transform_root.hpp"
 #include "camera/camera_component.hpp"

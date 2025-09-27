@@ -1,7 +1,7 @@
 #pragma once
 
 #define GLM_ENABLE_EXPERIMENTAL
-#include "../entity.hpp"
+#include "../../components/entity.hpp"
 #include <GL/glew.h>
 
 #include <glm/glm.hpp>

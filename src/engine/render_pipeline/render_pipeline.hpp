@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../components/renderering/sprite_renderer.hpp"
+#include "../renderer/sprite/sprite_renderer_component.hpp"
 #include "../ui/text/text_renderer_component.hpp"
 #include "../ui/image/image_renderer_component.hpp"
 #include "../system/window.hpp"

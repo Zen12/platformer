@@ -1,4 +1,4 @@
-#include "sprite_renderer.hpp"
+#include "sprite_renderer_component.hpp"
 
 #include <GL/glew.h>
 

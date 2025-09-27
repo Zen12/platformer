@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../entity.hpp"
-#include "transform.hpp"
+#include "../../renderer/transform/transform_component.hpp"
 #include "../../ui/rect_transform/rect_transform_component.hpp"
 #include "../../camera/camera_component.hpp"
 

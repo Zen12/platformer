@@ -5,7 +5,7 @@
 #include "mesh_renderer.hpp"
 #include "../../render/material.hpp"
 #include "../../physics/physics_world.hpp"
-#include "../transforms/transform.hpp"
+#include "../../renderer/transform/transform_component.hpp"
 
 
 class Light2dSettings {

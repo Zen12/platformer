@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../entity.hpp"
+#include "../../components/entity.hpp"
 #include "../../asset/loaders/asset_loader.hpp"
 #include "../../render/mesh.hpp"
 #include "../../render/material.hpp"
-#include "../transforms/transform.hpp"
+#include "../transform/transform_component.hpp"
 
 class SpriteRenderer : public Component
 {

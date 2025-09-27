@@ -41,39 +41,6 @@ public:
 };
 
 
-class TransformFactory final : public ComponentFactory<Transform, TransformComponentSerialization> {
-    protected:
-    void FillComponent(const std::weak_ptr<Transform> &component, const TransformComponentSerialization &serialization) override {
-        if (const auto transform = component.lock()) {
-            transform->SetPosition(serialization.position);
-            transform->SetEulerRotation(serialization.rotation);
-            transform->SetScale(serialization.scale);
-        }
-
-    }
-};
-
-
-
-class SpriteRendererFactory final : public ComponentFactory<SpriteRenderer, SpriteRenderComponentSerialization> {
-protected:
-    void FillComponent(const std::weak_ptr<SpriteRenderer> &component, const SpriteRenderComponentSerialization &serialization) override {
-
-        if (const auto scene = _scene.lock()) {
-            if (const auto comp = component.lock()) {
-
-                const auto material = scene->GetMaterial(serialization.MaterialGuid);
-                const auto sprite = scene->GetSprite(serialization.SpriteGuid);
-
-                comp->SetMaterial(material);
-                comp->SetSprite(sprite);
-
-                scene->GetRenderPipeline().lock()->AddRenderer(component);
-            }
-        }
-    }
-};
-
 
 class SpineRendererFactory final : public ComponentFactory<SpineRenderer, SpineRenderComponentSerialization> {
 protected:
