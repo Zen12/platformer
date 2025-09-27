@@ -2,7 +2,7 @@
 
 #include "../interactable.hpp"
 #include "../../components/entity.hpp"
-#include "../../components/transforms/rect_transform.hpp"
+#include "../rect_transform/rect_transform_component.hpp"
 
 #include <functional>
 #include <vector>

@@ -2,7 +2,7 @@
 
 #include "../entity.hpp"
 #include "transform.hpp"
-#include "rect_transform.hpp"
+#include "../../ui/rect_transform/rect_transform_component.hpp"
 #include "../../camera/camera_component.hpp"
 
 

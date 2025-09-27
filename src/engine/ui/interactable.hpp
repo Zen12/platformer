@@ -1,7 +1,7 @@
 #pragma once
 #include "../components/entity.hpp"
 #include "raycast_system.hpp"
-#include "../components/transforms/rect_transform.hpp"
+#include "rect_transform/rect_transform_component.hpp"
 
 
 struct UIInteractableState {

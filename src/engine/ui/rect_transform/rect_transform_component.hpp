@@ -1,13 +1,12 @@
-
 #pragma once
 
-#include "transform.hpp"
+#include "../../components/transforms/transform.hpp"
+#include "rect_transform_layout_options.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "layout_options.hpp"
 #include <iostream>
 #include <memory>
 

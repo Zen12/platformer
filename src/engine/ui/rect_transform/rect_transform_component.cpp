@@ -1,6 +1,4 @@
-
-
-#include "rect_transform.hpp"
+#include "rect_transform_component.hpp"
 
 glm::mat4 RectTransform::GetModel() const {
     const auto model = Transform::GetModel();

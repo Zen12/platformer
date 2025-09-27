@@ -3,7 +3,7 @@
 #include "../../render/material.hpp"
 #include "../../asset/loaders/asset_loader.hpp"
 #include "../../components/entity.hpp"
-#include "../../components/transforms/rect_transform.hpp"
+#include "../rect_transform/rect_transform_component.hpp"
 
 
 #include <glm/glm.hpp>

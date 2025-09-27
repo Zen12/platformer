@@ -15,7 +15,7 @@
 #include "components/entity.hpp"
 #include "components/renderering/sprite_renderer.hpp"
 #include "components/transforms/transform.hpp"
-#include "components/transforms/rect_transform.hpp"
+#include "ui/rect_transform/rect_transform_component.hpp"
 #include "components/transforms/rect_transform_root.hpp"
 #include "camera/camera_component.hpp"
 #include "ui/text/text_renderer_component.hpp"

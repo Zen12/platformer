@@ -3,7 +3,7 @@
 #include "../../render/mesh.hpp"
 #include "../../render/material.hpp"
 #include "../../components/entity.hpp"
-#include "../../components/transforms/rect_transform.hpp"
+#include "../rect_transform/rect_transform_component.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

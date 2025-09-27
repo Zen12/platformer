@@ -1,12 +1,10 @@
-
 #pragma once
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <memory>
-#include <glm/glm.hpp>
-#include <iostream>
+#include <vector>
 
 enum AlignmentLayout
 {
