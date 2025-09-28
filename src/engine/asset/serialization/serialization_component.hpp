@@ -21,36 +21,13 @@ struct EntitySerialization
 };
 
 
-struct Box2dColliderSerialization final : public ComponentSerialization
-{
-    glm::vec3 scale{};
-    glm::vec3 translate{};
-};
 
 
 
-struct ParticleEmitterSerialization final : public ComponentSerialization {
-    float duration;
-    float startScale;
-    float endScale;
-    size_t count;
-    glm::vec3 startVelocity;
-    glm::vec3 endVelocity;
-    glm::vec4 startColor;
-    glm::vec4 endColor;
-    std::string materialGuid;
-};
-
-struct SpineColliderSerialization final : public ComponentSerialization {
-
-};
 
 
 
-struct Rigidbody2dSerialization final : public ComponentSerialization
-{
-    bool isDynamic = false;
-};
+
 
 
 
@@ -64,29 +41,9 @@ struct ShaderComponentSerialization final : public ComponentSerialization
     {
     }
 };
-struct SpineRenderComponentSerialization final : public ComponentSerialization
-{
-    std::string SpineGuid;
-};
 
 
-struct MeshRendererComponentSerialization final : public ComponentSerialization
-{
-    std::string MaterialGuid;
-};
 
-struct Light2dComponentSerialization final : public ComponentSerialization
-{
-    std::string CenterTransform;
-    glm::vec3 Color;
-    glm::vec3 Offset;
-
-    float Radius = 20;
-    int Segments = 500;
-
-    float MaxAngle = 360;
-    float StartAngle = 0;
-};
 
 
 struct SpriteComponentSerialization final : public ComponentSerialization
@@ -111,11 +68,6 @@ struct MaterialComponentSerialization final : public ComponentSerialization
 
 
 
-struct RectTransformFollowerSerialization final : public ComponentSerialization {
-    bool UseCreator;
-    std::string Target;
-    glm::vec2 Offset{};
-};
 
 
 

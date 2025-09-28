@@ -1,5 +1,5 @@
 #pragma once
-#include "../entity.hpp"
+#include "../../components/entity.hpp"
 
 
 class Rigidbody2dComponent final : public Component {

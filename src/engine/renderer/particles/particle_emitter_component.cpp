@@ -1,4 +1,4 @@
-#include "particle_emitter.hpp"
+#include "particle_emitter_component.hpp"
 
 void ParticleSystem::Update(const float &deltaTime) {
     _duration += deltaTime;

@@ -19,8 +19,8 @@
 #include "components/transforms/rect_transform_root.hpp"
 #include "camera/camera_component.hpp"
 #include "ui/text/text_renderer_component.hpp"
-#include "components/physics/box_collider2d_component.hpp"
-#include "components/physics/rigidbody2d_component.hpp"
+#include "physics/collider/box_collider2d_component.hpp"
+#include "physics/rigidbody/rigidbody2d_component.hpp"
 
 
 #include "render_pipeline/render_pipeline.hpp"

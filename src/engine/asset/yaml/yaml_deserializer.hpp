@@ -25,6 +25,14 @@
 #include "../../ui/rect_transform/rect_transform_component_serialization_yaml.hpp"
 #include "../../renderer/transform/transform_component_serialization_yaml.hpp"
 #include "../../renderer/sprite/sprite_renderer_component_serialization_yaml.hpp"
+#include "../../renderer/spine/spine_renderer_component_serialization_yaml.hpp"
+#include "../../physics/collider/box_collider2d_component_serialization_yaml.hpp"
+#include "../../physics/rigidbody/rigidbody2d_component_serialization_yaml.hpp"
+#include "../../renderer/light_2d/light_2d_component_serialization_yaml.hpp"
+#include "../../renderer/mesh/mesh_renderer_component_serialization_yaml.hpp"
+#include "../../renderer/particles/particle_emitter_component_serialization_yaml.hpp"
+#include "../../physics/spine_collider/spine_collider_component_serialization_yaml.hpp"
+#include "../../game/rect_transform_follower/rect_transform_follower_component_serialization_yaml.hpp"
 #include "../../camera/camera_component_serialization.hpp"
 #include "../../camera/camera_component_serialization_yaml.hpp"
 #include "../../game/destroy_with_creator/destroy_with_creator_component_serialization.hpp"
@@ -99,42 +107,8 @@ namespace YAML
 
 
 
-    template <>
-    struct convert<SpineRenderComponentSerialization>
-    {
-        static bool decode(const Node &node, SpineRenderComponentSerialization &rhs)
-        {
-            rhs.SpineGuid = node["spine_data"].as<std::string>();
-            return true;
-        }
-    };
 
-    template <>
-    struct convert<MeshRendererComponentSerialization>
-    {
-        static bool decode(const Node &node, MeshRendererComponentSerialization &rhs)
-        {
-            rhs.MaterialGuid = node["material"].as<std::string>();
-            return true;
-        }
-    };
 
-    template <>
-    struct convert<Light2dComponentSerialization>
-    {
-        static bool decode(const Node &node, Light2dComponentSerialization &rhs) {
-
-            rhs.CenterTransform = node["center"].as<std::string>();
-            rhs.Offset = node["offset"].as<glm::vec3>();
-            rhs.Color = node["color"].as<glm::vec3>();
-            rhs.Radius = node["radius"].as<float>();
-            rhs.Segments = node["segments"].as<int>();
-            rhs.MaxAngle = node["max_angle"].as<float>();
-            rhs.StartAngle = node["start_angle"].as<float>();
-
-            return true;
-        }
-    };
 
 
 
@@ -150,54 +124,12 @@ namespace YAML
         }
     };
 
-    template <>
-    struct convert<Box2dColliderSerialization>
-    {
-        static bool decode(const Node &node, Box2dColliderSerialization &rhs) {
-            rhs.scale = node["size"].as<glm::vec3>();
-            if (node["translate"].IsDefined())
-                rhs.translate = node["translate"].as<glm::vec3>();
-
-            return true;
-        }
-    };
 
 
 
 
-    template <>
-    struct convert<ParticleEmitterSerialization>
-    {
-        static bool decode(const Node &node, ParticleEmitterSerialization &rhs) {
-            rhs.count = node["count"].as<size_t>();
-            rhs.startVelocity = node["start_velocity"].as<glm::vec3>();
-            rhs.endVelocity = node["end_velocity"].as<glm::vec3>();
-            rhs.duration = node["duration"].as<float>();
-            rhs.materialGuid = node["material_guid"].as<std::string>();
-            rhs.startScale = node["start_scale"].as<float>();
-            rhs.endScale = node["end_scale"].as<float>();
-            rhs.startColor = node["start_color"].as<glm::vec4>();
-            rhs.endColor = node["end_color"].as<glm::vec4>();
-            return true;
-        }
-    };
 
-    template <>
-    struct convert<SpineColliderSerialization>
-    {
-        static bool decode([[maybe_unused]] const Node &node, [[maybe_unused]] SpineColliderSerialization &rhs) {
-            return true;
-        }
-    };
 
-    template <>
-    struct convert<Rigidbody2dSerialization>
-    {
-        static bool decode(const Node &node, Rigidbody2dSerialization &rhs) {
-            rhs.isDynamic = node["isDynamic"].as<bool>();
-            return true;
-        }
-    };
 
     template <>
     struct convert<EntitySerialization>
@@ -373,18 +305,6 @@ namespace YAML
     };
 
 
-    template <>
-    struct convert<RectTransformFollowerSerialization>
-    {
-        static bool decode(const Node &node, RectTransformFollowerSerialization &rhs)
-        {
-            rhs.UseCreator = node["use_creator"].as<bool>();
-            rhs.Offset = node["offset"].as<glm::vec2>();
-            if (node["target"])
-                rhs.Target = node["target"].as<std::string>();
-            return true;
-        }
-    };
 
 
 

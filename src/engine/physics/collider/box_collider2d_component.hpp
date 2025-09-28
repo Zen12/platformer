@@ -1,5 +1,5 @@
 #pragma once
-#include "rigidbody2d_component.hpp"
+#include "../rigidbody/rigidbody2d_component.hpp"
 
 
 class BoxCollider2DComponent final : public Component
@@ -17,4 +17,3 @@ public:
     {
     }
 };
-

@@ -4,7 +4,7 @@
 #include "../../renderer/transform/transform_component.hpp"
 #include "../../system/input_system.hpp"
 #include "../../physics/physics_world.hpp"
-#include "../../components/renderering/spine_renderer.hpp"
+#include "../../renderer/spine/spine_renderer_component.hpp"
 #include "../../render_pipeline/render_pipeline.hpp"
 #include <glm/gtx/rotate_vector.hpp>
 

@@ -1,4 +1,4 @@
-#include "light_2d.hpp"
+#include "light_2d_component.hpp"
 
 #ifndef NDEBUG
 #include "../../debug/debug.hpp"

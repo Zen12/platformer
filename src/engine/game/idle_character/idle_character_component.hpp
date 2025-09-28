@@ -1,6 +1,6 @@
 #pragma once
 #include "../../components/entity.hpp"
-#include "../../components/renderering/spine_renderer.hpp"
+#include "../../renderer/spine/spine_renderer_component.hpp"
 
 
 class IdleCharacter final : public Component {

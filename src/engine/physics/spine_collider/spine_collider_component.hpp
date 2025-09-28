@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../renderering/spine_renderer.hpp"
-#include "../../physics/physics_world.hpp"
+#include "../../renderer/spine/spine_renderer_component.hpp"
+#include "../physics_world.hpp"
 
 
 class SpineColliderComponent final : public Component {

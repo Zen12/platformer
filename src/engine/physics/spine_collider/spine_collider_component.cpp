@@ -1,4 +1,4 @@
-#include "spine_collider.hpp"
+#include "spine_collider_component.hpp"
 
 #define DEBUG_ENGINE_SPINE_COLLIDER_PROFILE 0
 

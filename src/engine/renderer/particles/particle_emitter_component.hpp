@@ -1,12 +1,12 @@
 #pragma once
-#include "../entity.hpp"
+#include "../../components/entity.hpp"
 #include "glm/vec3.hpp"
 #include "../../render/mesh.hpp"
 #include "../../render/material.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/random.hpp>
 #include "../../utlis/engine_math.hpp"
-#include "../../renderer/transform/transform_component.hpp"
+#include "../transform/transform_component.hpp"
 
 struct ParticleData {
 public:

@@ -1,11 +1,11 @@
 #pragma once
 #include <utility>
 
-#include "../entity.hpp"
-#include "mesh_renderer.hpp"
+#include "../../components/entity.hpp"
+#include "../mesh/mesh_renderer_component.hpp"
 #include "../../render/material.hpp"
 #include "../../physics/physics_world.hpp"
-#include "../../renderer/transform/transform_component.hpp"
+#include "../transform/transform_component.hpp"
 
 
 class Light2dSettings {

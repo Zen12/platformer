@@ -1,4 +1,4 @@
-#include "spine_renderer.hpp"
+#include "spine_renderer_component.hpp"
 
 #include "../../debug/debug.hpp"
 #define DEBUG_SPINE_RENDERER 0

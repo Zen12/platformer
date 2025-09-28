@@ -3,8 +3,8 @@
 #include <map>
 #include <box2d/box2d.h>
 #include "../components/entity.hpp"
-#include "../components/physics/rigidbody2d_component.hpp"
-#include "../components/physics/box_collider2d_component.hpp"
+#include "rigidbody/rigidbody2d_component.hpp"
+#include "collider/box_collider2d_component.hpp"
 #include "glm/vec2.hpp"
 #include "glm/vec3.hpp"
 
