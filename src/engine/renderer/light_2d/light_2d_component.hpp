@@ -3,7 +3,7 @@
 
 #include "../../components/entity.hpp"
 #include "../mesh/mesh_renderer_component.hpp"
-#include "../../render/material.hpp"
+#include "../material.hpp"
 #include "../../physics/physics_world.hpp"
 #include "../transform/transform_component.hpp"
 

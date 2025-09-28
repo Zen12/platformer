@@ -5,7 +5,7 @@
 #include "../../system/input_system.hpp"
 #include "../../physics/physics_world.hpp"
 #include "../../renderer/spine/spine_renderer_component.hpp"
-#include "../../render_pipeline/render_pipeline.hpp"
+#include "../../renderer/render_pipeline.hpp"
 #include <glm/gtx/rotate_vector.hpp>
 
 class CharacterController final : public Component {

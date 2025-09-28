@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../render/mesh.hpp"
-#include "../../render/material.hpp"
+#include "../../renderer/mesh/mesh.hpp"
+#include "../../renderer/material.hpp"
 #include "../../components/entity.hpp"
 #include "../rect_transform/rect_transform_component.hpp"
 

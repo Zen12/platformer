@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../asset/serialization/serialization_component.hpp"
+#include "../../asset/serialization/serialization_component.hpp"
 
 struct CameraComponentSerialization final : public ComponentSerialization
 {

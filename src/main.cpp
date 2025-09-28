@@ -26,6 +26,11 @@ void RunEngineWebGl() {
         }
     }
 }
+
+void LoadEngineWebGL() {
+    emscripten_set_main_loop(RunEngineWebGl, 0, true);
+}
+
 #endif
 
 bool RunEngineDesktop() {
@@ -43,19 +48,18 @@ bool RunEngineDesktop() {
     return engine.IsReloadRequested();
 }
 
-void LoadEngine() {
-#ifndef __EMSCRIPTEN__
+void LoadEngineDesktop() {
     const bool reload = RunEngineDesktop();
 
     if (reload) {
-        LoadEngine();
+        LoadEngineDesktop();
     }
-#else
-    emscripten_set_main_loop(RunEngineWebGl, 0, true);
-#endif
-
 }
 
 int main() {
-    LoadEngine();
+#ifdef __EMSCRIPTEN__
+    LoadEngineWebGL();
+#else
+    LoadEngineDesktop();
+#endif
 }

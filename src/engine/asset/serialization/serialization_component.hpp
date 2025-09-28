@@ -20,17 +20,6 @@ struct EntitySerialization
     std::vector<std::shared_ptr<ComponentSerialization>> Components;
 };
 
-
-
-
-
-
-
-
-
-
-
-
 struct ShaderComponentSerialization final : public ComponentSerialization
 {
     std::string vertexSourceCode;
@@ -41,10 +30,6 @@ struct ShaderComponentSerialization final : public ComponentSerialization
     {
     }
 };
-
-
-
-
 
 struct SpriteComponentSerialization final : public ComponentSerialization
 {
@@ -60,18 +45,4 @@ struct MaterialComponentSerialization final : public ComponentSerialization
     {
     }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

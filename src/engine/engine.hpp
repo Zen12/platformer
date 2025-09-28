@@ -6,7 +6,7 @@
 #include <box2d/box2d.h>
 #include <GLFW/glfw3.h>
 
-#include "render/mesh.hpp"
+#include "renderer/mesh/mesh.hpp"
 #include "system/input_system.hpp"
 #include "system/window.hpp"
 #include "asset/loaders/asset_loader.hpp"
@@ -17,13 +17,13 @@
 #include "renderer/transform/transform_component.hpp"
 #include "ui/rect_transform/rect_transform_component.hpp"
 #include "components/transforms/rect_transform_root.hpp"
-#include "camera/camera_component.hpp"
+#include "renderer/camera/camera_component.hpp"
 #include "ui/text/text_renderer_component.hpp"
 #include "physics/collider/box_collider2d_component.hpp"
 #include "physics/rigidbody/rigidbody2d_component.hpp"
 
 
-#include "render_pipeline/render_pipeline.hpp"
+#include "renderer/render_pipeline.hpp"
 #include "system/time.hpp"
 #include "asset/asset_manager.hpp"
 #include "scene/scene_manager.hpp"

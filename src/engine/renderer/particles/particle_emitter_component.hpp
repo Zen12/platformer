@@ -1,8 +1,8 @@
 #pragma once
 #include "../../components/entity.hpp"
 #include "glm/vec3.hpp"
-#include "../../render/mesh.hpp"
-#include "../../render/material.hpp"
+#include "../mesh/mesh.hpp"
+#include "../material.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/random.hpp>
 #include "../../utlis/engine_math.hpp"

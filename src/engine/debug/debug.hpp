@@ -5,7 +5,7 @@
 #include <iomanip>
 #include <string>
 #include <utility>
-#include "../render/line.hpp"
+#include "../renderer/line.hpp"
 
 #ifndef NDEBUG
 #define PROFILE_SCOPE(name) ScopedTimer timer(name)

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../render/camera.hpp"
-#include "../components/entity.hpp"
-#include "../renderer/transform/transform_component.hpp"
+#include "camera.hpp"
+#include "../../components/entity.hpp"
+#include "../transform/transform_component.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

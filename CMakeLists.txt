@@ -55,11 +55,9 @@ if (NOT PLATFORM_WEB)
     endif()
 endif()
 
-# --- Link dependencies ---
 if (PLATFORM_WEB)
     file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/output)
 
-    # --- Output directory & naming ---
     set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
             OUTPUT_NAME "index"
             SUFFIX ".html"
@@ -73,18 +71,15 @@ if (PLATFORM_WEB)
     target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR} ${SPINE_CPP_SOURCES})
 
 else()
-    # --- Native linking ---
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw GLM::GLM freetype yaml-cpp box2d spine-cpp)
     target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR} ${SPINE_CPP_SOURCES})
     set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output"
     )
 
-    # Copy assets for native builds
     file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/output/assets")
     file(COPY "${CMAKE_SOURCE_DIR}/assets" DESTINATION "${CMAKE_BINARY_DIR}/output")
 
-    # --- Run target ---
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_custom_target(run
                 COMMAND "${CMAKE_BINARY_DIR}/output/${CMAKE_PROJECT_NAME}" "${CMAKE_CURRENT_SOURCE_DIR}/assets"

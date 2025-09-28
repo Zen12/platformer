@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../render/material.hpp"
+#include "../../renderer/material.hpp"
 #include "../../asset/loaders/asset_loader.hpp"
 #include "../../components/entity.hpp"
 #include "../rect_transform/rect_transform_component.hpp"

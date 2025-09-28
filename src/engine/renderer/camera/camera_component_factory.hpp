@@ -1,9 +1,9 @@
 #pragma once
 
 #include "camera_component_serialization.hpp"
-#include "../asset/factories/component_factory.hpp"
+#include "../../asset/factories/component_factory.hpp"
 #include "camera_component.hpp"
-#include "../render/camera.hpp"
+#include "camera.hpp"
 
 class CameraComponentFactory final : public ComponentFactory<CameraComponent, CameraComponentSerialization> {
 protected:

@@ -1,6 +1,6 @@
 #include "debug.hpp"
 
-#include "../render/material.hpp"
+#include "../renderer/material.hpp"
 
 
 static std::vector<std::shared_ptr<Line>> g_lines{};

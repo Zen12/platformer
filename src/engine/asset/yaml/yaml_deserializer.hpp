@@ -8,8 +8,8 @@
 
 #include "../serialization/serialization_component.hpp"
 #include "../serialization/serialization_asset.hpp"
-#include "../../gameplay/health_bar/health_bar_component_serialization.hpp"
-#include "../../gameplay/health_bar/health_bar_component_serialization_yaml.hpp"
+#include "../../game/health_bar/health_bar_component_serialization.hpp"
+#include "../../game/health_bar/health_bar_component_serialization_yaml.hpp"
 #include "../../ui/text/text_renderer_component_serialization.hpp"
 #include "../../ui/text/text_renderer_component_serialization_yaml.hpp"
 #include "../../ui/image/image_renderer_component_serialization.hpp"
@@ -33,8 +33,8 @@
 #include "../../renderer/particles/particle_emitter_component_serialization_yaml.hpp"
 #include "../../physics/spine_collider/spine_collider_component_serialization_yaml.hpp"
 #include "../../game/rect_transform_follower/rect_transform_follower_component_serialization_yaml.hpp"
-#include "../../camera/camera_component_serialization.hpp"
-#include "../../camera/camera_component_serialization_yaml.hpp"
+#include "../../renderer/camera/camera_component_serialization.hpp"
+#include "../../renderer/camera/camera_component_serialization_yaml.hpp"
 #include "../../game/destroy_with_creator/destroy_with_creator_component_serialization.hpp"
 #include "../../game/destroy_with_creator/destroy_with_creator_component_serialization_yaml.hpp"
 #include "../../game/idle_character/idle_character_component_serialization.hpp"
@@ -99,22 +99,6 @@ namespace YAML
         }
     };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     template <>
     struct convert<SpriteComponentSerialization>
     {
@@ -123,12 +107,6 @@ namespace YAML
             return true;
         }
     };
-
-
-
-
-
-
 
 
     template <>
@@ -285,31 +263,5 @@ namespace YAML
             return true;
         }
     };
-
-    template <>
-    struct convert<SpineAsset>
-    {
-        static bool decode(const Node &node, SpineAsset &rhs)
-        {
-            rhs.skeleton = node["skeleton"].as<std::string>();
-            rhs.atlas = node["atlas"].as<std::string>();
-            rhs.image = node["image"].as<std::string>();
-            rhs.json = node["json"].as<std::string>();
-            rhs.spineScale = node["spine_scale"].as<float>();
-            rhs.moveAnimationName = node["move_animation_name"].as<std::string>();
-            rhs.jumpAnimationName = node["jump_animation_name"].as<std::string>();
-            rhs.hitAnimationName = node["hit_animation_name"].as<std::string>();
-            rhs.idleAnimationName = node["idle_animation_name"].as<std::string>();
-            return true;
-        }
-    };
-
-
-
-
-
-
-
-
 
 } // namespace YAML

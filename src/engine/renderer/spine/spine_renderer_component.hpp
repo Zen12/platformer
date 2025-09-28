@@ -2,8 +2,8 @@
 
 #include "../../components/entity.hpp"
 #include "../mesh/mesh_renderer_component.hpp"
-#include "../../render/material.hpp"
-#include "../../render/spine/spine_data.hpp"
+#include "../material.hpp"
+#include "spine_data.hpp"
 
 
 
