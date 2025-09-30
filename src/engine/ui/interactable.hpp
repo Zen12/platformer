@@ -1,5 +1,5 @@
 #pragma once
-#include "../components/entity.hpp"
+#include "../entity/entity.hpp"
 #include "raycast_system.hpp"
 #include "rect_transform/rect_transform_component.hpp"
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "camera_component_serialization.hpp"
-#include "../../asset/factories/component_factory.hpp"
+#include "../../entity/component_factory.hpp"
 #include "camera_component.hpp"
 #include "camera.hpp"
 

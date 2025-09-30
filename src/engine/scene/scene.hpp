@@ -1,12 +1,13 @@
 #pragma once
 #include <unordered_map>
 #include <vector>
-#include "../components/entity.hpp"
+#include "../entity/entity.hpp"
+#include "../entity/entity_serialization.hpp"
 #include "../ui/show_fps/show_fps_component.hpp"
 
-#include "../components/transforms/rect_transform_root.hpp"
-#include "../renderer/shader.hpp"
-#include "../renderer/material.hpp"
+#include "../renderer/transform/rect_transform_root.hpp"
+#include "../renderer/material/shader.hpp"
+#include "../renderer/material/material.hpp"
 #include "../renderer/spine/spine_data.hpp"
 #include "../renderer/render_pipeline.hpp"
 #include "../asset/asset_manager.hpp"

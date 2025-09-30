@@ -1,5 +1,5 @@
 #pragma once
-#include "../../components/entity.hpp"
+#include "../../entity/entity.hpp"
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 

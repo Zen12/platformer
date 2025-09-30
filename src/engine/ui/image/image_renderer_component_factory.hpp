@@ -2,7 +2,7 @@
 
 #include "image_renderer_component.hpp"
 #include "image_renderer_component_serialization.hpp"
-#include "../../asset/factories/component_factory.hpp"
+#include "../../entity/component_factory.hpp"
 
 class UiImageFactory final : public ComponentFactory<UiImageRendererComponent, UiImageComponentSerialization> {
 protected:

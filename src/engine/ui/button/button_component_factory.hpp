@@ -2,7 +2,7 @@
 
 #include "button_component.hpp"
 #include "button_component_serialization.hpp"
-#include "../../asset/factories/component_factory.hpp"
+#include "../../entity/component_factory.hpp"
 
 class UiButtonComponentFactory final : public ComponentFactory<UiButtonComponent, UiButtonComponentSerialization> {
 protected:

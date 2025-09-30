@@ -1,5 +1,5 @@
 #pragma once
-#include "../../asset/serialization/serialization_component.hpp"
+#include "../../entity/component_serialization.hpp"
 #include <glm/vec3.hpp>
 
 struct Light2dComponentSerialization final : public ComponentSerialization

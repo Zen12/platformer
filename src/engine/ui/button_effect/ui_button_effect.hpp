@@ -2,7 +2,7 @@
 
 #include "../button/button_component.hpp"
 #include "../image/image_renderer_component.hpp"
-#include "../../components/entity.hpp"
+#include "../../entity/entity.hpp"
 
 #include <glm/glm.hpp>
 

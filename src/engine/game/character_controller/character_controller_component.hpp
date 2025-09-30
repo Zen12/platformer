@@ -1,6 +1,6 @@
 #pragma once
 #include "character_controller_settings.hpp"
-#include "../../components/entity.hpp"
+#include "../../entity/entity.hpp"
 #include "../../renderer/transform/transform_component.hpp"
 #include "../../system/input_system.hpp"
 #include "../../physics/physics_world.hpp"

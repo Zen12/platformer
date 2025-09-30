@@ -2,7 +2,7 @@
 
 #include "team_component.hpp"
 #include "team_component_serialization.hpp"
-#include "../../asset/factories/component_factory.hpp"
+#include "../../entity/component_factory.hpp"
 #include "../game_state/game_state_component.hpp"
 
 class TeamComponentFactory final : public ComponentFactory<TeamComponent, TeamSerialization> {

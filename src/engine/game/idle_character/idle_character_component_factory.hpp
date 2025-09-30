@@ -2,7 +2,7 @@
 
 #include "idle_character_component.hpp"
 #include "idle_character_component_serialization.hpp"
-#include "../../asset/factories/component_factory.hpp"
+#include "../../entity/component_factory.hpp"
 
 class IdleCharacterComponentFactor final : public ComponentFactory<IdleCharacter, IdleCharacterSerialization> {
 protected:

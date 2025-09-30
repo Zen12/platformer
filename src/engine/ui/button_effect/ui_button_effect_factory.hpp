@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ui_button_effect_serialization.hpp"
-#include "../../asset/factories/component_factory.hpp"
+#include "../../entity/component_factory.hpp"
 #include "ui_button_effect.hpp"
 #include "../button/button_component.hpp"
 #include "../image/image_renderer_component.hpp"

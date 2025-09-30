@@ -3,7 +3,7 @@
 
 #include "../team/team_repository.hpp"
 #include "../../scene/scene.hpp"
-#include "../../components/entity.hpp"
+#include "../../entity/entity.hpp"
 
 
 struct GameStateViewModel {

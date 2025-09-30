@@ -1,5 +1,5 @@
 #pragma once
-#include "../../asset/factories/component_factory.hpp"
+#include "../../entity/component_factory.hpp"
 #include "box_collider2d_component.hpp"
 #include "box_collider2d_component_serialization.hpp"
 

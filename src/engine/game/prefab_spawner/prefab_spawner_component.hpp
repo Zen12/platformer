@@ -1,7 +1,7 @@
 #pragma once
 #include <utility>
 
-#include "../../components/entity.hpp"
+#include "../../entity/entity.hpp"
 
 
 class PrefabSpawner final : public Component {

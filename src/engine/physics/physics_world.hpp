@@ -2,7 +2,7 @@
 #include <iostream>
 #include <map>
 #include <box2d/box2d.h>
-#include "../components/entity.hpp"
+#include "../entity/entity.hpp"
 #include "rigidbody/rigidbody2d_component.hpp"
 #include "collider/box_collider2d_component.hpp"
 #include "glm/vec2.hpp"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../asset/serialization/serialization_component.hpp"
+#include "../../entity/component_serialization.hpp"
 
 struct TeamSerialization final : public ComponentSerialization {
     int Team;

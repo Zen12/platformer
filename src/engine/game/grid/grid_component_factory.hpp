@@ -2,7 +2,7 @@
 
 #include "grid_component.hpp"
 #include "grid_component_serialization.hpp"
-#include "../../asset/factories/component_factory.hpp"
+#include "../../entity/component_factory.hpp"
 
 class GridFactory final : public ComponentFactory<GridComponent, GridSerialization> {
 protected:

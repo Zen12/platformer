@@ -2,7 +2,7 @@
 
 #include "grid_prefab_spawner_component.hpp"
 #include "grid_prefab_spawner_component_serialization.hpp"
-#include "../../asset/factories/component_factory.hpp"
+#include "../../entity/component_factory.hpp"
 
 class GridPrefabSpawnerFactor final : public ComponentFactory<GridPrefabSpawner, GridPrefabSpawnerSerialization> {
 protected:

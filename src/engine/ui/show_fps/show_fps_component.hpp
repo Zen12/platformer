@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../components/entity.hpp"
+#include "../../entity/entity.hpp"
 #include "../text/text_renderer_component.hpp"
 
 #include <sstream>

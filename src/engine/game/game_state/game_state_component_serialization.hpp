@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../asset/serialization/serialization_component.hpp"
+#include "../../entity/component_serialization.hpp"
 
 struct GameStateData final : public ComponentSerialization {
     std::string WinScene;

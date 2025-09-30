@@ -2,7 +2,7 @@
 
 #include "game_state_component.hpp"
 #include "game_state_component_serialization.hpp"
-#include "../../asset/factories/component_factory.hpp"
+#include "../../entity/component_factory.hpp"
 
 class GameStateFactory final : public ComponentFactory<GameStateController, GameStateData> {
 protected:

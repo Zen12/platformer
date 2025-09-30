@@ -1,5 +1,5 @@
 #pragma once
-#include "../../asset/factories/component_factory.hpp"
+#include "../../entity/component_factory.hpp"
 #include "particle_emitter_component.hpp"
 #include "particle_emitter_component_serialization.hpp"
 

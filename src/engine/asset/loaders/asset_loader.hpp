@@ -11,11 +11,11 @@
 
 #include <ft2build.h>
 
-#include "../serialization/serialization_asset.hpp"
-#include "../yaml/yaml_deserializer.hpp"
 #include "../../renderer/spine/spine_data.hpp"
 #include "../../renderer/spine/spine_asset.hpp"
 #include "../../renderer/spine/spine_asset_yaml.hpp"
+#include "../../project/project_asset.hpp"
+#include "../../project/project_asset_yaml.hpp"
 #include "spine/Atlas.h"
 #include "spine/Bone.h"
 #include "spine/Skeleton.h"

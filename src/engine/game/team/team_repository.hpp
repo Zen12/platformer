@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../components/entity.hpp"
+#include "../../entity/entity.hpp"
 #include "team_data.hpp"
 
 class TeamRepository {

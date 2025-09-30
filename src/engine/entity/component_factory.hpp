@@ -1,9 +1,4 @@
 #pragma once
-#include <memory>
-
-#include "../../ui/button/button_component.hpp"
-#include "../../game/game_state/game_state_component.hpp"
-#include "../../scene/scene.hpp"
 
 class BaseComponentFactory {
 public:
@@ -13,11 +8,11 @@ public:
 template<typename TComponent, typename TSerialization>
 class ComponentFactory : BaseComponentFactory {
 
-static_assert(std::is_base_of_v<ComponentSerialization, TSerialization>,
-              "TSerialization must inherit from ComponentSerialization");
+    static_assert(std::is_base_of_v<ComponentSerialization, TSerialization>,
+                  "TSerialization must inherit from ComponentSerialization");
 
-static_assert(std::is_base_of_v<Component, TComponent>,
-          "TSerialization must inherit from ComponentSerialization");
+    static_assert(std::is_base_of_v<Component, TComponent>,
+              "TSerialization must inherit from ComponentSerialization");
 
 protected:
     std::weak_ptr<Scene> _scene;
@@ -36,21 +31,3 @@ public:
         }
     }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -5,8 +5,8 @@
 #include <utility>
 #include <vector>
 #include <string>
-#include "serialization/serialization_asset.hpp"
-#include "yaml/yaml_deserializer.hpp"
+#include "meta/meta_asset.hpp"
+#include "meta/meta_asset_yaml.hpp"
 #include <fstream>
 #include <yaml-cpp/yaml.h>
 

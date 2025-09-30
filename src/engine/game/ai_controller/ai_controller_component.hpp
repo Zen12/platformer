@@ -2,7 +2,7 @@
 #include <memory>
 
 #include "../character_controller/character_controller_settings.hpp"
-#include "../../components/entity.hpp"
+#include "../../entity/entity.hpp"
 #include "../grid/grid_component.hpp"
 #include "../../renderer/transform/transform_component.hpp"
 #include "../../system/input_system.hpp"

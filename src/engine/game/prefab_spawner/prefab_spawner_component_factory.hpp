@@ -2,7 +2,7 @@
 
 #include "prefab_spawner_component.hpp"
 #include "prefab_spawner_component_serialization.hpp"
-#include "../../asset/factories/component_factory.hpp"
+#include "../../entity/component_factory.hpp"
 
 class PrefabSpawnerFactor final : public ComponentFactory<PrefabSpawner, PrefabSpawnerSerialization> {
 protected:

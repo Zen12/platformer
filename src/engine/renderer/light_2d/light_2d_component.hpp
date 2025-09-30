@@ -1,9 +1,9 @@
 #pragma once
 #include <utility>
 
-#include "../../components/entity.hpp"
+#include "../../entity/entity.hpp"
 #include "../mesh/mesh_renderer_component.hpp"
-#include "../material.hpp"
+#include "../material/material.hpp"
 #include "../../physics/physics_world.hpp"
 #include "../transform/transform_component.hpp"
 

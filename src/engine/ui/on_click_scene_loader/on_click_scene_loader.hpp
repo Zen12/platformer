@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../button/button_component.hpp"
-#include "../../components/entity.hpp"
+#include "../../entity/entity.hpp"
 #include "../../scene/scene.hpp"
 
 class OnClickSceneLoader final : public Component

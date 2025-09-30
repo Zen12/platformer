@@ -12,11 +12,11 @@
 #include "asset/loaders/asset_loader.hpp"
 #include <thread>
 
-#include "components/entity.hpp"
+#include "entity/entity.hpp"
 #include "renderer/sprite/sprite_renderer_component.hpp"
 #include "renderer/transform/transform_component.hpp"
 #include "ui/rect_transform/rect_transform_component.hpp"
-#include "components/transforms/rect_transform_root.hpp"
+#include "renderer/transform/rect_transform_root.hpp"
 #include "renderer/camera/camera_component.hpp"
 #include "ui/text/text_renderer_component.hpp"
 #include "physics/collider/box_collider2d_component.hpp"

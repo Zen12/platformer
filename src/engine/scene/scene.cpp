@@ -1,4 +1,6 @@
 #include "scene.hpp"
+#include "../renderer/material/material_asset.hpp"
+#include "../renderer/material/material_asset_yaml.hpp"
 
 std::shared_ptr<RectTransformRoot> Scene::GetRoot() const {
     return _root;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "show_fps_component_serialization.hpp"
-#include "../../asset/factories/component_factory.hpp"
+#include "../../entity/component_factory.hpp"
 #include "show_fps_component.hpp"
 #include "../text/text_renderer_component.hpp"
 

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../../renderer/mesh/mesh.hpp"
-#include "../../renderer/material.hpp"
-#include "../../components/entity.hpp"
+#include "../../renderer/material/material.hpp"
+#include "../../entity/entity.hpp"
 #include "../rect_transform/rect_transform_component.hpp"
 
 #include <glm/glm.hpp>

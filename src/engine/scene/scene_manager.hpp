@@ -1,9 +1,13 @@
 #pragma once
 
 #include "scene.hpp"
-#include "../components/transforms/rect_transform_root.hpp"
-#include "../renderer/shader.hpp"
-#include "../renderer/material.hpp"
+#include "scene_asset.hpp"
+#include "scene_asset_yaml.hpp"
+#include "../prefab/prefab_asset.hpp"
+#include "../prefab/prefab_asset_yaml.hpp"
+#include "../renderer/transform/rect_transform_root.hpp"
+#include "../renderer/material/shader.hpp"
+#include "../renderer/material/material.hpp"
 #include "../renderer/spine/spine_data.hpp"
 #include "../renderer/spine/spine_asset.hpp"
 #include "../renderer/render_pipeline.hpp"
@@ -17,7 +21,7 @@
 #include "../system/input_system.hpp"
 #include "../system/guid_generator.hpp"
 
-#include "../asset/factories/component_factory.hpp"
+#include "../entity/component_factory.hpp"
 #include "../game/health_bar/health_bar_component_factory.hpp"
 #include "../ui/text/text_renderer_component_factory.hpp"
 #include "../ui/image/image_renderer_component_factory.hpp"

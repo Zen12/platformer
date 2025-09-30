@@ -1,5 +1,5 @@
 #pragma once
-#include "../asset/serialization/serialization_component.hpp"
+#include "../entity/component_serialization.hpp"
 
 struct PathMoverComponentSerialization final : public ComponentSerialization {
     std::vector<glm::vec3> Positions;

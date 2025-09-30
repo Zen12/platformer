@@ -1,5 +1,5 @@
 #pragma once
-#include "../components/entity.hpp"
+#include "../entity/entity.hpp"
 #include "../renderer/transform/transform_component.hpp"
 
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "../../asset/factories/component_factory.hpp"
+#include "../../entity/component_factory.hpp"
 #include "transform_component.hpp"
 #include "transform_component_serialization.hpp"
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../interactable.hpp"
-#include "../../components/entity.hpp"
+#include "../../entity/entity.hpp"
 #include "../rect_transform/rect_transform_component.hpp"
 
 #include <functional>

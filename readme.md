@@ -116,7 +116,7 @@ https://andreigusan.itch.io/platformer-demo
 
 ## 0.1.1 Refactor + Optimization
 - [x] Simplified yaml
-- [ ] Reorganize factory/serializable classes
+- [x] Reorganize factory/serializable classes
 - [ ] Refactor spine loader
 - [ ] Refactor AIController and CharacterController
 
@@ -148,6 +148,6 @@ https://andreigusan.itch.io/platformer-demo
 
 ## Backlog
 - [ ] Optimization of light raycast system, the vertex approach
-- [ ] Move to c++20 to use mudules
+- [ ] Move to c++20 to use modules and reorganize into plugin system
 
 🇲🇩

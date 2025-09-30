@@ -1,5 +1,5 @@
 #pragma once
-#include "../../components/entity.hpp"
+#include "../../entity/entity.hpp"
 #include "../../ui/image/image_renderer_component.hpp"
 #include "../health/health_component.hpp"
 

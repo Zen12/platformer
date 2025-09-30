@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../components/entity.hpp"
+#include "../../entity/entity.hpp"
 #include "../../asset/loaders/asset_loader.hpp"
 #include "../mesh/mesh.hpp"
-#include "../material.hpp"
+#include "../material/material.hpp"
 #include "../transform/transform_component.hpp"
 
 class SpriteRenderer : public Component

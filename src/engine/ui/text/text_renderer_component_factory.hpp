@@ -1,8 +1,7 @@
 #pragma once
 #include "text_renderer_component.hpp"
-
-template<typename TComponent, typename TSerialization>
-class ComponentFactory;
+#include "text_renderer_component_serialization.hpp"
+#include "../../entity/component_factory.hpp"
 
 class UiTextComponentFactory final : public ComponentFactory<UiTextRendererComponent, UiTextComponentSerialization> {
 protected:
