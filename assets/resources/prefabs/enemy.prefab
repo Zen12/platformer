@@ -9,7 +9,7 @@ components:
       material: 5faecd48-398f-46db-889f-ba4199c2636f
     - type: spine_renderer
       spine_data: db5158b5-addf-4898-80d3-bfdeaf886d47
-    - type: ai_controller
+    - type: character_movement
       max_movement_speed: 2.0
       acceleration_speed: 0.8
       deceleration_speed: 1.0
@@ -17,6 +17,7 @@ components:
       jump_duration: 0.5
       jump_down_multiplier: 1.2
       air_control: 0.8
+    - type: ai_controller
       damage: 1
       ai_target_transform_tag: main-character
       path_finder_tag: path_finder

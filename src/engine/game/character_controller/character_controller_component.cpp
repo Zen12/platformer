@@ -31,184 +31,44 @@ void CharacterController::SetFaceRight(const bool &isFaceRight) const noexcept {
     }
 }
 
-void CharacterController::ResetJump() noexcept {
-    _velocity.y = 0;
-    _currentJumpDuration = _characterSettings.JumpDuration + 1;
-}
+void CharacterController::UpdateInternal(InputSystem *input, const Transform *transform) {
 
-glm::vec2 CharacterController::GetCenter() const noexcept {
-    if (const auto tr = _transform.lock()) {
-        const auto ground = tr->GetPosition();
-        return  {ground.x, ground.y + _halfCharacterSize.y};
-    }
+    if (const auto movement = _characterMovement.lock()) {
+        const auto position = transform->GetPosition();
+        const auto velocity = movement->GetVelocity();
+        glm::vec3 direction = glm::vec3(0);
 
-    return glm::vec2{0.0f, 0.0f};
-}
-
-bool CharacterController::IsHitDir(glm::vec2 position, glm::vec2 dir, glm::vec2 &hitPos) const {
-
-        if (const auto world = _world.lock()) {
-
-            const glm::vec3 pointA(position.x, position.y, 0);    // Start of ray
-            const glm::vec3 pointB(position.x + dir.x, position.y + dir.y, 0);   // End of ray
-
-            const auto result = world->RayCast( pointA, pointB, 1);
-
-            hitPos = glm::vec2(result.Point.x, result.Point.y);
-
-            return result.IsHit;
-        }
-
-        return false;
-    }
-
-bool CharacterController::IsHitUp(glm::vec2 &hitPos) const {
-    const auto center = GetCenter();
-
-    if (IsHitDir(
-                 center + glm::vec2{_halfCharacterSize.x, _fourthPartCharacterSize.y},
-                 glm::vec2{0.0f, _fourthPartCharacterSize.y}, hitPos))
-        return true;
-
-    if (IsHitDir(
-                 center + glm::vec2{-_halfCharacterSize.x, _fourthPartCharacterSize.y},
-                 glm::vec2{0.0f, _fourthPartCharacterSize.y}, hitPos))
-        return true;
-
-
-    return false;
-}
-
-bool CharacterController::IsHitLeft(glm::vec2 &hitPos) const {
-    const auto center = GetCenter();
-
-    if (IsHitDir(
-                 center + glm::vec2(-_fourthPartCharacterSize.x, -_fourthPartCharacterSize.y),
-                 glm::vec2(-_fourthPartCharacterSize.y, 0.0f), hitPos))
-        return true;
-
-    if (IsHitDir(
-                 center + glm::vec2(-_fourthPartCharacterSize.x, _fourthPartCharacterSize.y),
-                 glm::vec2(-_fourthPartCharacterSize.y, 0.0f), hitPos))
-        return true;
-
-
-    return false;
-}
-
-bool CharacterController::IsHitRight(glm::vec2 &hitPos) const {
-    const auto center = GetCenter();
-
-    if (IsHitDir(
-                 center + glm::vec2(_fourthPartCharacterSize.x, -_fourthPartCharacterSize.y),
-                 glm::vec2(_fourthPartCharacterSize.y, 0.0f), hitPos))
-        return true;
-
-    if (IsHitDir(
-                 center + glm::vec2(_fourthPartCharacterSize.x, _fourthPartCharacterSize.y),
-                 glm::vec2(_fourthPartCharacterSize.y, 0.0f), hitPos))
-        return true;
-
-    return false;
-}
-
-bool CharacterController::IsGrounded(glm::vec2 &hitPos) const {
-    const auto center = GetCenter();
-
-    if (IsHitDir(
-                 center + glm::vec2{_halfCharacterSize.x, -_fourthPartCharacterSize.y},
-                 glm::vec2{0.0f, -_fourthPartCharacterSize.y}, hitPos))
-        return true;
-
-    if (IsHitDir(
-                 center + glm::vec2{-_halfCharacterSize.x, -_fourthPartCharacterSize.y},
-                 glm::vec2{0.0f, -_fourthPartCharacterSize.y}, hitPos))
-        return true;
-
-
-    return false;
-}
-
-void CharacterController::UpdateInternal(const float &deltaTime, InputSystem *input, Transform *transform) {
-
-    auto position = transform->GetPosition();
-
-    glm::vec2 hitPos{};
-
-    if (input->IsKeyPressing(InputKey::A) || input->IsKeyPress(InputKey::A)) {
-        _velocity.x += -_characterSettings.AccelerationSpeed;
-        if (_velocity.x < -_characterSettings.MaxMovementSpeed)
-            _velocity.x = -_characterSettings.MaxMovementSpeed;
-    } else if (input->IsKeyPressing(InputKey::D) || input->IsKeyPress(InputKey::D)) {
-        _velocity.x += _characterSettings.AccelerationSpeed;
-        if (_velocity.x > _characterSettings.MaxMovementSpeed)
-            _velocity.x = _characterSettings.MaxMovementSpeed;
-    } else {
-        const float sign =  std::signbit(_velocity.x) ? -1.0f : 1.0f;
-        float absValue = std::abs(_velocity.x);
-        absValue -= _characterSettings.Deceleration;
-        if (absValue < 0) {
-            absValue = 0;
-        }
-        _velocity.x = sign * absValue;
-    }
-    if (IsGrounded(hitPos)) {
-        ResetJump();
-
-        if (const float diff = std::abs(hitPos.y - position.y); diff > 0.01) {
-            position.y = hitPos.y;
+        if (input->IsKeyPressing(InputKey::A) || input->IsKeyPress(InputKey::A)) {
+            direction = glm::vec3(-1, 0, 0);
+        } else if (input->IsKeyPressing(InputKey::D) || input->IsKeyPress(InputKey::D)) {
+            direction = glm::vec3(1, 0, 0);
         }
 
         if (input->IsKeyPress(InputKey::Space)) {
-            _currentJumpDuration = 0;
-            _velocity.y = _characterSettings.JumpHeigh / _characterSettings.JumpDuration;
+            direction.y = 1;
         }
 
-    } else {
-        _velocity.x *= _characterSettings.AirControl;
-        _currentJumpDuration += deltaTime;
+        const auto mouseWorldPosition = GetMousePosition();
+        _isRight = mouseWorldPosition.x > position.x;
+        SetFaceRight(_isRight);
 
-        if (_currentJumpDuration > _characterSettings.JumpDuration) {
-            _velocity.y = -(_characterSettings.JumpHeigh / _characterSettings.JumpDuration) * _characterSettings.JumpDownMultiplier;
+        if (velocity.y > 0.01)
+            SetAnimation(0, _renderer.lock()->GetJumpAnimation(), true, false);
+        else if (std::abs(velocity.x) > 0.01) {
+            const bool isCorrectDirection =  _isRight == velocity.x > 0.0f;
+            SetAnimation(0, _renderer.lock()->GetMoveAnimation(), true, !isCorrectDirection);
         }
-    }
+        else
+            SetAnimation(0, _renderer.lock()->GetIdleAnimation(), true, false);
 
 
-    if (IsHitLeft(hitPos)) {
-        if (_velocity.x < 0)
-            _velocity.x = 0;
-    }
-
-    if (IsHitRight(hitPos)) {
-        if (_velocity.x > 0)
-            _velocity.x = 0;
-    }
-
-    if (IsHitUp(hitPos)) {
-        if (_velocity.y > 0) {
-            ResetJump();
+        if (input->IsMousePress(MouseButton::Left)) {
+            Shoot(mouseWorldPosition);
         }
+
+        SetLookAt(mouseWorldPosition);
+        movement->SetDirection(direction);
     }
-    const auto mouseWorldPosition = GetMousePosition();
-    _isRight = mouseWorldPosition.x > position.x;
-    SetFaceRight(_isRight);
-
-    if (_velocity.y > 0.01)
-        SetAnimation(0, _renderer.lock()->GetJumpAnimation(), true, false);
-    else if (std::abs(_velocity.x) > 0.01) {
-        const bool isCorrectDirection =  _isRight == _velocity.x > 0.0f;
-        SetAnimation(0, _renderer.lock()->GetMoveAnimation(), true, !isCorrectDirection);
-    }
-    else
-        SetAnimation(0, _renderer.lock()->GetIdleAnimation(), true, false);
-
-
-    if (input->IsMousePress(MouseButton::Left)) {
-        Shoot(mouseWorldPosition);
-    }
-
-    transform->SetPosition(position + (_velocity * deltaTime));
-    SetLookAt(mouseWorldPosition);
 }
 
 CharacterController::CharacterController(const std::weak_ptr<Entity> &entity): Component(entity) {
@@ -304,12 +164,12 @@ void CharacterController::SetSpineRenderer(const std::weak_ptr<SpineRenderer> &s
     SetAnimation(1, "aim", true, false);
 }
 
-void CharacterController::Update(const float &deltaTime) {
+void CharacterController::Update([[maybe_unused]] const float &deltaTime) {
 
     if (const auto input = _inputSystem.lock())
         if (const auto transform = _transform.lock())
             if (const auto world = _world.lock())
                 if (const auto b2World = world->GetWorld().lock())
-                    UpdateInternal(deltaTime, input.get(), transform.get());
+                    UpdateInternal(input.get(), transform.get());
 
 }

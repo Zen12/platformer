@@ -12,16 +12,10 @@ protected:
                 if (const auto render = scene->GetRenderPipeline().lock()) {
                     if (const auto entity = _entity.lock()) {
                         const CharacterControllerSettings characterSettings =
-                            {
-                            serialization.MaxMovementSpeed,
-                            serialization.AccelerationSpeed,
-                            serialization.DecelerationSpeed,
-                            serialization.JumpHeigh,
-                            serialization.JumpDuration,
-                            serialization.JumpDownMultiplier,
-                            serialization.AirControl,
+                        {
                             serialization.Damage,
-                            std::string{}};
+                            std::string{}
+                        };
 
                         comp->SetCharacterControllerSettings(characterSettings);
                         comp->SetInputSystem(scene->GetInputSystem());
@@ -29,6 +23,7 @@ protected:
                         comp->SetParticles(entity->GetComponent<ParticleEmitterComponent>());
                         comp->SetRenderPipeline(render);
                         comp->SetSpineRenderer(entity->GetComponent<SpineRenderer>());
+                        comp->SetCharacterMovement(entity->GetComponent<CharacterMovementComponent>());
                     }
                 }
             }

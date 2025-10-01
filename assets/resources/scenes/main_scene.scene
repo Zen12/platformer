@@ -224,6 +224,14 @@ entities:
         material: 5faecd48-398f-46db-889f-ba4199c2636f
       - type: spine_renderer
         spine_data: 6c51e080-77d1-440c-bdc0-47169c111e20
+      - type: character_movement
+        max_movement_speed: 5.0
+        acceleration_speed: 0.8
+        deceleration_speed: 1.0
+        jump_heigh: 5
+        jump_duration: 0.5
+        jump_down_multiplier: 1.2
+        air_control: 0.8
       - type: character_controller
         max_movement_speed: 5.0
         acceleration_speed: 0.8

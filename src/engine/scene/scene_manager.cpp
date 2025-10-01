@@ -1,5 +1,8 @@
 #include "scene_manager.hpp"
 
+#include "../game/character_controller/movement/character_movement_component_factory.hpp"
+#include "../game/character_controller/movement/character_movement_component_serialization.hpp"
+
 #define DEBUG_ENGINE_SCENE_MANAGER_PROFILE 0
 
 
@@ -103,6 +106,7 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
                 Light2dComponentSerialization, Light2dFactory,
                 MeshRendererComponentSerialization, MeshRendererFactory,
                 CharacterControllerComponentSerialization, CharacterControllerFactory,
+                CharacterMovementComponentSerialization, CharacterMovementFactory,
                 AiControllerComponentSerialization, AiControllerFactory,
                 ShowFpsComponentSerialization, ShowFpsComponentFactory,
                 HealthComponentSerialization, HealthComponentFactory,

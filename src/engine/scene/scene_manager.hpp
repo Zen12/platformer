@@ -52,7 +52,7 @@
 #include "../nav_mesh/path_mover_component_factory.hpp"
 #include "../game/health/health_component_factory.hpp"
 #include "../game/character_controller/character_controller_component_factory.hpp"
-#include "../game/ai_controller/ai_controller_component_factory.hpp"
+#include "../game/character_controller/ai_controller/ai_controller_component_factory.hpp"
 
 
 
