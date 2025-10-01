@@ -117,7 +117,7 @@ https://andreigusan.itch.io/platformer-demo
 ## 0.1.1 Refactor + Optimization
 - [x] Simplified yaml
 - [x] Reorganize factory/serializable classes
-- [ ] Refactor spine loader
+- [x] Refactor asset loaders
 - [ ] Refactor AIController and CharacterController
 
 ## 0.1.2 From OOP to data oriented(DOD)

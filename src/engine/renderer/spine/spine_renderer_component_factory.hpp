@@ -2,6 +2,7 @@
 #include "../../entity/component_factory.hpp"
 #include "spine_renderer_component.hpp"
 #include "spine_renderer_component_serialization.hpp"
+#include "spine_asset_loader.hpp"
 
 class SpineRendererFactory final : public ComponentFactory<SpineRenderer, SpineRenderComponentSerialization> {
 protected:

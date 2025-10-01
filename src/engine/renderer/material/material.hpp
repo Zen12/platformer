@@ -3,6 +3,7 @@
 #include "shader.hpp"
 #include "../sprite/sprite.hpp"
 #include "../../asset/loaders/asset_loader.hpp"
+#include "../../ui/text/font.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>

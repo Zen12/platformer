@@ -46,7 +46,7 @@ public:
     template<typename T>
     [[nodiscard]] T LoadSourceByGuid(const std::string& guid) const noexcept {
         const auto path = GetPathFromGuid(guid);
-        return AssetLoader::LoadFromPath<T>(path);
+        return AssetLoader<T>::LoadFromPath(path);
     }
 
     void UnLoadAll() {
