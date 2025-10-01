@@ -196,6 +196,7 @@ entities:
         jump_duration: 0.5
         jump_down_multiplier: 1.2
         air_control: 0.8
+      - type: character_animation
       - type: character_controller
         damage: 10
       - type: rigidbody2d

@@ -22,8 +22,8 @@ protected:
                         comp->SetPhysicsWorld(scene->GetPhysicsWorld());
                         comp->SetParticles(entity->GetComponent<ParticleEmitterComponent>());
                         comp->SetRenderPipeline(render);
-                        comp->SetSpineRenderer(entity->GetComponent<SpineRenderer>());
                         comp->SetCharacterMovement(entity->GetComponent<CharacterMovementComponent>());
+                        comp->SetAnimation(entity->GetComponent<CharacterAnimationComponent>());
                     }
                 }
             }

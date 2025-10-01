@@ -1,5 +1,7 @@
 #include "scene_manager.hpp"
 
+#include "../game/character_controller/character_animation/character_animation_component_factory.hpp"
+#include "../game/character_controller/character_animation/character_animation_component_serialization.hpp"
 #include "../game/character_controller/movement/character_movement_component_factory.hpp"
 #include "../game/character_controller/movement/character_movement_component_serialization.hpp"
 
@@ -107,6 +109,7 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
                 MeshRendererComponentSerialization, MeshRendererFactory,
                 CharacterControllerComponentSerialization, CharacterControllerFactory,
                 CharacterMovementComponentSerialization, CharacterMovementFactory,
+                CharacterAnimationComponentSerialization, CharacterAnimationComponentFactory,
                 AiControllerComponentSerialization, AiControllerFactory,
                 ShowFpsComponentSerialization, ShowFpsComponentFactory,
                 HealthComponentSerialization, HealthComponentFactory,

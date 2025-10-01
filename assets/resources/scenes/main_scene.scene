@@ -232,14 +232,8 @@ entities:
         jump_duration: 0.5
         jump_down_multiplier: 1.2
         air_control: 0.8
+      - type: character_animation
       - type: character_controller
-        max_movement_speed: 5.0
-        acceleration_speed: 0.8
-        deceleration_speed: 1.0
-        jump_heigh: 5
-        jump_duration: 0.5
-        jump_down_multiplier: 1.2
-        air_control: 0.8
         damage: 10
       - type: rigidbody2d
         isDynamic: false
@@ -250,7 +244,6 @@ entities:
         prefab_id: aa0e5f29-2533-474b-8b88-07cb2adb9d11
         spawn_time: 0.0
         max_spawn: 1
-
   - components:
       - type: transform
         position: [5.0, 4.0, 0.0]

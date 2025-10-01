@@ -5,8 +5,6 @@
 #include "../../../entity/entity.hpp"
 #include "../../grid/grid_component.hpp"
 #include "../../../renderer/transform/transform_component.hpp"
-#include "../../../system/input_system.hpp"
-#include "../../../physics/physics_world.hpp"
 #include "../../../renderer/spine/spine_renderer_component.hpp"
 #include "../../../nav_mesh/astar_finder_component.hpp"
 

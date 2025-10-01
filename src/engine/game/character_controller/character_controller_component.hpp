@@ -8,6 +8,7 @@
 #include "../../renderer/render_pipeline.hpp"
 #include <glm/gtx/rotate_vector.hpp>
 
+#include "character_animation/character_animation_component.hpp"
 #include "movement/character_movement_component.hpp"
 
 class CharacterController final : public Component {
@@ -17,24 +18,13 @@ private:
     std::weak_ptr<RenderPipeline> _renderPipeline;
     std::weak_ptr<Transform> _transform;
     std::weak_ptr<PhysicsWorld> _world{};
-    std::weak_ptr<SpineRenderer> _renderer{};
     std::weak_ptr<CharacterMovementComponent> _characterMovement;
+    std::weak_ptr<CharacterAnimationComponent> _animation;
     CharacterControllerSettings _characterSettings{};
 
-    std::map<size_t,std::tuple<std::string, bool>> _animationValue;
-    bool _isRight = false;
-
-
 private:
-    void AppendAnimation(const size_t &index, const std::string &animation, const bool &isLoop) const;
 
-    void SetAnimation(const size_t &index, const std::string &animation, const bool &isLoop, const bool &isReverse);
-
-    void SetFaceRight(const bool& isFaceRight) const noexcept;
-
-    void UpdateInternal(InputSystem *input, const Transform *transform);
-
-    void SetLookAt(const glm::vec3 &lookAt) const;
+    void UpdateInternal(InputSystem *input) const;
 
     [[nodiscard]] glm::vec3 GetMousePosition() const;
 
@@ -67,7 +57,9 @@ public:
         _characterMovement = characterMovement;
     }
 
-    void SetSpineRenderer(const std::weak_ptr<SpineRenderer> &spineRenderer) noexcept;
+    void SetAnimation(const std::weak_ptr<CharacterAnimationComponent> &animation) noexcept {
+        _animation = animation;
+    }
 
     void Update(const float& deltaTime) override;
 };
