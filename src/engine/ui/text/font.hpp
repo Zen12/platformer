@@ -22,4 +22,13 @@ class Font
 {
 public:
     std::map<char, Character> Characters;
+
+    Font() = default;
+    ~Font();
+
+    Font(const Font&) = delete;
+    Font& operator=(const Font&) = delete;
+
+    Font(Font&&) noexcept;
+    Font& operator=(Font&&) noexcept;
 };

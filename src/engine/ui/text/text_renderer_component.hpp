@@ -23,6 +23,7 @@ private:
 
 public:
     explicit UiTextRendererComponent(const std::weak_ptr<Entity> &entity);
+    ~UiTextRendererComponent() override;
 
     void SetText(const std::string &text) { _text = text; }
     void SetMaterial(const std::weak_ptr<Material> &material) { _material = material; }

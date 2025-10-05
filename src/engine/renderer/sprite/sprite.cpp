@@ -15,3 +15,25 @@ void Sprite::Bind() const noexcept
 [[nodiscard]] uint32_t Sprite::GetTextureId() const noexcept {
     return _textureId;
 }
+
+Sprite::~Sprite()
+{
+    glDeleteTextures(1, &_textureId);
+}
+
+Sprite::Sprite(Sprite&& other) noexcept
+    : _textureId(other._textureId)
+{
+    other._textureId = 0;
+}
+
+Sprite& Sprite::operator=(Sprite&& other) noexcept
+{
+    if (this != &other)
+    {
+        glDeleteTextures(1, &_textureId);
+        _textureId = other._textureId;
+        other._textureId = 0;
+    }
+    return *this;
+}

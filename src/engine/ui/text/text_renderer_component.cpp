@@ -19,6 +19,12 @@ UiTextRendererComponent::UiTextRendererComponent(const std::weak_ptr<Entity> &en
     Bind();
 }
 
+UiTextRendererComponent::~UiTextRendererComponent()
+{
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+}
+
 void UiTextRendererComponent::Update([[maybe_unused]] const float& deltaTime)
 {
 }

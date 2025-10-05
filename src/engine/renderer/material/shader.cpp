@@ -93,4 +93,5 @@ Shader::~Shader()
 {
     glDeleteShader(_vertexShader);
     glDeleteShader(_fragmentShader);
+    glDeleteProgram(_shaderProgram);
 }

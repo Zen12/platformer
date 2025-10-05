@@ -98,7 +98,7 @@ private:
 
 public:
     explicit PhysicsWorld(b2Vec2 gravity)
-        : _world(new b2World(gravity))
+        : _world(std::make_shared<b2World>(gravity))
     {}
 
     void Simulate(const float& deltaTime) const;

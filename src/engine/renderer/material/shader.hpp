@@ -19,8 +19,8 @@ public:
     Shader(const std::string &vertexSource, const std::string &fragmentSource);
     ~Shader();
 
-    Shader(const Shader &other) = default;
-    Shader &operator=(const Shader &other) = default;
+    Shader(const Shader &other) = delete;
+    Shader &operator=(const Shader &other) = delete;
 
     Shader(Shader &&other) noexcept = delete;
     Shader &operator=(Shader &&other) noexcept = delete;

@@ -218,8 +218,8 @@ std::shared_ptr<Font> Scene::GetFont(const std::string &guid) {
 
     if (const auto assetManager = _assetManager.lock()) {
         if (_fonts.find(guid) == _fonts.end()) {
-            const auto fontFile = assetManager->LoadSourceByGuid<Font>(guid);
-            const auto font = std::make_shared<Font>(fontFile);
+            auto fontFile = assetManager->LoadSourceByGuid<Font>(guid);
+            const auto font = std::make_shared<Font>(std::move(fontFile));
             _fonts[guid] = font;
             return font;
         }
