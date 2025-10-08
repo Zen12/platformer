@@ -19,11 +19,11 @@ protected:
 
                         comp->SetCharacterControllerSettings(characterSettings);
                         comp->SetPhysicsWorld(scene->GetPhysicsWorld());
-                        comp->SetParticles(entity->GetComponent<ParticleEmitterComponent>());
                         comp->SetCharacterMovement(entity->GetComponent<CharacterMovementComponent>());
                         comp->SetAnimation(entity->GetComponent<CharacterAnimationComponent>());
                         comp->SetShootComponent(entity->GetComponent<ShootComponent>());
                         comp->SetInputComponent(entity->GetComponent<CharacterInputComponent>());
+                        comp->SetEffectController(entity->GetComponent<CharacterEffectController>());
                     }
                 }
             }

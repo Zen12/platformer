@@ -237,6 +237,7 @@ entities:
         bone_name: gun-tip
         raycast_distance: 1000.0
       - type: character_input
+      - type: character_effect
       - type: character_controller
         damage: 10
       - type: rigidbody2d

@@ -16,18 +16,9 @@ void CharacterController::Update([[maybe_unused]] const float &deltaTime) {
                 if (inputData.Shoot) {
                     if (const auto shoot = _shootComponent.lock()) {
                         const auto result = shoot->Shoot(inputData.LookAtPosition);
-                        if (const auto particles = _particles.lock()) {
-                            constexpr glm::vec3 axis(0.0f, 0.0f, 1.0f);
-                            constexpr float angle1 = glm::radians(30.0f);
-                            constexpr float angle2 = glm::radians(-30.0f);
 
-                            const glm::vec3 rotated1 = glm::rotate(result.Direction, angle1, axis);
-                            const glm::vec3 rotated2 = glm::rotate(result.Direction, angle2, axis);
-
-                            constexpr float speed = 1.0f;
-
-                            particles->OverrideDataVelocity(rotated1 * speed, rotated2 * speed);
-                            particles->Emit(result.StartPosition);
+                        if (const auto effects = _effectController.lock()) {
+                            effects->EmitMuzzleFlash(result);
                         }
 
                         if (result.IsHit) {
@@ -40,18 +31,8 @@ void CharacterController::Update([[maybe_unused]] const float &deltaTime) {
                                 }
 
                                 // Emit impact particles
-                                if (const auto particles = _particles.lock()) {
-                                    constexpr glm::vec3 axis(0.0f, 0.0f, 1.0f);
-                                    constexpr float angle1 = glm::radians(30.0f);
-                                    constexpr float angle2 = glm::radians(-30.0f);
-
-                                    const glm::vec3 rotated1 = glm::rotate(result.Normal, angle1, axis);
-                                    const glm::vec3 rotated2 = glm::rotate(result.Normal, angle2, axis);
-
-                                    constexpr float speed = 1.0f;
-
-                                    particles->OverrideDataVelocity(rotated1 * speed, rotated2 * speed);
-                                    particles->Emit(result.Point);
+                                if (const auto effects = _effectController.lock()) {
+                                    effects->EmitImpact(result);
                                 }
                             }
                         }

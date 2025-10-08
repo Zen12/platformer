@@ -10,16 +10,17 @@
 #include "movement/character_movement_component.hpp"
 #include "shoot/shoot_component.hpp"
 #include "character_input/character_input_component.hpp"
+#include "character_effect/character_effect_controller.hpp"
 
 class CharacterController final : public Component {
 private:
-    std::weak_ptr<ParticleEmitterComponent> _particles;
     std::weak_ptr<Transform> _transform;
     std::weak_ptr<PhysicsWorld> _world{};
     std::weak_ptr<CharacterMovementComponent> _characterMovement;
     std::weak_ptr<CharacterAnimationComponent> _animation;
     std::weak_ptr<ShootComponent> _shootComponent;
     std::weak_ptr<CharacterInputComponent> _inputComponent;
+    std::weak_ptr<CharacterEffectController> _effectController;
     CharacterControllerSettings _characterSettings{};
 
 public:
@@ -31,10 +32,6 @@ public:
 
     void SetPhysicsWorld(const std::weak_ptr<PhysicsWorld> &physicsWorld) noexcept {
         _world = physicsWorld;
-    }
-
-    void SetParticles(const std::weak_ptr<ParticleEmitterComponent> &particles) noexcept {
-        _particles = particles;
     }
 
     void SetCharacterMovement(const std::weak_ptr<CharacterMovementComponent> &characterMovement) noexcept {
@@ -51,6 +48,10 @@ public:
 
     void SetInputComponent(const std::weak_ptr<CharacterInputComponent> &inputComponent) noexcept {
         _inputComponent = inputComponent;
+    }
+
+    void SetEffectController(const std::weak_ptr<CharacterEffectController> &effectController) noexcept {
+        _effectController = effectController;
     }
 
     void SetTransform(const std::weak_ptr<Transform> &transform) noexcept {
