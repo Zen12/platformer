@@ -27,38 +27,38 @@ public:
     void SetRenderer(const std::weak_ptr<SpineRenderer> &renderer) {
         _renderer = renderer;
 
-        if (const auto render = _renderer.lock()) {
-            for (const auto &transition : _transitions) {
-                render->SetTransition(transition.From, transition.To, transition.Duration);
-            }
-        }
-
         SetAnimation(1, "aim", true, false);
     }
 
     void SetTransitions(const std::vector<AnimationTransition> &transitions) {
         _transitions = transitions;
+        if (const auto render = _renderer.lock()) {
+            for (const auto &transition : _transitions) {
+                render->SetTransition(transition.From, transition.To, transition.Duration);
+            }
+        }
     }
 
 
     void Update([[maybe_unused]] const float &deltaTime) override {
-        if (const auto &transform = _transform.lock()) {
-            if (const auto movement = _characterMovementComponent.lock()) {
-                const auto velocity = movement->GetVelocity();
 
-                const auto _isRight = _lookAt.x > transform->GetPosition().x;
-                SetFaceRight(_isRight);
+        if (const auto render = _renderer.lock()) {
+            if (const auto &transform = _transform.lock()) {
+                if (const auto movement = _characterMovementComponent.lock()) {
+                    const auto velocity = movement->GetVelocity();
 
-                if (velocity.y > 0.01)
-                    SetAnimation(0, _renderer.lock()->GetJumpAnimation(), true, false);
-                else if (std::abs(velocity.x) > 0.01) {
-                    const bool isCorrectDirection =  _isRight == velocity.x > 0.0f;
-                    SetAnimation(0, _renderer.lock()->GetMoveAnimation(), true, !isCorrectDirection);
-                }
-                else
-                    SetAnimation(0, _renderer.lock()->GetIdleAnimation(), true, false);
+                    const auto _isRight = _lookAt.x > transform->GetPosition().x;
+                    SetFaceRight(_isRight);
 
-                if (const auto render = _renderer.lock()) {
+                    if (velocity.y > 0.01)
+                        SetAnimation(0, render->GetJumpAnimation(), true, false);
+                    else if (std::abs(velocity.x) > 0.01) {
+                        const bool isCorrectDirection =  _isRight == velocity.x > 0.0f;
+                        SetAnimation(0, render->GetMoveAnimation(), true, !isCorrectDirection);
+                    }
+                    else
+                        SetAnimation(0, render->GetIdleAnimation(), true, false);
+
                     render->LookAt(_lookAt, "crosshair");
                 }
             }
