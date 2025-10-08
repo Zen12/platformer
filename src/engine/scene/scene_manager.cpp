@@ -6,6 +6,8 @@
 #include "../game/character_controller/movement/character_movement_component_serialization.hpp"
 #include "../game/character_controller/shoot/shoot_component_factory.hpp"
 #include "../game/character_controller/shoot/shoot_component_serialization.hpp"
+#include "../game/character_controller/character_input/character_input_component_factory.hpp"
+#include "../game/character_controller/character_input/character_input_component_serialization.hpp"
 
 #define DEBUG_ENGINE_SCENE_MANAGER_PROFILE 0
 
@@ -113,6 +115,7 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
                 CharacterMovementComponentSerialization, CharacterMovementFactory,
                 CharacterAnimationComponentSerialization, CharacterAnimationComponentFactory,
                 ShootComponentSerialization, ShootComponentFactory,
+                CharacterInputComponentSerialization, CharacterInputComponentFactory,
                 AiControllerComponentSerialization, AiControllerFactory,
                 ShowFpsComponentSerialization, ShowFpsComponentFactory,
                 HealthComponentSerialization, HealthComponentFactory,

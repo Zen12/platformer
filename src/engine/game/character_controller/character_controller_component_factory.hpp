@@ -18,13 +18,12 @@ protected:
                         };
 
                         comp->SetCharacterControllerSettings(characterSettings);
-                        comp->SetInputSystem(scene->GetInputSystem());
                         comp->SetPhysicsWorld(scene->GetPhysicsWorld());
                         comp->SetParticles(entity->GetComponent<ParticleEmitterComponent>());
-                        comp->SetRenderPipeline(render);
                         comp->SetCharacterMovement(entity->GetComponent<CharacterMovementComponent>());
                         comp->SetAnimation(entity->GetComponent<CharacterAnimationComponent>());
                         comp->SetShootComponent(entity->GetComponent<ShootComponent>());
+                        comp->SetInputComponent(entity->GetComponent<CharacterInputComponent>());
                     }
                 }
             }

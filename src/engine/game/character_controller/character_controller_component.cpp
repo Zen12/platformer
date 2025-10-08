@@ -7,45 +7,15 @@ CharacterController::CharacterController(const std::weak_ptr<Entity> &entity): C
     _transform = _entity.lock()->GetComponent<Transform>();
 }
 
-void CharacterController::SetShootComponent(const std::weak_ptr<ShootComponent> &shootComponent) noexcept {
-    _shootComponent = shootComponent;
-}
-
-
-glm::vec3 CharacterController::GetMousePosition() const {
-
-    if (const auto input = _inputSystem.lock()) {
-        if (const auto render = _renderPipeline.lock()) {
-            const auto mousePosition = input->GetMouseScreenSpace();
-            return render->ScreenToWorldPoint(mousePosition);
-        }
-    }
-    return {0.0f, 0.0f, 0.0f};
-}
-
-
-
 void CharacterController::Update([[maybe_unused]] const float &deltaTime) {
-    if (const auto input = _inputSystem.lock()) {
+    if (const auto inputComp = _inputComponent.lock()) {
         if (const auto animation = _animation.lock()) {
             if (const auto movement = _characterMovement.lock()) {
-                glm::vec3 direction = glm::vec3(0);
+                const auto inputData = inputComp->GetInputData();
 
-                if (input->IsKeyPressing(InputKey::A) || input->IsKeyPress(InputKey::A)) {
-                    direction = glm::vec3(-1, 0, 0);
-                } else if (input->IsKeyPressing(InputKey::D) || input->IsKeyPress(InputKey::D)) {
-                    direction = glm::vec3(1, 0, 0);
-                }
-
-                if (input->IsKeyPress(InputKey::Space)) {
-                    direction.y = 1;
-                }
-
-                const auto mouseWorldPosition = GetMousePosition();
-
-                if (input->IsMousePress(MouseButton::Left)) {
+                if (inputData.Shoot) {
                     if (const auto shoot = _shootComponent.lock()) {
-                        const auto result = shoot->Shoot(mouseWorldPosition);
+                        const auto result = shoot->Shoot(inputData.LookAtPosition);
                         if (const auto particles = _particles.lock()) {
                             constexpr glm::vec3 axis(0.0f, 0.0f, 1.0f);
                             constexpr float angle1 = glm::radians(30.0f);
@@ -88,8 +58,8 @@ void CharacterController::Update([[maybe_unused]] const float &deltaTime) {
                     }
                 }
 
-                movement->SetDirection(direction);
-                animation->SetLookAt(mouseWorldPosition);
+                movement->SetDirection(inputData.MovementDirection);
+                animation->SetLookAt(inputData.LookAtPosition);
             }
         }
     }
