@@ -10,6 +10,7 @@
 
 #include "character_animation/character_animation_component.hpp"
 #include "movement/character_movement_component.hpp"
+#include "shoot/shoot_component.hpp"
 
 class CharacterController final : public Component {
 private:
@@ -20,6 +21,7 @@ private:
     std::weak_ptr<PhysicsWorld> _world{};
     std::weak_ptr<CharacterMovementComponent> _characterMovement;
     std::weak_ptr<CharacterAnimationComponent> _animation;
+    std::weak_ptr<ShootComponent> _shootComponent;
     CharacterControllerSettings _characterSettings{};
 
 private:
@@ -27,8 +29,6 @@ private:
     void UpdateInternal(InputSystem *input) const;
 
     [[nodiscard]] glm::vec3 GetMousePosition() const;
-
-    void Shoot(const glm::vec3 &position) const;
 
 public:
     explicit CharacterController(const std::weak_ptr<Entity> &entity);
@@ -59,6 +59,12 @@ public:
 
     void SetAnimation(const std::weak_ptr<CharacterAnimationComponent> &animation) noexcept {
         _animation = animation;
+    }
+
+    void SetShootComponent(const std::weak_ptr<ShootComponent> &shootComponent) noexcept;
+
+    void SetTransform(const std::weak_ptr<Transform> &transform) noexcept {
+        _transform = transform;
     }
 
     void Update(const float& deltaTime) override;

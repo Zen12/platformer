@@ -24,6 +24,7 @@ protected:
                         comp->SetRenderPipeline(render);
                         comp->SetCharacterMovement(entity->GetComponent<CharacterMovementComponent>());
                         comp->SetAnimation(entity->GetComponent<CharacterAnimationComponent>());
+                        comp->SetShootComponent(entity->GetComponent<ShootComponent>());
                     }
                 }
             }

@@ -233,6 +233,9 @@ entities:
         jump_down_multiplier: 1.2
         air_control: 0.8
       - type: character_animation
+      - type: shoot
+        bone_name: gun-tip
+        raycast_distance: 1000.0
       - type: character_controller
         damage: 10
       - type: rigidbody2d

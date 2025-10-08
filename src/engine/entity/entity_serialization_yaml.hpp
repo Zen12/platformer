@@ -68,6 +68,8 @@
 #include "../game/character_controller/character_animation/character_animation_component_serialization_yaml.hpp"
 #include "../game/character_controller/movement/character_movement_component_serialization.hpp"
 #include "../game/character_controller/movement/character_movement_component_serialization_yaml.hpp"
+#include "../game/character_controller/shoot/shoot_component_serialization.hpp"
+#include "../game/character_controller/shoot/shoot_component_serialization_yaml.hpp"
 
 namespace YAML {
     template <>
@@ -128,6 +130,7 @@ namespace YAML {
                 { "character_controller",  [](const YAML::Node& n){ return Parse<CharacterControllerComponentSerialization>(n); } },
                 { "character_movement",    [](const YAML::Node& n){ return Parse<CharacterMovementComponentSerialization>(n); } },
                 { "character_animation",   [](const YAML::Node& n){ return Parse<CharacterAnimationComponentSerialization>(n); } },
+                { "shoot",                 [](const YAML::Node& n){ return Parse<ShootComponentSerialization>(n); } },
                 { "ai_controller",         [](const YAML::Node& n){ return Parse<AiControllerComponentSerialization>(n); } },
                 { "ui_show_fps",           [](const YAML::Node& n){ return Parse<ShowFpsComponentSerialization>(n); } },
                 { "health_component",      [](const YAML::Node& n){ return Parse<HealthComponentSerialization>(n); } },

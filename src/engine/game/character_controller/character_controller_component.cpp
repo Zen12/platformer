@@ -1,5 +1,4 @@
 #include "character_controller_component.hpp"
-
 #include "../health/health_component.hpp"
 
 #define CHARACTER_CONTROLLER_DEBUG 0
@@ -24,7 +23,48 @@ void CharacterController::UpdateInternal(InputSystem *input) const {
             const auto mouseWorldPosition = GetMousePosition();
 
             if (input->IsMousePress(MouseButton::Left)) {
-                Shoot(mouseWorldPosition);
+                if (const auto shoot = _shootComponent.lock()) {
+                    const auto result = shoot->Shoot(mouseWorldPosition);
+                    if (const auto particles = _particles.lock()) {
+                        constexpr glm::vec3 axis(0.0f, 0.0f, 1.0f);
+                        constexpr float angle1 = glm::radians(30.0f);
+                        constexpr float angle2 = glm::radians(-30.0f);
+
+                        const glm::vec3 rotated1 = glm::rotate(result.Direction, angle1, axis);
+                        const glm::vec3 rotated2 = glm::rotate(result.Direction, angle2, axis);
+
+                        constexpr float speed = 1.0f;
+
+                        particles->OverrideDataVelocity(rotated1 * speed, rotated2 * speed);
+                        particles->Emit(result.StartPosition);
+                    }
+
+                    if (result.IsHit) {
+                        // Apply damage to hit entity
+                        if (const auto rigid = result.Rigidbody.lock()) {
+                            if (const auto entity = rigid->GetEntity().lock()) {
+                                if (const auto health = entity->GetComponent<HealthComponent>().lock()) {
+                                    health->DecreaseHealth(_characterSettings.Damage);
+                                }
+                            }
+
+                            // Emit impact particles
+                            if (const auto particles = _particles.lock()) {
+                                constexpr glm::vec3 axis(0.0f, 0.0f, 1.0f);
+                                constexpr float angle1 = glm::radians(30.0f);
+                                constexpr float angle2 = glm::radians(-30.0f);
+
+                                const glm::vec3 rotated1 = glm::rotate(result.Normal, angle1, axis);
+                                const glm::vec3 rotated2 = glm::rotate(result.Normal, angle2, axis);
+
+                                constexpr float speed = 1.0f;
+
+                                particles->OverrideDataVelocity(rotated1 * speed, rotated2 * speed);
+                                particles->Emit(result.Point);
+                            }
+                        }
+                    }
+                }
             }
 
             movement->SetDirection(direction);
@@ -35,6 +75,10 @@ void CharacterController::UpdateInternal(InputSystem *input) const {
 
 CharacterController::CharacterController(const std::weak_ptr<Entity> &entity): Component(entity) {
     _transform = _entity.lock()->GetComponent<Transform>();
+}
+
+void CharacterController::SetShootComponent(const std::weak_ptr<ShootComponent> &shootComponent) noexcept {
+    _shootComponent = shootComponent;
 }
 
 
@@ -49,59 +93,7 @@ glm::vec3 CharacterController::GetMousePosition() const {
     return {0.0f, 0.0f, 0.0f};
 }
 
-void CharacterController::Shoot(const glm::vec3 &lookAt) const {
-    if (const auto world = _world.lock()) {
-        if (const auto animation = _animation.lock()) {
-            const auto startPosition = animation->GetBonePosition("gun-tip");
-            const auto dir = lookAt - startPosition;
-            const auto result = world->RayCast(startPosition, startPosition + dir * 1000.0f, 1);
 
-            if (const auto particles = _particles.lock()) {
-                constexpr glm::vec3 axis(0.0f, 0.0f, 1.0f); // Z axis
-                constexpr float angle1 = glm::radians(30.0f);
-                constexpr float angle2 = glm::radians(-30.0f);
-
-                const glm::vec3 rotated1 = glm::rotate(dir, angle1, axis);
-                const glm::vec3 rotated2 = glm::rotate(dir, angle2, axis);
-
-                constexpr float speed = 1.0f;
-
-                particles->OverrideDataVelocity(rotated1 * speed, rotated2 * speed);
-                particles->Emit(startPosition);
-            }
-
-#ifndef NDEBUG
-#if CHARACTER_CONTROLLER_DEBUG
-            DebugLines::AddLine(startPosition, lookAt);
-#endif
-#endif
-
-            if (result.IsHit) {
-                if (const auto rigid = result.Rigidbody.lock()) {
-                    if (const auto entity = rigid->GetEntity().lock()) {
-                        if (const auto health = entity->GetComponent<HealthComponent>().lock()) {
-                            health->DecreaseHealth(_characterSettings.Damage);
-                        }
-                    }
-                    if (const auto particles = _particles.lock()) {
-                        const glm::vec3 dir = result.Normal;
-                        constexpr glm::vec3 axis(0.0f, 0.0f, 1.0f); // Z axis
-                        constexpr float angle1 = glm::radians(30.0f);
-                        constexpr float angle2 = glm::radians(-30.0f);
-
-                        const glm::vec3 rotated1 = glm::rotate(dir, angle1, axis);
-                        const glm::vec3 rotated2 = glm::rotate(dir, angle2, axis);
-
-                        constexpr float speed = 1.0f;
-
-                        particles->OverrideDataVelocity(rotated1 * speed, rotated2 * speed);
-                        particles->Emit(result.Point);
-                    }
-                }
-            }
-        }
-    }
-}
 
 void CharacterController::Update([[maybe_unused]] const float &deltaTime) {
     if (const auto input = _inputSystem.lock())
