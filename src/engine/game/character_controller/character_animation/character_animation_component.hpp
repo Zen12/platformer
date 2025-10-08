@@ -3,6 +3,7 @@
 #include "../../../entity/entity.hpp"
 #include "../../../renderer/spine/spine_renderer_component.hpp"
 #include "../movement/character_movement_component.hpp"
+#include "character_animation_component_serialization.hpp"
 
 
 class CharacterAnimationComponent final : public Component {
@@ -12,6 +13,7 @@ private:
     std::map<size_t,std::tuple<std::string, bool>> _animationValue;
     std::weak_ptr<Transform> _transform;
     glm::vec3 _lookAt{0};
+    std::vector<AnimationTransition> _transitions;
 
 public:
     explicit CharacterAnimationComponent(const std::weak_ptr<Entity> &entity)
@@ -26,17 +28,16 @@ public:
         _renderer = renderer;
 
         if (const auto render = _renderer.lock()) {
-            render->SetTransition("walk", "idle", 0.3);
-            render->SetTransition("walk", "run", 0.3);
-
-            render->SetTransition("idle", "walk", 0.3);
-            render->SetTransition("idle", "run", 0.3);
-
-            render->SetTransition("run", "idle", 0.3);
-            render->SetTransition("run", "walk", 0.3);
+            for (const auto &transition : _transitions) {
+                render->SetTransition(transition.From, transition.To, transition.Duration);
+            }
         }
 
         SetAnimation(1, "aim", true, false);
+    }
+
+    void SetTransitions(const std::vector<AnimationTransition> &transitions) {
+        _transitions = transitions;
     }
 
 
@@ -99,5 +100,9 @@ public:
 
     void SetLookAt(const glm::vec3 &lookAt) noexcept {
         _lookAt = lookAt;
+    }
+
+    [[nodiscard]] std::weak_ptr<SpineRenderer> GetRenderer() const noexcept {
+        return _renderer;
     }
 };

@@ -12,6 +12,7 @@ protected:
             if (const auto comp = component.lock()) {
                 if (const auto render = scene->GetRenderPipeline().lock()) {
                     if (const auto entity = _entity.lock()) {
+                        comp->SetTransitions(serialization.Transitions);
                         comp->SetTransform(entity->GetComponent<Transform>());
                         comp->SetCharacterMovementComponent(entity->GetComponent<CharacterMovementComponent>());
                         comp->SetRenderer(entity->GetComponent<SpineRenderer>());

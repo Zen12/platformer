@@ -197,6 +197,13 @@ entities:
         jump_down_multiplier: 1.2
         air_control: 0.8
       - type: character_animation
+        transitions:
+          - { from: walk, to: idle, duration: 0.3 }
+          - { from: walk, to: run, duration: 0.3 }
+          - { from: idle, to: walk, duration: 0.3 }
+          - { from: idle, to: run, duration: 0.3 }
+          - { from: run, to: idle, duration: 0.3 }
+          - { from: run, to: walk, duration: 0.3 }
       - type: shoot
         bone_name: gun-tip
         raycast_distance: 1000.0
