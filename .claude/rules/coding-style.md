@@ -121,6 +121,9 @@ Components can access:
 
 ## Build and Run
 - Use `./run_debug.sh` to build and run the project in debug mode
-- **IMPORTANT**: Always run `./run_debug.sh` after making changes to verify the build succeeds
+- **CRITICAL**: ALWAYS run `./run_debug.sh` after ANY code change, even small ones
+  - This applies to single-line changes, header modifications, YAML edits, etc.
+  - No exceptions - every change must be verified with a build
+  - This prevents broken builds and catches issues immediately
 - Fix any compiler warnings before considering the task complete
 - The build output will show compilation progress and any errors/warnings

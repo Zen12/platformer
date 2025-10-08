@@ -26,8 +26,6 @@ private:
 
 private:
 
-    void UpdateInternal(InputSystem *input) const;
-
     [[nodiscard]] glm::vec3 GetMousePosition() const;
 
 public:
