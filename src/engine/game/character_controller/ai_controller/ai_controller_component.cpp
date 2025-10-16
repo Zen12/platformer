@@ -44,12 +44,6 @@ AiController::AiController(const std::weak_ptr<Entity> &entity): Component(entit
     _transform = _entity.lock()->GetComponent<Transform>();
 }
 
-void AiController::SetLookAt(const glm::vec3 &lookAt) const {
-    if (const auto& render = _renderer.lock()) {
-        render->LookAt(lookAt, "test");
-    }
-}
-
 void AiController::SetSpineRenderer(const std::weak_ptr<SpineRenderer> &spineRenderer) noexcept {
     _renderer = spineRenderer;
     _renderer.lock()->SetAnimation(0,  _renderer.lock()->GetMoveAnimation(), true, false);

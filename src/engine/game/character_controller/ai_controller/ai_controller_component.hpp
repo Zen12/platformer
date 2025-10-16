@@ -39,9 +39,6 @@ private:
 
     bool TryToHit();
 
-
-    void SetLookAt(const glm::vec3 &lookAt) const;
-
 public:
     explicit AiController(const std::weak_ptr<Entity> &entity);
 

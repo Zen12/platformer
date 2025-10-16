@@ -53,7 +53,7 @@ public:
         _rectTransform = rectTransform;
     }
 
-    bool IsPointInside(const glm::vec2 &position) const noexcept {
+    [[nodiscard]] bool IsPointInside(const glm::vec2 &position) const noexcept {
         if (const auto rect = _rectTransform.lock()) {
             const auto model = rect->GetModel();
             const glm::vec3 pos = glm::vec3(model[3]);
