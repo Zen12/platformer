@@ -11,3 +11,4 @@ history/*
 # Engine speicific 
 bin/*
 build/*
+cmake-build-debug/*
