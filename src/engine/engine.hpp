@@ -32,6 +32,7 @@
 #include "scene/scene_manager.hpp"
 
 #include "physics/physics_world.hpp"
+#include <entt/entt.hpp>
 
 class Engine {
 

@@ -1,6 +1,6 @@
 FetchContent_Declare(
     freetype
-    URL https://download.savannah.gnu.org/releases/freetype/freetype-2.13.0.tar.gz
+    URL https://download.savannah.gnu.org/releases/freetype/freetype-2.13.3.tar.gz
 )
 
 FetchContent_MakeAvailable(freetype)

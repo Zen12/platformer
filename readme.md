@@ -118,7 +118,7 @@ https://andreigusan.itch.io/platformer-demo
 - [x] Simplified yaml
 - [x] Reorganize factory/serializable classes
 - [x] Refactor asset loaders
-- [ ] Create ScriptableObject/ConfigAsset, and redo spine_asset 
+- [ ] Create ScriptableObject/ConfigAsset
 - [ ] Refactor AIController and CharacterController
 
 ## 0.1.2 From OOP to data oriented(DOD)
