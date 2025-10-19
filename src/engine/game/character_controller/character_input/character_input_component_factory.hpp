@@ -5,7 +5,7 @@
 
 class CharacterInputComponentFactory final : public ComponentFactory<CharacterInputComponent, CharacterInputComponentSerialization> {
 protected:
-    void FillComponent(const std::weak_ptr<CharacterInputComponent> &component, const CharacterInputComponentSerialization &serialization) override {
+    void FillComponent(const std::weak_ptr<CharacterInputComponent> &component, [[maybe_unused]]  const CharacterInputComponentSerialization &serialization) override {
         if (const auto scene = _scene.lock()) {
             if (const auto comp = component.lock()) {
                 comp->SetInputSystem(scene->GetInputSystem());

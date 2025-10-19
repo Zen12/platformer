@@ -24,6 +24,7 @@
 #include "../debug/debug.hpp"
 #include "../system/input_system.hpp"
 #include "../ui/desktop_raycast_system.hpp"
+#include "entt/entity/registry.hpp"
 
 struct PrefabInstantiateData {
     std::string Id{};
@@ -52,7 +53,8 @@ private:
 
     std::shared_ptr<PhysicsWorld> _physicsWorld = std::make_shared<PhysicsWorld>(b2Vec2{0.0, -10.0});
 
-    std::vector<std::shared_ptr<Entity>> Entities;
+    entt::registry _entityRegistry{};
+
 
     std::vector<std::string> _entitiesToRemove{};
     std::string _requestToLoadScene{};
@@ -94,7 +96,6 @@ public:
 
     [[nodiscard]] size_t GetEntityCount() const noexcept;
 
-    [[nodiscard]] std::shared_ptr<Entity> GetEntityByIndex(const uint32_t& index) const noexcept;
 
     void RemoveEntityById(const std::string &id);
 
@@ -116,8 +117,6 @@ public:
     [[nodiscard]] std::shared_ptr<Sprite> GetSprite(const std::string &guid);
 
     [[nodiscard]] std::shared_ptr<Font> GetFont(const std::string &guid);
-
-    [[nodiscard]] std::shared_ptr<Entity> GetEntity(const std::string &id) const;
 
     [[nodiscard]] std::weak_ptr<Entity> FindByTag(const std::string &tag) const;
 

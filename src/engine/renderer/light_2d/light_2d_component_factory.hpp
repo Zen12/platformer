@@ -10,8 +10,8 @@ protected:
         if (const auto scene = _scene.lock()) {
             if (const auto comp = component.lock()) {
 
-                const auto ref = scene->GetEntity(serialization.CenterTransform);
-                if (const auto transform = ref->GetComponent<Transform>().lock()) {
+                const auto ref = scene->GetEntityById(serialization.CenterTransform);
+                if (const auto transform = ref.lock()->GetComponent<Transform>().lock()) {
                     comp->SetCenterTransform(transform);
                 }
 

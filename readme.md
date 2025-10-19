@@ -116,7 +116,7 @@ https://andreigusan.itch.io/platformer-demo
 
 ## 0.1.2 From OOP to data oriented(DOD)
 - [x] Set Entt
-- [ ] Redo components to Entt
+- [x] Redo components to Entt
 - [ ] Redo systems (rendering, physics, etc...)
 
 ## 0.1.3 FSM

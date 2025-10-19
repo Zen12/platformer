@@ -104,8 +104,6 @@ private:
 
     [[nodiscard]] std::shared_ptr<Font> GetFont(const std::string& guid) const;
 
-    [[nodiscard]] std::shared_ptr<Entity> GetEntity(const std::string& id) const;
-
     [[nodiscard]] std::shared_ptr<SpineData> GetSpineData(const std::string &guid, const SpineAsset& asset) const;
 
     template <typename TSerialization, typename TFactory>

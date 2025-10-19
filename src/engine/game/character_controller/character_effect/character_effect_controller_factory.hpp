@@ -5,7 +5,7 @@
 
 class CharacterEffectControllerFactory final : public ComponentFactory<CharacterEffectController, CharacterEffectControllerSerialization> {
 protected:
-    void FillComponent(const std::weak_ptr<CharacterEffectController> &component, const CharacterEffectControllerSerialization &serialization) override {
+    void FillComponent(const std::weak_ptr<CharacterEffectController> &component, [[maybe_unused]]  const CharacterEffectControllerSerialization &serialization) override {
         if (const auto scene = _scene.lock()) {
             if (const auto comp = component.lock()) {
                 if (const auto entity = _entity.lock()) {

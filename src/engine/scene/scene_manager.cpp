@@ -240,7 +240,3 @@ std::shared_ptr<Sprite> SceneManager::GetSprite(const std::string &guid) const {
 std::shared_ptr<Font> SceneManager::GetFont(const std::string &guid) const {
    return _scene->GetFont(guid);
 }
-
-std::shared_ptr<Entity> SceneManager::GetEntity(const std::string &id) const {
-    return _scene->GetEntity(id);
-}

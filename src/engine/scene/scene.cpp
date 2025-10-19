@@ -1,6 +1,7 @@
 #include "scene.hpp"
 #include "../renderer/material/material_asset.hpp"
 #include "../renderer/material/material_asset_yaml.hpp"
+#include "entt/entity/registry.hpp"
 
 std::shared_ptr<RectTransformRoot> Scene::GetRoot() const {
     return _root;
@@ -34,28 +35,25 @@ std::weak_ptr<Entity> Scene::CreateEntity(const EntitySerialization &entitySeria
     newEntity->SetSelf(newEntity);
     newEntity->SetCreator(entitySerialization.Creator);
 
-    Entities.push_back(newEntity);
+    const auto entt = _entityRegistry.create();
+    _entityRegistry.emplace<std::shared_ptr<Entity>>(entt, newEntity);
     return newEntity;
 }
 
 std::weak_ptr<Entity> Scene::GetEntityById(const std::string &id) const {
-    for (const auto &entity: Entities) {
-        if (entity->GetId() == id) {
-            return entity;
+    const auto view = _entityRegistry.view<std::shared_ptr<Entity>>();
+
+    for (const auto &entity: view) {
+        if (const auto& en = view.get<std::shared_ptr<Entity>>(entity); en->GetId() == id) {
+            return en;
         }
     }
     return {};
 }
 
 size_t Scene::GetEntityCount() const noexcept {
-    return Entities.size();
-}
-
-std::shared_ptr<Entity> Scene::GetEntityByIndex(const uint32_t &index) const noexcept {
-    if (index >= Entities.size()) {
-        return {};
-    }
-    return Entities[index];
+    const auto view = _entityRegistry.view<std::shared_ptr<Entity>>();
+    return view.size();
 }
 
 void Scene::RemoveEntityById(const std::string &id) {
@@ -63,26 +61,34 @@ void Scene::RemoveEntityById(const std::string &id) {
 }
 
 void Scene::Update(const float &deltaTime) const {
-    for (const auto &entity: Entities) {
-        entity->Update(deltaTime);
+    const auto view = _entityRegistry.view<std::shared_ptr<Entity>>();
+    for (const auto entity : view) {
+        auto& pos = view.get<std::shared_ptr<Entity>>(entity);
+        pos->Update(deltaTime);
     }
+
     _uiRaycastSystem->UpdateState();
     _physicsWorld->UpdateRigidBodies();
 }
 
 void Scene::RemovePendingEntities() {
-    for (const auto & id: _entitiesToRemove) {
+    const auto view = _entityRegistry.view<std::shared_ptr<Entity>>();
 
-        const auto it = std::find_if(Entities.begin(), Entities.end(),
-                                     [id](const std::shared_ptr<Entity> &entity) {
-                                         return entity->GetId() == id;
+    for (const auto & id: _entitiesToRemove) {
+        const auto it = std::find_if(view.begin(), view.end(),
+                                     [id, view](const entt::entity &entity) {
+                                         return view.get<std::shared_ptr<Entity>>(entity)->GetId() == id;
                                      });
 
-        if (it != Entities.end()) {
-            _physicsWorld->RemoveRigidBody(it->get()->GetComponent<Rigidbody2dComponent>());
-            Entities.erase(it);
+
+        if (it != view.end()) {
+            const auto& entity = view.get<std::shared_ptr<Entity>>(*it);
+            _physicsWorld->RemoveRigidBody(entity->GetComponent<Rigidbody2dComponent>());
+            _entityRegistry.destroy(*it);
         }
     }
+
+    _entitiesToRemove.clear();
 }
 
 void Scene::Render(const float &deltaTime) const {
@@ -228,18 +234,14 @@ std::shared_ptr<Font> Scene::GetFont(const std::string &guid) {
     return {};
 }
 
-std::shared_ptr<Entity> Scene::GetEntity(const std::string &id) const {
-    for (const auto & entity: Entities) {
-        if (entity->GetId() == id)
-            return entity;
-    }
-    return {};
-}
-
 std::weak_ptr<Entity> Scene::FindByTag(const std::string &tag) const {
-    for (const auto & entity: Entities) {
-        if (entity->GetTag() == tag)
-            return entity;
+
+    const auto view = _entityRegistry.view<std::shared_ptr<Entity>>();
+
+    for (const auto &entity: view) {
+        if (const auto& en = view.get<std::shared_ptr<Entity>>(entity); en->GetTag() == tag) {
+            return en;
+        }
     }
     return {};
 }

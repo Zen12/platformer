@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 struct ProjectAsset
 {
     std::string Name{};
