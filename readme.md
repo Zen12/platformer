@@ -114,15 +114,8 @@ https://andreigusan.itch.io/platformer-demo
 
 # 🏃 Roadmap
 
-## 0.1.1 Refactor + Optimization
-- [x] Simplified yaml
-- [x] Reorganize factory/serializable classes
-- [x] Refactor asset loaders
-- [ ] Create ScriptableObject/ConfigAsset
-- [ ] Refactor AIController and CharacterController
-
 ## 0.1.2 From OOP to data oriented(DOD)
-- [ ] Set Entt
+- [x] Set Entt
 - [ ] Redo components to Entt
 - [ ] Redo systems (rendering, physics, etc...)
 
@@ -140,14 +133,14 @@ https://andreigusan.itch.io/platformer-demo
 
 ## 0.1.5 First Editor
 - [ ] Fix model matrix, multiplication order
+- [ ] Reflection option c++20 for serialization
 - [ ] Create new cmake project (editor)
 - [ ] Refactor engine to render into render-texture
 - [ ] ImGUI for editor + rendering into render-texture
 - [ ] Basic serialization viewer with play button
-- [ ] Test build on windows and linux
-- [ ] Proper fix retina issue on webgl and macOS
 
 ## Backlog
+- [ ] Proper fix retina issue on webgl and macOS
 - [ ] Optimization of light raycast system, the vertex approach
 - [ ] Move to c++20 to use modules and reorganize into plugin system
 
