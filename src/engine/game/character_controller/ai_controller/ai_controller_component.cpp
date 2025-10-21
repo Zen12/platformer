@@ -31,10 +31,10 @@ bool AiController::TryToHit() {
 
     if (const auto target = _target.lock()) {
         if (const auto entity = target->GetEntity().lock()) {
-            if (const auto health = entity->GetComponent<HealthComponent>().lock()) {
-                health->DecreaseHealth(10);
+            //if (const auto health = entity->GetComponent<HealthComponent>().lock()) {
+            //    health->DecreaseHealth(10);
                  _hitCooldown = 3;
-            }
+          //  }
         }
     }
     return true;

@@ -25,6 +25,7 @@
 #include "../system/input_system.hpp"
 #include "../ui/desktop_raycast_system.hpp"
 #include "entt/entity/registry.hpp"
+#include "../game/health/health_system.hpp"
 
 struct PrefabInstantiateData {
     std::string Id{};
@@ -48,12 +49,13 @@ private:
     std::weak_ptr<AssetManager> _assetManager;
     std::weak_ptr<InputSystem> _inputSystem;
     std::shared_ptr<UiRaycastSystem> _uiRaycastSystem;
+    std::unique_ptr<HealthSystem> _healthSystem{};
 
     std::shared_ptr<RectTransformRoot> _root;
 
     std::shared_ptr<PhysicsWorld> _physicsWorld = std::make_shared<PhysicsWorld>(b2Vec2{0.0, -10.0});
 
-    entt::registry _entityRegistry{};
+    std::shared_ptr<entt::registry> _entityRegistry{};
 
 
     std::vector<std::string> _entitiesToRemove{};
@@ -75,6 +77,9 @@ public:
         _uiRaycastSystem = std::make_shared<UiDesktopRaycast>();
         _uiRaycastSystem->SetInputSystem(inputSystem);
         _renderPipeline->Init();
+
+        _entityRegistry = std::make_shared<entt::registry>();
+        _healthSystem = std::make_unique<HealthSystem>();
     }
 
     [[nodiscard]] std::shared_ptr<RectTransformRoot> GetRoot() const;
@@ -96,10 +101,14 @@ public:
 
     [[nodiscard]] size_t GetEntityCount() const noexcept;
 
+    [[nodiscard]] std::shared_ptr<entt::registry> GetEntityRegistry() const noexcept {
+        return _entityRegistry;
+    }
+
 
     void RemoveEntityById(const std::string &id);
 
-    void Update(const float &deltaTime) const;
+    void Update(const float &deltaTime);
 
     void RemovePendingEntities();
 

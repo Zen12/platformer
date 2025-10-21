@@ -10,6 +10,7 @@
 
 #include "../debug/debug.hpp"
 #include "component.hpp"
+#include "entt/entity/entity.hpp"
 
 #define DEBUG_ENGINE_ENTITY_PROFILE 0
 

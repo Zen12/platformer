@@ -1,15 +1,20 @@
 #pragma once
-#include "../../entity/component_factory.hpp"
+#include <utility>
+
 #include "health_component.hpp"
 #include "health_component_serialization.hpp"
 
-class HealthComponentFactory final : public ComponentFactory<HealthComponent, HealthComponentSerialization> {
-protected:
-    void FillComponent(const std::weak_ptr<HealthComponent> &component, const HealthComponentSerialization &serialization) override {
-        if (const auto comp = component.lock()) {
-            comp->SetMaxHealth(serialization.Health);
-            comp->SetHealth(serialization.Health);
-            comp->SetScene(_scene.lock());
-        }
+
+class HealthComponentFactory {
+private:
+    std::shared_ptr<entt::registry> _registry;
+
+public:
+    explicit HealthComponentFactory(std::shared_ptr<entt::registry> registry)
+    : _registry(std::move(registry))
+    {}
+
+    void FillComponent(const entt::entity &e, const HealthComponentSerialization &serialization) const {
+        _registry->emplace<HealthComponent>(e, serialization.Health, serialization.Health);
     }
 };

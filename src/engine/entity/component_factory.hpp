@@ -15,13 +15,17 @@ class ComponentFactory : BaseComponentFactory {
               "TSerialization must inherit from ComponentSerialization");
 
 protected:
-    std::weak_ptr<Scene> _scene;
-    std::weak_ptr<Entity> _entity;
+    std::weak_ptr<Scene> _scene{};
+    std::weak_ptr<Entity> _entity{};
+    std::shared_ptr<entt::registry> _registry{};
     virtual void FillComponent(const std::weak_ptr<TComponent> &component, const TSerialization &serialization) = 0;
 
 public:
 
-    void SetScene(const std::weak_ptr<Scene> &scene) { _scene = scene; }
+    void SetScene(const std::weak_ptr<Scene> &scene) {
+        _scene = scene;
+        _registry = scene.lock()->GetEntityRegistry();
+    }
     void SetEntity(const std::weak_ptr<Entity> &entity) { _entity = entity; }
 
     void AddComponent(const std::weak_ptr<Entity>& entity, const TSerialization &serialization) {

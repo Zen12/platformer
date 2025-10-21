@@ -25,9 +25,9 @@ void CharacterController::Update([[maybe_unused]] const float &deltaTime) {
                             // Apply damage to hit entity
                             if (const auto rigid = result.Rigidbody.lock()) {
                                 if (const auto entity = rigid->GetEntity().lock()) {
-                                    if (const auto health = entity->GetComponent<HealthComponent>().lock()) {
-                                        health->DecreaseHealth(_characterSettings.Damage);
-                                    }
+                                    //if (const auto health = entity->GetComponent<HealthComponent>().lock()) {
+                                    //    health->DecreaseHealth(_characterSettings.Damage);
+                                    //}
                                 }
 
                                 // Emit impact particles

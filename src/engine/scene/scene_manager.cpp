@@ -95,6 +95,8 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
         entities.push_back(_scene->CreateEntity(entitySerialization));
     }
 
+    auto entityView = _scene->GetEntityRegistry()->view<Entity>();
+
     for (size_t i = 0; i < serialization.size(); i++) {
         const auto &entitySerialization = serialization[i];
         const auto &entityInstance = entities[i];
@@ -121,14 +123,14 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
                 CharacterEffectControllerSerialization, CharacterEffectControllerFactory,
                 AiControllerComponentSerialization, AiControllerFactory,
                 ShowFpsComponentSerialization, ShowFpsComponentFactory,
-                HealthComponentSerialization, HealthComponentFactory,
                 PrefabSpawnerSerialization, PrefabSpawnerFactor,
                 GridPrefabSpawnerSerialization, GridPrefabSpawnerFactor,
                 GridSerialization, GridFactory,
                 PathFinderSerialization, PathFinderFactory,
                 ParticleEmitterSerialization, ParticleEmitterComponentFactory,
                 SpineColliderSerialization, SpineColliderComponentFactory,
-                HealthBarComponentSerialization, HealthBarComponentFactory,
+                //HealthComponentSerialization, HealthComponentFactory,
+                //HealthBarComponentSerialization, HealthBarComponentFactory,
                 RectTransformFollowerSerialization, RectTransformFollowerFactory,
                 DestroyWithCreatorComponentSerialization, DestroyWithCreatorComponentFactory,
                 UiButtonComponentSerialization, UiButtonComponentFactory,
@@ -139,9 +141,22 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
                 TeamSerialization, TeamComponentFactory,
                 UiButtonEffectSerialization, UiButtonEffectFactory
             >(comp.get(), std::weak_ptr<Entity>(entityInstance))) {
+
+                if (auto* d = dynamic_cast<HealthComponentSerialization*>(comp.get())) {
+
+                    for (const auto & entity_view: entityView) {
+                        Entity *target = entityInstance.lock().get();
+                        Entity *source = & entityView->get(entity_view);
+                        if (source == target) {
+                            HealthComponentFactory factory(_scene->GetEntityRegistry());
+                            factory.FillComponent(entity_view, *d);
+                            break;
+                        }
+                    }
+                }
                 std::cerr << "can't add component" << std::endl;
 #ifndef NDEBUG
-                exit(-1);
+               // exit(-1);
 #endif
             }
         }

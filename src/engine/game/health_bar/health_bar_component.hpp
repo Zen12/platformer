@@ -4,32 +4,20 @@
 #include "../health/health_component.hpp"
 
 
-class HealthBarComponent final : public Component {
+class HealthBarComponent {
 
 private:
-    std::weak_ptr<UiImageRendererComponent> _image;
-    std::weak_ptr<HealthComponent> _health;
+    UiImageRendererComponent *_image;
+    HealthComponent *_health;
 
 public:
 
-    explicit HealthBarComponent(const std::weak_ptr<Entity> &entity)
-        : Component(entity) {
-    }
-
-    void Update([[maybe_unused]] const float &deltaTime) override {
-
-        if (const auto image = _image.lock()) {
-            if (const auto health = _health.lock()) {
-                image->SetFillAmount(health->GetPercentageHealth());
-            }
-        }
-    }
-
-    void SetFillBar(const std::weak_ptr<UiImageRendererComponent> &image) noexcept {
+    HealthBarComponent(HealthComponent *health, UiImageRendererComponent* image) {
+        _health = health;
         _image = image;
     }
 
-    void SetHealth(const std::weak_ptr<HealthComponent> &health) noexcept {
-        _health = health;
+    void Update() const {
+        _image->SetFillAmount(_health->GetPercentageHealth());
     }
 };
