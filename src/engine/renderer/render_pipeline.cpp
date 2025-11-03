@@ -4,13 +4,13 @@
 
 #define DEBUG_ENGINE_MESH_RENDERER_PIPELINE 0
 
-void RenderPipeline::RenderSprites(const float& deltaTime) const
-{
+void RenderPipeline::RenderSprites(const float& deltaTime) const {
     glEnable(GL_CULL_FACE);
     glDisable(GL_BLEND);
 
-    const auto projection = _camera3d.lock()->GetProjection();
-    const auto view = _cameraTransform3d.lock()->GetModel();
+
+    const auto projection = _camera3d.GetProjection();
+    const auto view = _cameraTransform3d.GetModel();
 
     for (const auto& value : _sprites)
     {
@@ -46,8 +46,8 @@ void RenderPipeline::RenderMeshes(const float& deltaTime) {
             return sa->GetZOrder() < sb->GetZOrder();
         });
 
-    const auto projection = _camera3d.lock()->GetProjection();
-    const auto view = _cameraTransform3d.lock()->GetModel();
+    const auto projection = _camera3d.GetProjection();
+    const auto view = _cameraTransform3d.GetModel();
 
 #ifndef NDEBUG
 #if DEBUG_ENGINE_MESH_RENDERER_PIPELINE
@@ -87,7 +87,6 @@ void RenderPipeline::RenderMeshes(const float& deltaTime) {
 }
 
 void RenderPipeline::RenderParticles([[maybe_unused]] const float &deltaTime) const {
-
     glEnable(GL_CULL_FACE);
     glEnable(GL_BLEND);
     auto SOURCE = GL_SRC_COLOR;
@@ -95,8 +94,8 @@ void RenderPipeline::RenderParticles([[maybe_unused]] const float &deltaTime) co
 
     glBlendFunc( SOURCE, DEST);
 
-    const auto projection = _camera3d.lock()->GetProjection();
-    const auto view = _cameraTransform3d.lock()->GetModel();
+    const auto projection = _camera3d.GetProjection();
+    const auto view = _cameraTransform3d.GetModel();
 
     for (const auto& value : _particles) {
         if (const auto& particle = value.lock()) {
@@ -113,19 +112,14 @@ glm::vec3 RenderPipeline::ScreenToWorldPoint(glm::vec2 screenPos) const {
 }
 
 glm::vec3 RenderPipeline::ScreenToWorldPoint(const glm::vec3 &screenPos) const {
-
-    if (const auto camera = _camera3d.lock()) {
-        return camera->ScreenToWorldPoint(screenPos);
-    }
-
-    return glm::vec3(0.0f);
+    return _camera3d.ScreenToWorldPoint(screenPos);
 }
 
 void RenderPipeline::RenderDebugLines() const {
     glEnable(GL_CULL_FACE);
 
-    const auto projection = _camera3d.lock()->GetProjection();
-    const auto view = _cameraTransform3d.lock()->GetModel();
+    const auto projection = _camera3d.GetProjection();
+    const auto view = _cameraTransform3d.GetModel();
 
     DebugLines::UpdateViewProjection(view, projection);
 

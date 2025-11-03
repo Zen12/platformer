@@ -1,5 +1,6 @@
 #include "scene_manager.hpp"
 
+#include "../entity/tag_component.hpp"
 #include "../game/character_controller/character_animation/character_animation_component_factory.hpp"
 #include "../game/character_controller/character_animation/character_animation_component_serialization.hpp"
 #include "../game/character_controller/movement/character_movement_component_factory.hpp"
@@ -78,86 +79,36 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
 
         LoadEntities(sceneAsset.Entities);
 
-        const auto sceneCamera = _scene->FindByTag("main_camera");
+        const std::tuple<CameraComponentComponent, TransformComponent> data = _scene->FindMainCamera();
 
-        if (const auto camera = sceneCamera.lock()) {
-            _scene->GetRenderPipeline().lock()->UpdateCamera(
-      camera->GetComponent<CameraComponent>(),
-      camera->GetComponent<Transform>());
-        }
+        _scene->_renderSystem = std::make_unique<RenderSystem>
+        (std::get<CameraComponentComponent>(data), std::get<TransformComponent>(data));
     }
 }
 
 void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serialization) const {
 
-    std::vector<std::weak_ptr<Entity>> entities;
-    for (const auto &entitySerialization : serialization) {
-        entities.push_back(_scene->CreateEntity(entitySerialization));
-    }
+    const auto &registry = _scene->GetEntityRegistry();
 
-    auto entityView = _scene->GetEntityRegistry()->view<Entity>();
+    const auto &tagView = registry->view<TagComponent>();
+
 
     for (size_t i = 0; i < serialization.size(); i++) {
         const auto &entitySerialization = serialization[i];
-        const auto &entityInstance = entities[i];
 
-        for (const auto &comp : entitySerialization.Components)
-        {
-            if (!TryToAddComponents<
-                CameraComponentSerialization, CameraComponentFactory,
-                TransformComponentSerialization, TransformFactory,
-                RectTransformComponentSerialization, RectTransformFactory,
-                UiImageComponentSerialization, UiImageFactory,
-                UiTextComponentSerialization, UiTextComponentFactory,
-                SpriteRenderComponentSerialization, SpriteRendererFactory,
-                SpineRenderComponentSerialization, SpineRendererFactory,
-                Box2dColliderSerialization, BoxCollider2dFactory,
-                Rigidbody2dSerialization, Rigidbody2dFactory,
-                Light2dComponentSerialization, Light2dFactory,
-                MeshRendererComponentSerialization, MeshRendererFactory,
-                CharacterControllerComponentSerialization, CharacterControllerFactory,
-                CharacterMovementComponentSerialization, CharacterMovementFactory,
-                CharacterAnimationComponentSerialization, CharacterAnimationComponentFactory,
-                ShootComponentSerialization, ShootComponentFactory,
-                CharacterInputComponentSerialization, CharacterInputComponentFactory,
-                CharacterEffectControllerSerialization, CharacterEffectControllerFactory,
-                AiControllerComponentSerialization, AiControllerFactory,
-                ShowFpsComponentSerialization, ShowFpsComponentFactory,
-                PrefabSpawnerSerialization, PrefabSpawnerFactor,
-                GridPrefabSpawnerSerialization, GridPrefabSpawnerFactor,
-                GridSerialization, GridFactory,
-                PathFinderSerialization, PathFinderFactory,
-                ParticleEmitterSerialization, ParticleEmitterComponentFactory,
-                SpineColliderSerialization, SpineColliderComponentFactory,
-                //HealthComponentSerialization, HealthComponentFactory,
-                //HealthBarComponentSerialization, HealthBarComponentFactory,
-                RectTransformFollowerSerialization, RectTransformFollowerFactory,
-                DestroyWithCreatorComponentSerialization, DestroyWithCreatorComponentFactory,
-                UiButtonComponentSerialization, UiButtonComponentFactory,
-                IdleCharacterSerialization, IdleCharacterComponentFactor,
-                OnClickSceneLoaderSerialization, OnClickSceneLoaderFactory,
-                PathMoverComponentSerialization, PathMoverComponentFactor,
-                GameStateData, GameStateFactory,
-                TeamSerialization, TeamComponentFactory,
-                UiButtonEffectSerialization, UiButtonEffectFactory
-            >(comp.get(), std::weak_ptr<Entity>(entityInstance))) {
+        const auto &entity = registry->create();
+        tagView->emplace(entity, entitySerialization.Tag);
 
-                if (auto* d = dynamic_cast<HealthComponentSerialization*>(comp.get())) {
-
-                    for (const auto & entity_view: entityView) {
-                        Entity *target = entityInstance.lock().get();
-                        Entity *source = & entityView->get(entity_view);
-                        if (source == target) {
-                            HealthComponentFactory factory(_scene->GetEntityRegistry());
-                            factory.FillComponent(entity_view, *d);
-                            break;
-                        }
-                    }
-                }
-                std::cerr << "can't add component" << std::endl;
-#ifndef NDEBUG
-               // exit(-1);
-#endif
+        for (const auto& component : entitySerialization.Components) {
+            if (const auto &d = dynamic_cast<SpriteRenderComponentSerialization*>(component.get())) {
+                const auto &view = registry->view<SpriteComponent>();
+                view->emplace(entity, GetMaterial(d->MaterialGuid), GetSprite(d->SpriteGuid));
+            } else if (const auto &camera_component_serialization = dynamic_cast<CameraComponentSerialization*>(component.get())) {
+                const auto &view = registry->view<CameraComponentComponent>();
+                view->emplace(entity, *camera_component_serialization, _window);
+            }else if (const auto &transformSerialization = dynamic_cast<TransformComponentSerialization*>(component.get())) {
+                const auto &view = registry->view<TransformComponent>();
+                view->emplace(entity, *transformSerialization);
             }
         }
     }

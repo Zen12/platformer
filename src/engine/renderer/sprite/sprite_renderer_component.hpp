@@ -6,6 +6,23 @@
 #include "../material/material.hpp"
 #include "../transform/transform_component.hpp"
 
+class SpriteComponent {
+private:
+    const std::shared_ptr<Material> _material;
+    const std::shared_ptr<Sprite> _sprite;
+    const std::shared_ptr<Mesh> _mesh;
+
+public:
+
+    SpriteComponent(const std::shared_ptr<Material> &material, const std::shared_ptr<Sprite> &sprite)
+        : _material(material), _sprite(sprite), _mesh(Mesh::GenerateSpritePtr())
+    {}
+
+    [[nodiscard]] std::weak_ptr<Material> GetMaterial() const noexcept { return _material; }
+    [[nodiscard]] std::weak_ptr<Sprite> GetSprite() const noexcept { return _sprite; }
+    [[nodiscard]] std::weak_ptr<Mesh> GetMesh() const noexcept { return _mesh; }
+};
+
 class SpriteRenderer : public Component
 {
 

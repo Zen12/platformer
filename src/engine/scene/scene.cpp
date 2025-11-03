@@ -102,7 +102,14 @@ void Scene::RemovePendingEntities() {
 }
 
 void Scene::Render(const float &deltaTime) const {
+    const auto view = _entityRegistry->view<TransformComponent, SpriteComponent>();
 
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    _renderSystem->RenderSprites(view);
+
+    // old
+    return;
     _renderPipeline->ClearFrame();
     _renderPipeline->RenderSprites(deltaTime);
     _renderPipeline->RenderParticles(deltaTime);
@@ -241,6 +248,17 @@ std::shared_ptr<Font> Scene::GetFont(const std::string &guid) {
         }
         return _fonts[guid];
     }
+    return {};
+}
+
+std::tuple<CameraComponentComponent, TransformComponent> Scene::FindMainCamera() const {
+
+    const auto view = _entityRegistry->view<CameraComponentComponent, TransformComponent>();
+
+    for (auto [entity, camera, transform] : view.each()) {
+        return std::tuple(camera, transform);
+    }
+
     return {};
 }
 

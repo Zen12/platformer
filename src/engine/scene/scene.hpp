@@ -26,6 +26,7 @@
 #include "../ui/desktop_raycast_system.hpp"
 #include "entt/entity/registry.hpp"
 #include "../game/health/health_system.hpp"
+#include "../renderer/render_system.hpp"
 
 struct PrefabInstantiateData {
     std::string Id{};
@@ -62,6 +63,7 @@ private:
     std::string _requestToLoadScene{};
 
 public:
+    std::unique_ptr<RenderSystem> _renderSystem;
 
     std::vector<PrefabInstantiateData> PrefabRequestInstantiate{};
 
@@ -126,6 +128,8 @@ public:
     [[nodiscard]] std::shared_ptr<Sprite> GetSprite(const std::string &guid);
 
     [[nodiscard]] std::shared_ptr<Font> GetFont(const std::string &guid);
+
+    [[nodiscard]] std::tuple<CameraComponentComponent, TransformComponent> FindMainCamera() const;
 
     [[nodiscard]] std::weak_ptr<Entity> FindByTag(const std::string &tag) const;
 

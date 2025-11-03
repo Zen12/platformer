@@ -3,7 +3,7 @@ include(FetchContent)
 FetchContent_Declare(
   glew
   GIT_REPOSITORY https://github.com/Perlmint/glew-cmake.git
-  GIT_TAG master
+  GIT_TAG a9714943d5e08cbc596a7f2758195148df5dc628
 )
 
 FetchContent_MakeAvailable(glew)

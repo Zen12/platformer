@@ -112,8 +112,7 @@ namespace YAML {
             return true;
         }
 
-        static std::unique_ptr<ComponentSerialization>
-        createComponentFromYAML(const YAML::Node& node) {
+        static std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAML::Node& node) {
 
             const auto type = node["type"].as<std::string>();
 

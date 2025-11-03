@@ -1,0 +1,22 @@
+name: test_scene
+type: scene
+entities:
+  - components:
+      - type: transform
+        position: [0.03, 0.15, -12.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [16.0, 9.0, 1.0]
+      - type: sprite_renderer
+        material: f22681f4-45d1-4542-a838-99f854890c18
+        image: 2c45b2e3-8a3a-47d0-bad9-b767994cfc3d
+
+  - guid: main-camera
+    tag: main_camera
+    components:
+      - type: transform
+        position: [0.0, 1.55, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: camera
+        aspectPower: 70.0
+        isPerspective: false

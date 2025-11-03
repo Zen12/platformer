@@ -15,11 +15,6 @@ if (NOT TARGET glm)
     if(NOT glm_POPULATED)
         FetchContent_Populate(glm)
 
-        # Patch the CMakeLists.txt to use a compatible cmake_minimum_required
-        file(READ "${glm_SOURCE_DIR}/CMakeLists.txt" GLM_CMAKE)
-        string(REGEX REPLACE "cmake_minimum_required\\(VERSION [0-9.]+\\)" "cmake_minimum_required(VERSION 3.5)" GLM_CMAKE "${GLM_CMAKE}")
-        file(WRITE "${glm_SOURCE_DIR}/CMakeLists.txt" "${GLM_CMAKE}")
-
         add_subdirectory(${glm_SOURCE_DIR} ${glm_BINARY_DIR})
     endif()
 

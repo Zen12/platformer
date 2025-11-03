@@ -4,9 +4,9 @@
 
 struct EntitySerialization
 {
-    std::string Creator{};
+    std::string Creator{}; // remove
     std::string Tag;
-    std::string Guid;
+    std::string Guid; // remove
     int Layer;
     std::vector<std::shared_ptr<ComponentSerialization>> Components;
 };

@@ -4,5 +4,6 @@ resolution:
   - 1200
 target_fps: 60
 scenes:
+  - 963d3fa8-8f5c-45aa-beab-1aa887e30816
   - 993c601d-92e7-4678-bf0e-d8c1ac63dae6
   - d0677c93-a26f-4793-9eb7-5232d99378d1

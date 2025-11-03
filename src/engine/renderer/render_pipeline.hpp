@@ -13,8 +13,8 @@
 class RenderPipeline
 {
 private:
-    std::weak_ptr<CameraComponent> _camera3d;
-    std::weak_ptr<Transform> _cameraTransform3d;
+    CameraComponentComponent _camera3d{};
+    TransformComponent _cameraTransform3d;
     Camera _uiCamera;
 
     std::weak_ptr<Window> _window;
@@ -31,17 +31,9 @@ public:
     {
     }
 
-    RenderPipeline(
-        const std::weak_ptr<CameraComponent> &camera3d,
-        const std::weak_ptr<Transform> &cameraTransform3d,
-        const std::weak_ptr<Window> &window) :
-                                               _camera3d(camera3d),
-                                               _cameraTransform3d(cameraTransform3d),
-                                               _uiCamera(Camera(1, true, false, window)) {
-                                               };
 
-    void UpdateCamera(const std::weak_ptr<CameraComponent> &camera3d,
-                      const std::weak_ptr<Transform> &cameraTransform3d)
+    void UpdateCamera(const CameraComponentComponent &camera3d,
+                      const TransformComponent &cameraTransform3d)
     {
         _camera3d = camera3d;
         _cameraTransform3d = cameraTransform3d;
@@ -68,7 +60,7 @@ public:
 
     [[nodiscard]] glm::vec3 ScreenToWorldPoint( const glm::vec3 &screenPos) const;
 
-    [[nodiscard]] std::weak_ptr<CameraComponent> Get3dCamera() const { return _camera3d; }
+    [[nodiscard]] std::weak_ptr<CameraComponent> Get3dCamera() const { return {}; }
     void RenderDebugLines() const;
 
     void Cleanup();
