@@ -1,14 +1,15 @@
 #pragma once
 #include <string>
+#include <utility>
 
 
 class TagComponent {
 private:
     std::string _tag;
 public:
-    explicit TagComponent(const std::string &tag)
-        : _tag(tag)
+    explicit TagComponent(std::string tag)
+        : _tag(std::move(tag))
     {}
 
-    const std::string &GetTag() const noexcept { return _tag; }
+    [[nodiscard]] const std::string &GetTag() const noexcept { return _tag; }
 };

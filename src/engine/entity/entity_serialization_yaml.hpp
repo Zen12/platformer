@@ -105,19 +105,19 @@ namespace YAML {
 
             if (node["components"]) {
                 for (const auto& comp : node["components"]) {
-                    rhs.Components.push_back(createComponentFromYAML(comp));
+                    rhs.Components.push_back(DecodeComponents(comp));
                 }
             }
 
             return true;
         }
 
-        static std::unique_ptr<ComponentSerialization> createComponentFromYAML(const YAML::Node& node) {
+        static std::unique_ptr<ComponentSerialization> DecodeComponents(const YAML::Node& node) {
 
             const auto type = node["type"].as<std::string>();
 
-            using Factory = std::function<std::unique_ptr<ComponentSerialization>(const YAML::Node&)>;
-            static const std::unordered_map<std::string, Factory> factories = {
+            using ComponentSerialization = std::function<std::unique_ptr<ComponentSerialization>(const YAML::Node&)>;
+            static const std::unordered_map<std::string, ComponentSerialization> pairs = {
                 { "camera",                [](const YAML::Node& n){ return Parse<CameraComponentSerialization>(n); } },
                 { "transform",             [](const YAML::Node& n){ return Parse<TransformComponentSerialization>(n); } },
                 { "rect_transform",        [](const YAML::Node& n){ return Parse<RectTransformComponentSerialization>(n); } },
@@ -156,7 +156,7 @@ namespace YAML {
                 { "ui_button_effect",      [](const YAML::Node& n){ return Parse<UiButtonEffectSerialization>(n); } },
             };
 
-            if (const auto it = factories.find(type); it != factories.end()) {
+            if (const auto it = pairs.find(type); it != pairs.end()) {
                 return it->second(node);
             }
 

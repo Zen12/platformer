@@ -13,8 +13,6 @@
 class RenderPipeline
 {
 private:
-    CameraComponentComponent _camera3d{};
-    TransformComponent _cameraTransform3d;
     Camera _uiCamera;
 
     std::weak_ptr<Window> _window;
@@ -31,13 +29,6 @@ public:
     {
     }
 
-
-    void UpdateCamera(const CameraComponentComponent &camera3d,
-                      const TransformComponent &cameraTransform3d)
-    {
-        _camera3d = camera3d;
-        _cameraTransform3d = cameraTransform3d;
-    }
 
     void AddRenderer(const std::weak_ptr<MeshRenderer> &meshRenderer) noexcept { _meshRenderers.push_back(meshRenderer); }
     void AddRenderer(const std::weak_ptr<SpriteRenderer> &sprite) noexcept { _sprites.push_back(sprite); }

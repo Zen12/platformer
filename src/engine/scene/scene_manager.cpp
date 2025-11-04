@@ -11,6 +11,8 @@
 #include "../game/character_controller/character_input/character_input_component_serialization.hpp"
 #include "../game/character_controller/character_effect/character_effect_controller_factory.hpp"
 #include "../game/character_controller/character_effect/character_effect_controller_serialization.hpp"
+#include "../plugins/renderer/common/camera_plugin.hpp"
+#include "../plugins/renderer/sprite_renderer/render_system.hpp"
 
 #define DEBUG_ENGINE_SCENE_MANAGER_PROFILE 0
 
@@ -78,17 +80,16 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
         _scene = std::make_shared<Scene> (_window,_assetManager, _inputSystem);
 
         LoadEntities(sceneAsset.Entities);
-
-        const std::tuple<CameraComponentComponent, TransformComponent> data = _scene->FindMainCamera();
-
-        _scene->_renderSystem = std::make_unique<RenderSystem>
-        (std::get<CameraComponentComponent>(data), std::get<TransformComponent>(data));
     }
 }
 
 void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serialization) const {
 
     const auto &registry = _scene->GetEntityRegistry();
+
+    const auto &entityWindow = registry->create();
+    const auto &windowView = registry->view<Core::WindowComponent>();
+    windowView->emplace(entityWindow, Core::WindowComponent());
 
     const auto &tagView = registry->view<TagComponent>();
 
@@ -101,17 +102,29 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
 
         for (const auto& component : entitySerialization.Components) {
             if (const auto &d = dynamic_cast<SpriteRenderComponentSerialization*>(component.get())) {
-                const auto &view = registry->view<SpriteComponent>();
-                view->emplace(entity, GetMaterial(d->MaterialGuid), GetSprite(d->SpriteGuid));
+                const auto &view = registry->view<Plugins::Renderer::Sprite::SpriteComponentV2>();
+                view->emplace(entity, *d);
             } else if (const auto &camera_component_serialization = dynamic_cast<CameraComponentSerialization*>(component.get())) {
-                const auto &view = registry->view<CameraComponentComponent>();
-                view->emplace(entity, *camera_component_serialization, _window);
+                const auto &view = registry->view<Plugins::Renderer::Common::CameraComponentV2>();
+                view->emplace(entity, *camera_component_serialization);
             }else if (const auto &transformSerialization = dynamic_cast<TransformComponentSerialization*>(component.get())) {
-                const auto &view = registry->view<TransformComponent>();
+                const auto &view = registry->view<Core::TransformComponentV2>();
                 view->emplace(entity, *transformSerialization);
             }
         }
     }
+
+
+    const auto camera = registry->view<Plugins::Renderer::Common::CameraComponentV2, Core::TransformComponentV2>();
+    _scene->AddSystem(std::make_unique<Core::WindowSystem>(windowView, _scene->GetWindow()));
+    _scene->AddSystem(
+        std::make_unique<Plugins::Renderer::Common::CameraSystem>
+        (windowView, camera));
+    _scene->AddSystem(std::make_unique<Plugins::Renderer::Sprite::SpriteRenderSystem>
+        (
+        registry->view<Plugins::Renderer::Sprite::SpriteComponentV2, Core::TransformComponentV2>(),
+        registry->view<Plugins::Renderer::Common::CameraComponentV2>(),
+        _scene));
 }
 
 std::weak_ptr<Entity> SceneManager::GetEntityById(const std::string &id) const {
@@ -143,7 +156,7 @@ void SceneManager::CreateRequestedPrefabs() const {
     }
 
 
-    LoadEntities(serializations);
+    //LoadEntities(serializations);
     _scene->PrefabRequestInstantiate.clear();
 }
 

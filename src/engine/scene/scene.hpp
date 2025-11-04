@@ -26,7 +26,7 @@
 #include "../ui/desktop_raycast_system.hpp"
 #include "entt/entity/registry.hpp"
 #include "../game/health/health_system.hpp"
-#include "../renderer/render_system.hpp"
+#include "../plugin-core/plugin.hpp"
 
 struct PrefabInstantiateData {
     std::string Id{};
@@ -40,6 +40,7 @@ class Scene {
 private:
     std::unordered_map<std::string, std::shared_ptr<Shader>> _shaders;
     std::unordered_map<std::string, std::shared_ptr<Material>> _materials;
+    std::unordered_map<std::string, std::shared_ptr<Mesh>> _mesh;
     std::unordered_map<std::string, std::shared_ptr<Sprite>> _sprites;
     std::vector<std::shared_ptr<SpineData>> _spineDatas;
     std::unordered_map<std::string, std::shared_ptr<Font>> _fonts;
@@ -62,8 +63,9 @@ private:
     std::vector<std::string> _entitiesToRemove{};
     std::string _requestToLoadScene{};
 
+    std::vector<std::unique_ptr<Core::ISystem>> _systems{};
+
 public:
-    std::unique_ptr<RenderSystem> _renderSystem;
 
     std::vector<PrefabInstantiateData> PrefabRequestInstantiate{};
 
@@ -107,6 +109,10 @@ public:
         return _entityRegistry;
     }
 
+    void AddSystem(std::unique_ptr<Core::ISystem> system) noexcept {
+        _systems.emplace_back(std::move(system));
+    }
+
 
     void RemoveEntityById(const std::string &id);
 
@@ -120,6 +126,8 @@ public:
 
     [[nodiscard]] std::shared_ptr<Material> GetMaterial(const std::string &guid);
 
+    std::shared_ptr<Mesh> GetMesh(const std::string &guid);
+
     [[nodiscard]] std::shared_ptr<SpineData> LoadSpineData(const SpineAsset& asset) const;
 
 
@@ -128,8 +136,6 @@ public:
     [[nodiscard]] std::shared_ptr<Sprite> GetSprite(const std::string &guid);
 
     [[nodiscard]] std::shared_ptr<Font> GetFont(const std::string &guid);
-
-    [[nodiscard]] std::tuple<CameraComponentComponent, TransformComponent> FindMainCamera() const;
 
     [[nodiscard]] std::weak_ptr<Entity> FindByTag(const std::string &tag) const;
 

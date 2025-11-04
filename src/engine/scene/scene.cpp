@@ -71,6 +71,12 @@ void Scene::Update(const float &deltaTime) {
     _healthSystem->Update(_entityRegistry);
     _uiRaycastSystem->UpdateState();
     _physicsWorld->UpdateRigidBodies();
+
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    for (auto &system: _systems) {
+        system->OnTick();
+    }
 }
 
 void Scene::RemovePendingEntities() {
@@ -102,12 +108,6 @@ void Scene::RemovePendingEntities() {
 }
 
 void Scene::Render(const float &deltaTime) const {
-    const auto view = _entityRegistry->view<TransformComponent, SpriteComponent>();
-
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    _renderSystem->RenderSprites(view);
-
     // old
     return;
     _renderPipeline->ClearFrame();
@@ -157,6 +157,19 @@ std::shared_ptr<Material> Scene::GetMaterial(const std::string &guid) {
             return material;
         }
         return _materials[guid];
+    }
+
+    return {};
+}
+
+std::shared_ptr<Mesh> Scene::GetMesh(const std::string &guid) {
+    if (const auto assetManager = _assetManager.lock()) {
+        if (_mesh.find(guid) == _mesh.end()) {
+            const auto meshAsset = std::shared_ptr<Mesh>(Mesh::GenerateSpritePtr());
+            _mesh[guid] = meshAsset;
+            return meshAsset;
+        }
+        return _mesh[guid];
     }
 
     return {};
@@ -251,16 +264,6 @@ std::shared_ptr<Font> Scene::GetFont(const std::string &guid) {
     return {};
 }
 
-std::tuple<CameraComponentComponent, TransformComponent> Scene::FindMainCamera() const {
-
-    const auto view = _entityRegistry->view<CameraComponentComponent, TransformComponent>();
-
-    for (auto [entity, camera, transform] : view.each()) {
-        return std::tuple(camera, transform);
-    }
-
-    return {};
-}
 
 std::weak_ptr<Entity> Scene::FindByTag(const std::string &tag) const {
 

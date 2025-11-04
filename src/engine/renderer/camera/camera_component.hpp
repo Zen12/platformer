@@ -10,40 +10,6 @@
 
 #include "camera_component_serialization.hpp"
 
-class CameraComponentComponent final {
-private:
-    CameraComponentSerialization _cameraSerialization{};
-    Camera _camera{};
-
-public:
-
-    CameraComponentComponent() = default;
-
-    explicit CameraComponentComponent(CameraComponentSerialization cameraSerialization, const std::weak_ptr<Window>& window)
-        : _cameraSerialization(std::move(cameraSerialization)),
-        _camera(_cameraSerialization.aspectPower, false, _cameraSerialization.isPerspective, window)
-    {}
-
-    [[nodiscard]] glm::mat4 GetProjection() const { return _camera.GetProjection(); }
-
-    [[nodiscard]] glm::vec3 ScreenToWorldPoint([[maybe_unused]] glm::vec3 screenPos) const
-    {
-        // todo
-        return glm::vec3(0.0f);
-    }
-
-    [[nodiscard]] glm::vec3 ScreenToWorldPoint(const glm::vec2 &screenPos) const
-    {
-        return ScreenToWorldPoint(glm::vec3(screenPos.x, screenPos.y, 0));
-    }
-
-    [[nodiscard]] glm::vec3 WorldToScreenPoint([[maybe_unused]] glm::vec3 worldPos) const
-    {
-        // todo
-        return glm::vec3(0.0f);
-    }
-};
-
 class CameraComponent final : public Component
 {
 private:

@@ -4,29 +4,11 @@
 
 #define DEBUG_ENGINE_MESH_RENDERER_PIPELINE 0
 
-void RenderPipeline::RenderSprites(const float& deltaTime) const {
+void RenderPipeline::RenderSprites([[maybe_unused]] const float& deltaTime) const {
+
+    return;
     glEnable(GL_CULL_FACE);
     glDisable(GL_BLEND);
-
-
-    const auto projection = _camera3d.GetProjection();
-    const auto view = _cameraTransform3d.GetModel();
-
-    for (const auto& value : _sprites)
-    {
-
-        if (const auto& renderer = value.lock())
-        {
-            renderer->Update(deltaTime); // move to material, it is called twice per frame, need to remove it
-
-            const auto model = renderer->GetModel();
-            renderer->SetUniformMat4("model",model);
-            renderer->SetUniformMat4("view",view);
-            renderer->SetUniformMat4("projection",projection);
-
-            renderer->Render();
-        }
-    }
 }
 
 void RenderPipeline::RenderMeshes(const float& deltaTime) {
@@ -46,8 +28,8 @@ void RenderPipeline::RenderMeshes(const float& deltaTime) {
             return sa->GetZOrder() < sb->GetZOrder();
         });
 
-    const auto projection = _camera3d.GetProjection();
-    const auto view = _cameraTransform3d.GetModel();
+    //const auto projection = _camera3d.GetProjection();
+    // const auto view = _cameraTransform3d.GetModel();
 
 #ifndef NDEBUG
 #if DEBUG_ENGINE_MESH_RENDERER_PIPELINE
@@ -71,8 +53,8 @@ void RenderPipeline::RenderMeshes(const float& deltaTime) {
             meshRenderer->Update(deltaTime); // move to material, it is called twice per frame, need to remove it
 
             meshRenderer->SetUniformMat4("model", meshRenderer->GetModel());
-            meshRenderer->SetUniformMat4("view", view);
-            meshRenderer->SetUniformMat4("projection", projection);
+            //meshRenderer->SetUniformMat4("view", view);
+            //meshRenderer->SetUniformMat4("projection", projection);
 
             meshRenderer->Render();
         }
@@ -94,13 +76,13 @@ void RenderPipeline::RenderParticles([[maybe_unused]] const float &deltaTime) co
 
     glBlendFunc( SOURCE, DEST);
 
-    const auto projection = _camera3d.GetProjection();
-    const auto view = _cameraTransform3d.GetModel();
+    //const auto projection = _camera3d.GetProjection();
+    //const auto view = _cameraTransform3d.GetModel();
 
     for (const auto& value : _particles) {
         if (const auto& particle = value.lock()) {
-            particle->SetUniformMat4("view", view);
-            particle->SetUniformMat4("projection", projection);
+            //particle->SetUniformMat4("view", view);
+            //particle->SetUniformMat4("projection", projection);
 
             particle->Render();
         }
@@ -111,19 +93,20 @@ glm::vec3 RenderPipeline::ScreenToWorldPoint(glm::vec2 screenPos) const {
     return ScreenToWorldPoint(glm::vec3(screenPos.x, screenPos.y, 0));
 }
 
-glm::vec3 RenderPipeline::ScreenToWorldPoint(const glm::vec3 &screenPos) const {
-    return _camera3d.ScreenToWorldPoint(screenPos);
+glm::vec3 RenderPipeline::ScreenToWorldPoint([[maybe_unused]] const glm::vec3 &screenPos) const {
+    //return _camera3d.ScreenToWorldPoint(screenPos);
+    return {};
 }
 
 void RenderPipeline::RenderDebugLines() const {
     glEnable(GL_CULL_FACE);
 
-    const auto projection = _camera3d.GetProjection();
-    const auto view = _cameraTransform3d.GetModel();
+    //const auto projection = _camera3d.GetProjection();
+    //const auto view = _cameraTransform3d.GetModel();
 
-    DebugLines::UpdateViewProjection(view, projection);
+    //DebugLines::UpdateViewProjection(view, projection);
 
-    DebugLines::DrawLines();
+    //DebugLines::DrawLines();
 
     DebugLines::Clear();
 }
