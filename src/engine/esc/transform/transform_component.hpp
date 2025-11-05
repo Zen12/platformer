@@ -27,4 +27,8 @@ public:
 
         return model;
     }
+
+    [[nodiscard]] const glm::vec3& GetPosition() const noexcept {
+        return _position;
+    }
 };

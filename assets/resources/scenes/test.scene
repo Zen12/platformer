@@ -17,6 +17,8 @@ entities:
       - type: sprite_renderer
         material: f22681f4-45d1-4542-a838-99f854890c18
         image: 9f7b9b06-73ea-4f02-afc1-76d9e82bf593
+      - type: box_collider
+        size: [1.0, 1.0, 0.0]
   - guid: main-camera
     tag: main_camera
     components:

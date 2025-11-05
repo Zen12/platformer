@@ -9,15 +9,15 @@ public:
     virtual ~ISystem() = default;
 };
 
-template <typename T>
+template <typename... Components>
 class ISystemView : public ISystem {
 protected:
-    using TypeView = decltype(std::declval<entt::registry>().view<T>());
-    const TypeView View{};
+    using TypeView = decltype(std::declval<entt::registry&>().view<Components...>());
+    TypeView View;
 
 public:
-    explicit ISystemView(const TypeView& view)
-        :View(view) {}
+    explicit ISystemView(TypeView view) : View(view) {}
+    ~ISystemView() override = default;
 
     void OnTick() override = 0;
 };

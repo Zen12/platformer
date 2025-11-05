@@ -3,6 +3,8 @@
 #include "camera/camera_component.hpp"
 #include "camera/camera_system.hpp"
 #include "entt/entt.hpp"
+#include "physics/box_collider_component.hpp"
+#include "physics/box_collider_system.hpp"
 #include "sprite/sprite_component.hpp"
 #include "sprite/sprite_system.hpp"
 #include "tag/tag_component.hpp"
@@ -27,6 +29,7 @@ public:
 
             registry->view<WindowComponent>()->emplace(systemEntity, WindowComponent());
             registry->view<DeltaTimeComponent>()->emplace(systemEntity, DeltaTimeComponent());
+            registry->view<PhysicsWorldComponent>()->emplace(systemEntity, PhysicsWorldComponent());
         }
     }
 
@@ -51,6 +54,9 @@ public:
                     }else if (const auto &transformSerialization = dynamic_cast<TransformComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<TransformComponentV2>();
                         view->emplace(entity, *transformSerialization);
+                    }if (const auto &boxColliderSerialization = dynamic_cast<Box2dColliderSerialization*>(component.get())) {
+                        const auto &view = registry->view<BoxColliderComponent>();
+                        view->emplace(entity, *boxColliderSerialization);
                     }
                 }
             }
@@ -69,8 +75,11 @@ public:
             _systems.emplace_back(std::make_unique<DeltaTimeSystem>(registry->view<DeltaTimeComponent>()));
 
             _systems.emplace_back(std::make_unique<CameraSystem>(registry->view<WindowComponent>(),registry->view<CameraComponentV2, TransformComponentV2>()));
+
             _systems.emplace_back(std::make_unique<SpriteRenderSystem>(registry->view<SpriteComponentV2, TransformComponentV2>(),
                 registry->view<CameraComponentV2>(), _scene));
+
+            _systems.emplace_back(std::make_unique<BoxColliderSystem>(registry->view<BoxColliderComponent, TransformComponentV2>(), registry->view<PhysicsWorldComponent>()));
         }
     }
 
