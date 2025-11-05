@@ -73,10 +73,6 @@ void Scene::Update(const float &deltaTime) {
     _physicsWorld->UpdateRigidBodies();
 
     glClear(GL_COLOR_BUFFER_BIT);
-
-    for (auto &system: _systems) {
-        system->OnTick();
-    }
 }
 
 void Scene::RemovePendingEntities() {

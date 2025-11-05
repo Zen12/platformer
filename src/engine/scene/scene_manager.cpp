@@ -1,9 +1,7 @@
 #include "scene_manager.hpp"
 
 #include "../game/character_controller/character_animation/character_animation_component_factory.hpp"
-#include "../plugins/renderer/common/camera_plugin.hpp"
-#include "../plugins/renderer/common/delta_time_plugin.hpp"
-#include "../plugins/renderer/sprite_renderer/render_system.hpp"
+#include "../esc/tag/tag_component.hpp"
 
 #define DEBUG_ENGINE_SCENE_MANAGER_PROFILE 0
 
@@ -74,50 +72,13 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
     }
 }
 
-void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serialization) const {
+void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serialization) {
 
-    const auto &registry = _scene->GetEntityRegistry();
+    _escSystem = std::make_unique<EscSystem>(_scene);
 
-    const auto &systemEntity = registry->create();
+    _escSystem->LoadEntities(serialization);
 
-    registry->view<Core::WindowComponent>()->emplace(systemEntity, Core::WindowComponent());
-    registry->view<Plugins::Common::DeltaTimeComponent>()->emplace(systemEntity, Plugins::Common::DeltaTimeComponent());
-
-    const auto &tagView = registry->view<Core::TagComponent>();
-
-
-    for (const auto & entitySerialization : serialization) {
-        const auto &entity = registry->create();
-        tagView->emplace(entity, entitySerialization.Tag);
-
-        for (const auto& component : entitySerialization.Components) {
-            if (const auto &d = dynamic_cast<SpriteRenderComponentSerialization*>(component.get())) {
-                const auto &view = registry->view<Plugins::Renderer::Sprite::SpriteComponentV2>();
-                view->emplace(entity, *d);
-            } else if (const auto &camera_component_serialization = dynamic_cast<CameraComponentSerialization*>(component.get())) {
-                const auto &view = registry->view<Plugins::Renderer::Common::CameraComponentV2>();
-                view->emplace(entity, *camera_component_serialization);
-            }else if (const auto &transformSerialization = dynamic_cast<TransformComponentSerialization*>(component.get())) {
-                const auto &view = registry->view<Core::TransformComponentV2>();
-                view->emplace(entity, *transformSerialization);
-            }
-        }
-    }
-
-    const auto &windowView = registry->view<Core::WindowComponent>();
-
-    _scene->AddSystem(std::make_unique<Core::WindowSystem>(windowView, _scene->GetWindow()));
-    _scene->AddSystem(std::make_unique<Plugins::Common::DeltaTimeSystem>(registry->view<Plugins::Common::DeltaTimeComponent>()));
-
-    _scene->AddSystem(
-        std::make_unique<Plugins::Renderer::Common::CameraSystem>
-        (windowView, registry->view<Plugins::Renderer::Common::CameraComponentV2, Core::TransformComponentV2>()));
-
-    _scene->AddSystem(std::make_unique<Plugins::Renderer::Sprite::SpriteRenderSystem>
-        (
-        registry->view<Plugins::Renderer::Sprite::SpriteComponentV2, Core::TransformComponentV2>(),
-        registry->view<Plugins::Renderer::Common::CameraComponentV2>(),
-        _scene));
+    _escSystem->InitSystems();
 }
 
 std::weak_ptr<Entity> SceneManager::GetEntityById(const std::string &id) const {
@@ -163,6 +124,7 @@ void SceneManager::Update(const float &deltaTime) {
     _scene->RemovePendingEntities();
     CreateRequestedPrefabs();
     _scene->Update(deltaTime);
+    _escSystem->Update();
 }
 
 void SceneManager::Render(const float &deltaTime) const  {

@@ -26,8 +26,6 @@
 #include "../ui/desktop_raycast_system.hpp"
 #include "entt/entity/registry.hpp"
 #include "../game/health/health_system.hpp"
-#include "../plugin-core/plugin.hpp"
-
 struct PrefabInstantiateData {
     std::string Id{};
     std::string Creator{};
@@ -62,8 +60,6 @@ private:
 
     std::vector<std::string> _entitiesToRemove{};
     std::string _requestToLoadScene{};
-
-    std::vector<std::unique_ptr<Core::ISystem>> _systems{};
 
 public:
 
@@ -108,11 +104,6 @@ public:
     [[nodiscard]] std::shared_ptr<entt::registry> GetEntityRegistry() const noexcept {
         return _entityRegistry;
     }
-
-    void AddSystem(std::unique_ptr<Core::ISystem> system) noexcept {
-        _systems.emplace_back(std::move(system));
-    }
-
 
     void RemoveEntityById(const std::string &id);
 

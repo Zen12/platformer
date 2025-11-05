@@ -22,6 +22,7 @@
 #include "../system/guid_generator.hpp"
 
 #include "../entity/component_factory.hpp"
+#include "../esc/esc_core.hpp"
 #include "../game/health_bar/health_bar_component_factory.hpp"
 #include "../ui/text/text_renderer_component_factory.hpp"
 #include "../ui/image/image_renderer_component_factory.hpp"
@@ -53,7 +54,7 @@
 #include "../game/health/health_component_factory.hpp"
 #include "../game/character_controller/character_controller_component_factory.hpp"
 #include "../game/character_controller/ai_controller/ai_controller_component_factory.hpp"
-
+#include "../esc/esc.hpp"
 
 
 class SceneManager {
@@ -62,6 +63,8 @@ class SceneManager {
     std::weak_ptr<AssetManager> _assetManager;
     std::weak_ptr<Window> _window;
     std::weak_ptr<InputSystem> _inputSystem;
+
+    std::unique_ptr<EscSystem> _escSystem{};
 
 public:
     SceneManager(
@@ -74,7 +77,7 @@ public:
     }
 
     void LoadScene(const SceneAsset& serialization);
-    void LoadEntities(const std::vector<EntitySerialization> &serialization) const;
+    void LoadEntities(const std::vector<EntitySerialization> &serialization);
 
     [[nodiscard]] std::weak_ptr<PhysicsWorld> GetPhysicsWorld() const {
         return _scene->GetPhysicsWorld();;
