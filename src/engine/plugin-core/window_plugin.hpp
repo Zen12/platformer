@@ -14,18 +14,15 @@ namespace Core {
     };
 
 
-    class WindowSystem final : public ISystem
+    class WindowSystem final : public ISystemView<WindowComponent>
     {
         private:
             std::weak_ptr<Window> _window;
-            decltype(std::declval<entt::registry>().view<WindowComponent>()) View;
         public:
-            WindowSystem(
-                const decltype(std::declval<entt::registry>().view<WindowComponent>())& view,
-                const std::weak_ptr<Window> &window)
-            {
-                View = view;
-                _window = window;
+
+            WindowSystem(const TypeView &view, const std::weak_ptr<Window> &window):
+                ISystemView(view),
+                  _window(window){
             }
 
             void OnTick() override {

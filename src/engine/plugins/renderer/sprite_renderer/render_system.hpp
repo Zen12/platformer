@@ -30,9 +30,8 @@ namespace Plugins::Renderer::Sprite {
             const decltype(std::declval<entt::registry>().view<SpriteComponentV2, Core::TransformComponentV2>()) &spriteView,
             const decltype(std::declval<entt::registry>().view<Common::CameraComponentV2>()) &cameraView,
             const std::weak_ptr<Scene> &scene
-        ) : _spriteView(spriteView), _cameraView(cameraView), _scene(scene)
-
-        {}
+        ) : ISystem(), _spriteView(spriteView), _cameraView(cameraView), _scene(scene) {
+        }
 
 
         void OnTick() override {

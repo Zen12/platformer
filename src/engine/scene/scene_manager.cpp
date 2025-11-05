@@ -1,17 +1,8 @@
 #include "scene_manager.hpp"
 
-#include "../entity/tag_component.hpp"
 #include "../game/character_controller/character_animation/character_animation_component_factory.hpp"
-#include "../game/character_controller/character_animation/character_animation_component_serialization.hpp"
-#include "../game/character_controller/movement/character_movement_component_factory.hpp"
-#include "../game/character_controller/movement/character_movement_component_serialization.hpp"
-#include "../game/character_controller/shoot/shoot_component_factory.hpp"
-#include "../game/character_controller/shoot/shoot_component_serialization.hpp"
-#include "../game/character_controller/character_input/character_input_component_factory.hpp"
-#include "../game/character_controller/character_input/character_input_component_serialization.hpp"
-#include "../game/character_controller/character_effect/character_effect_controller_factory.hpp"
-#include "../game/character_controller/character_effect/character_effect_controller_serialization.hpp"
 #include "../plugins/renderer/common/camera_plugin.hpp"
+#include "../plugins/renderer/common/delta_time_plugin.hpp"
 #include "../plugins/renderer/sprite_renderer/render_system.hpp"
 
 #define DEBUG_ENGINE_SCENE_MANAGER_PROFILE 0
@@ -87,16 +78,15 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
 
     const auto &registry = _scene->GetEntityRegistry();
 
-    const auto &entityWindow = registry->create();
-    const auto &windowView = registry->view<Core::WindowComponent>();
-    windowView->emplace(entityWindow, Core::WindowComponent());
+    const auto &systemEntity = registry->create();
 
-    const auto &tagView = registry->view<TagComponent>();
+    registry->view<Core::WindowComponent>()->emplace(systemEntity, Core::WindowComponent());
+    registry->view<Plugins::Common::DeltaTimeComponent>()->emplace(systemEntity, Plugins::Common::DeltaTimeComponent());
+
+    const auto &tagView = registry->view<Core::TagComponent>();
 
 
-    for (size_t i = 0; i < serialization.size(); i++) {
-        const auto &entitySerialization = serialization[i];
-
+    for (const auto & entitySerialization : serialization) {
         const auto &entity = registry->create();
         tagView->emplace(entity, entitySerialization.Tag);
 
@@ -114,12 +104,15 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
         }
     }
 
+    const auto &windowView = registry->view<Core::WindowComponent>();
 
-    const auto camera = registry->view<Plugins::Renderer::Common::CameraComponentV2, Core::TransformComponentV2>();
     _scene->AddSystem(std::make_unique<Core::WindowSystem>(windowView, _scene->GetWindow()));
+    _scene->AddSystem(std::make_unique<Plugins::Common::DeltaTimeSystem>(registry->view<Plugins::Common::DeltaTimeComponent>()));
+
     _scene->AddSystem(
         std::make_unique<Plugins::Renderer::Common::CameraSystem>
-        (windowView, camera));
+        (windowView, registry->view<Plugins::Renderer::Common::CameraComponentV2, Core::TransformComponentV2>()));
+
     _scene->AddSystem(std::make_unique<Plugins::Renderer::Sprite::SpriteRenderSystem>
         (
         registry->view<Plugins::Renderer::Sprite::SpriteComponentV2, Core::TransformComponentV2>(),
