@@ -3,5 +3,6 @@
 
 struct MeshRendererComponentSerialization final : public ComponentSerialization
 {
+    std::string MeshGuid;
     std::string MaterialGuid;
 };

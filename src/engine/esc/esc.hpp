@@ -3,8 +3,12 @@
 #include "camera/camera_component.hpp"
 #include "camera/camera_system.hpp"
 #include "entt/entt.hpp"
+#include "mesh/mesh_renderer_component.hpp"
+#include "mesh/mesh_render_system.hpp"
 #include "physics/box_collider_component.hpp"
 #include "physics/box_collider_system.hpp"
+#include "spine/spine_component.hpp"
+#include "spine/spine_system.hpp"
 #include "sprite/sprite_component.hpp"
 #include "sprite/sprite_system.hpp"
 #include "tag/tag_component.hpp"
@@ -48,15 +52,23 @@ public:
                     if (const auto &d = dynamic_cast<SpriteRenderComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<SpriteComponentV2>();
                         view->emplace(entity, *d);
-                    } else if (const auto &camera_component_serialization = dynamic_cast<CameraComponentSerialization*>(component.get())) {
+                    } else if (const auto &cameraSerialization = dynamic_cast<CameraComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<CameraComponentV2>();
-                        view->emplace(entity, *camera_component_serialization);
+                        view->emplace(entity, *cameraSerialization);
                     }else if (const auto &transformSerialization = dynamic_cast<TransformComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<TransformComponentV2>();
                         view->emplace(entity, *transformSerialization);
                     }if (const auto &boxColliderSerialization = dynamic_cast<Box2dColliderSerialization*>(component.get())) {
                         const auto &view = registry->view<BoxColliderComponent>();
                         view->emplace(entity, *boxColliderSerialization);
+                    } if (const auto &meshSerialization = dynamic_cast<MeshRendererComponentSerialization*>(component.get())) {
+                        const auto &view = registry->view<MeshRendererComponent>();
+                        view->emplace(entity, *meshSerialization);
+                    } if (const auto &spineSerialization = dynamic_cast<SpineRenderComponentSerialization*>(component.get())) {
+                        const auto spineAsset = scenePtr->GetAssetManager().lock()->LoadAssetByGuid<SpineAsset>(spineSerialization->SpineGuid);
+                        const auto spineData = scenePtr->LoadSpineData(spineAsset);
+                        const auto &view = registry->view<SpineComponent>();
+                        view->emplace(entity, *spineData);
                     }
                 }
             }
@@ -78,6 +90,11 @@ public:
 
             _systems.emplace_back(std::make_unique<SpriteRenderSystem>(registry->view<SpriteComponentV2, TransformComponentV2>(),
                 registry->view<CameraComponentV2>(), _scene));
+
+            _systems.emplace_back(std::make_unique<MeshRenderSystem>(registry->view<MeshRendererComponent, TransformComponentV2>(),
+               registry->view<CameraComponentV2>(), _scene ));
+
+            _systems.emplace_back(std::make_unique<SpineSystem>(registry->view<SpineComponent, MeshRendererComponent>(),registry->view<DeltaTimeComponent>(), _scene));
 
             _systems.emplace_back(std::make_unique<BoxColliderSystem>(registry->view<BoxColliderComponent, TransformComponentV2>(), registry->view<PhysicsWorldComponent>()));
         }
