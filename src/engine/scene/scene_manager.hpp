@@ -10,10 +10,6 @@
 #include "../renderer/material/material.hpp"
 #include "../renderer/render_pipeline.hpp"
 #include "../asset/asset_manager.hpp"
-#include "../physics/physics_world.hpp"
-#include "../renderer/light_2d/light_2d_component.hpp"
-#include "../physics/collider/box_collider2d_component.hpp"
-#include "../physics/rigidbody/rigidbody2d_component.hpp"
 #include "../debug/debug.hpp"
 #include "../system/input_system.hpp"
 #include "../system/guid_generator.hpp"
@@ -47,17 +43,11 @@ public:
     void LoadScene(const SceneAsset& serialization);
     void LoadEntities(const std::vector<EntitySerialization> &serialization);
 
-    [[nodiscard]] std::weak_ptr<PhysicsWorld> GetPhysicsWorld() const {
-        return _scene->GetPhysicsWorld();;
-    }
-
     [[nodiscard]] std::weak_ptr<Entity> GetEntityById(const std::string& id) const;
 
     void CreateRequestedPrefabs() const;
 
     void Update(const float& deltaTime);
-
-    void Render(const float &deltaTime) const;
 
     [[nodiscard]] bool IsRequestToLoadScene() const;
 

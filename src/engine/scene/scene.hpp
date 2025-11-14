@@ -12,10 +12,6 @@
 #include "../asset/asset_manager.hpp"
 #include "../renderer/sprite/sprite_asset_loader.hpp"
 #include "../ui/text/font_loader.hpp"
-#include "../physics/physics_world.hpp"
-#include "../renderer/light_2d/light_2d_component.hpp"
-#include "../physics/collider/box_collider2d_component.hpp"
-#include "../physics/rigidbody/rigidbody2d_component.hpp"
 #include "../debug/debug.hpp"
 #include "../system/input_system.hpp"
 #include "../ui/desktop_raycast_system.hpp"
@@ -45,8 +41,6 @@ private:
 
     std::shared_ptr<RectTransformRoot> _root;
 
-    std::shared_ptr<PhysicsWorld> _physicsWorld = std::make_shared<PhysicsWorld>(b2Vec2{0.0, -10.0});
-
     std::shared_ptr<entt::registry> _entityRegistry{};
 
 
@@ -75,8 +69,6 @@ public:
 
     [[nodiscard]] std::shared_ptr<RectTransformRoot> GetRoot() const;
 
-    [[nodiscard]] std::weak_ptr<PhysicsWorld> GetPhysicsWorld() const noexcept;
-
     [[nodiscard]] std::weak_ptr<RenderPipeline> GetRenderPipeline() const noexcept;
 
     [[nodiscard]] std::weak_ptr<AssetManager> GetAssetManager() const noexcept;
@@ -101,8 +93,6 @@ public:
     void Update(const float &deltaTime);
 
     void RemovePendingEntities();
-
-    void Render(const float &deltaTime) const;
 
     [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid);
 

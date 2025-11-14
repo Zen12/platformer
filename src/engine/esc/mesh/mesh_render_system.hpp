@@ -1,9 +1,9 @@
 #pragma once
+#include "GL/glew.h"
 #include "mesh_renderer_component.hpp"
 #include "../esc_core.hpp"
 #include "../../scene/scene.hpp"
 #include "../camera/camera_component.hpp"
-#include "../time/time_component.hpp"
 #include "../transform/transform_component.hpp"
 
 

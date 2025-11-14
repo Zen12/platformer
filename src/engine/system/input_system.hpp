@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GL/glew.h"
 #include "window.hpp"
 #include "GLFW/glfw3.h"
 #include "glm/vec2.hpp"

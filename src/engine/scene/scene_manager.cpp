@@ -126,16 +126,6 @@ void SceneManager::Update(const float &deltaTime) {
     _escSystem->Update();
 }
 
-void SceneManager::Render(const float &deltaTime) const  {
-#ifndef NDEBUG
-#if DEBUG_ENGINE_SCENE_MANAGER_PROFILE
-    PROFILE_SCOPE("  SceneManager::Render");
-#endif
-#endif
-
-    _scene->Render(deltaTime);
-}
-
 std::shared_ptr<Shader> SceneManager::GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) const {
     return _scene->GetShader(vertexGuid, fragmentGuid);
 }

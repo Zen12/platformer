@@ -20,16 +20,10 @@
 #include "../renderer/transform/transform_component_serialization_yaml.hpp"
 #include "../renderer/sprite/sprite_renderer_component_serialization.hpp"
 #include "../renderer/sprite/sprite_renderer_component_serialization_yaml.hpp"
-#include "../renderer/light_2d/light_2d_component_serialization.hpp"
-#include "../renderer/light_2d/light_2d_component_serialization_yaml.hpp"
 #include "../renderer/mesh/mesh_renderer_component_serialization.hpp"
 #include "../renderer/mesh/mesh_renderer_component_serialization_yaml.hpp"
 #include "../renderer/particles/particle_emitter_component_serialization.hpp"
 #include "../renderer/particles/particle_emitter_component_serialization_yaml.hpp"
-#include "../physics/collider/box_collider2d_component_serialization.hpp"
-#include "../physics/collider/box_collider2d_component_serialization_yaml.hpp"
-#include "../physics/rigidbody/rigidbody2d_component_serialization.hpp"
-#include "../physics/rigidbody/rigidbody2d_component_serialization_yaml.hpp"
 #include "../renderer/camera/camera_component_serialization.hpp"
 #include "../renderer/camera/camera_component_serialization_yaml.hpp"
 #include "../nav_mesh/astar_finder_component_serialization.hpp"
@@ -87,9 +81,6 @@ namespace YAML {
                 { "ui_button",             [](const YAML::Node& n){ return Parse<UiButtonComponentSerialization>(n); } },
                 { "ui_text",               [](const YAML::Node& n){ return Parse<UiTextComponentSerialization>(n); } },
                 { "sprite_renderer",       [](const YAML::Node& n){ return Parse<SpriteRenderComponentSerialization>(n); } },
-                { "box_collider",          [](const YAML::Node& n){ return Parse<Box2dColliderSerialization>(n); } },
-                { "rigidbody2d",           [](const YAML::Node& n){ return Parse<Rigidbody2dSerialization>(n); } },
-                { "light_2d",              [](const YAML::Node& n){ return Parse<Light2dComponentSerialization>(n); } },
                 { "mesh_renderer",         [](const YAML::Node& n){ return Parse<MeshRendererComponentSerialization>(n); } },
                 { "ui_show_fps",           [](const YAML::Node& n){ return Parse<ShowFpsComponentSerialization>(n); } },
                 { "astar_path_finder",     [](const YAML::Node& n){ return Parse<PathFinderSerialization>(n); } },

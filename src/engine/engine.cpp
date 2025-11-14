@@ -63,7 +63,6 @@ void Engine::Tick() {
     _frameTimer.Reset();
     _inputSystem->Update();
     _sceneManager->Update(deltaTime);
-    _sceneManager->Render(deltaTime);
     _window->SwapBuffers();
 
     // maybe #if debug?

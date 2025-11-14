@@ -8,10 +8,6 @@ std::shared_ptr<RectTransformRoot> Scene::GetRoot() const {
     return _root;
 }
 
-std::weak_ptr<PhysicsWorld> Scene::GetPhysicsWorld() const noexcept {
-    return _physicsWorld;
-}
-
 std::weak_ptr<RenderPipeline> Scene::GetRenderPipeline() const noexcept {
     return _renderPipeline;
 }
@@ -69,7 +65,6 @@ void Scene::Update(const float &deltaTime) {
     }
 
     _uiRaycastSystem->UpdateState();
-    _physicsWorld->UpdateRigidBodies();
 
     glClear(GL_COLOR_BUFFER_BIT);
 }
@@ -86,8 +81,6 @@ void Scene::RemovePendingEntities() {
 
 
         if (it != view.end()) {
-            const auto& entity = view.get<std::shared_ptr<Entity>>(*it);
-            _physicsWorld->RemoveRigidBody(entity->GetComponent<Rigidbody2dComponent>());
             _entityRegistry->destroy(*it);
         }
     }
@@ -100,18 +93,6 @@ void Scene::RemovePendingEntities() {
         _entityRegistry->destroy(entity);
     }
 
-}
-
-void Scene::Render(const float &deltaTime) const {
-    // old
-    return;
-    _renderPipeline->ClearFrame();
-    _renderPipeline->RenderSprites(deltaTime);
-    _renderPipeline->RenderParticles(deltaTime);
-    _renderPipeline->RenderMeshes(deltaTime);
-
-    _renderPipeline->RenderDebugLines();
-    _renderPipeline->RenderUI(deltaTime);
 }
 
 std::shared_ptr<Shader> Scene::GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) {
