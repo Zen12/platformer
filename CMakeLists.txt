@@ -21,7 +21,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(FREETYPE REQUIRED)
 find_package(YAMLCPP REQUIRED)
 find_package(Box2D REQUIRED)
-find_package(Spine REQUIRED)
 find_package(GLM REQUIRED)
 find_package(EnTT REQUIRED)
 
@@ -36,7 +35,7 @@ file(GLOB_RECURSE HEADER_FILES "src/*.hpp")
 file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
 
 # --- Create target ---
-add_executable(${CMAKE_PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${SPINE_CPP_SOURCES})
+add_executable(${CMAKE_PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
 # --- Compiler flags (native only) ---
 if (NOT PLATFORM_WEB)
@@ -68,12 +67,12 @@ if (PLATFORM_WEB)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s USE_WEBGL2=1 -s FULL_ES3=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 --shell-file ${CMAKE_SOURCE_DIR}/template/html/simple.html --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets")
 
 
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE GLM::GLM freetype yaml-cpp box2d spine-cpp EnTT::EnTT)
-    target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR} ${SPINE_CPP_SOURCES})
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE GLM::GLM freetype yaml-cpp box2d EnTT::EnTT)
+    target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR})
 
 else()
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw GLM::GLM freetype yaml-cpp box2d spine-cpp EnTT::EnTT)
-    target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR} ${SPINE_CPP_SOURCES})
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw GLM::GLM freetype yaml-cpp box2d EnTT::EnTT)
+    target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR})
     set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output"
     )

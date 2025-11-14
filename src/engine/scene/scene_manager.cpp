@@ -1,6 +1,5 @@
 #include "scene_manager.hpp"
 
-#include "../game/character_controller/character_animation/character_animation_component_factory.hpp"
 #include "../esc/tag/tag_component.hpp"
 
 #define DEBUG_ENGINE_SCENE_MANAGER_PROFILE 0
@@ -143,15 +142,6 @@ std::shared_ptr<Shader> SceneManager::GetShader(const std::string &vertexGuid, c
 
 std::shared_ptr<Material> SceneManager::GetMaterial(const std::string &guid) const {
     return _scene->GetMaterial(guid);
-}
-
-std::shared_ptr<SpineData> SceneManager::LoadSpineData(const SpineAsset& asset) const {
-    return _scene->LoadSpineData(asset);
-}
-
-
-std::shared_ptr<SpineData> SceneManager::GetSpineData(const std::string &guid, const SpineAsset& asset) const {
-    return _scene->GetSpineData(guid, asset);
 }
 
 bool SceneManager::IsRequestToLoadScene() const {

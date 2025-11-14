@@ -8,52 +8,20 @@
 #include "../renderer/transform/rect_transform_root.hpp"
 #include "../renderer/material/shader.hpp"
 #include "../renderer/material/material.hpp"
-#include "../renderer/spine/spine_data.hpp"
-#include "../renderer/spine/spine_asset.hpp"
 #include "../renderer/render_pipeline.hpp"
 #include "../asset/asset_manager.hpp"
 #include "../physics/physics_world.hpp"
 #include "../renderer/light_2d/light_2d_component.hpp"
-#include "../renderer/spine/spine_renderer_component.hpp"
 #include "../physics/collider/box_collider2d_component.hpp"
 #include "../physics/rigidbody/rigidbody2d_component.hpp"
 #include "../debug/debug.hpp"
 #include "../system/input_system.hpp"
 #include "../system/guid_generator.hpp"
 
-#include "../entity/component_factory.hpp"
-#include "../esc/esc_core.hpp"
-#include "../game/health_bar/health_bar_component_factory.hpp"
 #include "../ui/text/text_renderer_component_factory.hpp"
 #include "../ui/image/image_renderer_component_factory.hpp"
 #include "../ui/button/button_component_factory.hpp"
-#include "../ui/on_click_scene_loader/on_click_scene_loader_factory.hpp"
-#include "../ui/button_effect/ui_button_effect_factory.hpp"
 #include "../ui/show_fps/show_fps_component_factory.hpp"
-#include "../ui/rect_transform/rect_transform_component_factory.hpp"
-#include "../renderer/transform/transform_component_factory.hpp"
-#include "../renderer/sprite/sprite_renderer_component_factory.hpp"
-#include "../renderer/spine/spine_renderer_component_factory.hpp"
-#include "../renderer/light_2d/light_2d_component_factory.hpp"
-#include "../renderer/mesh/mesh_renderer_component_factory.hpp"
-#include "../renderer/particles/particle_emitter_component_factory.hpp"
-#include "../physics/spine_collider/spine_collider_component_factory.hpp"
-#include "../game/rect_transform_follower/rect_transform_follower_component_factory.hpp"
-#include "../physics/collider/box_collider2d_component_factory.hpp"
-#include "../physics/rigidbody/rigidbody2d_component_factory.hpp"
-#include "../renderer/camera/camera_component_factory.hpp"
-#include "../game/destroy_with_creator/destroy_with_creator_component_factory.hpp"
-#include "../game/idle_character/idle_character_component_factory.hpp"
-#include "../game/game_state/game_state_component_factory.hpp"
-#include "../game/team/team_component_factory.hpp"
-#include "../game/prefab_spawner/prefab_spawner_component_factory.hpp"
-#include "../game/grid_prefab_spawner/grid_prefab_spawner_component_factory.hpp"
-#include "../game/grid/grid_component_factory.hpp"
-#include "../nav_mesh/astar_finder_component_factory.hpp"
-#include "../nav_mesh/path_mover_component_factory.hpp"
-#include "../game/health/health_component_factory.hpp"
-#include "../game/character_controller/character_controller_component_factory.hpp"
-#include "../game/character_controller/ai_controller/ai_controller_component_factory.hpp"
 #include "../esc/esc.hpp"
 
 
@@ -101,13 +69,10 @@ private:
 
     [[nodiscard]] std::shared_ptr<Material> GetMaterial(const std::string& guid) const;
 
-    [[nodiscard]] std::shared_ptr<SpineData> LoadSpineData(const SpineAsset &asset) const;
 
     [[nodiscard]] std::shared_ptr<Sprite> GetSprite(const std::string& guid) const;
 
     [[nodiscard]] std::shared_ptr<Font> GetFont(const std::string& guid) const;
-
-    [[nodiscard]] std::shared_ptr<SpineData> GetSpineData(const std::string &guid, const SpineAsset& asset) const;
 
     template <typename TSerialization, typename TFactory>
     void AddComponent(std::weak_ptr<Entity> e, TSerialization *serialization) const;

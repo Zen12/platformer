@@ -6,7 +6,6 @@
 #include "../system/window.hpp"
 #include "camera/camera_component.hpp"
 #include "../renderer/particles/particle_emitter_component.hpp"
-#include "../renderer/spine/spine_renderer_component.hpp"
 #include "../renderer/mesh/mesh_renderer_component.hpp"
 
 

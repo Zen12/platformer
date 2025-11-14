@@ -8,24 +8,18 @@
 #include "../renderer/transform/rect_transform_root.hpp"
 #include "../renderer/material/shader.hpp"
 #include "../renderer/material/material.hpp"
-#include "../renderer/spine/spine_data.hpp"
 #include "../renderer/render_pipeline.hpp"
 #include "../asset/asset_manager.hpp"
 #include "../renderer/sprite/sprite_asset_loader.hpp"
-#include "../renderer/spine/spine_atlas_loader.hpp"
-#include "../renderer/spine/spine_asset_loader.hpp"
 #include "../ui/text/font_loader.hpp"
 #include "../physics/physics_world.hpp"
 #include "../renderer/light_2d/light_2d_component.hpp"
-#include "../game/character_controller/character_controller_component.hpp"
-#include "../renderer/spine/spine_renderer_component.hpp"
 #include "../physics/collider/box_collider2d_component.hpp"
 #include "../physics/rigidbody/rigidbody2d_component.hpp"
 #include "../debug/debug.hpp"
 #include "../system/input_system.hpp"
 #include "../ui/desktop_raycast_system.hpp"
 #include "entt/entity/registry.hpp"
-#include "../game/health/health_system.hpp"
 struct PrefabInstantiateData {
     std::string Id{};
     std::string Creator{};
@@ -40,7 +34,6 @@ private:
     std::unordered_map<std::string, std::shared_ptr<Material>> _materials;
     std::unordered_map<std::string, std::shared_ptr<Mesh>> _mesh;
     std::unordered_map<std::string, std::shared_ptr<Sprite>> _sprites;
-    std::vector<std::shared_ptr<SpineData>> _spineDatas;
     std::unordered_map<std::string, std::shared_ptr<Font>> _fonts;
     std::unordered_map<std::string, std::shared_ptr<Mesh>> _meshes;
 
@@ -49,7 +42,6 @@ private:
     std::weak_ptr<AssetManager> _assetManager;
     std::weak_ptr<InputSystem> _inputSystem;
     std::shared_ptr<UiRaycastSystem> _uiRaycastSystem;
-    std::unique_ptr<HealthSystem> _healthSystem{};
 
     std::shared_ptr<RectTransformRoot> _root;
 
@@ -79,7 +71,6 @@ public:
         _renderPipeline->Init();
 
         _entityRegistry = std::make_shared<entt::registry>();
-        _healthSystem = std::make_unique<HealthSystem>();
     }
 
     [[nodiscard]] std::shared_ptr<RectTransformRoot> GetRoot() const;
@@ -118,11 +109,6 @@ public:
     [[nodiscard]] std::shared_ptr<Material> GetMaterial(const std::string &guid);
 
     std::shared_ptr<Mesh> GetMesh(const std::string &guid);
-
-    [[nodiscard]] std::shared_ptr<SpineData> LoadSpineData(const SpineAsset& asset) const;
-
-
-    [[nodiscard]] std::shared_ptr<SpineData> GetSpineData([[maybe_unused]] const std::string &guid, const SpineAsset& asset);
 
     [[nodiscard]] std::shared_ptr<Sprite> GetSprite(const std::string &guid);
 

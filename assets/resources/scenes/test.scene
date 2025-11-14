@@ -7,9 +7,7 @@ entities:
         rotation: [0.0, 0.0, 0.0]
         scale: [1.0, 1.0, 1.0]
       - type: mesh_renderer
-        material: 5faecd48-398f-46db-889f-ba4199c2636f
-      - type: spine_renderer
-        spine_data: db5158b5-addf-4898-80d3-bfdeaf886d47
+        material: f22681f4-45d1-4542-a838-99f854890c18
   - guid: main-camera
     tag: main_camera
     components:

@@ -5,8 +5,6 @@
 - 🛠️ ```[optional]``` Emscripten used for webgl build
 ## 👋 Getting started 🤞
 - 🏃```run.sh```
-### 🛠️ Webgl build
-https://andreigusan.itch.io/platformer-demo
 
 ## 🔨 Project structure
 ``` 
@@ -21,7 +19,6 @@ https://andreigusan.itch.io/platformer-demo
     ├─ ⚙️ FindGLEW.cmake
     ├─ ⚙️ FindGLFW3.cmake
     ├─ ⚙️ FindGLM.cmake
-    ├─ ⚙️ FindSpine.cmake
     └─ ⚙️ FindYamlCpp.cmake
 🛠️ editor               # editor scripts, not real editor
     ├─ 📄 import.py
@@ -29,12 +26,8 @@ https://andreigusan.itch.io/platformer-demo
 💻 src                  # source code
     ├─ 🚀 main.cpp
     └─ 🧠 engine
-        ├─ 📄 engine.h
-        ├─ 📁 assets
-        ├─ 📁 components
-        ├─ 📁 renderers
-        ├─ 📁 render_pipiline
-        └─ 📁 system
+        ├─ 📄 engine.hpp
+        ├─ 📁 
 🚀 run.sh               # release build desktop
 🚀 run_debug.sh         # debug build desktop
 🚀 run_web.sh           # release build webgl
@@ -46,15 +39,15 @@ https://andreigusan.itch.io/platformer-demo
 - 🏢 macOS, windows, web
 - 🔳 UI system
 - 📀 Asset management
-- 🔦 2d lightning
-- 🎳 2d physics
+- 🚀 ESC
+- 🔦 Focused on 3d
 
 # 🏃 Roadmap
 
 ## 0.1.2 From OOP to data oriented(DOD)
 - [x] Set Entt
 - [x] Redo components to Entt
-- [ ] Redo systems (rendering, physics, etc...)
+- [ ] Redo systems (rendering, etc...)
 
 ## 0.1.3 FSM
 - [ ] FSM for animation and app-state 

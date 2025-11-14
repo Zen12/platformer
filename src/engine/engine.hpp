@@ -11,7 +11,6 @@
 #include "system/window.hpp"
 #include "asset/loaders/asset_loader.hpp"
 #include "renderer/sprite/sprite_asset_loader.hpp"
-#include "renderer/spine/spine_atlas_loader.hpp"
 #include "project/project_asset_loader.hpp"
 #include <thread>
 

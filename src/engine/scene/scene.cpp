@@ -68,7 +68,6 @@ void Scene::Update(const float &deltaTime) {
         pos->Update(deltaTime);
     }
 
-    _healthSystem->Update(_entityRegistry);
     _uiRaycastSystem->UpdateState();
     _physicsWorld->UpdateRigidBodies();
 
@@ -169,67 +168,6 @@ std::shared_ptr<Mesh> Scene::GetMesh(const std::string &guid) {
     }
 
     return {};
-}
-
-std::shared_ptr<SpineData> Scene::LoadSpineData(const SpineAsset &asset) const {
-    if (auto assetManager = _assetManager.lock()) {
-        // Load atlas (Spine owns this pointer)
-        auto atlas = assetManager->LoadSourceByGuid<spine::Atlas*>(asset.atlas);
-
-#ifndef NDEBUG
-        if (atlas && atlas->getPages().size() > 0) {
-            std::cout << "Atlas is valid. Pages: " << atlas->getPages().size() << std::endl;
-        } else {
-            std::cerr << "Atlas failed to load or is empty!" << std::endl;
-        }
-#endif
-        spine::SkeletonBinary binary(atlas);
-
-        std::ifstream file(assetManager->GetPathFromGuid(asset.skeleton), std::ios::binary);
-
-        std::string buffer((std::istreambuf_iterator<char>(file)),
-                    std::istreambuf_iterator<char>());
-
-        const unsigned char* skelData = reinterpret_cast<const unsigned char*>(buffer.data());
-        size_t skelSize = buffer.size();
-
-        spine::SkeletonData* skeletonDataRaw = binary.readSkeletonData(skelData, skelSize);
-
-        if (!skeletonDataRaw) {
-            std::cerr << "Failed to load skeleton from memory!" << std::endl;
-            return nullptr;
-        }
-        // Wrap in smart pointer so it's freed automatically
-        auto skeletonData = std::shared_ptr<spine::SkeletonData>(skeletonDataRaw);
-
-        // Create AnimationStateData and wrap in smart pointer
-        auto stateData = std::make_shared<spine::AnimationStateData>(skeletonData.get());
-
-        // Create Skeleton and AnimationState
-        auto skeleton = std::make_shared<spine::Skeleton>(skeletonData.get());
-        auto animationState = std::make_shared<spine::AnimationState>(stateData.get());
-
-        // Store all in SpineData so nothing is destroyed prematurely
-        return std::make_shared<SpineData>(
-            skeletonData,
-            stateData,
-            skeleton,
-            animationState,
-            asset.moveAnimationName,
-            asset.jumpAnimationName,
-            asset.hitAnimationName,
-            asset.idleAnimationName
-        );
-    }
-
-    return {};
-}
-
-std::shared_ptr<SpineData> Scene::GetSpineData([[maybe_unused]] const std::string &guid, const SpineAsset &asset) {
-
-    const auto spine = LoadSpineData(asset);
-    _spineDatas.push_back(spine);
-    return spine;
 }
 
 std::shared_ptr<Sprite> Scene::GetSprite(const std::string &guid) {

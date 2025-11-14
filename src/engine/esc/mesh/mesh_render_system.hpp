@@ -29,7 +29,7 @@ public:
             const auto projection = camera.Projection;
             const auto view = camera.View;
 
-            for (auto [_, mesh, transform] : View.each()) {
+            for (const auto &[_, mesh, transform] : View.each()) {
                 const auto &model = transform.GetModel();
 
                 const auto mat = _scene.lock()->GetMaterial(mesh.MaterialGuid);

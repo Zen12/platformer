@@ -2,8 +2,6 @@
 
 #include "entity_serialization.hpp"
 #include "../math/glm_vec_yaml.hpp"
-#include "../game/health_bar/health_bar_component_serialization.hpp"
-#include "../game/health_bar/health_bar_component_serialization_yaml.hpp"
 #include "../ui/text/text_renderer_component_serialization.hpp"
 #include "../ui/text/text_renderer_component_serialization_yaml.hpp"
 #include "../ui/image/image_renderer_component_serialization.hpp"
@@ -22,58 +20,22 @@
 #include "../renderer/transform/transform_component_serialization_yaml.hpp"
 #include "../renderer/sprite/sprite_renderer_component_serialization.hpp"
 #include "../renderer/sprite/sprite_renderer_component_serialization_yaml.hpp"
-#include "../renderer/spine/spine_renderer_component_serialization.hpp"
-#include "../renderer/spine/spine_renderer_component_serialization_yaml.hpp"
 #include "../renderer/light_2d/light_2d_component_serialization.hpp"
 #include "../renderer/light_2d/light_2d_component_serialization_yaml.hpp"
 #include "../renderer/mesh/mesh_renderer_component_serialization.hpp"
 #include "../renderer/mesh/mesh_renderer_component_serialization_yaml.hpp"
 #include "../renderer/particles/particle_emitter_component_serialization.hpp"
 #include "../renderer/particles/particle_emitter_component_serialization_yaml.hpp"
-#include "../physics/spine_collider/spine_collider_component_serialization.hpp"
-#include "../physics/spine_collider/spine_collider_component_serialization_yaml.hpp"
-#include "../game/rect_transform_follower/rect_transform_follower_component_serialization.hpp"
-#include "../game/rect_transform_follower/rect_transform_follower_component_serialization_yaml.hpp"
 #include "../physics/collider/box_collider2d_component_serialization.hpp"
 #include "../physics/collider/box_collider2d_component_serialization_yaml.hpp"
 #include "../physics/rigidbody/rigidbody2d_component_serialization.hpp"
 #include "../physics/rigidbody/rigidbody2d_component_serialization_yaml.hpp"
 #include "../renderer/camera/camera_component_serialization.hpp"
 #include "../renderer/camera/camera_component_serialization_yaml.hpp"
-#include "../game/destroy_with_creator/destroy_with_creator_component_serialization.hpp"
-#include "../game/destroy_with_creator/destroy_with_creator_component_serialization_yaml.hpp"
-#include "../game/idle_character/idle_character_component_serialization.hpp"
-#include "../game/idle_character/idle_character_component_serialization_yaml.hpp"
-#include "../game/game_state/game_state_component_serialization.hpp"
-#include "../game/game_state/game_state_component_serialization_yaml.hpp"
-#include "../game/team/team_component_serialization.hpp"
-#include "../game/team/team_component_serialization_yaml.hpp"
-#include "../game/prefab_spawner/prefab_spawner_component_serialization.hpp"
-#include "../game/prefab_spawner/prefab_spawner_component_serialization_yaml.hpp"
-#include "../game/grid_prefab_spawner/grid_prefab_spawner_component_serialization.hpp"
-#include "../game/grid_prefab_spawner/grid_prefab_spawner_component_serialization_yaml.hpp"
-#include "../game/grid/grid_component_serialization.hpp"
-#include "../game/grid/grid_component_serialization_yaml.hpp"
 #include "../nav_mesh/astar_finder_component_serialization.hpp"
 #include "../nav_mesh/astar_finder_component_serialization_yaml.hpp"
 #include "../nav_mesh/path_mover_component_serialization.hpp"
 #include "../nav_mesh/path_mover_component_serialization_yaml.hpp"
-#include "../game/health/health_component_serialization.hpp"
-#include "../game/health/health_component_serialization_yaml.hpp"
-#include "../game/character_controller/character_controller_component_serialization.hpp"
-#include "../game/character_controller/character_controller_component_serialization_yaml.hpp"
-#include "../game/character_controller/ai_controller/ai_controller_component_serialization.hpp"
-#include "../game/character_controller/ai_controller/ai_controller_component_serialization_yaml.hpp"
-#include "../game/character_controller/character_animation/character_animation_component_serialization.hpp"
-#include "../game/character_controller/character_animation/character_animation_component_serialization_yaml.hpp"
-#include "../game/character_controller/movement/character_movement_component_serialization.hpp"
-#include "../game/character_controller/movement/character_movement_component_serialization_yaml.hpp"
-#include "../game/character_controller/shoot/shoot_component_serialization.hpp"
-#include "../game/character_controller/shoot/shoot_component_serialization_yaml.hpp"
-#include "../game/character_controller/character_input/character_input_component_serialization.hpp"
-#include "../game/character_controller/character_input/character_input_component_serialization_yaml.hpp"
-#include "../game/character_controller/character_effect/character_effect_controller_serialization.hpp"
-#include "../game/character_controller/character_effect/character_effect_controller_serialization_yaml.hpp"
 
 namespace YAML {
     template <>
@@ -129,30 +91,11 @@ namespace YAML {
                 { "rigidbody2d",           [](const YAML::Node& n){ return Parse<Rigidbody2dSerialization>(n); } },
                 { "light_2d",              [](const YAML::Node& n){ return Parse<Light2dComponentSerialization>(n); } },
                 { "mesh_renderer",         [](const YAML::Node& n){ return Parse<MeshRendererComponentSerialization>(n); } },
-                { "spine_renderer",        [](const YAML::Node& n){ return Parse<SpineRenderComponentSerialization>(n); } },
-                { "character_controller",  [](const YAML::Node& n){ return Parse<CharacterControllerComponentSerialization>(n); } },
-                { "character_movement",    [](const YAML::Node& n){ return Parse<CharacterMovementComponentSerialization>(n); } },
-                { "character_animation",   [](const YAML::Node& n){ return Parse<CharacterAnimationComponentSerialization>(n); } },
-                { "shoot",                 [](const YAML::Node& n){ return Parse<ShootComponentSerialization>(n); } },
-                { "character_input",       [](const YAML::Node& n){ return Parse<CharacterInputComponentSerialization>(n); } },
-                { "character_effect",      [](const YAML::Node& n){ return Parse<CharacterEffectControllerSerialization>(n); } },
-                { "ai_controller",         [](const YAML::Node& n){ return Parse<AiControllerComponentSerialization>(n); } },
                 { "ui_show_fps",           [](const YAML::Node& n){ return Parse<ShowFpsComponentSerialization>(n); } },
-                { "health_component",      [](const YAML::Node& n){ return Parse<HealthComponentSerialization>(n); } },
-                { "prefab_spawner",        [](const YAML::Node& n){ return Parse<PrefabSpawnerSerialization>(n); } },
-                { "grid_prefab_spawner",   [](const YAML::Node& n){ return Parse<GridPrefabSpawnerSerialization>(n); } },
-                { "grid",                  [](const YAML::Node& n){ return Parse<GridSerialization>(n); } },
                 { "astar_path_finder",     [](const YAML::Node& n){ return Parse<PathFinderSerialization>(n); } },
                 { "particle_emitter",      [](const YAML::Node& n){ return Parse<ParticleEmitterSerialization>(n); } },
-                { "spine_collider",        [](const YAML::Node& n){ return Parse<SpineColliderSerialization>(n); } },
-                { "health_bar",            [](const YAML::Node& n){ return Parse<HealthBarComponentSerialization>(n); } },
-                { "rect_transform_follower",[](const YAML::Node& n){ return Parse<RectTransformFollowerSerialization>(n); } },
-                { "destroy_with_creator",  [](const YAML::Node& n){ return Parse<DestroyWithCreatorComponentSerialization>(n); } },
-                { "idle_character",        [](const YAML::Node& n){ return Parse<IdleCharacterSerialization>(n); } },
                 { "on_click_scene_loader", [](const YAML::Node& n){ return Parse<OnClickSceneLoaderSerialization>(n); } },
                 { "path_mover",            [](const YAML::Node& n){ return Parse<PathMoverComponentSerialization>(n); } },
-                { "game_state",            [](const YAML::Node& n){ return Parse<GameStateData>(n); } },
-                { "team",                  [](const YAML::Node& n){ return Parse<TeamSerialization>(n); } },
                 { "ui_button_effect",      [](const YAML::Node& n){ return Parse<UiButtonEffectSerialization>(n); } },
             };
 

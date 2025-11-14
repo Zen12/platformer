@@ -6,7 +6,6 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
 
     std::cout << "Load project from: " << _projectPath << "\n";
     AssetLoader<Sprite>::Init();
-    AssetLoader<spine::Atlas*>::Init();
     const std::filesystem::path projectFilePath = _projectPath.append("project.yaml");
     _projectAsset = AssetLoader<ProjectAsset>::LoadFromPath(projectFilePath);
 
