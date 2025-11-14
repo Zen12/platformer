@@ -1,21 +1,18 @@
 #pragma once
 #include <unordered_map>
 #include <vector>
-#include "../entity/entity.hpp"
-#include "../entity/entity_serialization.hpp"
-#include "../ui/show_fps/show_fps_component.hpp"
 
-#include "../renderer/transform/rect_transform_root.hpp"
 #include "../renderer/material/shader.hpp"
 #include "../renderer/material/material.hpp"
-#include "../renderer/render_pipeline.hpp"
+#include "../renderer/mesh/mesh.hpp"
 #include "../asset/asset_manager.hpp"
-#include "../renderer/sprite/sprite_asset_loader.hpp"
+#include "../renderer/texture/texture_asset_loader.hpp"
 #include "../ui/text/font_loader.hpp"
 #include "../debug/debug.hpp"
 #include "../system/input_system.hpp"
-#include "../ui/desktop_raycast_system.hpp"
 #include "entt/entity/registry.hpp"
+
+
 struct PrefabInstantiateData {
     std::string Id{};
     std::string Creator{};
@@ -28,28 +25,20 @@ class Scene {
 private:
     std::unordered_map<std::string, std::shared_ptr<Shader>> _shaders;
     std::unordered_map<std::string, std::shared_ptr<Material>> _materials;
-    std::unordered_map<std::string, std::shared_ptr<Mesh>> _mesh;
-    std::unordered_map<std::string, std::shared_ptr<Sprite>> _sprites;
+    std::unordered_map<std::string, std::shared_ptr<Texture>> _sprites;
     std::unordered_map<std::string, std::shared_ptr<Font>> _fonts;
     std::unordered_map<std::string, std::shared_ptr<Mesh>> _meshes;
 
-    std::shared_ptr<RenderPipeline> _renderPipeline;
     std::weak_ptr<Window> _window;
     std::weak_ptr<AssetManager> _assetManager;
     std::weak_ptr<InputSystem> _inputSystem;
-    std::shared_ptr<UiRaycastSystem> _uiRaycastSystem;
-
-    std::shared_ptr<RectTransformRoot> _root;
 
     std::shared_ptr<entt::registry> _entityRegistry{};
 
 
-    std::vector<std::string> _entitiesToRemove{};
     std::string _requestToLoadScene{};
 
 public:
-
-    std::vector<PrefabInstantiateData> PrefabRequestInstantiate{};
 
     Scene(
         const std::weak_ptr<Window> &window,
@@ -58,18 +47,10 @@ public:
         :  _window(window), _assetManager(assetManager),_inputSystem(inputSystem)
 
     {
-        _root = std::make_shared<RectTransformRoot>(window);
-        _renderPipeline = std::make_shared<RenderPipeline>(window);
-        _uiRaycastSystem = std::make_shared<UiDesktopRaycast>();
-        _uiRaycastSystem->SetInputSystem(inputSystem);
-        _renderPipeline->Init();
 
         _entityRegistry = std::make_shared<entt::registry>();
     }
 
-    [[nodiscard]] std::shared_ptr<RectTransformRoot> GetRoot() const;
-
-    [[nodiscard]] std::weak_ptr<RenderPipeline> GetRenderPipeline() const noexcept;
 
     [[nodiscard]] std::weak_ptr<AssetManager> GetAssetManager() const noexcept;
 
@@ -77,22 +58,9 @@ public:
 
     [[nodiscard]] std::weak_ptr<Window> GetWindow() const noexcept;
 
-    std::weak_ptr<Entity> CreateEntity(const EntitySerialization &entitySerialization);
-
-
-    [[nodiscard]] std::weak_ptr<Entity> GetEntityById(const std::string &id) const;
-
-    [[nodiscard]] size_t GetEntityCount() const noexcept;
-
     [[nodiscard]] std::shared_ptr<entt::registry> GetEntityRegistry() const noexcept {
         return _entityRegistry;
     }
-
-    void RemoveEntityById(const std::string &id);
-
-    void Update(const float &deltaTime);
-
-    void RemovePendingEntities();
 
     [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid);
 
@@ -100,13 +68,9 @@ public:
 
     std::shared_ptr<Mesh> GetMesh(const std::string &guid);
 
-    [[nodiscard]] std::shared_ptr<Sprite> GetSprite(const std::string &guid);
+    [[nodiscard]] std::shared_ptr<Texture> GetTexture(const std::string &guid);
 
     [[nodiscard]] std::shared_ptr<Font> GetFont(const std::string &guid);
-
-    [[nodiscard]] std::weak_ptr<Entity> FindByTag(const std::string &tag) const;
-
-    [[nodiscard]] std::weak_ptr<UiRaycastSystem> GetUiRaycast() const;
 
     void RequestToLoadScene(const std::string &sceneGuid) noexcept {
         _requestToLoadScene = sceneGuid;

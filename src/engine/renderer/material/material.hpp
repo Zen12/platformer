@@ -1,7 +1,7 @@
 #pragma once
 
 #include "shader.hpp"
-#include "../sprite/sprite.hpp"
+#include "../texture/texture.hpp"
 #include "../../asset/loaders/asset_loader.hpp"
 #include "../../ui/text/font.hpp"
 #include <glm/glm.hpp>
@@ -22,7 +22,7 @@ class Material
 private:
     std::weak_ptr<Shader> _shader{};
     std::weak_ptr<Font> _font{};
-    std::vector<std::weak_ptr<Sprite>> _sprites{};
+    std::vector<std::weak_ptr<Texture>> _sprites{};
     bool _isFaceCulled{};
     BlendMode _blendMode{};
 
@@ -43,7 +43,7 @@ public:
         _sprites.clear();
     }
 
-    void AddSprite(const std::weak_ptr<Sprite> &sprite) noexcept
+    void AddSprite(const std::weak_ptr<Texture> &sprite) noexcept
     {
         _sprites.push_back(sprite);
     }

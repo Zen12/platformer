@@ -1,33 +1,33 @@
-#include "sprite.hpp"
+#include "texture.hpp"
 
 
-Sprite::Sprite(const uint32_t &textureId)
+Texture::Texture(const uint32_t &textureId)
 : _textureId(textureId)
 {
 
 }
 
-void Sprite::Bind() const noexcept
+void Texture::Bind() const noexcept
 {
     glBindTexture(GL_TEXTURE_2D, _textureId);
 }
 
-[[nodiscard]] uint32_t Sprite::GetTextureId() const noexcept {
+[[nodiscard]] uint32_t Texture::GetTextureId() const noexcept {
     return _textureId;
 }
 
-Sprite::~Sprite()
+Texture::~Texture()
 {
     glDeleteTextures(1, &_textureId);
 }
 
-Sprite::Sprite(Sprite&& other) noexcept
+Texture::Texture(Texture&& other) noexcept
     : _textureId(other._textureId)
 {
     other._textureId = 0;
 }
 
-Sprite& Sprite::operator=(Sprite&& other) noexcept
+Texture& Texture::operator=(Texture&& other) noexcept
 {
     if (this != &other)
     {

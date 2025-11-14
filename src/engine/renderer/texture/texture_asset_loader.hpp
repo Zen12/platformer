@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sprite.hpp"
+#include "texture.hpp"
 #include "../../asset/loaders/asset_loader.hpp"
 #include "../../asset/loaders/asset_texture_loader.h"
 #include <memory>
@@ -8,11 +8,11 @@
 
 // Specialization for Sprite
 template<>
-class AssetLoader<Sprite> : public AssetLoaderBase<Sprite, AssetLoader<Sprite>> {
+class AssetLoader<Texture> : public AssetLoaderBase<Texture, AssetLoader<Texture>> {
 private:
     static std::function<std::shared_ptr<AssetTextureLoader>()> _textureLoader;
 
 public:
     static void Init();
-    static Sprite LoadImpl(const std::string& path);
+    static Texture LoadImpl(const std::string& path);
 };

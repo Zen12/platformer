@@ -1,59 +1,9 @@
 #include "scene_manager.hpp"
+#include "scene_asset_yaml.hpp"
 
 #include "../esc/tag/tag_component.hpp"
 
 #define DEBUG_ENGINE_SCENE_MANAGER_PROFILE 0
-
-
-template< typename TSerialization, typename TFactory>
-void SceneManager::AddComponent(std::weak_ptr<Entity> e, TSerialization *serialization) const {
-
-    static_assert(std::is_base_of_v<ComponentSerialization, TSerialization>,
-          "TSerialization must inherit from ComponentSerialization");
-
-    static_assert(std::is_base_of_v<BaseComponentFactory, TFactory>,
-          "TFactory must inherit from BaseComponentFactory");
-
-    auto factory = TFactory{};
-    factory.SetScene(_scene);
-    factory.SetEntity(e);
-    factory.AddComponent(e, *serialization);
-}
-
-template<typename TSerialization, typename TFactory>
-bool SceneManager::TryToAddComponent(ComponentSerialization* component, std::weak_ptr<Entity> e) const {
-
-    static_assert(std::is_base_of_v<ComponentSerialization, TSerialization>,
-              "TSerialization must inherit from ComponentSerialization");
-
-    static_assert(std::is_base_of_v<BaseComponentFactory, TFactory>,
-      "TFactory must inherit from BaseComponentFactory");
-
-    if (const auto componentSerialization = dynamic_cast<TSerialization *>(component)) {
-        AddComponent<TSerialization, TFactory>(e, componentSerialization);
-        return true;
-    }
-
-    return false;
-}
-
-template <typename TSerialization, typename TFactory, typename... Rest>
-bool SceneManager::TryToAddComponents(ComponentSerialization* comp, std::weak_ptr<Entity> e) const {
-
-    static_assert(std::is_base_of_v<ComponentSerialization, TSerialization>,
-                  "TSerialization must inherit from ComponentSerialization");
-
-    static_assert(std::is_base_of_v<BaseComponentFactory, TFactory>,
-      "TFactory must inherit from BaseComponentFactory");
-
-    if (TryToAddComponent<TSerialization, TFactory>(comp, e)) {
-        return true;
-    }
-    if constexpr (sizeof...(Rest) > 0) {
-        return TryToAddComponents<Rest...>(comp, e);
-    }
-    return false;
-}
 
 
 void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
@@ -69,6 +19,9 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
 
         LoadEntities(sceneAsset.Entities);
     }
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
 }
 
 void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serialization) {
@@ -80,50 +33,18 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
     _escSystem->InitSystems();
 }
 
-std::weak_ptr<Entity> SceneManager::GetEntityById(const std::string &id) const {
-    return _scene->GetEntityById(id);
-}
 
-void SceneManager::CreateRequestedPrefabs() const {
-
-    std::vector<EntitySerialization> serializations{};
-
-    if (const auto assetManager = _assetManager.lock()) {
-
-        for (const auto& prefabRequest: _scene->PrefabRequestInstantiate) {
-            auto prefabAsset = assetManager->LoadAssetByGuid<PrefabAsset>(prefabRequest.Id);
-            prefabAsset.Obj.Guid = GuidGenerator::GenerateGuid();
-            prefabAsset.Obj.Creator = prefabRequest.Creator;
-            for (auto &component : prefabAsset.Obj.Components) {
-
-                if (auto *tr = dynamic_cast<TransformComponentSerialization *>(component.get()); tr != nullptr) {
-                    tr->position = prefabRequest.Position;
-                    tr->rotation = prefabRequest.Rotation;
-                    tr->scale = prefabRequest.Scale;
-                }
-            }
-
-
-            serializations.push_back(prefabAsset.Obj);
-        }
-    }
-
-
-    //LoadEntities(serializations);
-    _scene->PrefabRequestInstantiate.clear();
-}
-
-void SceneManager::Update(const float &deltaTime) {
+void SceneManager::Update() {
 #ifndef NDEBUG
 #if DEBUG_ENGINE_SCENE_MANAGER_PROFILE
     PROFILE_SCOPE("  SceneManager::Update");
 #endif
 #endif
+    glClear(GL_COLOR_BUFFER_BIT);
 
-    _scene->RemovePendingEntities();
-    CreateRequestedPrefabs();
-    _scene->Update(deltaTime);
-    _escSystem->Update();
+    _escSystem->Update(); // ATM single threaded
+
+    // here we should do rendering
 }
 
 std::shared_ptr<Shader> SceneManager::GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) const {
@@ -147,8 +68,8 @@ void SceneManager::LoadRequestedScene() {
     }
 }
 
-std::shared_ptr<Sprite> SceneManager::GetSprite(const std::string &guid) const {
-    return _scene->GetSprite(guid);
+std::shared_ptr<Texture> SceneManager::GetSprite(const std::string &guid) const {
+    return _scene->GetTexture(guid);
 }
 
 std::shared_ptr<Font> SceneManager::GetFont(const std::string &guid) const {

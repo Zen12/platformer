@@ -1,11 +1,12 @@
 #include "engine.hpp"
+#include "scene/scene_asset_yaml.hpp"
 
 #define DEBUG_ENGINE_PROFILE 0
 
 Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectPath) {
 
     std::cout << "Load project from: " << _projectPath << "\n";
-    AssetLoader<Sprite>::Init();
+    AssetLoader<Texture>::Init();
     const std::filesystem::path projectFilePath = _projectPath.append("project.yaml");
     _projectAsset = AssetLoader<ProjectAsset>::LoadFromPath(projectFilePath);
 
@@ -55,14 +56,14 @@ void Engine::Tick() {
 #endif
 #endif
 
+    _frameTimer.Reset();
+
     if (_sceneManager->IsRequestToLoadScene()) {
         _sceneManager->LoadRequestedScene();
     }
 
-    const float deltaTime = _frameTimer.GetResetDelta();
-    _frameTimer.Reset();
     _inputSystem->Update();
-    _sceneManager->Update(deltaTime);
+    _sceneManager->Update();
     _window->SwapBuffers();
 
     // maybe #if debug?

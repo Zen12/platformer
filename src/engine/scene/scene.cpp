@@ -1,16 +1,7 @@
 #include "scene.hpp"
 #include "../renderer/material/material_asset.hpp"
 #include "../renderer/material/material_asset_yaml.hpp"
-#include <entt/entity/registry.hpp>
-#include "../entity/destroy_request_component.hpp"
 
-std::shared_ptr<RectTransformRoot> Scene::GetRoot() const {
-    return _root;
-}
-
-std::weak_ptr<RenderPipeline> Scene::GetRenderPipeline() const noexcept {
-    return _renderPipeline;
-}
 
 std::weak_ptr<AssetManager> Scene::GetAssetManager() const noexcept {
     return _assetManager;
@@ -24,76 +15,6 @@ std::weak_ptr<Window> Scene::GetWindow() const noexcept {
     return _window;
 }
 
-std::weak_ptr<Entity> Scene::CreateEntity(const EntitySerialization &entitySerialization) {
-    const auto newEntity = std::make_shared<Entity>();
-    newEntity->SetId(entitySerialization.Guid);
-    newEntity->SetTag(entitySerialization.Tag);
-    newEntity->SetLayer(entitySerialization.Layer);
-    newEntity->SetSelf(newEntity);
-    newEntity->SetCreator(entitySerialization.Creator);
-
-    const auto entt = _entityRegistry->create();
-    _entityRegistry->emplace<std::shared_ptr<Entity>>(entt, newEntity);
-    return newEntity;
-}
-
-std::weak_ptr<Entity> Scene::GetEntityById(const std::string &id) const {
-    const auto view = _entityRegistry->view<std::shared_ptr<Entity>>();
-
-    for (const auto &entity: view) {
-        if (const auto& en = view.get<std::shared_ptr<Entity>>(entity); en->GetId() == id) {
-            return en;
-        }
-    }
-    return {};
-}
-
-size_t Scene::GetEntityCount() const noexcept {
-    const auto view = _entityRegistry->view<std::shared_ptr<Entity>>();
-    return view.size();
-}
-
-void Scene::RemoveEntityById(const std::string &id) {
-    _entitiesToRemove.push_back(id);
-}
-
-void Scene::Update(const float &deltaTime) {
-    const auto view = _entityRegistry->view<std::shared_ptr<Entity>>();
-    for (const auto entity : view) {
-        auto& pos = view.get<std::shared_ptr<Entity>>(entity);
-        pos->Update(deltaTime);
-    }
-
-    _uiRaycastSystem->UpdateState();
-
-    glClear(GL_COLOR_BUFFER_BIT);
-}
-
-void Scene::RemovePendingEntities() {
-    // legacy
-    const auto view = _entityRegistry->view<std::shared_ptr<Entity>>();
-
-    for (const auto & id: _entitiesToRemove) {
-        const auto it = std::find_if(view.begin(), view.end(),
-                                     [id, view](const entt::entity &entity) {
-                                         return view.get<std::shared_ptr<Entity>>(entity)->GetId() == id;
-                                     });
-
-
-        if (it != view.end()) {
-            _entityRegistry->destroy(*it);
-        }
-    }
-
-    _entitiesToRemove.clear();
-
-    // new
-    const auto viewDestroy = _entityRegistry->view<DestroyRequestComponent>();
-    for (const auto &entity: viewDestroy) {
-        _entityRegistry->destroy(entity);
-    }
-
-}
 
 std::shared_ptr<Shader> Scene::GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) {
     if (const auto assetManager = _assetManager.lock()) {
@@ -125,7 +46,7 @@ std::shared_ptr<Material> Scene::GetMaterial(const std::string &guid) {
             material->SetCulling(materialAsset.IsCulling);
 
             if (!materialAsset.Image.empty()) {
-                const auto sprite = GetSprite(materialAsset.Image);
+                const auto sprite = GetTexture(materialAsset.Image);
                 material->AddSprite(sprite);
             }
 
@@ -139,22 +60,23 @@ std::shared_ptr<Material> Scene::GetMaterial(const std::string &guid) {
 }
 
 std::shared_ptr<Mesh> Scene::GetMesh(const std::string &guid) {
+
     if (const auto assetManager = _assetManager.lock()) {
-        if (_mesh.find(guid) == _mesh.end()) {
+        if (_meshes.find(guid) == _meshes.end()) {
             const auto meshAsset = std::shared_ptr<Mesh>(Mesh::GenerateSpritePtr());
-            _mesh[guid] = meshAsset;
+            _meshes[guid] = meshAsset;
             return meshAsset;
         }
-        return _mesh[guid];
+        return _meshes[guid];
     }
 
     return {};
 }
 
-std::shared_ptr<Sprite> Scene::GetSprite(const std::string &guid) {
+std::shared_ptr<Texture> Scene::GetTexture(const std::string &guid) {
     if (const auto assetManager = _assetManager.lock()) {
         if (_sprites.find(guid) == _sprites.end()) {
-            const auto sprite = std::make_shared<Sprite>(assetManager->LoadSourceByGuid<Sprite>(guid));
+            const auto sprite = std::make_shared<Texture>(assetManager->LoadSourceByGuid<Texture>(guid));
             _sprites[guid] = sprite;
             return sprite;
         }
@@ -179,19 +101,3 @@ std::shared_ptr<Font> Scene::GetFont(const std::string &guid) {
     return {};
 }
 
-
-std::weak_ptr<Entity> Scene::FindByTag(const std::string &tag) const {
-
-    const auto view = _entityRegistry->view<std::shared_ptr<Entity>>();
-
-    for (const auto &entity: view) {
-        if (const auto& en = view.get<std::shared_ptr<Entity>>(entity); en->GetTag() == tag) {
-            return en;
-        }
-    }
-    return {};
-}
-
-std::weak_ptr<UiRaycastSystem> Scene::GetUiRaycast() const {
-    return _uiRaycastSystem;
-}

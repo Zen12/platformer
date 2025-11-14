@@ -1,5 +1,8 @@
 #pragma once
 
+#include "material_asset.hpp"
+#include "yaml-cpp/node/node.h"
+
 namespace YAML {
     template <>
     struct convert<MaterialAsset>
