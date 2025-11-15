@@ -3,18 +3,22 @@ type: scene
 entities:
   - components:
       - type: transform
-        position: [-0.1, -0.5, -12.0]
+        position: [0.0, 0.0, -1.0]
         rotation: [0.0, 0.0, 0.0]
         scale: [1.0, 1.0, 1.0]
       - type: mesh_renderer
         material: f22681f4-45d1-4542-a838-99f854890c18
+        mesh: sprite
   - guid: main-camera
     tag: main_camera
     components:
       - type: transform
-        position: [0.0, 1.55, 0.0]
+        position: [0.0, 0.0, 0.0]
         rotation: [0.0, 0.0, 0.0]
         scale: [1.0, 1.0, 1.0]
       - type: camera
-        aspectPower: 170.0
-        isPerspective: false
+        perspectiveNearPlane: 0.1
+        perspectiveFarPlane: 100.0
+        perspectiveAspect: 100
+        orthographicAspect: 70
+        isPerspective: true

@@ -14,7 +14,6 @@
     └─ 🗒️ project.yaml
 📦 bin                  # build folder for ./run.sh
 📚 cmake                # packages
-    ├─ ⚙️ FindBox2D.cmake
     ├─ ⚙️ FindFreetype.cmake
     ├─ ⚙️ FindGLEW.cmake
     ├─ ⚙️ FindGLFW3.cmake

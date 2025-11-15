@@ -24,17 +24,11 @@ class CameraSystem final : public ISystem {
          if (data.isPerspective)
          {
              const float ration = static_cast<float>(windowsSize.x) / static_cast<float>(windowsSize.y);
-             return glm::perspective(glm::radians(data.aspectPower), ration, -0.1f, 100.0f);
+             return glm::perspective(glm::radians(data.perspectiveAspect), ration, data.perspectiveNearPlane, data.perspectiveFarPlane);
          }
-         else if (data.isUi)
-         {
-             const float width = static_cast<float>(windowsSize.x) / data.aspectPower;
-             const float height = static_cast<float>(windowsSize.y) / data.aspectPower;
-
-             return glm::ortho(0.0f, width, 0.0f, height, -1.0f, 100.0f);
-         } else { // ortho
-             const float width = static_cast<float>(windowsSize.x) / data.aspectPower;
-             const float height = static_cast<float>(windowsSize.y) / data.aspectPower;
+         else { // ortho
+             const float width = static_cast<float>(windowsSize.x) / data.orthographicAspect;
+             const float height = static_cast<float>(windowsSize.y) / data.orthographicAspect;
 
              const float halfWidth = width * 0.5f;
              const float halfHeight = height * 0.5f;

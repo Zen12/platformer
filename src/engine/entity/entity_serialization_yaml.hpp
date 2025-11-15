@@ -6,8 +6,6 @@
 #include "../renderer/transform/transform_component_serialization_yaml.hpp"
 #include "../renderer/mesh/mesh_renderer_component_serialization.hpp"
 #include "../renderer/mesh/mesh_renderer_component_serialization_yaml.hpp"
-#include "../renderer/particles/particle_emitter_component_serialization.hpp"
-#include "../renderer/particles/particle_emitter_component_serialization_yaml.hpp"
 #include "../renderer/camera/camera_component_serialization.hpp"
 #include "../renderer/camera/camera_component_serialization_yaml.hpp"
 
@@ -57,7 +55,6 @@ namespace YAML {
                 { "camera",                [](const YAML::Node& n){ return Parse<CameraComponentSerialization>(n); } },
                 { "transform",             [](const YAML::Node& n){ return Parse<TransformComponentSerialization>(n); } },
                 { "mesh_renderer",         [](const YAML::Node& n){ return Parse<MeshRendererComponentSerialization>(n); } },
-                { "particle_emitter",      [](const YAML::Node& n){ return Parse<ParticleEmitterSerialization>(n); } },
             };
 
             if (const auto it = pairs.find(type); it != pairs.end()) {

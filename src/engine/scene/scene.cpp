@@ -63,9 +63,13 @@ std::shared_ptr<Mesh> Scene::GetMesh(const std::string &guid) {
 
     if (const auto assetManager = _assetManager.lock()) {
         if (_meshes.find(guid) == _meshes.end()) {
-            const auto meshAsset = std::shared_ptr<Mesh>(Mesh::GenerateSpritePtr());
-            _meshes[guid] = meshAsset;
-            return meshAsset;
+            if (guid == "sprite") {
+                const auto meshAsset = std::shared_ptr<Mesh>(Mesh::GenerateSpritePtr());
+                _meshes[guid] = meshAsset;
+                return meshAsset;
+            }
+
+            std::cerr << "Mesh does not exist: " << guid << std::endl;
         }
         return _meshes[guid];
     }

@@ -4,7 +4,9 @@
 
 struct CameraComponentSerialization final : public ComponentSerialization
 {
-    bool isUi = false;
-    float aspectPower;
+    float perspectiveAspect;
+    float perspectiveNearPlane;
+    float perspectiveFarPlane;
+    float orthographicAspect;
     bool isPerspective;
 };

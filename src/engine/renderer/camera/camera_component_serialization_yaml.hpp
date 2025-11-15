@@ -9,7 +9,15 @@ namespace YAML {
     {
         static bool decode(const Node &node, CameraComponentSerialization &rhs)
         {
-            rhs.aspectPower = node["aspectPower"].as<float>();
+            if (node["perspectiveAspect"])
+                rhs.perspectiveAspect = node["perspectiveAspect"].as<float>();
+            if (node["perspectiveNearPlane"])
+                rhs.perspectiveNearPlane = node["perspectiveNearPlane"].as<float>();
+            if (node["perspectiveFarPlane"])
+                rhs.perspectiveFarPlane = node["perspectiveFarPlane"].as<float>();
+            if (node["orthographicAspect"])
+                rhs.orthographicAspect = node["orthographicAspect"].as<float>();
+
             rhs.isPerspective = node["isPerspective"].as<bool>();
             return true;
         }

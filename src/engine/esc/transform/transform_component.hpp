@@ -17,15 +17,15 @@ public:
     {}
 
     [[nodiscard]] glm::mat4 GetModel() const {
-        auto model = glm::scale(glm::mat4(1.0f), _scale);
+        glm::mat4 T = glm::translate(glm::mat4(1.0f), _position);
 
-        model = glm::rotate(model, glm::radians(_eulerRotation.x), glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate around X
-        model = glm::rotate(model, glm::radians(_eulerRotation.y), glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate around Y
-        model = glm::rotate(model, glm::radians(_eulerRotation.z), glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate around Z
+        const glm::mat4 RX = glm::rotate(glm::mat4(1.0f), glm::radians(_eulerRotation.x), glm::vec3(1,0,0));
+        const glm::mat4 RY = glm::rotate(glm::mat4(1.0f), glm::radians(_eulerRotation.y), glm::vec3(0,1,0));
+        const glm::mat4 RZ = glm::rotate(glm::mat4(1.0f), glm::radians(_eulerRotation.z), glm::vec3(0,0,1));
 
-        model = glm::translate(model, _position);
+        const glm::mat4 S = glm::scale(glm::mat4(1.0f), _scale);
 
-        return model;
+        return T * RZ * RY * RX * S;
     }
 
     [[nodiscard]] const glm::vec3& GetPosition() const noexcept {

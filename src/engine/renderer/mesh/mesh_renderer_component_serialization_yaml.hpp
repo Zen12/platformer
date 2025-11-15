@@ -11,10 +11,7 @@ namespace YAML
         static bool decode(const Node &node, MeshRendererComponentSerialization &rhs)
         {
             rhs.MaterialGuid = node["material"].as<std::string>();
-            if (node["guid"])
-                rhs.MeshGuid = node["guid"].as<std::string>();
-            else
-                rhs.MeshGuid = GuidGenerator::GenerateGuid();
+            rhs.MeshGuid = node["mesh"].as<std::string>();
             return true;
         }
     };
