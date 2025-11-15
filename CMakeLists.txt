@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.11...3.30)
 
-project(Platformer)
+project(Engine-Demo)
 
 include(FetchContent)
 
@@ -17,12 +17,15 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Set minimum policy version for compatibility
+cmake_policy(SET CMP0000 NEW)
+
 # Dependencies
-find_package(FREETYPE REQUIRED)
 find_package(YAMLCPP REQUIRED)
-find_package(Box2D REQUIRED)
 find_package(GLM REQUIRED)
 find_package(EnTT REQUIRED)
+find_package(RmlUi REQUIRED)
+find_package(FREETYPE REQUIRED)
 
 if (NOT PLATFORM_WEB)
     find_package(OpenGL REQUIRED)
@@ -67,11 +70,11 @@ if (PLATFORM_WEB)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s USE_WEBGL2=1 -s FULL_ES3=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 --shell-file ${CMAKE_SOURCE_DIR}/template/html/simple.html --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets")
 
 
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE GLM::GLM freetype yaml-cpp box2d EnTT::EnTT)
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE GLM::GLM freetype yaml-cpp EnTT::EnTT rmlui_core)
     target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR})
 
 else()
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw GLM::GLM freetype yaml-cpp box2d EnTT::EnTT)
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw GLM::GLM freetype yaml-cpp EnTT::EnTT rmlui_core)
     target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR})
     set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output"
