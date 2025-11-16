@@ -22,7 +22,7 @@ class Material
 private:
     std::weak_ptr<Shader> _shader{};
     std::weak_ptr<Font> _font{};
-    std::vector<std::weak_ptr<Texture>> _sprites{};
+    std::vector<std::weak_ptr<Texture>> _textures{};
     bool _isFaceCulled{};
     BlendMode _blendMode{};
 
@@ -39,13 +39,17 @@ public:
 
     void Bind() const;
 
+    void UseShader() const {
+        _shader.lock()->Use();
+    }
+
     void ClearSprites() noexcept {
-        _sprites.clear();
+        _textures.clear();
     }
 
     void AddSprite(const std::weak_ptr<Texture> &sprite) noexcept
     {
-        _sprites.push_back(sprite);
+        _textures.push_back(sprite);
     }
 
     [[nodiscard]] std::weak_ptr<Font> GetFont() const noexcept {

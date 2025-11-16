@@ -5,6 +5,9 @@
 #include <vector>
 #include <iostream>
 
+#include "RmlUi/Core/Span.h"
+#include "RmlUi/Core/Vertex.h"
+
 class Mesh
 {
 public:
@@ -12,8 +15,8 @@ private:
     uint32_t _vbo{};
     uint32_t _vao{};
     uint32_t _ebo{};
-    std::vector<float> _vertices;
-    std::vector<uint32_t> _indices;
+    size_t _verticesCount;
+    size_t _indicesCount;
 
 public:
     Mesh() = delete;
@@ -21,6 +24,10 @@ public:
         const std::vector<float> &vertices,
         const std::vector<uint32_t> &indices,
         const bool& useTexture);
+
+    Mesh(
+    const Rml::Span<const Rml::Vertex> &vertices,
+    const Rml::Span<const int> &indices);
 
     Mesh(const Mesh&) = delete;
     Mesh& operator=(const Mesh&) = delete;
@@ -33,12 +40,13 @@ public:
     ~Mesh();
 
     void Bind() const noexcept;
+
+    uint32_t VAO() {
+        return _vao;
+    }
+
     [[nodiscard]] size_t GetVertexCount() const noexcept;
     [[nodiscard]] size_t GetIndicesCount() const noexcept;
-
-    [[nodiscard]] const std::vector<float> &GetVertices() const noexcept {
-        return _vertices;
-    }
 
     static Mesh GenerateSquare();
     static std::unique_ptr<Mesh> GenerateSpritePtr();

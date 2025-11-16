@@ -37,11 +37,11 @@ void Material::Bind() const
 
         shader->Use();
 
-        for (const auto &value : _sprites)
+        for (const auto &value : _textures)
         {
-            if (const auto sprite = value.lock())
+            if (const auto texture = value.lock())
             {
-                sprite->Bind();
+                texture->Bind();
             }
         }
     }

@@ -1,5 +1,6 @@
 #include "engine.hpp"
 #include "scene/scene_asset_yaml.hpp"
+#include <RmlUi/Core.h>
 
 #define DEBUG_ENGINE_PROFILE 0
 
@@ -46,6 +47,14 @@ void Engine::WaitForTargetFrameRate() const {
 
 Engine::~Engine() {
     std::cout << "Destroying gameengine..." << std::endl;
+
+    // Clean up RmlUi before destroying other resources
+    // Reset the scene manager first (this releases the RmlUI context)
+    _sceneManager.reset();
+
+    // Now it's safe to shutdown RmlUi
+    Rml::Shutdown();
+
     _window->Destroy();
 }
 

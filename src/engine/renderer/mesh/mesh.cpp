@@ -8,8 +8,8 @@ Mesh::Mesh(
     const std::vector<uint32_t> &indices,
     const bool &useTexture)
 {
-    _vertices = vertices;
-    _indices = indices;
+    _verticesCount = vertices.size();
+    _indicesCount = indices.size();
 
     glGenVertexArrays(1, &_vao);
     glGenBuffers(1, &_vbo);
@@ -36,65 +36,61 @@ Mesh::Mesh(
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
 
+Mesh::Mesh(const Rml::Span<const Rml::Vertex> &vertices, const Rml::Span<const int> &indices) {
 
-#ifndef NDEBUG
-#if DEBUG_ENGINE_MESH
-    std::cout << "Create Mesh \n";
-    std::cout << "VAO: " << _vao << " VBO: " << _vbo << "EBO: " << _ebo << "\n";
-    std::cout << "\nSize Vertex: " << vertices.size() << "\n";
-    for (const float vertice : vertices) {
-        std::cout << vertice << " ";
-    }
+    _verticesCount = vertices.size();
+    _indicesCount = indices.size();
+    // Create VAO
+    glGenVertexArrays(1, &_vao);
+    glBindVertexArray(_vao);
 
-    std::cout << "\nSize Index: " << indices.size() << "\n";
-    for (const auto index : indices) {
-        std::cout << index << " ";
-    }
-    std::cout << "\n";
-#endif
-#endif
+    // Create and upload VBO
+    glGenBuffers(1, &_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Rml::Vertex), vertices.data(), GL_STATIC_DRAW);
+
+    // Position attribute
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Rml::Vertex), (void*)offsetof(Rml::Vertex, position));
+
+    // Color attribute
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Rml::Vertex), (void*)offsetof(Rml::Vertex, colour));
+
+    // Tex coord attribute
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Rml::Vertex), (void*)offsetof(Rml::Vertex, tex_coord));
+
+    // Create and upload EBO
+    glGenBuffers(1, &_ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), indices.data(), GL_STATIC_DRAW);
+
+    glBindVertexArray(0);
 }
 
 void Mesh::UpdateData(const std::vector<float> &vertices, const std::vector<uint32_t> &indices) noexcept {
 
-
-
-#ifndef NDEBUG
-#if DEBUG_ENGINE_MESH
-    std::cout << "Update Mesh \n";
-    std::cout << "VAO: " << _vao << " VBO: " << _vbo << "EBO: " << _ebo << "\n";
-    std::cout << "Size Vertex: " << vertices.size() << "\n";
-    for (const float vertice : vertices) {
-        std::cout << vertice << " ";
-    }
-
-    std::cout << "Size Index: " << indices.size() << "\n";
-    for (const auto index : indices) {
-        std::cout << index << " ";
-    }
-    std::cout << "\n";
-#endif
-#endif
-
     glBindVertexArray(_vao);
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-    if (vertices.size() <= _vertices.size()) {
+    if (vertices.size() <= _verticesCount) {
         glBufferSubData(GL_ARRAY_BUFFER, 0,  static_cast<long>(vertices.size() * sizeof(float)), vertices.data());
     } else {
         glBufferData(GL_ARRAY_BUFFER, static_cast<long>(vertices.size() * sizeof(float)), vertices.data(), GL_DYNAMIC_DRAW);
     }
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-    if (indices.size() <= _indices.size()) {
+    if (indices.size() <= _indicesCount) {
         glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, static_cast<long>(indices.size() * sizeof(uint32_t)), indices.data());
     } else {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<long>(indices.size() * sizeof(uint32_t)), indices.data(), GL_DYNAMIC_DRAW);
     }
 
 
-    _vertices = vertices;
-    _indices = indices;
+    _verticesCount = vertices.size();
+    _indicesCount = indices.size();
 }
 
 Mesh::~Mesh()
@@ -118,12 +114,12 @@ void Mesh::Bind() const noexcept
 
 size_t Mesh::GetVertexCount() const noexcept
 {
-    return _vertices.size();
+    return _verticesCount;
 }
 
 size_t Mesh::GetIndicesCount() const noexcept
 {
-    return _indices.size();
+    return _indicesCount;
 }
 
 Mesh Mesh::GenerateSquare() {

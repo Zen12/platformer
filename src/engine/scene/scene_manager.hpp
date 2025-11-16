@@ -10,6 +10,8 @@
 
 #include "../esc/esc.hpp"
 
+#include <RmlUi/Core.h>
+
 
 class SceneManager {
 
@@ -20,6 +22,8 @@ class SceneManager {
 
     std::unique_ptr<EscSystem> _escSystem{};
 
+    Rml::Context* _rmlContext = nullptr;
+
 public:
     SceneManager(
         const std::weak_ptr<Window> &window,
@@ -29,6 +33,8 @@ public:
         _window = window;
         _inputSystem = inputSystem;
     }
+
+    ~SceneManager();
 
     void LoadScene(const SceneAsset& serialization);
     void LoadEntities(const std::vector<EntitySerialization> &serialization);

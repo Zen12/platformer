@@ -1,0 +1,4 @@
+name: ui_text
+guid: d933330e-f84f-48ff-835d-c8fdc5277c12
+extension: .vert
+type: vertex-shader
