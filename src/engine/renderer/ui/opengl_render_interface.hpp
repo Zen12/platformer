@@ -1,20 +1,31 @@
 #pragma once
 
+#include "RmlUi/Core/RenderInterface.h"
+
+#include <memory>
+#include <unordered_map>
+#include <vector>
+#include <algorithm>
+
+#include <GL/glew.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include "../mesh/mesh.hpp"
+#include "../material/material.hpp"
+#include "../texture/texture.hpp"
+#include "../../system/window.hpp"
+
 // Simple OpenGL render interface for RmlUi
 class OpenGLRenderInterface : public Rml::RenderInterface {
 private:
-    struct GeometryData {
-        GLuint vao = 0;
-        GLuint vbo = 0;
-        GLuint ibo = 0;
-        int num_indices = 0;
-    };
     std::unordered_map<Rml::CompiledGeometryHandle, std::unique_ptr<Mesh>> geometries;
     Rml::CompiledGeometryHandle next_handle = 1;
-    std::vector<GLuint> textures;
 
     std::weak_ptr<Window> _window;
     std::weak_ptr<Material> _material;
+
+    std::vector<std::shared_ptr<Texture>> _textures{};
 
 
 public:
@@ -45,19 +56,15 @@ public:
 
         // Apply translation
         projection = glm::translate(projection, glm::vec3(translation.x, translation.y, 0.0f));
-
-        const auto projectionLoc = _material.lock()->GetLocation("projection");
-        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-        const auto useTextureLoc = _material.lock()->GetLocation("useTexture");
+        _material.lock()->SetMat4("projection",projection);
 
         // Bind texture if present
         if (texture) {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(texture));
-            glUniform1i(useTextureLoc, 1);
+            _material.lock()->SetInt("useTexture", 1);
         } else {
-            glUniform1i(useTextureLoc, 0);
+            _material.lock()->SetInt("useTexture", 0);
         }
 
         glBindVertexArray(data->VAO());
@@ -96,7 +103,9 @@ public:
 
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        textures.push_back(texture_id);
+        const auto texture = std::make_shared<Texture>(texture_id);
+        _textures.push_back(texture);
+        _material.lock()->AddSprite(texture);
         return static_cast<Rml::TextureHandle>(texture_id);
     }
 
@@ -104,9 +113,13 @@ public:
         if (texture) {
             GLuint texture_id = static_cast<GLuint>(texture);
             glDeleteTextures(1, &texture_id);
-            auto it = std::find(textures.begin(), textures.end(), texture_id);
-            if (it != textures.end()) {
-                textures.erase(it);
+            const auto it = std::find_if(_textures.begin(), _textures.end(),
+                                   [texture_id](const std::shared_ptr<Texture>& t) {
+                                       return t->GetTextureId() == texture_id;
+                                   });
+
+            if (it != _textures.end()) {
+                _textures.erase(it);
             }
         }
     }

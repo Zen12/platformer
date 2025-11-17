@@ -7,8 +7,9 @@ Texture::Texture(const uint32_t &textureId)
 
 }
 
-void Texture::Bind() const noexcept
+void Texture::Bind(const size_t &index) const noexcept
 {
+    glActiveTexture(GL_TEXTURE0 + index);
     glBindTexture(GL_TEXTURE_2D, _textureId);
 }
 

@@ -22,7 +22,6 @@ class SceneManager {
 
     std::unique_ptr<EscSystem> _escSystem{};
 
-    Rml::Context* _rmlContext = nullptr;
 
 public:
     SceneManager(
@@ -34,8 +33,6 @@ public:
         _inputSystem = inputSystem;
     }
 
-    ~SceneManager();
-
     void LoadScene(const SceneAsset& serialization);
     void LoadEntities(const std::vector<EntitySerialization> &serialization);
 
@@ -45,14 +42,13 @@ public:
 
     void LoadRequestedScene();
 
+    [[nodiscard]] std::shared_ptr<Material> GetMaterial(const std::string& guid) const;
 
 private:
     [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) const;
 
-    [[nodiscard]] std::shared_ptr<Material> GetMaterial(const std::string& guid) const;
 
-
-    [[nodiscard]] std::shared_ptr<Texture> GetSprite(const std::string& guid) const;
+    [[nodiscard]] std::shared_ptr<Texture> GetTexture(const std::string& guid) const;
 
     [[nodiscard]] std::shared_ptr<Font> GetFont(const std::string& guid) const;
 

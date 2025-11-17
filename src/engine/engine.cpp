@@ -12,20 +12,23 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
     _projectAsset = AssetLoader<ProjectAsset>::LoadFromPath(projectFilePath);
 
     _assetManager = std::make_shared<AssetManager>(projectPath);
+    _window = std::make_shared<Window>(_projectAsset.Resolution[0], _projectAsset.Resolution[1], _projectAsset.Name);
+    _inputSystem = std::make_shared<InputSystem>(_window);
+    _sceneManager = std::make_shared<SceneManager>(_window, _assetManager, _inputSystem);
+    _uiManager = std::make_shared<UIManager>(_assetManager, _sceneManager, _window);
+
+    _window->WinInit();
     _assetManager->Init();
 
-    _window = std::make_shared<Window>(_projectAsset.Resolution[0], _projectAsset.Resolution[1], _projectAsset.Name);
-    _window->WinInit();
-
-    _inputSystem = std::make_shared<InputSystem>(_window);
     _targetFrameTime = 1.0f / _projectAsset.TargetFps;
 }
 
 void Engine::LoadFirstScene() {
     const auto scene = _assetManager->LoadAssetByGuid<SceneAsset>(_projectAsset.Scenes[0]);
 
-    _sceneManager = std::make_shared<SceneManager>(_window,_assetManager, _inputSystem);
     _sceneManager->LoadScene(scene);
+
+    _uiManager->Initialize();
 
     _frameTimer.Start();
 }
@@ -52,6 +55,9 @@ Engine::~Engine() {
     // Reset the scene manager first (this releases the RmlUI context)
     _sceneManager.reset();
 
+    // Destroy UI manager before shutting down RmlUi
+    _uiManager->Destroy();
+
     // Now it's safe to shutdown RmlUi
     Rml::Shutdown();
 
@@ -59,10 +65,8 @@ Engine::~Engine() {
 }
 
 void Engine::Tick() {
-#ifndef NDEBUG
 #if DEBUG_ENGINE_PROFILE
     PROFILE_SCOPE("Engine::Tick");
-#endif
 #endif
 
     _frameTimer.Reset();
@@ -73,6 +77,7 @@ void Engine::Tick() {
 
     _inputSystem->Update();
     _sceneManager->Update();
+    _uiManager->Update();
     _window->SwapBuffers();
 
     // maybe #if debug?

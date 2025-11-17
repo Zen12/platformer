@@ -25,7 +25,7 @@ class Scene {
 private:
     std::unordered_map<std::string, std::shared_ptr<Shader>> _shaders;
     std::unordered_map<std::string, std::shared_ptr<Material>> _materials;
-    std::unordered_map<std::string, std::shared_ptr<Texture>> _sprites;
+    std::unordered_map<std::string, std::shared_ptr<Texture>> _textures;
     std::unordered_map<std::string, std::shared_ptr<Font>> _fonts;
     std::unordered_map<std::string, std::shared_ptr<Mesh>> _meshes;
 

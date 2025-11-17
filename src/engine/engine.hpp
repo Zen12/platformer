@@ -9,6 +9,7 @@
 
 #include "system/time.hpp"
 #include "asset/asset_manager.hpp"
+#include "renderer/ui/ui_manager.hpp"
 #include "scene/scene_manager.hpp"
 
 class Engine {
@@ -17,6 +18,7 @@ private:
     std::shared_ptr<InputSystem> _inputSystem;
     std::shared_ptr<AssetManager> _assetManager;
     std::shared_ptr<SceneManager> _sceneManager;
+    std::shared_ptr<UIManager> _uiManager;
     std::shared_ptr<Window> _window;
 
     std::filesystem::path _projectPath;

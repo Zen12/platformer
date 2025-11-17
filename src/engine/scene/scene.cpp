@@ -79,12 +79,12 @@ std::shared_ptr<Mesh> Scene::GetMesh(const std::string &guid) {
 
 std::shared_ptr<Texture> Scene::GetTexture(const std::string &guid) {
     if (const auto assetManager = _assetManager.lock()) {
-        if (_sprites.find(guid) == _sprites.end()) {
+        if (_textures.find(guid) == _textures.end()) {
             const auto sprite = std::make_shared<Texture>(assetManager->LoadSourceByGuid<Texture>(guid));
-            _sprites[guid] = sprite;
+            _textures[guid] = sprite;
             return sprite;
         }
-        return _sprites[guid];
+        return _textures[guid];
     }
     return {};
 }

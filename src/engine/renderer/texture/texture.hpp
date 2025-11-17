@@ -9,7 +9,7 @@ class Texture
         explicit Texture(const uint32_t &textureId);
         ~Texture();
 
-        void Bind() const noexcept;
+        void Bind(const size_t &index) const noexcept;
         uint32_t GetTextureId() const noexcept;
 
         Texture(const Texture&) = delete;
