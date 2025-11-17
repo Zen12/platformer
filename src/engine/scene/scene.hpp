@@ -8,7 +8,6 @@
 #include "../asset/asset_manager.hpp"
 #include "../renderer/texture/texture_asset_loader.hpp"
 #include "../ui/text/font_loader.hpp"
-#include "../debug/debug.hpp"
 #include "../system/input_system.hpp"
 #include "entt/entity/registry.hpp"
 
@@ -23,11 +22,11 @@ struct PrefabInstantiateData {
 
 class Scene {
 private:
-    std::unordered_map<std::string, std::shared_ptr<Shader>> _shaders;
-    std::unordered_map<std::string, std::shared_ptr<Material>> _materials;
-    std::unordered_map<std::string, std::shared_ptr<Texture>> _textures;
-    std::unordered_map<std::string, std::shared_ptr<Font>> _fonts;
-    std::unordered_map<std::string, std::shared_ptr<Mesh>> _meshes;
+    std::unordered_map<std::string, std::shared_ptr<Shader>> _shaders{};
+    std::unordered_map<std::string, std::shared_ptr<Material>> _materials{};
+    std::unordered_map<std::string, std::shared_ptr<Texture>> _textures{};
+    std::unordered_map<std::string, std::shared_ptr<Font>> _fonts{};
+    std::unordered_map<std::string, std::shared_ptr<Mesh>> _meshes{};
 
     std::weak_ptr<Window> _window;
     std::weak_ptr<AssetManager> _assetManager;

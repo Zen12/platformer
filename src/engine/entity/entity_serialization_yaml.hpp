@@ -2,12 +2,12 @@
 
 #include "entity_serialization.hpp"
 #include "../math/glm_vec_yaml.hpp"
-#include "../renderer/transform/transform_component_serialization.hpp"
-#include "../renderer/transform/transform_component_serialization_yaml.hpp"
-#include "../renderer/mesh/mesh_renderer_component_serialization.hpp"
-#include "../renderer/mesh/mesh_renderer_component_serialization_yaml.hpp"
-#include "../renderer/camera/camera_component_serialization.hpp"
-#include "../renderer/camera/camera_component_serialization_yaml.hpp"
+#include "../esc/transform/transform_component_serialization.hpp"
+#include "../esc/transform/transform_component_serialization_yaml.hpp"
+#include "../esc/mesh_renderer/mesh_renderer_component_serialization.hpp"
+#include "../esc/mesh_renderer/mesh_renderer_component_serialization_yaml.hpp"
+#include "../esc/camera/camera_component_serialization.hpp"
+#include "../esc/camera/camera_component_serialization_yaml.hpp"
 
 namespace YAML {
     template <>

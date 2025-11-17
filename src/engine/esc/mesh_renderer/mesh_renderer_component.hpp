@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <string>
 
-#include "../../renderer/mesh/mesh_renderer_component_serialization.hpp"
+#include "mesh_renderer_component_serialization.hpp"
 
 
 class MeshRendererComponent final {

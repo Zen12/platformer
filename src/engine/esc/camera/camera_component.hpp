@@ -1,7 +1,7 @@
 #pragma once
 #include <algorithm>
 
-#include "../../renderer/camera/camera_component_serialization.hpp"
+#include "camera_component_serialization.hpp"
 #include "glm/mat4x4.hpp"
 
 class CameraComponentV2 final
