@@ -9,10 +9,8 @@
 
 
 void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
-#ifndef NDEBUG
 #if DEBUG_ENGINE_SCENE_MANAGER_PROFILE
     PROFILE_SCOPE("Loading of scene " + sceneAsset.Name);
-#endif
 #endif
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -34,10 +32,8 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
 
 
 void SceneManager::Update() {
-#ifndef NDEBUG
 #if DEBUG_ENGINE_SCENE_MANAGER_PROFILE
     PROFILE_SCOPE("  SceneManager::Update");
-#endif
 #endif
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -73,5 +69,9 @@ std::shared_ptr<Texture> SceneManager::GetTexture(const std::string &guid) const
 
 std::shared_ptr<Font> SceneManager::GetFont(const std::string &guid) const {
    return _scene->GetFont(guid);
+}
+
+std::shared_ptr<UiPage> SceneManager::GetUiPage(const std::string &guid) const {
+    return _scene->GetUiPage(guid);
 }
 

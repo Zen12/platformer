@@ -37,29 +37,27 @@ public:
 
                     static OpenGLRenderInterface render_interface;
 
+                    const auto uiPage = sceneManager->GetUiPage("df04e927-64d5-406b-8170-ddd96f1864a5");
+
                     // Initialize the render interface with window dimensions and asset path
-                    render_interface.Initialize(_window, sceneManager->GetMaterial("48389756-b5e5-4e57-a44c-e85a030304c8"));
+                    render_interface.Initialize(_window, uiPage->Material);
 
                     Rml::SetRenderInterface(&render_interface);
                     Rml::Initialise();
 
-                    const auto fontPath = assetManager->GetPathFromGuid("682a2b0c-eeac-48f0-ab67-d2312a971cec");
+                    std::cout << uiPage->FontPath << std::endl;
 
-                    Rml::LoadFontFace(fontPath);
+                    Rml::LoadFontFace(uiPage->FontPath);
+                    const auto css = Rml::Factory::InstanceStyleSheetString(uiPage->Css);
 
 
                     // Create context
                     _rmlContext = Rml::CreateContext("main", Rml::Vector2i(window->GetWidth(), window->GetHeight()));
 
                     // Create a simple Hello World document
-                    Rml::ElementDocument* document = _rmlContext->CreateDocument();
-                    if (document) {
-                        document->SetInnerRML(R"(
-                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-                         font-family: arial; font-size: 48px; color: #FFFFFF; text-align: center;">
-                        Hello World from RmlUi!
-                    </div>
-                )");
+                    if (Rml::ElementDocument* document = _rmlContext->CreateDocument()) {
+                        document->SetInnerRML(uiPage->Rml);
+                        document->SetStyleSheetContainer(std::move(css));
                         document->Show();
                     }
                 }

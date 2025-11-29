@@ -7,9 +7,15 @@
 #include "../renderer/mesh/mesh.hpp"
 #include "../asset/asset_manager.hpp"
 #include "../renderer/texture/texture_asset_loader.hpp"
-#include "../ui/text/font_loader.hpp"
+#include "../font/font_loader.hpp"
+#include "../renderer/ui/ui_page.hpp"
 #include "../system/input_system.hpp"
 #include "entt/entity/registry.hpp"
+#include "../renderer/material/material_asset.hpp"
+#include "../renderer/material/material_asset_yaml.hpp"
+#include "../renderer/ui/ui_page.hpp"
+#include "../renderer/ui/ui_page_asset.hpp"
+#include "../renderer/ui/ui_page_asset_yaml.hpp"
 
 
 struct PrefabInstantiateData {
@@ -24,6 +30,7 @@ class Scene {
 private:
     std::unordered_map<std::string, std::shared_ptr<Shader>> _shaders{};
     std::unordered_map<std::string, std::shared_ptr<Material>> _materials{};
+    std::unordered_map<std::string, std::shared_ptr<UiPage>> _uiPages{};
     std::unordered_map<std::string, std::shared_ptr<Texture>> _textures{};
     std::unordered_map<std::string, std::shared_ptr<Font>> _fonts{};
     std::unordered_map<std::string, std::shared_ptr<Mesh>> _meshes{};
@@ -70,6 +77,8 @@ public:
     [[nodiscard]] std::shared_ptr<Texture> GetTexture(const std::string &guid);
 
     [[nodiscard]] std::shared_ptr<Font> GetFont(const std::string &guid);
+
+    [[nodiscard]] std::shared_ptr<UiPage> GetUiPage(const std::string &guid);
 
     void RequestToLoadScene(const std::string &sceneGuid) noexcept {
         _requestToLoadScene = sceneGuid;

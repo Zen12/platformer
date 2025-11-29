@@ -1,7 +1,7 @@
 #pragma once
 
 #include "font.hpp"
-#include "../../asset/loaders/asset_loader.hpp"
+#include "../asset/loaders/asset_loader.hpp"
 #include <GL/glew.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H

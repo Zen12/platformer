@@ -1,7 +1,4 @@
 #include "scene.hpp"
-#include "../renderer/material/material_asset.hpp"
-#include "../renderer/material/material_asset_yaml.hpp"
-
 
 std::weak_ptr<AssetManager> Scene::GetAssetManager() const noexcept {
     return _assetManager;
@@ -28,6 +25,26 @@ std::shared_ptr<Shader> Scene::GetShader(const std::string &vertexGuid, const st
         }
 
         return _shaders[vertexGuid + fragmentGuid];
+    }
+
+    return {};
+}
+
+std::shared_ptr<UiPage> Scene::GetUiPage(const std::string &guid) {
+    if (const auto assetManager = _assetManager.lock()) {
+        if (_uiPages.find(guid) == _uiPages.end()) {
+            const auto uiPageAsset = assetManager->LoadAssetByGuid<UiPageAsset>(guid);
+
+            const auto uiPage = std::make_shared<UiPage>();
+            uiPage->Rml = assetManager->LoadSourceByGuid<std::string>(uiPageAsset.RmlGuid);
+            uiPage->Material = GetMaterial(uiPageAsset.MaterialGuid);
+            uiPage->FontPath = assetManager->GetPathFromGuid(uiPageAsset.FontGuid);
+            uiPage->Css = assetManager->LoadSourceByGuid<std::string>(uiPageAsset.CssGuid);
+
+            _uiPages[guid] = uiPage;
+            return uiPage;
+        }
+        return _uiPages[guid];
     }
 
     return {};

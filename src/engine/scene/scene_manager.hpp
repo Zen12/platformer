@@ -44,6 +44,8 @@ public:
 
     [[nodiscard]] std::shared_ptr<Material> GetMaterial(const std::string& guid) const;
 
+    [[nodiscard]] std::shared_ptr<UiPage> GetUiPage(const std::string& guid) const;
+
 private:
     [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) const;
 
@@ -51,6 +53,7 @@ private:
     [[nodiscard]] std::shared_ptr<Texture> GetTexture(const std::string& guid) const;
 
     [[nodiscard]] std::shared_ptr<Font> GetFont(const std::string& guid) const;
+
 
 };
 

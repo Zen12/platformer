@@ -49,16 +49,14 @@ def ext_check(value_ext):
         ".ttf": "font",
         ".png": "image",
         ".jpg": "image",
-        ".vert": "vertex-shader",
-        ".frag": "fragment-shader",
+        ".vert": "vertex_shader",
+        ".frag": "fragment_shader",
         ".scene": "scene",
         ".prefab": "prefab",
         ".mat": "material",
-        ".atlas-spine": "atlas-spine",
-        ".png-spine": "image-spine",
-        ".json-spine": "json-spine",
-        ".skel-spine": "skel-spine",
-        ".engine-spine": "engine-spine"
+        ".css": "css",
+        ".rml" : "rml",
+        ".upage": "ui_page",
     }
     return mapping.get(value_ext, "error")
 
