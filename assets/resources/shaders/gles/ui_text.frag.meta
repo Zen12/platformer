@@ -1,0 +1,4 @@
+name: ui_text
+guid: 1cb84eae-7f27-49d6-af54-81d5ddde977d
+extension: .frag
+type: fragment_shader

@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 
+#include "RmlUi/Core/Debug.h"
 #include "RmlUi/Core/Span.h"
 #include "RmlUi/Core/Vertex.h"
 
