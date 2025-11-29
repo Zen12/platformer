@@ -50,6 +50,10 @@
 - [ ] ImGUI for editor 
 - [ ] Basic serialization viewer with play button
 
+## 0.1.4 NavMesh
+- [ ] NavMesh builder
+- [ ] Astar navigation
+
 ## Backlog
 - [ ] Proper fix retina issue on webgl and macOS
 
