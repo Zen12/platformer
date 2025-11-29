@@ -16,6 +16,7 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
     _inputSystem = std::make_shared<InputSystem>(_window);
     _sceneManager = std::make_shared<SceneManager>(_window, _assetManager, _inputSystem);
     _uiManager = std::make_shared<UIManager>(_assetManager, _sceneManager, _window);
+    _renderController = std::make_shared<OpenGLRenderController>(_sceneManager);
 
     _window->WinInit();
     _assetManager->Init();
@@ -77,8 +78,13 @@ void Engine::Tick() {
 
     _inputSystem->Update();
     _sceneManager->Update();
+
+    _renderController->Render(_sceneManager->GetRenderRepository());
     _uiManager->Update();
+
+    _sceneManager->ClearRenderRepository();
     _window->SwapBuffers();
+
 
     // maybe #if debug?
     if (_inputSystem->IsKeyUp(InputKey::Escape)) {

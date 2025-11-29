@@ -58,7 +58,7 @@ public:
         }
     }
 
-    void InitSystems() {
+    void InitSystems(std::shared_ptr<RenderRepository> &renderRepository) {
         if (const auto &scenePtr = _scene.lock()) {
 
             const auto registry = scenePtr->GetEntityRegistry();
@@ -71,7 +71,7 @@ public:
             _systems.emplace_back(std::make_unique<CameraSystem>(registry->view<WindowComponent>(),registry->view<CameraComponentV2, TransformComponentV2>()));
 
             _systems.emplace_back(std::make_unique<MeshRenderSystem>(registry->view<MeshRendererComponent, TransformComponentV2>(),
-               registry->view<CameraComponentV2>(), _scene ));
+               registry->view<CameraComponentV2>(), renderRepository ));
         }
     }
 

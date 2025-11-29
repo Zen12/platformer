@@ -41,9 +41,10 @@
 # 🏃 Roadmap
 
 ## 0.1.3 FSM
-- [ ] 3d renderer manager
+- [x] 3d renderer manager
 - [ ] Create appstate flow (FSM)
 - [ ] Mesh Loader
+- [ ] RML Button and signal system 
 
 ## 0.1.4 First Editor
 - [ ] Create new cmake project (editor)

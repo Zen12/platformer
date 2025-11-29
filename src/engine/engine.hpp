@@ -9,7 +9,8 @@
 
 #include "system/time.hpp"
 #include "asset/asset_manager.hpp"
-#include "renderer/ui/ui_manager.hpp"
+#include "renderer/ui_manager.hpp"
+#include "renderer/controller/opengl_render_controller.hpp"
 #include "scene/scene_manager.hpp"
 
 class Engine {
@@ -20,6 +21,7 @@ private:
     std::shared_ptr<SceneManager> _sceneManager;
     std::shared_ptr<UIManager> _uiManager;
     std::shared_ptr<Window> _window;
+    std::shared_ptr<OpenGLRenderController> _renderController;
 
     std::filesystem::path _projectPath;
     ProjectAsset _projectAsset;

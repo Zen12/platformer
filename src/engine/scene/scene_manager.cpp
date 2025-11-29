@@ -3,7 +3,7 @@
 
 #include <GL/glew.h>
 #include <fstream>
-#include "../renderer/ui/opengl_render_interface.hpp"
+#include "../renderer/controller/ui_opengl_render_controller.hpp"
 
 #define DEBUG_ENGINE_SCENE_MANAGER_PROFILE 0
 
@@ -27,7 +27,7 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
 
     _escSystem->LoadEntities(serialization);
 
-    _escSystem->InitSystems();
+    _escSystem->InitSystems(_renderRepository);
 }
 
 

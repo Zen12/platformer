@@ -2,9 +2,9 @@
 #include <cstdint>
 #include <memory>
 
-#include "opengl_render_interface.hpp"
-#include "../../asset/asset_manager.hpp"
-#include "../../scene/scene_manager.hpp"
+#include "controller/ui_opengl_render_controller.hpp"
+#include "../asset/asset_manager.hpp"
+#include "../scene/scene_manager.hpp"
 #include "RmlUi/Core/Core.h"
 #include "RmlUi/Core/ElementDocument.h"
 
@@ -14,7 +14,7 @@ private:
     const std::weak_ptr<Window> _window{};
     const std::weak_ptr<AssetManager> _assetManager{};
 
-    std::unique_ptr<OpenGLRenderInterface> _render{};
+    std::unique_ptr<UiOpenGLRenderController> _render{};
     Rml::Context* _rmlContext{};
 
 
@@ -25,7 +25,7 @@ public:
         const std::weak_ptr<SceneManager> &sceneManager,
         const std::weak_ptr<Window> &window
         ) : _sceneManager(sceneManager), _window(window) , _assetManager(assetManager),
-            _render(std::make_unique<OpenGLRenderInterface>())
+            _render(std::make_unique<UiOpenGLRenderController>())
     {}
 
     void Initialize() {
@@ -33,9 +33,9 @@ public:
             if (const auto &assetManager = _assetManager.lock()) {
                 if (const auto window = _window.lock()) {
 
-                    _render = std::make_unique<OpenGLRenderInterface>();
+                    _render = std::make_unique<UiOpenGLRenderController>();
 
-                    static OpenGLRenderInterface render_interface;
+                    static UiOpenGLRenderController render_interface;
 
                     const auto uiPage = sceneManager->GetUiPage("df04e927-64d5-406b-8170-ddd96f1864a5");
 
@@ -57,7 +57,7 @@ public:
                     // Create a simple Hello World document
                     if (Rml::ElementDocument* document = _rmlContext->CreateDocument()) {
                         document->SetInnerRML(uiPage->Rml);
-                        document->SetStyleSheetContainer(std::move(css));
+                        document->SetStyleSheetContainer(css);
                         document->Show();
                     }
                 }
@@ -68,6 +68,9 @@ public:
     void Update() {
         // Render RmlUi with proper 2D OpenGL state
         if (_rmlContext) {
+            if (const auto window = _window.lock()) {
+                _rmlContext->SetDimensions(Rml::Vector2i(window->GetWidth(), window->GetHeight()));
+            }
             _rmlContext->Update();
             _rmlContext->Render();
         }

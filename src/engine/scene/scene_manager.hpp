@@ -20,6 +20,8 @@ class SceneManager {
     std::weak_ptr<Window> _window;
     std::weak_ptr<InputSystem> _inputSystem;
 
+    std::shared_ptr<RenderRepository> _renderRepository{};
+
     std::unique_ptr<EscSystem> _escSystem{};
 
 
@@ -31,6 +33,7 @@ public:
         _assetManager = assetManager;
         _window = window;
         _inputSystem = inputSystem;
+        _renderRepository = std::make_shared<RenderRepository>();
     }
 
     void LoadScene(const SceneAsset& serialization);
@@ -45,6 +48,18 @@ public:
     [[nodiscard]] std::shared_ptr<Material> GetMaterial(const std::string& guid) const;
 
     [[nodiscard]] std::shared_ptr<UiPage> GetUiPage(const std::string& guid) const;
+
+    [[nodiscard]] std::shared_ptr<RenderRepository> GetRenderRepository() const {
+        return _renderRepository;
+    }
+
+    void ClearRenderRepository() const {
+        _renderRepository->Clear();
+    }
+
+    [[nodiscard]] std::shared_ptr<Mesh> GetMesh(const std::string& guid) const {
+        return _scene->GetMesh(guid);
+    }
 
 private:
     [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) const;

@@ -17,7 +17,7 @@
 #include "../../system/window.hpp"
 
 // Simple OpenGL render interface for RmlUi
-class OpenGLRenderInterface : public Rml::RenderInterface {
+class UiOpenGLRenderController : public Rml::RenderInterface {
 private:
     std::unordered_map<Rml::CompiledGeometryHandle, std::unique_ptr<Mesh>> geometries;
     Rml::CompiledGeometryHandle next_handle = 1;
@@ -29,7 +29,7 @@ private:
 
 
 public:
-    void Initialize(const std::weak_ptr<Window> window, const std::weak_ptr<Material> material ) {
+    void Initialize(const std::weak_ptr<Window> &window, const std::weak_ptr<Material> &material ) {
         _window = window;
         _material = material;
     }

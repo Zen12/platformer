@@ -9,6 +9,14 @@ entities:
       - type: mesh_renderer
         material: f22681f4-45d1-4542-a838-99f854890c18
         mesh: sprite
+  - components:
+      - type: transform
+        position: [-2.0, 0.0, -1.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: mesh_renderer
+        material: c035a59c-a6b5-4eed-9bd5-b8f0ffdc1460
+        mesh: sprite
   - guid: main-camera
     tag: main_camera
     components:
@@ -19,6 +27,6 @@ entities:
       - type: camera
         perspectiveNearPlane: 0.1
         perspectiveFarPlane: 100.0
-        perspectiveAspect: 100
+        perspectiveAspect: 130
         orthographicAspect: 70
         isPerspective: true
