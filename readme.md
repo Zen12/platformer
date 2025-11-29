@@ -9,16 +9,12 @@
 ## 🔨 Project structure
 ``` 
 ⚙️ .gitignore 
-🗂️ assets               # engine-project used in build 
+🗂️ assets               # dummy project example
     ├─ 🗂️ resources
     └─ 🗒️ project.yaml
 📦 bin                  # build folder for ./run.sh
 📚 cmake                # packages
-    ├─ ⚙️ FindFreetype.cmake
-    ├─ ⚙️ FindGLEW.cmake
-    ├─ ⚙️ FindGLFW3.cmake
-    ├─ ⚙️ FindGLM.cmake
-    └─ ⚙️ FindYamlCpp.cmake
+    ├─ ⚙️ Find***.cmake
 🛠️ editor               # editor scripts, not real editor
     ├─ 📄 import.py
     └─ 📄 clear_all_refs.py
@@ -26,7 +22,7 @@
     ├─ 🚀 main.cpp
     └─ 🧠 engine
         ├─ 📄 engine.hpp
-        ├─ 📁 
+        ├─ 📁 **CORE**
 🚀 run.sh               # release build desktop
 🚀 run_debug.sh         # debug build desktop
 🚀 run_web.sh           # release build webgl
@@ -39,33 +35,22 @@
 - 🔳 UI system
 - 📀 Asset management
 - 🚀 ESC
-- 🔦 Focused on 3d
+- 🔦 Basic mesh 3d rendering 
+- 🧠 Nav mesh
 
 # 🏃 Roadmap
 
-## 0.1.2 From OOP to data oriented(DOD)
-- [x] Set Entt
-- [x] Redo components to Entt
-- [ ] Redo systems (rendering, etc...)
-
 ## 0.1.3 FSM
-- [ ] FSM for animation and app-state 
-- [ ] Create AnimationComponent
-- [ ] Create appstate flow 
+- [ ] 3d renderer manager
+- [ ] Create appstate flow (FSM)
+- [ ] Mesh Loader
 
-## 0.1.4 Hot reload
-- [ ] Split into 2 cmake project (app + engine)
-- [ ] Compile engine into dll/so
-- [ ] Implement hot-reload (swapping dll and reloading it)
-- [ ] Split Engine logic and game logic
-
-## 0.1.5 First Editor
+## 0.1.4 First Editor
 - [ ] Create new cmake project (editor)
 - [ ] ImGUI for editor 
 - [ ] Basic serialization viewer with play button
 
 ## Backlog
 - [ ] Proper fix retina issue on webgl and macOS
-- [ ] Optimization of light raycast system, the vertex approach
 
 🇲🇩
