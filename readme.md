@@ -35,8 +35,9 @@
 - 🔳 UI system
 - 📀 Asset management
 - 🚀 ESC
-- 🔦 Basic mesh 3d rendering 
+- 🔦 Basic mesh 3d rendering
 - 🧠 Nav mesh
+- 🔄 FSM
 
 # 🏃 Roadmap
 

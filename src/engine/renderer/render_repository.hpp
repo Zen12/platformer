@@ -45,22 +45,22 @@ namespace std {
             std::size_t seed = 0;
 
             // Hash MaterialGuid
-            hash_combine(seed, std::hash<std::string>{}(id.MaterialGuid));
+            HashCombine(seed, std::hash<std::string>{}(id.MaterialGuid));
 
             // Hash MeshGuid
-            hash_combine(seed, std::hash<std::string>{}(id.MeshGuid));
+            HashCombine(seed, std::hash<std::string>{}(id.MeshGuid));
 
             // Hash CameraView matrix
             for (int i = 0; i < 4; ++i) {
                 for (int j = 0; j < 4; ++j) {
-                    hash_combine(seed, std::hash<float>{}(id.CameraView[i][j]));
+                    HashCombine(seed, std::hash<float>{}(id.CameraView[i][j]));
                 }
             }
 
             // Hash CameraProjection matrix
             for (int i = 0; i < 4; ++i) {
                 for (int j = 0; j < 4; ++j) {
-                    hash_combine(seed, std::hash<float>{}(id.CameraProjection[i][j]));
+                    HashCombine(seed, std::hash<float>{}(id.CameraProjection[i][j]));
                 }
             }
 
@@ -68,7 +68,7 @@ namespace std {
         }
 
     private:
-        static void hash_combine(std::size_t& seed, std::size_t hash) noexcept {
+        static void HashCombine(std::size_t& seed, const std::size_t hash) noexcept {
             // Based on boost::hash_combine
             seed ^= hash + 0x9e3779b9 + (seed << 6) + (seed >> 2);
         }
@@ -81,19 +81,17 @@ private:
 
 
 public:
-    void Add(const RenderData &renderData) {
+    void Add(const RenderData &renderData) noexcept {
         const auto &id = RenderId(renderData.MaterialGuid, renderData.MeshGuid, renderData.ViewMatrix, renderData.ProjectionMatrix);
         if (_renderData.find(id) == _renderData.end()) {
-            std::vector<glm::mat4> transforms{};
-            transforms.push_back(renderData.ModelMatrix);
-            _renderData[id] = transforms;
+            _renderData[id] = std::vector{renderData.ModelMatrix};
             return;
         }
 
         _renderData[id].push_back(renderData.ModelMatrix);
     }
 
-    [[nodiscard]] const std::unordered_map<RenderId, std::vector<glm::mat4>> &GetData() const {
+    [[nodiscard]] const std::unordered_map<RenderId, std::vector<glm::mat4>> &GetData() const noexcept {
         return _renderData;
     }
 

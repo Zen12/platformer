@@ -11,7 +11,6 @@ static std::unique_ptr<Engine> g_engine;
 void RunEngineWebGl() {
     if (!g_engine) {
         g_engine = std::make_unique<Engine>(GetProjectRootPath());
-        g_engine->LoadFirstScene();
     }
 
     if (g_engine->IsTickable()) {
@@ -36,8 +35,6 @@ void LoadEngineWebGL() {
 bool RunEngineDesktop() {
 
     Engine engine(GetProjectRootPath());
-
-    engine.LoadFirstScene();
 
     while (engine.IsTickable())
     {

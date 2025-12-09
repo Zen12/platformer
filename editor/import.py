@@ -57,6 +57,7 @@ def ext_check(value_ext):
         ".css": "css",
         ".rml" : "rml",
         ".upage": "ui_page",
+        ".fsm": "fsm",
     }
     return mapping.get(value_ext, "error")
 

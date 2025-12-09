@@ -21,6 +21,13 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
     }
 }
 
+void SceneManager::LoadSceneByGuid(const std::string& sceneGuid) {
+    if (const auto assetManager = _assetManager.lock()) {
+        const auto sceneAsset = assetManager->LoadAssetByGuid<SceneAsset>(sceneGuid);
+        LoadScene(sceneAsset);
+    }
+}
+
 void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serialization) {
 
     _escSystem = std::make_unique<EscSystem>(_scene);
@@ -37,7 +44,9 @@ void SceneManager::Update() {
 #endif
     glClear(GL_COLOR_BUFFER_BIT);
 
-    _escSystem->Update(); // ATM single threaded
+    if (_escSystem) {
+        _escSystem->Update(); // ATM single threaded
+    }
 
     // here we should do rendering
 }

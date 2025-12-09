@@ -2,6 +2,9 @@
 #include "scene/scene_asset_yaml.hpp"
 #include <RmlUi/Core.h>
 
+#include "fsm/fsm_asset.hpp"
+#include "fsm/fsm_asset_yaml.hpp"
+
 #define DEBUG_ENGINE_PROFILE 0
 
 Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectPath) {
@@ -21,15 +24,12 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
     _window->WinInit();
     _assetManager->Init();
 
-    _targetFrameTime = 1.0f / _projectAsset.TargetFps;
-}
-
-void Engine::LoadFirstScene() {
-    const auto scene = _assetManager->LoadAssetByGuid<SceneAsset>(_projectAsset.Scenes[0]);
-
-    _sceneManager->LoadScene(scene);
+    const auto mainFsm = _assetManager->LoadAssetByGuid<FsmAsset>(_projectAsset.MainFsm);
+    _fsmController = std::make_unique<FsmController>(mainFsm, _sceneManager, _uiManager);
 
     _uiManager->Initialize();
+
+    _targetFrameTime = 1.0f / _projectAsset.TargetFps;
 
     _frameTimer.Start();
 }
@@ -56,10 +56,10 @@ Engine::~Engine() {
     // Reset the scene manager first (this releases the RmlUI context)
     _sceneManager.reset();
 
-    // Destroy UI manager before shutting down RmlUi
+    // Destroy UI manager to release the context pointer before shutting down RmlUi
     _uiManager->Destroy();
 
-    // Now it's safe to shutdown RmlUi
+    // Shutdown RmlUi (this will clean up all contexts)
     Rml::Shutdown();
 
     _window->Destroy();
@@ -72,12 +72,9 @@ void Engine::Tick() {
 
     _frameTimer.Reset();
 
-    if (_sceneManager->IsRequestToLoadScene()) {
-        _sceneManager->LoadRequestedScene();
-    }
 
     _inputSystem->Update();
-    _sceneManager->Update();
+    _fsmController->Update();
 
     _renderController->Render(_sceneManager->GetRenderRepository());
     _uiManager->Update();

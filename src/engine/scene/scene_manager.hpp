@@ -37,6 +37,7 @@ public:
     }
 
     void LoadScene(const SceneAsset& serialization);
+    void LoadSceneByGuid(const std::string& sceneGuid);
     void LoadEntities(const std::vector<EntitySerialization> &serialization);
 
     void Update();

@@ -9,6 +9,7 @@
 
 #include "system/time.hpp"
 #include "asset/asset_manager.hpp"
+#include "fsm/fsm_controller.hpp"
 #include "renderer/ui_manager.hpp"
 #include "renderer/controller/opengl_render_controller.hpp"
 #include "scene/scene_manager.hpp"
@@ -25,6 +26,7 @@ private:
 
     std::filesystem::path _projectPath;
     ProjectAsset _projectAsset;
+    std::unique_ptr<FsmController> _fsmController;
 
     Time _frameTimer;
 
@@ -33,8 +35,6 @@ private:
 
 public:
     explicit Engine(const std::filesystem::path &projectPath);
-
-    void LoadFirstScene();
 
     void WaitForTargetFrameRate() const;
 
