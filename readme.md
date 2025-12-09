@@ -43,9 +43,10 @@
 
 ## 0.1.3 FSM
 - [x] 3d renderer manager
-- [ ] Create appstate flow (FSM)
+- [x] Create appstate flow (FSM)
+- [x] RML Button
 - [ ] Mesh Loader
-- [ ] RML Button and signal system 
+- [ ] FSM conditions + fsm-var-dictionary 
 
 ## 0.1.4 First Editor
 - [ ] Create new cmake project (editor)
