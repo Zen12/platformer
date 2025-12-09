@@ -4,6 +4,9 @@
 #include "yaml-cpp/node/node.h"
 #include "../../renderer/ui/ui_page_action_serialization.hpp"
 #include "../../renderer/ui/ui_page_action_serialization_yaml.hpp"
+#include "../../renderer/ui/button_listener_action.hpp"
+#include "../../renderer/ui/button_listener_action_serialization.hpp"
+#include "../../renderer/ui/button_listener_action_serialization_yaml.hpp"
 #include "../../scene/load_scene_action.hpp"
 #include "../../scene/load_scene_action_serialization.hpp"
 #include "../../scene/load_scene_action_serialization_yaml.hpp"
@@ -26,6 +29,12 @@ namespace YAML {
                 LoadSceneAction action;
                 action.SetSceneGuid(serialization.SceneGuid);
                 // Note: SceneManager will be set later by the FsmController
+                return action;
+            } else if (type == "action_button_listener") {
+                const auto serialization = node.as<ButtonListenerActionSerialization>();
+                ButtonListenerAction action;
+                action.SetButtonId(serialization.ButtonId);
+                // Note: UIManager will be set later by the FsmController
                 return action;
             }
 

@@ -175,5 +175,9 @@ void Window::GetMousePosition(double *x, double *y) const noexcept {
 #ifdef __EMSCRIPTEN__
     *x /= 2.0;
     *y /= 2.0;
+#elif defined(__APPLE__)
+    // On macOS with Retina displays, scale coordinates to match framebuffer size
+    *x *= 2.0;
+    *y *= 2.0;
 #endif
 }

@@ -8,6 +8,8 @@ nodes:
       scene_guid: 963d3fa8-8f5c-45aa-beab-1aa887e30816
     - type: load_ui_page
       page_guid: df04e927-64d5-406b-8170-ddd96f1864a5
+    - type: action_button_listener
+      button_id: hello-button
 - name: "Close the game"
   guid: "closeGame"
   actions:

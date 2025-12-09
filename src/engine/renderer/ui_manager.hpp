@@ -1,12 +1,35 @@
 #pragma once
 #include <cstdint>
 #include <memory>
+#include <functional>
 
 #include "controller/ui_opengl_render_controller.hpp"
 #include "../asset/asset_manager.hpp"
 #include "../scene/scene_manager.hpp"
 #include "RmlUi/Core/Core.h"
 #include "RmlUi/Core/ElementDocument.h"
+#include "RmlUi/Core/EventListener.h"
+
+// Custom event listener for button clicks
+class ButtonClickListener : public Rml::EventListener {
+private:
+    std::function<void()>* _handler;
+
+public:
+    explicit ButtonClickListener(std::function<void()>* handler) : _handler(handler) {}
+
+    void ProcessEvent(Rml::Event& event) override {
+        if (_handler && *_handler) {
+            (*_handler)();
+        }
+    }
+};
+
+struct ButtonListenerData {
+    std::function<void()> handler;
+    std::unique_ptr<ButtonClickListener> listener;
+    Rml::Element* element = nullptr;
+};
 
 class UIManager final {
 private:
@@ -18,6 +41,7 @@ private:
     std::unique_ptr<Rml::Context> _rmlContext{};
 
     bool _isPageLoaded{};
+    std::unordered_map<std::string, ButtonListenerData> _buttonListeners;
 
 
 public:
@@ -75,6 +99,52 @@ public:
         _isPageLoaded = false;
     }
 
+    void ProcessMouseMove(const int &x, const int &y) {
+        if (_rmlContext) {
+            _rmlContext->ProcessMouseMove(x, y, 0);
+        }
+    }
+
+    void ProcessMouseButtonDown(const int &button) {
+        if (_rmlContext) {
+            _rmlContext->ProcessMouseButtonDown(button, 0);
+        }
+    }
+
+    void ProcessMouseButtonUp(const int &button) {
+        if (_rmlContext) {
+            _rmlContext->ProcessMouseButtonUp(button, 0);
+        }
+    }
+
+    void SetButtonClickHandler(const std::string& buttonIdentifier, std::function<void()> handler) {
+        // If page is already loaded, attach listener immediately
+        if (_rmlContext) {
+            if (Rml::ElementDocument* document = _rmlContext->GetDocument(0)) {
+                // Try to find element by ID first, then by tag name
+                Rml::Element* buttonElement = document->GetElementById(buttonIdentifier);
+                if (!buttonElement) {
+                    Rml::ElementList elements;
+                    document->GetElementsByTagName(elements, buttonIdentifier);
+                    if (!elements.empty()) {
+                        buttonElement = elements[0];
+                    }
+                }
+
+                if (buttonElement) {
+                    // Create listener data and insert into map first to get stable address
+                    auto& listenerData = _buttonListeners[buttonIdentifier];
+                    listenerData.handler = std::move(handler);
+                    listenerData.element = buttonElement;
+                    listenerData.listener = std::make_unique<ButtonClickListener>(&listenerData.handler);
+
+                    // Attach listener to element
+                    buttonElement->AddEventListener(Rml::EventId::Click, listenerData.listener.get());
+                }
+            }
+        }
+    }
+
     void Update() {
         // Render RmlUi with proper 2D OpenGL state
         if (_rmlContext) {
@@ -87,6 +157,14 @@ public:
     }
 
     void Destroy() {
+        // Remove all event listeners before cleanup
+        for (auto& [identifier, listenerData] : _buttonListeners) {
+            if (listenerData.element && listenerData.listener) {
+                listenerData.element->RemoveEventListener(Rml::EventId::Click, listenerData.listener.get());
+            }
+        }
+        _buttonListeners.clear();
+
         // Release the unique_ptr without calling the deleter
         // Rml::Shutdown() will handle the actual context cleanup
         if (_rmlContext != nullptr) {

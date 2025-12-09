@@ -76,6 +76,18 @@ void Engine::Tick() {
     _inputSystem->Update();
     _fsmController->Update();
 
+    // Forward mouse input to UI
+    const auto mousePos = _inputSystem->GetMouseWindowPosition();
+    _uiManager->ProcessMouseMove(static_cast<int>(mousePos.x), static_cast<int>(mousePos.y));
+
+    // Handle mouse button events for UI
+    if (_inputSystem->IsMousePress(MouseButton::Left)) {
+        _uiManager->ProcessMouseButtonDown(0); // 0 = left button in RmlUi
+    }
+    if (_inputSystem->IsMouseUp(MouseButton::Left)) {
+        _uiManager->ProcessMouseButtonUp(0);
+    }
+
     _renderController->Render(_sceneManager->GetRenderRepository());
     _uiManager->Update();
 

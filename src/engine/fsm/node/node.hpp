@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "../../renderer/ui/ui_page_action.hpp"
+#include "../../renderer/ui/button_listener_action.hpp"
 #include "../../scene/load_scene_action.hpp"
 
 class UIManager;
@@ -11,7 +12,7 @@ class SceneManager;
 
 class StateNode final {
 public:
-    using AllActionVariants = std::variant<UiPageAction, LoadSceneAction>;
+    using AllActionVariants = std::variant<UiPageAction, LoadSceneAction, ButtonListenerAction>;
 private:
     std::vector<AllActionVariants> _states{};
 public:
@@ -30,6 +31,8 @@ public:
                     if (sceneManager) {
                         state.SetSceneManager(sceneManager);
                     }
+                } else if constexpr (std::is_same_v<T, ButtonListenerAction>) {
+                    state.SetUIManager(uiManager);
                 }
             }, stateVar);
         }
