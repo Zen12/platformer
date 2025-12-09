@@ -34,3 +34,21 @@ input.text {
     width: 200px;
     font-size: 0.9em;
 }
+
+button {
+    background-color: #f6470a;
+    color: white;
+    padding: 12px 24px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 1em;
+}
+
+button:hover {
+    background-color: #d63e08;
+}
+
+button:active {
+    background-color: #b83507;
+}

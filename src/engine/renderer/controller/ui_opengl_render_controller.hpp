@@ -15,6 +15,7 @@
 #include "../material/material.hpp"
 #include "../texture/texture.hpp"
 #include "../../system/window.hpp"
+#include "../../asset/loaders/asset_texture_loader.h"
 
 // Simple OpenGL render interface for RmlUi
 class UiOpenGLRenderController : public Rml::RenderInterface {
@@ -26,6 +27,7 @@ private:
     std::weak_ptr<Material> _material;
 
     std::vector<std::shared_ptr<Texture>> _textures{};
+    AssetTextureLoader _texture_loader;
 
 
 public:
@@ -83,8 +85,29 @@ public:
 
     Rml::TextureHandle LoadTexture(Rml::Vector2i& texture_dimensions,
                                   const Rml::String& source) override {
-        texture_dimensions = {0, 0};
-        return 0;
+        // Load texture without vertical flip (UI textures use top-left origin)
+        GLuint texture_id = _texture_loader.texture_load(source.c_str(), false);
+
+        if (texture_id == 0) {
+            texture_dimensions = {0, 0};
+            return 0;
+        }
+
+        // Query texture dimensions
+        GLint width, height;
+        glBindTexture(GL_TEXTURE_2D, texture_id);
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        texture_dimensions = {width, height};
+
+        // Store texture for cleanup later
+        const auto texture = std::make_shared<Texture>(texture_id);
+        _textures.push_back(texture);
+        _material.lock()->AddSprite(texture);
+
+        return static_cast<Rml::TextureHandle>(texture_id);
     }
 
     Rml::TextureHandle GenerateTexture(Rml::Span<const Rml::byte> source,
