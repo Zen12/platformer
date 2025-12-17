@@ -1,8 +1,11 @@
 
 #pragma once
+#include <functional>
+#include <unordered_map>
+
 #include "fsm_serialization.hpp"
 #include "condition/condition_serialization.hpp"
-#include "condition/core_types/bool_check_condition_serialization.hpp"
+#include "condition/core_types/trigger_check_condition_serialization.hpp"
 #include "yaml-cpp/node/node.h"
 
 namespace YAML {
@@ -22,10 +25,11 @@ namespace YAML {
 
             using type = std::function<std::unique_ptr<ConditionSerialization>(const YAML::Node&)>;
             static const std::unordered_map<std::string, type> pairs = {
-                { "bool_check",                [](const YAML::Node& n){ return Parse<BoolCheckConditionSerialization>(n); } }
+                { "trigger_check",             [](const YAML::Node& n){ return Parse<TriggerCheckConditionSerialization>(n); } }
             };
 
-            if (const auto it = pairs.find(type); it != pairs.end()) {
+            const auto nodeType = node["type"].as<std::string>();
+            if (const auto it = pairs.find(nodeType); it != pairs.end()) {
                 return it->second(node);
             }
             return {};

@@ -4,4 +4,5 @@
 struct ActionSerializationData {
     std::string Type;
     std::string Param;
+    std::string Param2;
 };

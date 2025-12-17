@@ -2,13 +2,36 @@
 #include "fsm_asset.hpp"
 #include "node/node_serialization_yaml.hpp"
 #include "connection/connection_serialization_yaml.hpp"
-#include "condition/condition_serialization_yaml.hpp"
+#include "condition/condition_serialization.hpp"
+#include "condition/core_types/trigger_check_condition_serialization_yaml.hpp"
 #include "yaml-cpp/node/node.h"
 
 
 namespace YAML {
     template <>
     struct convert<FsmAsset> {
+        template<typename T>
+        static std::unique_ptr<T> Parse(const YAML::Node &data) {
+            static_assert(std::is_base_of_v<ConditionSerialization, T>,
+                      "T must derive from ConditionSerialization");
+
+            const auto action = data.as<T>();
+            return std::make_unique<T>(action);
+        }
+
+        static std::unique_ptr<ConditionSerialization> DecodeCondition(const YAML::Node& node) {
+            using type = std::function<std::unique_ptr<ConditionSerialization>(const YAML::Node&)>;
+            static const std::unordered_map<std::string, type> pairs = {
+                { "trigger_check",             [](const YAML::Node& n){ return Parse<TriggerCheckConditionSerialization>(n); } }
+            };
+
+            const auto nodeType = node["type"].as<std::string>();
+            if (const auto it = pairs.find(nodeType); it != pairs.end()) {
+                return it->second(node);
+            }
+            return {};
+        }
+
         static bool decode(const Node &node, FsmAsset &rhs) {
             // The YAML file format has each top level item as a list element
             if (node["name"]) {
@@ -28,8 +51,7 @@ namespace YAML {
             }
             if (node["conditions"]) {
                 for (const auto &condition: node["conditions"]) {
-                    auto condSer = condition.as<ConditionSerialization>();
-                    rhs.ConditionSerialization.push_back(std::make_unique<ConditionSerialization>(std::move(condSer)));
+                    rhs.ConditionSerialization.push_back(DecodeCondition(condition));
                 }
             }
             return true;

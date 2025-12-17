@@ -7,6 +7,9 @@
 #include "../../renderer/ui/button_listener_action.hpp"
 #include "../../renderer/ui/button_listener_action_serialization.hpp"
 #include "../../renderer/ui/button_listener_action_serialization_yaml.hpp"
+#include "../../renderer/ui/trigger_setter_button_listener_action.hpp"
+#include "../../renderer/ui/trigger_setter_button_listener_action_serialization.hpp"
+#include "../../renderer/ui/trigger_setter_button_listener_action_serialization_yaml.hpp"
 #include "../../scene/load_scene_action.hpp"
 #include "../../scene/load_scene_action_serialization.hpp"
 #include "../../scene/load_scene_action_serialization_yaml.hpp"
@@ -30,6 +33,10 @@ namespace YAML {
             } else if (type == "action_button_listener") {
                 const auto serialization = node.as<ButtonListenerActionSerialization>();
                 data.Param = serialization.ButtonId;
+            } else if (type == "action_trigger_setter_button_listener") {
+                const auto serialization = node.as<TriggerSetterButtonListenerActionSerialization>();
+                data.Param = serialization.ButtonId;
+                data.Param2 = serialization.TriggerName;
             }
 
             return data;

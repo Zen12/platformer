@@ -3,6 +3,8 @@
 #include <vector>
 
 #include "condition/condition.hpp"
+#include "condition/core_types/trigger_check_condition.hpp"
+#include "condition/core_types/trigger_check_condition_serialization.hpp"
 #include "connection/connection.hpp"
 #include "node/node.hpp"
 #include "node/action/action_factory.hpp"
@@ -14,6 +16,7 @@ private:
     std::unordered_map<std::string, StateNode> _stateNodes{};
     std::vector<Connection> _connections{};
     std::unordered_map<std::string, std::unique_ptr<Condition>> _conditions{};
+    std::unordered_map<std::string, bool> _triggers{};
     // no support for subfsm??
 
     std::string _currentState;
@@ -37,7 +40,7 @@ public:
             _wasEntered(false)
     {
         // Create ActionFactory with dependencies
-        ActionFactory actionFactory(uiManager, sceneManager);
+        ActionFactory actionFactory(uiManager, sceneManager, _triggers);
 
         // Convert StateNodeSerialization to StateNode
         for (const auto& nodeSer : fsmAsset.StateNodeSerialization) {
@@ -51,6 +54,8 @@ public:
                     actions.emplace_back(actionFactory.CreateLoadSceneAction(actionData.Param));
                 } else if (actionData.Type == "action_button_listener") {
                     actions.emplace_back(actionFactory.CreateButtonListenerAction(actionData.Param));
+                } else if (actionData.Type == "action_trigger_setter_button_listener") {
+                    actions.emplace_back(actionFactory.CreateTriggerSetterButtonListenerAction(actionData.Param, actionData.Param2));
                 }
             }
 
@@ -67,11 +72,28 @@ public:
             _connections.push_back(conn);
         }
 
-        // Convert ConditionSerialization to Condition (TODO: implement polymorphic conversion)
-        // For now, just store empty conditions
+        // Convert ConditionSerialization to Condition with triggers injection
+        for (const auto& condSer : fsmAsset.ConditionSerialization) {
+            if (condSer->Type == "trigger_check") {
+                if (const auto* triggerCheckSer = dynamic_cast<TriggerCheckConditionSerialization*>(condSer.get())) {
+                    auto condition = std::make_unique<TriggerCheckCondition>(
+                        triggerCheckSer->TriggerName,
+                        _triggers
+                    );
+                    condition->Type = triggerCheckSer->Type;
+                    condition->Guid = triggerCheckSer->Guid;
+                    _conditions[triggerCheckSer->Guid] = std::move(condition);
+                }
+            }
+        }
+
+        std::cout << _conditions.size() << std::endl;
     }
 
     void Update() {
+        // Reset triggers at the end of update, after condition checks
+       // _triggers.clear();
+
         const auto currentNode = _stateNodes.at(_currentState);
 
         if (!_wasEntered) {
@@ -83,10 +105,7 @@ public:
 
         const auto &result = std::find_if(_connections.begin(), _connections.end(),
             [&](const Connection& conn) {
-                if (conn.Nodes[0] != _currentState) {
-                    return false;
-                }
-                return true;
+                return conn.Nodes[0] == _currentState;
             });
 
         // No connection found from current state

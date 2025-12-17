@@ -41,7 +41,8 @@ private:
     std::unique_ptr<Rml::Context> _rmlContext{};
 
     bool _isPageLoaded{};
-    std::unordered_map<std::string, ButtonListenerData> _buttonListeners;
+    std::unordered_map<int, ButtonListenerData> _buttonListeners;
+    int _nextHandlerId = 0;
 
 
 public:
@@ -117,7 +118,9 @@ public:
         }
     }
 
-    void SetButtonClickHandler(const std::string& buttonIdentifier, std::function<void()> handler) {
+    int SetButtonClickHandler(const std::string& buttonIdentifier, std::function<void()> handler) {
+        int handlerId = _nextHandlerId++;
+
         // If page is already loaded, attach listener immediately
         if (_rmlContext) {
             if (Rml::ElementDocument* document = _rmlContext->GetDocument(0)) {
@@ -133,7 +136,7 @@ public:
 
                 if (buttonElement) {
                     // Create listener data and insert into map first to get stable address
-                    auto& listenerData = _buttonListeners[buttonIdentifier];
+                    auto& listenerData = _buttonListeners[handlerId];
                     listenerData.handler = std::move(handler);
                     listenerData.element = buttonElement;
                     listenerData.listener = std::make_unique<ButtonClickListener>(&listenerData.handler);
@@ -142,6 +145,19 @@ public:
                     buttonElement->AddEventListener(Rml::EventId::Click, listenerData.listener.get());
                 }
             }
+        }
+
+        return handlerId;
+    }
+
+    void RemoveButtonClickHandler(int handlerId) {
+        auto it = _buttonListeners.find(handlerId);
+        if (it != _buttonListeners.end()) {
+            auto& listenerData = it->second;
+            if (listenerData.element && listenerData.listener) {
+                listenerData.element->RemoveEventListener(Rml::EventId::Click, listenerData.listener.get());
+            }
+            _buttonListeners.erase(it);
         }
     }
 

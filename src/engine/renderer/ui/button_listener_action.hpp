@@ -9,6 +9,7 @@ struct ButtonListenerAction final : public Action {
 private:
     std::string _buttonId;
     std::shared_ptr<UIManager> _manager;
+    mutable int _handlerId = -1;
 
 public:
     ButtonListenerAction(std::string buttonId, std::shared_ptr<UIManager> manager)
@@ -16,7 +17,7 @@ public:
 
     void OnEnter() const override {
         if (_manager && !_buttonId.empty()) {
-            _manager->SetButtonClickHandler(_buttonId, [buttonId = _buttonId]() {
+            _handlerId = _manager->SetButtonClickHandler(_buttonId, [buttonId = _buttonId]() {
                 std::cout << "Button clicked: " << buttonId << std::endl;
             });
         }
@@ -27,6 +28,9 @@ public:
     }
 
     void OnExit() const override {
-        // Cleanup will be handled by UIManager::Destroy()
+        if (_manager && _handlerId != -1) {
+            _manager->RemoveButtonClickHandler(_handlerId);
+            _handlerId = -1;
+        }
     }
 };
