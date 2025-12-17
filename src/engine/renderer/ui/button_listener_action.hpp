@@ -11,15 +11,8 @@ private:
     std::shared_ptr<UIManager> _manager;
 
 public:
-    ButtonListenerAction() = default;
-
-    void SetButtonId(const std::string &buttonId) {
-        _buttonId = buttonId;
-    }
-
-    void SetUIManager(const std::shared_ptr<UIManager> &uiManager) {
-        _manager = uiManager;
-    }
+    ButtonListenerAction(std::string buttonId, std::shared_ptr<UIManager> manager)
+        : _buttonId(std::move(buttonId)), _manager(std::move(manager)) {}
 
     void OnEnter() const override {
         if (_manager && !_buttonId.empty()) {

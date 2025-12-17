@@ -10,15 +10,8 @@ private:
     std::shared_ptr<UIManager> _manager;
 
 public:
-    UiPageAction() = default;
-
-    void SetPageGuid(const std::string &pageGuid) {
-        _pageGuid = pageGuid;
-    }
-
-    void SetUIManager(const std::shared_ptr<UIManager> &uiManager) {
-        _manager = uiManager;
-    }
+    UiPageAction(std::string pageGuid, std::shared_ptr<UIManager> manager)
+        : _pageGuid(std::move(pageGuid)), _manager(std::move(manager)) {}
 
     void OnEnter() const override {
         if (_manager) {

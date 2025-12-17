@@ -11,15 +11,8 @@ private:
     std::shared_ptr<SceneManager> _sceneManager;
 
 public:
-    LoadSceneAction() = default;
-
-    void SetSceneGuid(const std::string &sceneGuid) {
-        _sceneGuid = sceneGuid;
-    }
-
-    void SetSceneManager(const std::shared_ptr<SceneManager> &sceneManager) {
-        _sceneManager = sceneManager;
-    }
+    LoadSceneAction(std::string sceneGuid, std::shared_ptr<SceneManager> sceneManager)
+        : _sceneGuid(std::move(sceneGuid)), _sceneManager(std::move(sceneManager)) {}
 
     void OnEnter() const override {
         if (_sceneManager) {

@@ -10,45 +10,36 @@
 #include "../../scene/load_scene_action.hpp"
 #include "../../scene/load_scene_action_serialization.hpp"
 #include "../../scene/load_scene_action_serialization_yaml.hpp"
+#include "action/action_serialization_data.hpp"
 
 namespace YAML {
     template <>
     struct convert<StateNodeSerialization> {
 
-        static StateNode::AllActionVariants DecodeAction(const YAML::Node& node) {
+        static ActionSerializationData DecodeAction(const YAML::Node& node) {
             const auto type = node["type"].as<std::string>();
+            ActionSerializationData data;
+            data.Type = type;
 
             if (type == "load_ui_page") {
                 const auto serialization = node.as<UIPageActionSerialization>();
-                UiPageAction action;
-                action.SetPageGuid(serialization.UiPageGuid);
-                // Note: UIManager will be set later by the FsmController
-                return action;
+                data.Param = serialization.UiPageGuid;
             } else if (type == "load_scene") {
                 const auto serialization = node.as<LoadSceneActionSerialization>();
-                LoadSceneAction action;
-                action.SetSceneGuid(serialization.SceneGuid);
-                // Note: SceneManager will be set later by the FsmController
-                return action;
+                data.Param = serialization.SceneGuid;
             } else if (type == "action_button_listener") {
                 const auto serialization = node.as<ButtonListenerActionSerialization>();
-                ButtonListenerAction action;
-                action.SetButtonId(serialization.ButtonId);
-                // Note: UIManager will be set later by the FsmController
-                return action;
+                data.Param = serialization.ButtonId;
             }
 
-            // Return default-constructed action if type not found
-            return UiPageAction();
+            return data;
         }
-        static bool decode(const Node &node, StateNodeSerialization &rhs) {
 
+        static bool decode(const Node &node, StateNodeSerialization &rhs) {
             rhs.Guid = node["guid"].as<std::string>();
             for (const auto& comp : node["actions"]) {
-                rhs.Actions.push_back(DecodeAction(comp));
+                rhs.ActionData.push_back(DecodeAction(comp));
             }
-
-
             return true;
         }
     };

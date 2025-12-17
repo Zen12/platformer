@@ -5,6 +5,7 @@
 #include "condition/condition.hpp"
 #include "connection/connection.hpp"
 #include "node/node.hpp"
+#include "node/action/action_factory.hpp"
 #include "fsm_asset.hpp"
 
 
@@ -35,9 +36,25 @@ public:
             _uiManager(uiManager),
             _wasEntered(false)
     {
+        // Create ActionFactory with dependencies
+        ActionFactory actionFactory(uiManager, sceneManager);
+
         // Convert StateNodeSerialization to StateNode
         for (const auto& nodeSer : fsmAsset.StateNodeSerialization) {
-            StateNode node(nodeSer->Guid, nodeSer->Actions, uiManager, sceneManager);
+            std::vector<StateNode::AllActionVariants> actions;
+
+            // Create actions from serialization data using ActionFactory
+            for (const auto& actionData : nodeSer->ActionData) {
+                if (actionData.Type == "load_ui_page") {
+                    actions.emplace_back(actionFactory.CreateUiPageAction(actionData.Param));
+                } else if (actionData.Type == "load_scene") {
+                    actions.emplace_back(actionFactory.CreateLoadSceneAction(actionData.Param));
+                } else if (actionData.Type == "action_button_listener") {
+                    actions.emplace_back(actionFactory.CreateButtonListenerAction(actionData.Param));
+                }
+            }
+
+            StateNode node(nodeSer->Guid, std::move(actions));
             _stateNodes.emplace(nodeSer->Guid, std::move(node));
         }
 

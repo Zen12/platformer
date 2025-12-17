@@ -7,9 +7,6 @@
 #include "../../renderer/ui/button_listener_action.hpp"
 #include "../../scene/load_scene_action.hpp"
 
-class UIManager;
-class SceneManager;
-
 class StateNode final {
 public:
     using AllActionVariants = std::variant<UiPageAction, LoadSceneAction, ButtonListenerAction>;
@@ -18,25 +15,8 @@ private:
 public:
     const std::string Guid;
 
-
-    StateNode(std::string guid, const std::vector<AllActionVariants> &states, const std::shared_ptr<UIManager> &uiManager, const std::shared_ptr<SceneManager> &sceneManager = nullptr)
-        : _states(states), Guid(std::move(guid)) {
-        // Set UIManager and SceneManager on action instances
-        for (auto& stateVar : _states) {
-            std::visit([&uiManager, &sceneManager](auto& state) {
-                using T = std::decay_t<decltype(state)>;
-                if constexpr (std::is_same_v<T, UiPageAction>) {
-                    state.SetUIManager(uiManager);
-                } else if constexpr (std::is_same_v<T, LoadSceneAction>) {
-                    if (sceneManager) {
-                        state.SetSceneManager(sceneManager);
-                    }
-                } else if constexpr (std::is_same_v<T, ButtonListenerAction>) {
-                    state.SetUIManager(uiManager);
-                }
-            }, stateVar);
-        }
-    }
+    StateNode(std::string guid, std::vector<AllActionVariants> states)
+        : _states(std::move(states)), Guid(std::move(guid)) {}
 
     void EnterAll() const {
         for (auto& stateVar : _states) {
