@@ -86,19 +86,13 @@ public:
     Rml::TextureHandle LoadTexture(Rml::Vector2i& texture_dimensions,
                                   const Rml::String& source) override {
         // Load texture without vertical flip (UI textures use top-left origin)
-        GLuint texture_id = _texture_loader.texture_load(source.c_str(), false);
+        int width, height;
+        GLuint texture_id = _texture_loader.texture_load(source.c_str(), false, &width, &height);
 
         if (texture_id == 0) {
             texture_dimensions = {0, 0};
             return 0;
         }
-
-        // Query texture dimensions
-        GLint width, height;
-        glBindTexture(GL_TEXTURE_2D, texture_id);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
-        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
-        glBindTexture(GL_TEXTURE_2D, 0);
 
         texture_dimensions = {width, height};
 

@@ -3,14 +3,18 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-unsigned int AssetTextureLoader::texture_load(const char *file_path, bool flip_vertically) {
-    int width, height, nrChannels;
+unsigned int AssetTextureLoader::texture_load(const char *file_path, bool flip_vertically, int *width, int *height) {
+    int w, h, nrChannels;
     stbi_set_flip_vertically_on_load(flip_vertically);
-    unsigned char *data = stbi_load(file_path, &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load(file_path, &w, &h, &nrChannels, 0);
     if (!data) {
         printf("Failed to load texture at path: %s\n", file_path);
         return 0;
     }
+
+    // Set output parameters if provided
+    if (width) *width = w;
+    if (height) *height = h;
 
     GLint internalFormat = GL_RGBA8;
     GLint format = GL_RGBA;
@@ -28,7 +32,7 @@ unsigned int AssetTextureLoader::texture_load(const char *file_path, bool flip_v
     unsigned int texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, format, GL_UNSIGNED_BYTE, data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

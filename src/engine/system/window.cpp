@@ -173,8 +173,8 @@ void Window::GetMousePosition(double *x, double *y) const noexcept {
     glfwGetCursorPos(window, x, y);
     // find a better way to handle physical and logical pixels for emscripten to not adapt mouse position to it
 #ifdef __EMSCRIPTEN__
-    *x /= 2.0;
-    *y /= 2.0;
+    //*x /= 2.0;
+    //*y /= 2.0;
 #elif defined(__APPLE__)
     // On macOS with Retina displays, scale coordinates to match framebuffer size
     *x *= 2.0;
