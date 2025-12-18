@@ -39,6 +39,7 @@ public:
     void LoadScene(const SceneAsset& serialization);
     void LoadSceneByGuid(const std::string& sceneGuid);
     void LoadEntities(const std::vector<EntitySerialization> &serialization);
+    void UnloadScene();
 
     void Update();
 
@@ -59,7 +60,10 @@ public:
     }
 
     [[nodiscard]] std::shared_ptr<Mesh> GetMesh(const std::string& guid) const {
-        return _scene->GetMesh(guid);
+        if (_scene) {
+            return _scene->GetMesh(guid);
+        }
+        return nullptr;
     }
 
 private:

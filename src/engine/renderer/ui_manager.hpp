@@ -96,7 +96,8 @@ public:
     }
 
     void UnLoadPage(const std::string &guid) {
-        Rml::RemoveContext(guid);
+        Rml::RemoveContext("main");
+        _rmlContext.release();
         _isPageLoaded = false;
     }
 
@@ -164,11 +165,14 @@ public:
     void Update() {
         // Render RmlUi with proper 2D OpenGL state
         if (_rmlContext) {
+            std::cout << "[DEBUG] UI Update - rendering context" << std::endl;
             if (const auto window = _window.lock()) {
                 _rmlContext->SetDimensions(Rml::Vector2i(window->GetWidth(), window->GetHeight()));
             }
             _rmlContext->Update();
             _rmlContext->Render();
+        } else {
+            std::cout << "[DEBUG] UI Update - no context to render" << std::endl;
         }
     }
 

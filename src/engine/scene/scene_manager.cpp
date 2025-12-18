@@ -13,8 +13,6 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
     PROFILE_SCOPE("Loading of scene " + sceneAsset.Name);
 #endif
 
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
     if (const auto assetManager = _assetManager.lock()) {
         _scene = std::make_shared<Scene> (_window,_assetManager, _inputSystem);
         LoadEntities(sceneAsset.Entities);
@@ -37,6 +35,21 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
     _escSystem->InitSystems(_renderRepository);
 }
 
+void SceneManager::UnloadScene() {
+    std::cout << "[DEBUG] UnloadScene called" << std::endl;
+    if (_escSystem) {
+        _escSystem.reset();
+        std::cout << "[DEBUG] _escSystem reset" << std::endl;
+    }
+    if (_scene) {
+        _scene.reset();
+        std::cout << "[DEBUG] _scene reset" << std::endl;
+    }
+    if (_renderRepository) {
+        _renderRepository->Clear();
+        std::cout << "[DEBUG] _renderRepository cleared" << std::endl;
+    }
+}
 
 void SceneManager::Update() {
 #if DEBUG_ENGINE_SCENE_MANAGER_PROFILE
@@ -46,25 +59,36 @@ void SceneManager::Update() {
 
     if (_escSystem) {
         _escSystem->Update(); // ATM single threaded
+    } else {
+        std::cout << "[DEBUG] Update called but _escSystem is null" << std::endl;
     }
 
     // here we should do rendering
 }
 
 std::shared_ptr<Shader> SceneManager::GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) const {
-    return _scene->GetShader(vertexGuid, fragmentGuid);
+    if (_scene) {
+        return _scene->GetShader(vertexGuid, fragmentGuid);
+    }
+    return nullptr;
 }
 
 std::shared_ptr<Material> SceneManager::GetMaterial(const std::string &guid) const {
-    return _scene->GetMaterial(guid);
+    if (_scene) {
+        return _scene->GetMaterial(guid);
+    }
+    return nullptr;
 }
 
 bool SceneManager::IsRequestToLoadScene() const {
-    return !_scene->GetLoadSceneRequestGuid().empty();
+    if (_scene) {
+        return !_scene->GetLoadSceneRequestGuid().empty();
+    }
+    return false;
 }
 
 void SceneManager::LoadRequestedScene() {
-    if (!_scene->GetLoadSceneRequestGuid().empty()) {
+    if (_scene && !_scene->GetLoadSceneRequestGuid().empty()) {
         if (const auto assetManager = _assetManager.lock()) {
             const auto scene = assetManager->LoadAssetByGuid<SceneAsset>(_scene->GetLoadSceneRequestGuid());
             LoadScene(scene);
@@ -73,14 +97,23 @@ void SceneManager::LoadRequestedScene() {
 }
 
 std::shared_ptr<Texture> SceneManager::GetTexture(const std::string &guid) const {
-    return _scene->GetTexture(guid);
+    if (_scene) {
+        return _scene->GetTexture(guid);
+    }
+    return nullptr;
 }
 
 std::shared_ptr<Font> SceneManager::GetFont(const std::string &guid) const {
-   return _scene->GetFont(guid);
+    if (_scene) {
+        return _scene->GetFont(guid);
+    }
+    return nullptr;
 }
 
 std::shared_ptr<UiPage> SceneManager::GetUiPage(const std::string &guid) const {
-    return _scene->GetUiPage(guid);
+    if (_scene) {
+        return _scene->GetUiPage(guid);
+    }
+    return nullptr;
 }
 

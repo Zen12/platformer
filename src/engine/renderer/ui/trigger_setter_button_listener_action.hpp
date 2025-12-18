@@ -21,7 +21,6 @@ public:
     void OnEnter() const override {
         if (_manager && !_buttonId.empty() && !_triggerName.empty()) {
             _handlerId = _manager->SetButtonClickHandler(_buttonId, [&triggers = _triggers, triggerName = _triggerName]() {
-                std::cout << triggerName << ": true" << std::endl;
                 triggers[triggerName] = true;
             });
         }

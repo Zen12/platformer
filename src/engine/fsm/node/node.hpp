@@ -2,15 +2,18 @@
 #include <any>
 #include <variant>
 #include <vector>
+#include <typeinfo>
 
 #include "../../renderer/ui/ui_page_action.hpp"
 #include "../../renderer/ui/button_listener_action.hpp"
 #include "../../renderer/ui/trigger_setter_button_listener_action.hpp"
 #include "../../scene/load_scene_action.hpp"
+#include "action/set_system_trigger_action.hpp"
+#include "action/log_action.hpp"
 
 class StateNode final {
 public:
-    using AllActionVariants = std::variant<UiPageAction, LoadSceneAction, ButtonListenerAction, TriggerSetterButtonListenerAction>;
+    using AllActionVariants = std::variant<UiPageAction, LoadSceneAction, ButtonListenerAction, TriggerSetterButtonListenerAction, SetSystemTriggerAction, LogAction>;
 private:
     std::vector<AllActionVariants> _states{};
 public:

@@ -14,7 +14,8 @@ nodes:
 - name: "Close the game"
   guid: "closeGame"
   actions:
-    - type: close_game
+    - type: log
+      message: "Exit"
 conditions:
   - type: trigger_check
     guid: "is_close_condition"

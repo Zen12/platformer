@@ -2,6 +2,8 @@
 #include "scene/scene_asset_yaml.hpp"
 #include <RmlUi/Core.h>
 
+#include <utility>
+
 #include "fsm/fsm_asset.hpp"
 #include "fsm/fsm_asset_yaml.hpp"
 
@@ -76,6 +78,10 @@ void Engine::Tick() {
     _inputSystem->Update();
     _fsmController->Update();
 
+    // Always clear the framebuffer at the start of each frame
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
     // Forward mouse input to UI
     const auto mousePos = _inputSystem->GetMouseWindowPosition();
     _uiManager->ProcessMouseMove(static_cast<int>(mousePos.x), static_cast<int>(mousePos.y));
@@ -94,6 +100,16 @@ void Engine::Tick() {
     _sceneManager->ClearRenderRepository();
     _window->SwapBuffers();
 
+    if (_fsmController->IsSystemTriggered(SystemTriggers::Exit)) {
+        _window->Destroy();
+        return;
+    }
+
+    if (_fsmController->IsSystemTriggered(SystemTriggers::Reload)) {
+        _isReloadRequested = true;
+        _window->Destroy();
+        return;
+    }
 
     // maybe #if debug?
     if (_inputSystem->IsKeyUp(InputKey::Escape)) {

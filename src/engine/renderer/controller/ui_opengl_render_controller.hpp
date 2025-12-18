@@ -50,7 +50,10 @@ public:
 
         const auto& data = it->second;
 
-        _material.lock()->UseShader();
+        const auto material = _material.lock();
+        if (!material) return;
+
+        material->UseShader();
 
         // Set projection matrix
         glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(_window.lock()->GetWidth()),
@@ -58,15 +61,15 @@ public:
 
         // Apply translation
         projection = glm::translate(projection, glm::vec3(translation.x, translation.y, 0.0f));
-        _material.lock()->SetMat4("projection",projection);
+        material->SetMat4("projection",projection);
 
         // Bind texture if present
         if (texture) {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(texture));
-            _material.lock()->SetInt("useTexture", 1);
+            material->SetInt("useTexture", 1);
         } else {
-            _material.lock()->SetInt("useTexture", 0);
+            material->SetInt("useTexture", 0);
         }
 
         glBindVertexArray(data->VAO());
@@ -99,7 +102,9 @@ public:
         // Store texture for cleanup later
         const auto texture = std::make_shared<Texture>(texture_id);
         _textures.push_back(texture);
-        _material.lock()->AddSprite(texture);
+        if (const auto material = _material.lock()) {
+            material->AddSprite(texture);
+        }
 
         return static_cast<Rml::TextureHandle>(texture_id);
     }

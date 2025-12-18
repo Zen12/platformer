@@ -27,6 +27,8 @@ public:
     }
 
     void OnExit() const override {
-        // Scene cleanup if needed
+        if (_sceneManager) {
+            _sceneManager->UnloadScene();
+        }
     }
 };

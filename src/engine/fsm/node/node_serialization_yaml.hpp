@@ -13,6 +13,12 @@
 #include "../../scene/load_scene_action.hpp"
 #include "../../scene/load_scene_action_serialization.hpp"
 #include "../../scene/load_scene_action_serialization_yaml.hpp"
+#include "action/set_system_trigger_action.hpp"
+#include "action/set_system_trigger_action_serialization.hpp"
+#include "action/set_system_trigger_action_serialization_yaml.hpp"
+#include "action/log_action.hpp"
+#include "action/log_action_serialization.hpp"
+#include "action/log_action_serialization_yaml.hpp"
 #include "action/action_serialization_data.hpp"
 
 namespace YAML {
@@ -37,6 +43,12 @@ namespace YAML {
                 const auto serialization = node.as<TriggerSetterButtonListenerActionSerialization>();
                 data.Param = serialization.ButtonId;
                 data.Param2 = serialization.TriggerName;
+            } else if (type == "set_system_trigger") {
+                const auto serialization = node.as<SetSystemTriggerActionSerialization>();
+                data.Param = serialization.TriggerType;
+            } else if (type == "log") {
+                const auto serialization = node.as<LogActionSerialization>();
+                data.Param = serialization.Message;
             }
 
             return data;

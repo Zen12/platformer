@@ -8,8 +8,10 @@
 #include "connection/connection.hpp"
 #include "node/node.hpp"
 #include "node/action/action_factory.hpp"
+#include "node/action/set_system_trigger_action.hpp"
+#include "node/action/log_action.hpp"
 #include "fsm_asset.hpp"
-
+#include "system_triggers.hpp"
 
 class FsmController final {
 private:
@@ -17,7 +19,7 @@ private:
     std::vector<Connection> _connections{};
     std::unordered_map<std::string, std::unique_ptr<Condition>> _conditions{};
     std::unordered_map<std::string, bool> _triggers{};
-    // no support for subfsm??
+    std::unordered_map<SystemTriggers, bool> _systemTrigger{};
 
     std::string _currentState;
     std::shared_ptr<SceneManager> _sceneManager;
@@ -27,8 +29,13 @@ private:
 
 private:
     void ChangeState(const std::string &state) {
+        std::cout << "ChangeState: " << state << std::endl;
+        auto currentNode = _stateNodes.at(_currentState);
+        currentNode.ExitAll();
+
         _currentState = state;
         _wasEntered = false;
+        _triggers.clear();
     }
 
 
@@ -40,7 +47,7 @@ public:
             _wasEntered(false)
     {
         // Create ActionFactory with dependencies
-        ActionFactory actionFactory(uiManager, sceneManager, _triggers);
+        ActionFactory actionFactory(uiManager, sceneManager, _triggers, _systemTrigger);
 
         // Convert StateNodeSerialization to StateNode
         for (const auto& nodeSer : fsmAsset.StateNodeSerialization) {
@@ -56,6 +63,10 @@ public:
                     actions.emplace_back(actionFactory.CreateButtonListenerAction(actionData.Param));
                 } else if (actionData.Type == "action_trigger_setter_button_listener") {
                     actions.emplace_back(actionFactory.CreateTriggerSetterButtonListenerAction(actionData.Param, actionData.Param2));
+                } else if (actionData.Type == "set_system_trigger") {
+                    actions.emplace_back(actionFactory.CreateSetSystemTriggerAction(actionData.Param));
+                } else if (actionData.Type == "log") {
+                    actions.emplace_back(actionFactory.CreateLogAction(actionData.Param));
                 }
             }
 
@@ -86,14 +97,16 @@ public:
                 }
             }
         }
+    }
 
-        std::cout << _conditions.size() << std::endl;
+    [[nodiscard]] bool IsSystemTriggered(const SystemTriggers &triggerName) const {
+        if (_systemTrigger.find(triggerName) == _systemTrigger.end())
+            return false;
+
+        return _systemTrigger.at(triggerName);
     }
 
     void Update() {
-        // Reset triggers at the end of update, after condition checks
-       // _triggers.clear();
-
         const auto currentNode = _stateNodes.at(_currentState);
 
         if (!_wasEntered) {
@@ -126,6 +139,7 @@ public:
                 }
             }
             ChangeState(result->Nodes[1]);
+            return;
         }
 
         if (result->ConditionType == ConditionType::AtLeastOne) {
@@ -139,6 +153,7 @@ public:
             }
             if (anySuccess) {
                 ChangeState(result->Nodes[1]);
+                return;
             }
         }
     }
