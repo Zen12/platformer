@@ -1,7 +1,7 @@
 ## 📋 Requirements
 - 🧠 ```C++17```
 - 🛠️ ```Cmake``` >3.28
-- ⚙️ ```[optional]``` Python used for editor tools
+- ⚙️ ```[optional]``` Python used for MCP
 - 🛠️ ```[optional]``` Emscripten used for webgl build
 ## 👋 Getting started 🤞
 - 🏃```run.sh```
@@ -38,7 +38,7 @@
 - 🔦 Basic mesh 3d rendering
 - 🧠 Nav mesh
 - 🔄 FSM
-- 🧠 MCP
+- 🏄 MCP
 
 # 🏃 Roadmap
 
@@ -51,14 +51,15 @@
 ## 0.1.5 Mesh Rendering
 - [ ] Mesh Loader (FBX??, glTF??, .blend??)
 - [ ] Frustum Culling
-- [ ] IK/Animations
+- [ ] IK/Animations/Skinned Mesh
 
 ## 0.1.6 NavMesh
 - [ ] NavMesh builder (floating and fix point), grid based for determinism
 - [ ] Astar navigation (path query with smooth path)
 
 ## 0.1.7 3d platformer game
-- [ ]
+- [ ] Behaviour Tree
+- [ ] One level of 3d platformer ("Squirrel with a gun"-like) with basic AI
 
 ## Backlog
 - [ ] Proper fix retina issue on webgl and macOS
