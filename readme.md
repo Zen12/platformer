@@ -32,30 +32,33 @@
 
 ## 🦾 Features
 - 🏢 macOS, windows, web
-- 🔳 UI system
+- 🔳 UI system (HTML/CSS-like)
 - 📀 Asset management
 - 🚀 ESC
 - 🔦 Basic mesh 3d rendering
 - 🧠 Nav mesh
 - 🔄 FSM
+- 🧠 MCP
 
 # 🏃 Roadmap
 
-## 0.1.3 FSM
-- [x] 3d renderer manager
-- [x] Create appstate flow (FSM)
-- [x] RML Button
-- [ ] Mesh Loader
-- [ ] FSM conditions + fsm-var-dictionary 
+## 0.1.4 Model Context Protocol (MCP)
+- [ ] Python scripts for fsm
+- [ ] Python scripts for import
+- [ ] Python scripts for ui
+- [ ] Python scripts for shader/materials/images
 
-## 0.1.4 First Editor
-- [ ] Create new cmake project (editor)
-- [ ] ImGUI for editor 
-- [ ] Basic serialization viewer with play button
+## 0.1.5 Mesh Rendering
+- [ ] Mesh Loader (FBX??, glTF??, .blend??)
+- [ ] Frustum Culling
+- [ ] IK/Animations
 
-## 0.1.4 NavMesh
-- [ ] NavMesh builder
-- [ ] Astar navigation
+## 0.1.6 NavMesh
+- [ ] NavMesh builder (floating and fix point), grid based for determinism
+- [ ] Astar navigation (path query with smooth path)
+
+## 0.1.7 3d platformer game
+- [ ]
 
 ## Backlog
 - [ ] Proper fix retina issue on webgl and macOS

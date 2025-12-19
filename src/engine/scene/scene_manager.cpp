@@ -36,18 +36,14 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
 }
 
 void SceneManager::UnloadScene() {
-    std::cout << "[DEBUG] UnloadScene called" << std::endl;
     if (_escSystem) {
         _escSystem.reset();
-        std::cout << "[DEBUG] _escSystem reset" << std::endl;
     }
     if (_scene) {
         _scene.reset();
-        std::cout << "[DEBUG] _scene reset" << std::endl;
     }
     if (_renderRepository) {
         _renderRepository->Clear();
-        std::cout << "[DEBUG] _renderRepository cleared" << std::endl;
     }
 }
 
@@ -59,8 +55,6 @@ void SceneManager::Update() {
 
     if (_escSystem) {
         _escSystem->Update(); // ATM single threaded
-    } else {
-        std::cout << "[DEBUG] Update called but _escSystem is null" << std::endl;
     }
 
     // here we should do rendering
