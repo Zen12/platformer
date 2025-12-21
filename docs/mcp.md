@@ -42,6 +42,9 @@ export ASSETS_DIR=/path/to/game-assets
 ## Available MCP Tools
 
 Once configured, Claude Code can help you with:
+- **Create Project** - Generate a new project.yaml file with configuration
+- **Create FSM** - Generate a new FSM file with default structure and metadata
+- **Create Shader** - Generate shader folder with GL and GLES versions (unique GUIDs)
 - **Generate Asset Metadata** - Create .meta files for assets without them
 - **Delete Asset Metadata** - Remove all .meta files
 - **List Assets Without Metadata** - Check which assets need metadata
@@ -54,6 +57,9 @@ Once configured, Claude Code can help you with:
 ### In Claude Code
 
 ```
+- "Create a new project called 'My Game' with 1920x1080 resolution"
+- "Create a new FSM called 'menu_fsm'"
+- "Create a new shader called 'custom_shader'"
 - "Generate metadata for all assets"
 - "List assets without metadata"
 - "Find all references to awesomeface.png"
@@ -63,6 +69,15 @@ Once configured, Claude Code can help you with:
 ### Command Line
 
 ```bash
+# Create a new project
+python3 mcp/create.py project --name "My Game" --resolution 1920 1080 --fps 60
+
+# Create a new FSM
+python3 mcp/create.py fsm --name menu_fsm
+
+# Create a new shader (GL + GLES with unique GUIDs)
+python3 mcp/create.py shader --name custom_shader
+
 # Find all references to an asset
 python3 mcp/find.py assets/resources/images/player.png
 
@@ -108,6 +123,7 @@ The `.mcp.json` configuration uses `${PROJECT_ROOT}` for portability across diff
 
 - `asset_server.py` - Main MCP server implementation
 - `asset_utils.py` - Shared utilities for asset management
+- `create.py` - Project and asset creation utilities
 - `find.py` - GUID reference finder
 - `import.py` - Asset metadata generator
 - `delete.py` - Safe asset deletion with reference checking

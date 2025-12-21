@@ -10,7 +10,7 @@ private:
 
 public:
     SetSystemTriggerAction(SystemTriggers triggerType, std::unordered_map<SystemTriggers, bool>& systemTriggers)
-        : _triggerType(triggerType), _systemTriggers(systemTriggers) {}
+        : _systemTriggers(systemTriggers), _triggerType(triggerType) {}
 
     void OnEnter() const override {
         _systemTriggers[_triggerType] = true;

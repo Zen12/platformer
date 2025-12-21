@@ -1,21 +1,22 @@
 ## 📋 Requirements
 - 🧠 ```C++17```
-- 🛠️ ```Cmake``` >3.28
-- 🤖 ```[optional]``` Python used for MCP
-- 🛠️ ```[optional]``` Emscripten used for webgl build
+- 🛠️ ```Cmake``` 3.11+
+- 💫 ```[optional]``` Python used for MCP
+- 🌐 ```[optional]``` Emscripten used for webgl build
+
 ## 👋 Getting started 🤞
 - 🏃```run.sh```
+- 💫```run_claude.sh``` [docs/mcp.md](docs/mcp.md)
 
-## 🤖 MCP (Model Context Protocol)
-
-AI-assisted asset management for GUID-based references, metadata generation, and safe deletion.
-
-**Quick start:**
-```bash
-./run_claude.sh
-```
-
-**See [docs/mcp.md](docs/mcp.md) for detailed documentation.**
+## 🦾 Features
+- 🏢 macOS, windows, web
+- 🔳 UI system (HTML/CSS-like)
+- 📀 Asset management
+- 🚀 ESC
+- 🔦 Basic mesh 3d rendering
+- 🧠 Nav mesh
+- 🔄 FSM
+- 💫 MCP
 
 ## 🔨 Project structure
 ``` 
@@ -33,27 +34,18 @@ AI-assisted asset management for GUID-based references, metadata generation, and
         ├─ 📄 engine.hpp
         ├─ 📁 **CORE**
 🚀 run.sh               # release build desktop
-🚀 run_debug.sh         # debug build desktop
-🚀 run_web.sh           # release build webgl
+🐛 run_debug.sh         # debug build desktop
+🌐 run_web.sh           # release build webgl
+💫 run_claude.sh        # setup and run claude
 ⚙️ CMakeLists.txt
 📘 readme.md
  ```
-
-## 🦾 Features
-- 🏢 macOS, windows, web
-- 🔳 UI system (HTML/CSS-like)
-- 📀 Asset management
-- 🚀 ESC
-- 🔦 Basic mesh 3d rendering
-- 🧠 Nav mesh
-- 🔄 FSM
-- 🏄 MCP
 
 # 🏃 Roadmap
 
 ## 0.1.4 Model Context Protocol (MCP)
 - [ ] Python scripts for fsm
-- [ ] Python scripts for import
+- [x] Python scripts for import
 - [ ] Python scripts for ui
 - [ ] Python scripts for shader/materials/images
 

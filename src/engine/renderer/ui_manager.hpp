@@ -19,7 +19,7 @@ private:
 public:
     explicit ButtonClickListener(std::function<void()>* handler) : _handler(handler) {}
 
-    void ProcessEvent(Rml::Event& event) override {
+    void ProcessEvent([[maybe_unused]] Rml::Event& event) override {
         if (_handler && *_handler) {
             (*_handler)();
         }
@@ -67,7 +67,6 @@ public:
     }
 
     void LoadPage(const std::string& guid) {
-        //df04e927-64d5-406b-8170-ddd96f1864a5
         if (_isPageLoaded)
             return;
 
@@ -99,7 +98,7 @@ public:
         }
     }
 
-    void UnLoadPage(const std::string &guid) {
+    void UnLoadPage([[maybe_unused]] const std::string &guid) {
         Rml::RemoveContext("main");
         _rmlContext.release();
         _isPageLoaded = false;

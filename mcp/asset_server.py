@@ -21,6 +21,7 @@ logger = logging.getLogger("asset-server")
 from mcp.server.fastmcp import FastMCP
 from asset_utils import dict_to_yaml, ext_check
 from find import read_meta_file, find_guid_references
+from create import create_project_yaml, create_fsm, create_shader
 
 # Initialize MCP server
 mcp = FastMCP("platformer-assets")
@@ -320,6 +321,154 @@ def check_asset_references(file_path: str) -> str:
         result += "This asset is safe to delete."
         logger.info("No references found")
         return result
+
+
+@mcp.tool()
+def create_project(
+    name: str = "New Project",
+    resolution_width: int = 1600,
+    resolution_height: int = 1200,
+    target_fps: int = 30,
+    main_fsm_guid: str = None
+) -> str:
+    """
+    Create a new project.yaml file with the specified configuration.
+
+    Args:
+        name: Project name (default: "New Project")
+        resolution_width: Screen width in pixels (default: 1600)
+        resolution_height: Screen height in pixels (default: 1200)
+        target_fps: Target frames per second (default: 30)
+        main_fsm_guid: GUID of the main FSM, or None to generate a new one
+
+    Returns:
+        str: Summary of created project file
+    """
+    logger.info(f"Creating project: {name}")
+
+    # Get base assets directory (parent of ASSETS_DIR)
+    # If ASSETS_DIR is "assets/resources", we want "assets"
+    assets_base = os.path.dirname(ASSETS_DIR) if ASSETS_DIR.endswith('resources') else ASSETS_DIR
+    output_path = os.path.join(assets_base, 'project.yaml')
+
+    try:
+        created_path = create_project_yaml(
+            name=name,
+            resolution_width=resolution_width,
+            resolution_height=resolution_height,
+            target_fps=target_fps,
+            main_fsm_guid=main_fsm_guid,
+            output_path=output_path
+        )
+
+        result = f"✓ Created project file: {created_path}\n\n"
+        result += "Project configuration:\n"
+        result += f"  Name: {name}\n"
+        result += f"  Resolution: {resolution_width}x{resolution_height}\n"
+        result += f"  Target FPS: {target_fps}\n"
+
+        # Read back the file to get the actual GUID
+        with open(created_path, 'r') as f:
+            for line in f:
+                if line.startswith('main_fsm:'):
+                    guid = line.split(':', 1)[1].strip()
+                    result += f"  Main FSM GUID: {guid}\n"
+                    break
+
+        logger.info(f"Project created successfully: {created_path}")
+        return result
+
+    except Exception as e:
+        error_msg = f"Error creating project: {str(e)}"
+        logger.error(error_msg, exc_info=True)
+        return f"Error: {error_msg}"
+
+
+@mcp.tool()
+def create_shader_files(name: str = "new_shader") -> str:
+    """
+    Create a new shader with OpenGL and GLES versions.
+
+    Creates a shader folder containing:
+    - gl.vert and gl_.frag (OpenGL shaders)
+    - gles.vert and gles_.frag (GLES shaders)
+    - .meta files for all shader files
+    - Fragment shaders use underscore for alphabetical ordering
+    - Each shader file has its own unique GUID
+
+    Args:
+        name: Shader name (used for folder name)
+
+    Returns:
+        str: Summary of created shader files
+    """
+    logger.info(f"Creating shader: {name}")
+
+    try:
+        folder_path, gl_vert_guid, gl_frag_guid, gles_vert_guid, gles_frag_guid, files = create_shader(name=name)
+
+        result = f"✓ Created shader folder: {folder_path}\n\n"
+        result += "Files created:\n"
+        for file in files:
+            result += f"  - {file}\n"
+        result += "\n"
+        result += "Shader configuration:\n"
+        result += f"  Name: {name}\n"
+        result += f"  GL Vertex Shader GUID: {gl_vert_guid}\n"
+        result += f"  GL Fragment Shader GUID: {gl_frag_guid}\n"
+        result += f"  GLES Vertex Shader GUID: {gles_vert_guid}\n"
+        result += f"  GLES Fragment Shader GUID: {gles_frag_guid}\n"
+
+        logger.info(f"Shader created successfully: {folder_path}")
+        return result
+
+    except Exception as e:
+        error_msg = f"Error creating shader: {str(e)}"
+        logger.error(error_msg, exc_info=True)
+        return f"Error: {error_msg}"
+
+
+@mcp.tool()
+def create_fsm_file(name: str = "new_fsm") -> str:
+    """
+    Create a new FSM file with default structure.
+
+    Creates an FSM with:
+    - 2 nodes (Start Node and Second Node)
+    - Each node has a log action
+    - 1 trigger condition (continue_trigger)
+    - 1 connection between the nodes
+    - Automatic .meta file generation
+
+    Args:
+        name: FSM name (used for filename and internal name)
+
+    Returns:
+        str: Summary of created FSM files
+    """
+    logger.info(f"Creating FSM: {name}")
+
+    try:
+        fsm_path, meta_path, fsm_guid = create_fsm(name=name)
+
+        result = f"✓ Created FSM file: {fsm_path}\n"
+        result += f"✓ Created metadata: {meta_path}\n\n"
+        result += "FSM configuration:\n"
+        result += f"  Name: {name}\n"
+        result += f"  GUID: {fsm_guid}\n"
+        result += f"  Nodes: 2\n"
+        result += f"    - Start Node (log: 'FSM Started')\n"
+        result += f"    - Second Node (log: 'Second Node Reached')\n"
+        result += f"  Conditions: 1 (trigger_check: continue_trigger)\n"
+        result += f"  Connections: 1 (Start Node → Second Node)\n"
+
+        logger.info(f"FSM created successfully: {fsm_path}")
+        return result
+
+    except Exception as e:
+        error_msg = f"Error creating FSM: {str(e)}"
+        logger.error(error_msg, exc_info=True)
+        return f"Error: {error_msg}"
 
 
 def main():
