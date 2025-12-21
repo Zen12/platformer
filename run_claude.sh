@@ -62,11 +62,11 @@ echo ""
 # Priority:
 #   1. Command-line argument
 #   2. ASSETS_DIR environment variable
-#   3. Default: ${PROJECT_ROOT}/assets/resources
+#   3. Default: ${PROJECT_ROOT}/assets
 if [ -n "$1" ]; then
     export ASSETS_DIR="$1"
 elif [ -z "$ASSETS_DIR" ]; then
-    export ASSETS_DIR="${PROJECT_ROOT}/assets/resources"
+    export ASSETS_DIR="${PROJECT_ROOT}/assets"
 fi
 
 # Add project to Python path (for MCP server imports)

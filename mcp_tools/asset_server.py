@@ -18,7 +18,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger("asset-server")
 
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 from asset_utils import dict_to_yaml, ext_check
 from find import read_meta_file, find_guid_references
 from create import create_project_yaml, create_fsm, create_shader

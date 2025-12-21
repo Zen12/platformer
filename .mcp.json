@@ -4,9 +4,19 @@
       "type": "stdio",
       "command": "${PROJECT_ROOT}/venv/bin/python",
       "args": [
-        "${PROJECT_ROOT}/mcp/asset_server.py"
+        "${PROJECT_ROOT}/mcp_tools/asset_server.py"
       ],
       "env": {}
+    },
+    "blender": {
+      "type": "stdio",
+      "command": "${PROJECT_ROOT}/venv/bin/python",
+      "args": [
+        "${PROJECT_ROOT}/mcp_tools/blender_server.py"
+      ],
+      "env": {
+        "BLENDER_PATH": "/opt/homebrew/bin/blender"
+      }
     }
   }
 }

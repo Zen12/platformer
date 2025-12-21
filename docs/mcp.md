@@ -41,6 +41,8 @@ export ASSETS_DIR=/path/to/game-assets
 
 ## Available MCP Tools
 
+### Asset Management Tools
+
 Once configured, Claude Code can help you with:
 - **Create Project** - Generate a new project.yaml file with configuration
 - **Create FSM** - Generate a new FSM file with default structure and metadata
@@ -52,10 +54,20 @@ Once configured, Claude Code can help you with:
 - **Delete Asset** - Safely delete assets with reference checking
 - **GUID-based Asset Loading** - Use `guid://` protocol in RML/CSS files
 
+### Blender Tools
+
+The Blender MCP server provides:
+- **Execute Blender Python** - Run arbitrary Python code in Blender (bpy, bmesh, mathutils)
+- **Create Blender Object** - Create basic 3D objects (cube, sphere, cylinder, etc.)
+- **Save Blender File** - Save scenes to .blend files
+- **Get Blender Info** - View Blender version and system information
+- **List Blender Objects** - List all objects in a scene or .blend file
+
 ## Usage Examples
 
 ### In Claude Code
 
+#### Asset Management
 ```
 - "Create a new project called 'My Game' with 1920x1080 resolution"
 - "Create a new FSM called 'menu_fsm'"
@@ -66,31 +78,41 @@ Once configured, Claude Code can help you with:
 - "Delete sprite2.mat"
 ```
 
+#### Blender
+```
+- "Create a cube in Blender at position (0, 0, 5)"
+- "Execute Python code in Blender to create a sphere"
+- "List all objects in the Blender scene"
+- "Save the Blender scene to assets/models/my_scene.blend"
+- "Get Blender version information"
+- "Create a monkey head mesh and save it as monkey.blend"
+```
+
 ### Command Line
 
 ```bash
 # Create a new project
-python3 mcp/create.py project --name "My Game" --resolution 1920 1080 --fps 60
+python3 mcp_tools/create.py project --name "My Game" --resolution 1920 1080 --fps 60
 
 # Create a new FSM
-python3 mcp/create.py fsm --name menu_fsm
+python3 mcp_tools/create.py fsm --name menu_fsm
 
 # Create a new shader (GL + GLES with unique GUIDs)
-python3 mcp/create.py shader --name custom_shader
+python3 mcp_tools/create.py shader --name custom_shader
 
 # Find all references to an asset
-python3 mcp/find.py assets/resources/images/player.png
+python3 mcp_tools/find.py assets/resources/images/player.png
 
 # Find references by GUID
-python3 mcp/find.py --guid f22681f4-45d1-4542-a838-99f854890c18
+python3 mcp_tools/find.py --guid f22681f4-45d1-4542-a838-99f854890c18
 
 # Import/create metadata for new assets
-python3 mcp/import.py                          # All assets
-python3 mcp/import.py assets/resources/images  # Specific folder
-python3 mcp/import.py assets/resources/test.png # Specific file
+python3 mcp_tools/import.py                          # All assets
+python3 mcp_tools/import.py assets/resources/images  # Specific folder
+python3 mcp_tools/import.py assets/resources/test.png # Specific file
 
 # Delete assets with reference checking
-python3 mcp/delete.py assets/resources/test.png
+python3 mcp_tools/delete.py assets/resources/test.png
 ```
 
 ## GUID-Based Asset References
@@ -121,9 +143,13 @@ The `.mcp.json` configuration uses `${PROJECT_ROOT}` for portability across diff
 
 ## MCP Server Files
 
-- `asset_server.py` - Main MCP server implementation
-- `asset_utils.py` - Shared utilities for asset management
-- `create.py` - Project and asset creation utilities
-- `find.py` - GUID reference finder
-- `import.py` - Asset metadata generator
-- `delete.py` - Safe asset deletion with reference checking
+### Asset Management
+- `mcp_tools/asset_server.py` - Main MCP server implementation
+- `mcp_tools/asset_utils.py` - Shared utilities for asset management
+- `mcp_tools/create.py` - Project and asset creation utilities
+- `mcp_tools/find.py` - GUID reference finder
+- `mcp_tools/import.py` - Asset metadata generator
+- `mcp_tools/delete.py` - Safe asset deletion with reference checking
+
+### Blender Integration
+- `mcp_tools/blender_server.py` - Blender MCP server for 3D modeling and automation
