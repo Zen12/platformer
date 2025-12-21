@@ -1,28 +1,19 @@
 """
-This code is write by chatGTP, this is not expected to be maintained
-It is only to automate manual work
+Shared utilities for asset metadata management.
 
-What it does:
- - Finds all files that doesn't have associated .meta files (similar as in unity engine)
- - create a templated version of it with custom GUID
+This module contains common functions used by both import.py and asset_server.py
+to avoid code duplication.
 """
-
-import os
-import uuid
-
-"""TODO: THIS IS HARDCODED. Make it as param or dynamic from project.yaml"""
-""" Expected usage is from root of project by calling: python3 editor/import.py"""
-directory = 'assets/resources'
 
 
 def dict_to_yaml(data, indent=0):
     """
     Convert a Python dict to a simple YAML string (supports nested dicts and lists).
-    
+
     Args:
         data (dict): The data to convert.
         indent (int): Current indentation level (used internally).
-    
+
     Returns:
         str: YAML-formatted string.
     """
@@ -44,7 +35,17 @@ def dict_to_yaml(data, indent=0):
             yaml_lines.append(prefix + ' ' + str(value))
     return '\n'.join(yaml_lines)
 
+
 def ext_check(value_ext):
+    """
+    Map file extension to asset type.
+
+    Args:
+        value_ext (str): File extension (e.g., ".png", ".ttf")
+
+    Returns:
+        str: Asset type (e.g., "image", "font") or "unknown" if not recognized
+    """
     mapping = {
         ".ttf": "font",
         ".png": "image",
@@ -55,34 +56,8 @@ def ext_check(value_ext):
         ".prefab": "prefab",
         ".mat": "material",
         ".css": "css",
-        ".rml" : "rml",
+        ".rml": "rml",
         ".upage": "ui_page",
         ".fsm": "fsm",
     }
-    return mapping.get(value_ext, "error")
-
-for root, dirs, files in os.walk(directory):
-    # Modify dirs in-place to skip hidden folders and specific names
-    dirs[:] = [d for d in dirs if not d.startswith('.') and d != '__pycache__']
-
-    for file in files:
-        base_name, ext = os.path.splitext(file)
-        if file.startswith('.') or file.endswith('.meta'):
-            continue
-
-        yaml_path = os.path.join(root, base_name + ext + '.meta')
-        if (os.path.isfile(yaml_path)):
-            continue
-
-        print(yaml_path);
-        data = {
-            'name': base_name,
-            'guid': str(uuid.uuid4()),
-            'extension': ext,
-            'type': ext_check(ext)
-        }
-
-
-        with open(yaml_path, 'w') as f:
-            f.write(dict_to_yaml(data))
-
+    return mapping.get(value_ext, "unknown")

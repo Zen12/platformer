@@ -16,6 +16,7 @@
 #include "../texture/texture.hpp"
 #include "../../system/window.hpp"
 #include "../../asset/loaders/asset_texture_loader.h"
+#include "../../asset/asset_manager.hpp"
 
 // Simple OpenGL render interface for RmlUi
 class UiOpenGLRenderController : public Rml::RenderInterface {
@@ -25,15 +26,36 @@ private:
 
     std::weak_ptr<Window> _window;
     std::weak_ptr<Material> _material;
+    std::weak_ptr<AssetManager> _assetManager;
 
     std::vector<std::shared_ptr<Texture>> _textures{};
     AssetTextureLoader _texture_loader;
 
+    std::string ResolveGuidToPath(const std::string& path) const {
+        constexpr const char* guidPrefix = "guid://";
+        constexpr size_t guidPrefixLen = 7;
+
+        if (path.rfind(guidPrefix, 0) == 0) {
+            const std::string guid = path.substr(guidPrefixLen);
+
+            if (const auto assetManager = _assetManager.lock()) {
+                return assetManager->GetPathFromGuid(guid);
+            }
+
+            std::cerr << "AssetManager not available for GUID resolution: " << guid << std::endl;
+            return "";
+        }
+
+        return path;
+    }
+
 
 public:
-    void Initialize(const std::weak_ptr<Window> &window, const std::weak_ptr<Material> &material ) {
+    void Initialize(const std::weak_ptr<Window> &window, const std::weak_ptr<Material> &material,
+                    const std::weak_ptr<AssetManager> &assetManager) {
         _window = window;
         _material = material;
+        _assetManager = assetManager;
     }
 
     Rml::CompiledGeometryHandle CompileGeometry(Rml::Span<const Rml::Vertex> vertices,
@@ -88,9 +110,16 @@ public:
 
     Rml::TextureHandle LoadTexture(Rml::Vector2i& texture_dimensions,
                                   const Rml::String& source) override {
+        const std::string resolvedPath = ResolveGuidToPath(source);
+
+        if (resolvedPath.empty()) {
+            texture_dimensions = {0, 0};
+            return 0;
+        }
+
         // Load texture without vertical flip (UI textures use top-left origin)
         int width, height;
-        GLuint texture_id = _texture_loader.texture_load(source.c_str(), false, &width, &height);
+        GLuint texture_id = _texture_loader.texture_load(resolvedPath.c_str(), false, &width, &height);
 
         if (texture_id == 0) {
             texture_dimensions = {0, 0};

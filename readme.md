@@ -1,10 +1,21 @@
 ## 📋 Requirements
 - 🧠 ```C++17```
 - 🛠️ ```Cmake``` >3.28
-- ⚙️ ```[optional]``` Python used for MCP
+- 🤖 ```[optional]``` Python used for MCP
 - 🛠️ ```[optional]``` Emscripten used for webgl build
 ## 👋 Getting started 🤞
 - 🏃```run.sh```
+
+## 🤖 MCP (Model Context Protocol)
+
+AI-assisted asset management for GUID-based references, metadata generation, and safe deletion.
+
+**Quick start:**
+```bash
+./run_claude.sh
+```
+
+**See [docs/mcp.md](docs/mcp.md) for detailed documentation.**
 
 ## 🔨 Project structure
 ``` 
@@ -15,11 +26,9 @@
 📦 bin                  # build folder for ./run.sh
 📚 cmake                # packages
     ├─ ⚙️ Find***.cmake
-🛠️ editor               # editor scripts, not real editor
-    ├─ 📄 import.py
-    └─ 📄 clear_all_refs.py
+🛠️ mcp              
 💻 src                  # source code
-    ├─ 🚀 main.cpp
+    ├─ 🚀 main.cpp      # entry point 
     └─ 🧠 engine
         ├─ 📄 engine.hpp
         ├─ 📁 **CORE**

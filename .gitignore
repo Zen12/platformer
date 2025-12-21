@@ -8,7 +8,10 @@ history/*
 # Built Visual Studio Code Extensions
 *.vsix
 
-# Engine speicific 
+# Engine speicific
 bin/*
 build/*
 cmake-build-debug/*
+
+# Python virtual environment
+venv/

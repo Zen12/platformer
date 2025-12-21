@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "platformer-assets": {
+      "type": "stdio",
+      "command": "${PROJECT_ROOT}/venv/bin/python",
+      "args": [
+        "${PROJECT_ROOT}/mcp/asset_server.py"
+      ],
+      "env": {}
+    }
+  }
+}

@@ -1,0 +1,1 @@
+"""MCP server package for asset management tools."""

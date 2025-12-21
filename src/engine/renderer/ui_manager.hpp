@@ -6,6 +6,7 @@
 #include "controller/ui_opengl_render_controller.hpp"
 #include "../asset/asset_manager.hpp"
 #include "../scene/scene_manager.hpp"
+#include "guid_file_interface.hpp"
 #include "RmlUi/Core/Core.h"
 #include "RmlUi/Core/ElementDocument.h"
 #include "RmlUi/Core/EventListener.h"
@@ -38,6 +39,7 @@ private:
     const std::weak_ptr<AssetManager> _assetManager{};
 
     std::unique_ptr<UiOpenGLRenderController> _render{};
+    std::unique_ptr<GuidFileInterface> _fileInterface{};
     std::unique_ptr<Rml::Context> _rmlContext{};
 
     bool _isPageLoaded{};
@@ -57,7 +59,9 @@ public:
 
     void Initialize() {
         _render = std::make_unique<UiOpenGLRenderController>();
+        _fileInterface = std::make_unique<GuidFileInterface>(_assetManager);
 
+        Rml::SetFileInterface(_fileInterface.get());
         Rml::SetRenderInterface(_render.get());
         Rml::Initialise();
     }
@@ -78,7 +82,7 @@ public:
                 _isPageLoaded = true;
 
                 // Initialize the render interface with window dimensions and asset path
-                _render->Initialize(_window, uiPage->Material);
+                _render->Initialize(_window, uiPage->Material, _assetManager);
                 Rml::LoadFontFace(uiPage->FontPath);
                 const auto css = Rml::Factory::InstanceStyleSheetString(uiPage->Css);
                 // Create context
