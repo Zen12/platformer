@@ -16,6 +16,7 @@ Usage:
 
 import os
 import sys
+from asset_utils import get_asset_extensions_with_references
 
 # Get assets directory from environment, or use default
 ASSETS_DIR = os.getenv('ASSETS_DIR', 'assets/resources')
@@ -60,7 +61,7 @@ def find_guid_references(guid, search_dir=None):
     references = []
 
     # File types that can contain GUID references
-    asset_extensions = ['.scene', '.prefab', '.mat', '.upage', '.fsm', '.rml', '.css']
+    asset_extensions = get_asset_extensions_with_references()
 
     for root, dirs, files in os.walk(search_dir):
         # Skip hidden folders

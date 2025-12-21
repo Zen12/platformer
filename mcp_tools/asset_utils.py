@@ -5,6 +5,33 @@ This module contains common functions used by both import.py and asset_server.py
 to avoid code duplication.
 """
 
+# Mapping of file extensions to asset types
+ASSET_TYPE_MAPPING = {
+    ".ttf": "font",
+    ".png": "image",
+    ".jpg": "image",
+    ".vert": "vertex_shader",
+    ".frag": "fragment_shader",
+    ".scene": "scene",
+    ".prefab": "prefab",
+    ".mat": "material",
+    ".css": "css",
+    ".rml": "rml",
+    ".upage": "ui_page",
+    ".fsm": "fsm",
+}
+
+# Asset types that can contain GUID references to other assets
+ASSET_TYPES_WITH_REFERENCES = {
+    "scene",
+    "prefab",
+    "material",
+    "ui_page",
+    "fsm",
+    "rml",
+    "css",
+}
+
 
 def dict_to_yaml(data, indent=0):
     """
@@ -36,6 +63,17 @@ def dict_to_yaml(data, indent=0):
     return '\n'.join(yaml_lines)
 
 
+def get_asset_extensions_with_references():
+    """
+    Get list of asset file extensions that can contain GUID references.
+
+    Returns:
+        list: List of file extensions (e.g., ['.scene', '.prefab', '.mat'])
+    """
+    return [ext for ext, asset_type in ASSET_TYPE_MAPPING.items()
+            if asset_type in ASSET_TYPES_WITH_REFERENCES]
+
+
 def ext_check(value_ext):
     """
     Map file extension to asset type.
@@ -46,18 +84,4 @@ def ext_check(value_ext):
     Returns:
         str: Asset type (e.g., "image", "font") or "unknown" if not recognized
     """
-    mapping = {
-        ".ttf": "font",
-        ".png": "image",
-        ".jpg": "image",
-        ".vert": "vertex_shader",
-        ".frag": "fragment_shader",
-        ".scene": "scene",
-        ".prefab": "prefab",
-        ".mat": "material",
-        ".css": "css",
-        ".rml": "rml",
-        ".upage": "ui_page",
-        ".fsm": "fsm",
-    }
-    return mapping.get(value_ext, "unknown")
+    return ASSET_TYPE_MAPPING.get(value_ext, "unknown")
