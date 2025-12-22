@@ -8,6 +8,13 @@
 - 🏃```run.sh```
 - 💫```run_claude.sh``` [docs/mcp.md](docs/mcp.md)
 
+## 📚 Documentation
+- [MCP Setup](docs/mcp.md) - Model Context Protocol and asset tools
+- [Blender Integration](docs/blender.md) - 3D modeling with Blender MCP
+- [Material System](docs/material.md) - Material creation and shader workflow
+- [UI System](docs/ui-system.md) - RmlUi UI system and FSM integration
+- [FSM System](docs/fsm-system.md) - Finite State Machine architecture and workflow
+
 ## 🦾 Features
 - 🏢 macOS, windows, web
 - 🔳 UI system (HTML/CSS-like)
@@ -44,13 +51,15 @@
 # 🏃 Roadmap
 
 ## 0.1.4 Model Context Protocol (MCP)
-- [ ] Python scripts for fsm
+- [x] Python scripts for fsm
 - [x] Python scripts for import
-- [ ] Python scripts for ui
-- [ ] Python scripts for shader/materials/images
+- [x] Python scripts for ui
+- [x] Python scripts for shader/materials/images
 
 ## 0.1.5 Mesh Rendering
-- [ ] Mesh Loader (FBX??, glTF??, .blend??)
+- [x] Mesh Loader (GLB format via Assimp)
+- [x] Coordinate system conversion (Blender Y-up to Engine Y-forward)
+- [x] Debug logging and performance timing
 - [ ] Frustum Culling
 - [ ] IK/Animations/Skinned Mesh
 

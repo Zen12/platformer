@@ -1,0 +1,4 @@
+name: solid_color
+guid: 3cef9230-0a3c-4ed8-8fa7-af1755d63f16
+extension: .frag
+type: fragment_shader

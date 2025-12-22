@@ -21,7 +21,7 @@ logger = logging.getLogger("asset-server")
 from fastmcp import FastMCP
 from asset_utils import dict_to_yaml, ext_check
 from find import read_meta_file, find_guid_references
-from create import create_project_yaml, create_fsm, create_shader
+from create import create_project_yaml, create_fsm, create_shader, create_material
 
 # Initialize MCP server
 mcp = FastMCP("platformer-assets")
@@ -467,6 +467,87 @@ def create_fsm_file(name: str = "new_fsm") -> str:
 
     except Exception as e:
         error_msg = f"Error creating FSM: {str(e)}"
+        logger.error(error_msg, exc_info=True)
+        return f"Error: {error_msg}"
+
+
+@mcp.tool()
+def create_material_file(
+    name: str = "new_material",
+    opengl_vertex_guid: str = None,
+    opengl_fragment_guid: str = None,
+    gles_vertex_guid: str = None,
+    gles_fragment_guid: str = None,
+    image_guid: str = None,
+    font_guid: str = None,
+    blend_mode: int = 0,
+    is_culling: bool = False
+) -> str:
+    """
+    Create or update a material file (.mat) with shader references.
+
+    Materials link together shaders (vertex/fragment for both OpenGL and GLES)
+    and optionally reference textures and fonts. If a material with the same
+    name already exists, it will be updated while preserving its GUID.
+
+    Args:
+        name: Material name (used for filename)
+        opengl_vertex_guid: GUID of OpenGL vertex shader
+        opengl_fragment_guid: GUID of OpenGL fragment shader
+        gles_vertex_guid: GUID of GLES vertex shader
+        gles_fragment_guid: GUID of GLES fragment shader
+        image_guid: Optional GUID of texture image
+        font_guid: Optional GUID of font
+        blend_mode: Blend mode (0=none, 1=alpha blending, etc.)
+        is_culling: Enable face culling
+
+    Returns:
+        str: Summary of created/updated material file
+    """
+    logger.info(f"Creating material: {name}")
+
+    try:
+        mat_path, meta_path, mat_guid = create_material(
+            name=name,
+            opengl_vertex_guid=opengl_vertex_guid,
+            opengl_fragment_guid=opengl_fragment_guid,
+            gles_vertex_guid=gles_vertex_guid,
+            gles_fragment_guid=gles_fragment_guid,
+            image_guid=image_guid,
+            font_guid=font_guid,
+            blend_mode=blend_mode,
+            is_culling=is_culling
+        )
+
+        result = f"✓ Created material file: {mat_path}\n"
+        result += f"✓ Created metadata: {meta_path}\n\n"
+        result += "Material configuration:\n"
+        result += f"  Name: {name}\n"
+        result += f"  GUID: {mat_guid}\n"
+        result += f"  Blend Mode: {blend_mode}\n"
+        result += f"  Culling: {is_culling}\n"
+
+        if opengl_vertex_guid and opengl_fragment_guid:
+            result += f"  OpenGL Shaders:\n"
+            result += f"    Vertex: {opengl_vertex_guid}\n"
+            result += f"    Fragment: {opengl_fragment_guid}\n"
+
+        if gles_vertex_guid and gles_fragment_guid:
+            result += f"  GLES Shaders:\n"
+            result += f"    Vertex: {gles_vertex_guid}\n"
+            result += f"    Fragment: {gles_fragment_guid}\n"
+
+        if image_guid:
+            result += f"  Image: {image_guid}\n"
+
+        if font_guid:
+            result += f"  Font: {font_guid}\n"
+
+        logger.info(f"Material created successfully: {mat_path}")
+        return result
+
+    except Exception as e:
+        error_msg = f"Error creating material: {str(e)}"
         logger.error(error_msg, exc_info=True)
         return f"Error: {error_msg}"
 

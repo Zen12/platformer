@@ -7,6 +7,7 @@ This MCP server provides Blender integration for Claude Code, allowing you to co
 - **Execute Blender Python**: Run arbitrary Python code in Blender with full access to the bpy API
 - **Create Objects**: Easily create basic 3D objects (cubes, spheres, cylinders, etc.)
 - **Save Files**: Save Blender scenes to .blend files
+- **Export GLB**: Export models to GLB format (optimized for game engine)
 - **Get Info**: View Blender version and system information
 - **List Objects**: List all objects in a scene or .blend file
 
@@ -181,4 +182,113 @@ for i in range(20):
     cube.name = f"Cube_{i}"
 
 print(f"Created {len(bpy.data.objects)} objects in spiral pattern")
+```
+
+## Exporting for the Game Engine
+
+### GLB Format (Recommended)
+
+**GLB (GL Binary)** is the recommended format for the game engine. It provides:
+
+- ⚡ **5-50x faster loading** compared to FBX
+- 📦 **Smaller file sizes** - efficient binary encoding
+- 🎮 **Optimized for real-time** - data ready for GPU upload
+- 🌐 **Industry standard** - supported by Unity, Unreal, Godot, Three.js
+
+### Basic GLB Export
+
+```python
+import bpy
+
+# Export current scene to GLB
+bpy.ops.export_scene.gltf(
+    filepath="/path/to/model.glb",
+    export_format='GLB'  # Binary format (single file)
+)
+```
+
+### Complete Export Example
+
+```python
+import bpy
+
+# Create a simple model
+bpy.ops.mesh.primitive_cube_add(location=(0, 0, 0))
+cube = bpy.context.active_object
+cube.scale = (2, 1, 1)
+
+# Add material
+mat = bpy.data.materials.new(name="CubeMaterial")
+mat.diffuse_color = (1.0, 0.0, 0.0, 1.0)  # Red
+cube.data.materials.append(mat)
+
+# Save as .blend (editable)
+bpy.ops.wm.save_as_mainfile(filepath="assets/resources/models/my_model.blend")
+
+# Export as .glb (for game engine)
+bpy.ops.export_scene.gltf(
+    filepath="assets/resources/models/my_model.glb",
+    export_format='GLB'
+)
+
+print("✅ Model saved as .blend and exported as .glb")
+```
+
+### Export with Compression (Large Models)
+
+For models with high polygon counts (>100k vertices):
+
+```python
+bpy.ops.export_scene.gltf(
+    filepath="assets/resources/models/large_model.glb",
+    export_format='GLB',
+    export_draco_mesh_compression_enable=True,  # Enable compression
+    export_draco_mesh_compression_level=6        # 0-10, higher = smaller
+)
+```
+
+### Coordinate System
+
+The game engine uses **Y-forward, Z-up** coordinates, while Blender uses **Y-up** by default.
+
+✅ **The mesh loader automatically converts coordinates**, so you can:
+- Model in Blender's Y-up coordinate system (natural)
+- Export with default settings
+- Engine handles the conversion
+
+### Export Checklist
+
+When exporting models for the game:
+
+- ✅ Use **GLB format** (not FBX)
+- ✅ **Apply modifiers** before export
+- ✅ Check **scale** - 1 Blender unit = 1 game unit
+- ✅ **Center objects** at origin for proper rotation
+- ✅ Use **PBR materials** for proper rendering
+- ✅ Keep **polygon count reasonable** (<100k vertices for real-time)
+
+### Performance Tips
+
+| Model Complexity | Vertex Count | Export Settings |
+|-----------------|--------------|-----------------|
+| Simple (props) | <5k | Default GLB |
+| Medium (characters) | 5k-50k | Default GLB |
+| Complex (environments) | 50k-500k | GLB + Draco compression |
+| Very High | >500k | Consider decimation first |
+
+### After Export
+
+1. **Generate metadata** - Asset system needs .meta file
+2. **Test loading** - Run debug build to check load times
+3. **Check bounds** - Verify model dimensions are correct
+
+Example workflow:
+```bash
+# 1. Export from Blender (GLB)
+# 2. Generate metadata
+python3 -m mcp_tools.server.asset_server
+
+# 3. Test loading
+./run_debug.sh
+# Check console for: "MESH_LOADER: Loaded ... Total: Xms"
 ```

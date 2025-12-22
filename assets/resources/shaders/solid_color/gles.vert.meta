@@ -1,0 +1,4 @@
+name: solid_color
+guid: ac004df9-141c-4a5c-879b-635614a28f98
+extension: .vert
+type: vertex_shader

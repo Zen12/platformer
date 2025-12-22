@@ -1,0 +1,9 @@
+name: solid_color
+is_culling: False
+blend_mode: 0
+shader_opengl:
+  vertex: f4667e0f-731b-4ea5-bbb8-e44213a7a85a
+  fragment: aa8c0a2c-8082-4b2f-8f5e-2f98981ffe93
+shader_gles:
+  vertex: ac004df9-141c-4a5c-879b-635614a28f98
+  fragment: 3cef9230-0a3c-4ed8-8fa7-af1755d63f16

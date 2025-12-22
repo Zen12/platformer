@@ -51,7 +51,9 @@ Blender is accessible via MCP tools and should be used for:
 ### Blender Workflow
 - Use Python scripting via `bpy` module for programmatic asset creation
 - Background mode is used (no GUI)
-- Save work as `.blend` files when appropriate
+- **Primary format: GLB** - Export models as .glb for the game engine
+- Save source as `.blend` files for editing
+- GLB provides 5-50x faster loading than FBX
 
 ### **CRITICAL: Preview Renders for 3D Models**
 
@@ -129,12 +131,12 @@ assets/resources/
 **Example of models directory:**
 ```
 assets/resources/models/
-├── simple_house.blend
+├── simple_house.blend              ← Source file (editable)
 ├── simple_house.blend.meta
+├── simple_house.glb                ← Game engine format (recommended)
+├── simple_house.glb.meta
 ├── simple_house_preview.png        ← Required preview
-├── simple_house_preview.png.meta
-├── simple_house.fbx
-└── simple_house.fbx.meta
+└── simple_house_preview.png.meta
 ```
 
 ### Metadata Files
@@ -219,13 +221,22 @@ The `asset_utils.py` module provides shared functions:
 
 ```
 1. Create 3D model using Blender MCP tools
-2. Save to assets/resources/models/my_model.blend (and optionally .fbx)
-3. Render preview: assets/resources/models/my_model_preview.png
-4. Call generate_asset_metadata() MCP tool
-5. Verify .meta files were created for both model and preview
-6. Commit all files to version control:
-   - my_model.blend + my_model.blend.meta
-   - my_model_preview.png + my_model_preview.png.meta
+2. Save source to assets/resources/models/my_model.blend
+3. Export to GLB: assets/resources/models/my_model.glb
+4. Render preview: assets/resources/models/my_model_preview.png
+5. Call generate_asset_metadata() MCP tool
+6. Verify .meta files were created for all files
+7. Commit all files to version control:
+   - my_model.blend + my_model.blend.meta (source/editable)
+   - my_model.glb + my_model.glb.meta (game engine)
+   - my_model_preview.png + my_model_preview.png.meta (preview)
+```
+
+**GLB Export Example:**
+```python
+# After creating model in Blender
+bpy.ops.wm.save_as_mainfile(filepath="assets/resources/models/my_model.blend")
+bpy.ops.export_scene.gltf(filepath="assets/resources/models/my_model.glb", export_format='GLB')
 ```
 
 **Never skip metadata generation** - metadata is essential for the asset system to function.

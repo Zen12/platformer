@@ -3,6 +3,23 @@ Asset creation utilities.
 
 This script creates new asset files with proper structure and metadata.
 
+IMPORTANT DIRECTORY STRUCTURE RULE:
+    All assets MUST be created under assets/resources/ directory.
+    Exception: project.yaml goes in assets/ root.
+
+    Correct structure:
+        assets/
+        ├── project.yaml              # Project configuration (root level)
+        └── resources/                # All other assets go here
+            ├── shaders/              # Shader files (.vert, .frag)
+            ├── materials/            # Material files (.mat)
+            ├── scenes/               # Scene files (.scene)
+            ├── prefabs/              # Prefab files (.prefab)
+            ├── images/               # Image files (.png, .jpg)
+            ├── models/               # 3D model files (.fbx, .blend)
+            ├── fonts/                # Font files (.ttf)
+            └── fsm/                  # FSM files (.fsm)
+
 Usage:
     python3 mcp/create.py project --name "My Game" --resolution 1920 1080 --fps 60
     python3 mcp/create.py project --name "My Game"  # Use defaults
@@ -349,6 +366,110 @@ void main()
     files_created.append(gles_frag_path + '.meta')
 
     return output_path, gl_vert_guid, gl_frag_guid, gles_vert_guid, gles_frag_guid, files_created
+
+
+def create_material(
+    name="new_material",
+    opengl_vertex_guid=None,
+    opengl_fragment_guid=None,
+    gles_vertex_guid=None,
+    gles_fragment_guid=None,
+    image_guid=None,
+    font_guid=None,
+    blend_mode=0,
+    is_culling=False,
+    output_path=None
+):
+    """
+    Create or update a material file (.mat) with shader references.
+
+    Args:
+        name (str): Material name
+        opengl_vertex_guid (str): GUID of OpenGL vertex shader
+        opengl_fragment_guid (str): GUID of OpenGL fragment shader
+        gles_vertex_guid (str): GUID of GLES vertex shader
+        gles_fragment_guid (str): GUID of GLES fragment shader
+        image_guid (str): Optional GUID of texture image
+        font_guid (str): Optional GUID of font
+        blend_mode (int): Blend mode (0=none, 1=alpha, etc.)
+        is_culling (bool): Enable face culling
+        output_path (str): Output file path, or None to use ASSETS_DIR/materials/{name}.mat
+
+    Returns:
+        tuple: (mat_path, meta_path, mat_guid)
+    """
+    # Determine output path
+    if output_path is None:
+        assets_dir = os.getenv('ASSETS_DIR', 'assets/resources')
+        materials_dir = os.path.join(assets_dir, 'materials')
+        os.makedirs(materials_dir, exist_ok=True)
+        output_path = os.path.join(materials_dir, f"{name}.mat")
+
+    # Check if material already exists to reuse GUID
+    mat_guid = None
+    meta_path = output_path + '.meta'
+    if os.path.exists(meta_path):
+        # Read existing GUID from meta file
+        try:
+            import yaml
+            with open(meta_path, 'r') as f:
+                meta_content = yaml.safe_load(f)
+                if meta_content and 'guid' in meta_content:
+                    mat_guid = meta_content['guid']
+        except:
+            pass
+
+    # Generate new GUID if not found
+    if mat_guid is None:
+        mat_guid = str(uuid.uuid4())
+
+    # Build material data
+    material_data = {
+        'name': name,
+        'is_culling': is_culling,
+        'blend_mode': blend_mode
+    }
+
+    # Add shader references
+    if opengl_vertex_guid and opengl_fragment_guid:
+        material_data['shader_opengl'] = {
+            'vertex': opengl_vertex_guid,
+            'fragment': opengl_fragment_guid
+        }
+
+    if gles_vertex_guid and gles_fragment_guid:
+        material_data['shader_gles'] = {
+            'vertex': gles_vertex_guid,
+            'fragment': gles_fragment_guid
+        }
+
+    # Add optional references
+    if image_guid:
+        material_data['image'] = image_guid
+
+    if font_guid:
+        material_data['font'] = font_guid
+
+    # Write material file
+    yaml_content = dict_to_yaml(material_data)
+    with open(output_path, 'w') as f:
+        f.write(yaml_content)
+        f.write('\n')
+
+    # Create/update metadata
+    meta_data = {
+        'name': name,
+        'guid': mat_guid,
+        'extension': '.mat',
+        'type': 'material'
+    }
+
+    meta_content = dict_to_yaml(meta_data)
+    with open(meta_path, 'w') as f:
+        f.write(meta_content)
+        f.write('\n')
+
+    return output_path, meta_path, mat_guid
 
 
 def main():

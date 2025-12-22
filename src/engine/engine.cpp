@@ -6,6 +6,7 @@
 
 #include "fsm/fsm_asset.hpp"
 #include "fsm/fsm_asset_yaml.hpp"
+#include "renderer/mesh/mesh_asset_loader.hpp"
 
 #define DEBUG_ENGINE_PROFILE 0
 
@@ -13,6 +14,7 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
 
     std::cout << "Load project from: " << _projectPath << "\n";
     AssetLoader<Texture>::Init();
+    AssetLoader<MeshData>::Init();
     const std::filesystem::path projectFilePath = _projectPath.append("project.yaml");
     _projectAsset = AssetLoader<ProjectAsset>::LoadFromPath(projectFilePath);
 

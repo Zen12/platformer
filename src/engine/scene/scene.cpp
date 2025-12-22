@@ -77,7 +77,6 @@ std::shared_ptr<Material> Scene::GetMaterial(const std::string &guid) {
 }
 
 std::shared_ptr<Mesh> Scene::GetMesh(const std::string &guid) {
-
     if (const auto assetManager = _assetManager.lock()) {
         if (_meshes.find(guid) == _meshes.end()) {
             if (guid == "sprite") {
@@ -86,7 +85,10 @@ std::shared_ptr<Mesh> Scene::GetMesh(const std::string &guid) {
                 return meshAsset;
             }
 
-            std::cerr << "Mesh does not exist: " << guid << std::endl;
+            const auto meshData = assetManager->LoadSourceByGuid<MeshData>(guid);
+            const auto mesh = std::make_shared<Mesh>(meshData.Vertices, meshData.Indices, meshData.HasTexCoords);
+            _meshes[guid] = mesh;
+            return mesh;
         }
         return _meshes[guid];
     }

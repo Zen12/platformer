@@ -3,20 +3,12 @@ type: scene
 entities:
   - components:
       - type: transform
-        position: [0.0, 0.0, -1.0]
+        position: [0.0, 0.0, -5.0]
         rotation: [0.0, 0.0, 0.0]
         scale: [1.0, 1.0, 1.0]
       - type: mesh_renderer
-        material: f22681f4-45d1-4542-a838-99f854890c18
-        mesh: sprite
-  - components:
-      - type: transform
-        position: [-2.0, 0.0, -1.0]
-        rotation: [0.0, 0.0, 0.0]
-        scale: [1.0, 1.0, 1.0]
-      - type: mesh_renderer
-        material: c035a59c-a6b5-4eed-9bd5-b8f0ffdc1460
-        mesh: sprite
+        material: 566ef6f8-bc3f-4ca9-bdfb-d2c2f9ee5b47
+        mesh: a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d
   - guid: main-camera
     tag: main_camera
     components:

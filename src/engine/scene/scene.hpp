@@ -7,6 +7,7 @@
 #include "../renderer/mesh/mesh.hpp"
 #include "../asset/asset_manager.hpp"
 #include "../renderer/texture/texture_asset_loader.hpp"
+#include "../renderer/mesh/mesh_asset_loader.hpp"
 #include "../font/font_loader.hpp"
 #include "../renderer/ui/ui_page.hpp"
 #include "../system/input_system.hpp"
