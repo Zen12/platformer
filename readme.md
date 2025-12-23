@@ -60,16 +60,17 @@
 - [x] Mesh Loader (GLB format via Assimp)
 - [x] Coordinate system conversion (Blender Y-up to Engine Y-forward)
 - [x] Debug logging and performance timing
-- [ ] Frustum Culling
+- [x] Frustum Culling
 - [ ] IK/Animations/Skinned Mesh
 
 ## 0.1.6 NavMesh
-- [ ] NavMesh builder (floating and fix point), grid based for determinism
+- [ ] NavMesh builder (floating and fix point), grid based for determinism, backed
 - [ ] Astar navigation (path query with smooth path)
 
 ## 0.1.7 3d platformer game
-- [ ] Behaviour Tree
-- [ ] One level of 3d platformer ("Squirrel with a gun"-like) with basic AI
+- [ ] Behaviour Tree as ESC
+- [ ] Horde-skinned-instance rendering
+- [ ] One level of 3d platformer with horde AI(Alien shooter?)
 
 ## Backlog
 - [ ] Proper fix retina issue on webgl and macOS

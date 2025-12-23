@@ -27,7 +27,7 @@ void Material::Bind() const
                 break;
             case BlendMode::AlphaAdditive:
                 glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
                 break;
             case BlendMode::ColorAdditive:
                 glEnable(GL_BLEND);

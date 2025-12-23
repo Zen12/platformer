@@ -35,6 +35,7 @@ public:
     void SetVec2(const int32_t &location, const float &x, const float &y) const noexcept;
     void SetVec3(const int32_t &location, const float &x, const float &y, const float &z) const noexcept;
     void SetMat4(const int32_t &location, const glm::mat4 &mat) const noexcept;
+    void SetMat4Array(const int32_t &location, const std::vector<glm::mat4> &matrices) const noexcept;
 
     void SetInt(const int32_t &location, const int &x) const noexcept;
     void SetFloat(const int32_t &location, const float &x) const noexcept;

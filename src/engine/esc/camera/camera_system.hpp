@@ -48,7 +48,7 @@ class CameraSystem final : public ISystem {
 
          const auto size = GetViewportSize();
          for (const auto &[_, camera, transform] : CameraView.each()) {
-             camera.View = transform.GetModel();
+             camera.View = glm::inverse(transform.GetModel());
              camera.Projection = GetProjection(size, camera.cameraData);
          }
      }

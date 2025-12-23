@@ -81,7 +81,7 @@ void Engine::Tick() {
     _fsmController->Update();
 
     // Always clear the framebuffer at the start of each frame
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.53f, 0.81f, 0.98f, 1.0f);  // Light blue (sky blue)
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Forward mouse input to UI

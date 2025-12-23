@@ -3,6 +3,7 @@
 #include "mesh_renderer_component.hpp"
 #include "../esc_core.hpp"
 #include "../../renderer/render_repository.hpp"
+#include "../../renderer/frustum.hpp"
 #include "../../scene/scene.hpp"
 #include "../camera/camera_component.hpp"
 #include "../transform/transform_component.hpp"
@@ -27,8 +28,26 @@ public:
 
     void OnTick() override {
         for (const auto &[_, camera] : _cameraView.each()) {
+            // Extract frustum from view-projection matrix
+            Frustum frustum;
+            const glm::mat4 viewProjection = camera.Projection * camera.View;
+            frustum.ExtractPlanes(viewProjection);
+
             for (const auto &[_, mesh, transform] : View.each()) {
                 const auto &model = transform.GetModel();
+
+                // Extract position from model matrix (last column)
+                const glm::vec3 position(model[3][0], model[3][1], model[3][2]);
+
+                // Use a conservative bounding sphere radius
+                // TODO: Get actual mesh bounds from mesh data
+                constexpr float boundingRadius = 5.0f;
+
+                // Perform frustum culling
+                if (!frustum.IsSphereVisible(position, boundingRadius)) {
+                    continue; // Skip this mesh, it's outside the frustum
+                }
+
                 _repository->Add(RenderData{mesh.MaterialGuid, mesh.Guid, model, camera.View, camera.Projection});
             }
         }

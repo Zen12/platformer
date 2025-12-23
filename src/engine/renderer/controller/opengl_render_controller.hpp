@@ -1,5 +1,7 @@
 #pragma once
 #include "../render_repository.hpp"
+#include <GL/glew.h>
+#include <iostream>
 
 
 class OpenGLRenderController final {
@@ -25,12 +27,22 @@ public:
             mat->Bind();
             meshPtr->Bind();
 
-            mat->SetMat4("view", renderId.CameraProjection);
-            mat->SetMat4("projection", renderId.CameraView);
+            // Debug GL state
+            GLint currentVAO, currentEBO;
+            glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
+            glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &currentEBO);
+            static int stateDebugCounter = 0;
+            if (stateDebugCounter++ == 0) {
+                std::cout << "Current VAO: " << currentVAO << " (meshVAO: " << meshPtr->VAO() << ")" << std::endl;
+                std::cout << "Current EBO: " << currentEBO << std::endl;
+            }
 
-            // can be instance rendering
-            for (const auto &matrix : matrixVector) {
-                mat->SetMat4("model", matrix);
+            mat->SetMat4("view", renderId.CameraView);
+            mat->SetMat4("projection", renderId.CameraProjection);
+
+            // Draw each instance separately for now (will optimize later)
+            for (const auto& modelMatrix : matrixVector) {
+                mat->SetMat4("model", modelMatrix);
                 glDrawElements(GL_TRIANGLES, static_cast<int32_t>(meshPtr->GetIndicesCount()), GL_UNSIGNED_INT, nullptr);
             }
         }

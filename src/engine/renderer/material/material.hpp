@@ -95,6 +95,15 @@ public:
         }
     }
 
+    void SetMat4Array(const std::string &name, const std::vector<glm::mat4> &matrices) const noexcept  {
+        if (const auto shader = _shader.lock())
+        {
+            shader->Use();
+            const auto location = shader->GetLocation(name);
+            shader->SetMat4Array(location, matrices);
+        }
+    }
+
     void SetVec4(const std::string &name, const glm::vec4 &value) const noexcept {
         if (const auto shader = _shader.lock())
         {

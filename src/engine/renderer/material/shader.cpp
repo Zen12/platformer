@@ -84,6 +84,11 @@ void Shader::SetMat4(const int32_t &location, const glm::mat4 &mat) const noexce
     glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(mat));
 }
 
+void Shader::SetMat4Array(const int32_t &location, const std::vector<glm::mat4> &matrices) const noexcept
+{
+    glUniformMatrix4fv(location, static_cast<GLsizei>(matrices.size()), GL_FALSE, glm::value_ptr(matrices[0]));
+}
+
 int32_t Shader::GetShaderId() const noexcept
 {
     return _shaderProgram;

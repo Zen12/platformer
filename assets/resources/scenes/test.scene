@@ -4,11 +4,11 @@ entities:
   - components:
       - type: transform
         position: [0.0, 0.0, -5.0]
-        rotation: [0.0, 0.0, 0.0]
-        scale: [1.0, 1.0, 1.0]
+        rotation: [-90.0, -90.0, 0.0]
+        scale: [7.0, 7.0, 7.0]
       - type: mesh_renderer
-        material: 566ef6f8-bc3f-4ca9-bdfb-d2c2f9ee5b47
-        mesh: a1b2c3d4-5e6f-7a8b-9c0d-1e2f3a4b5c6d
+        material: fd97df0e-6ef6-4d36-842f-f0f03b4ab178
+        mesh: 82740789-12ed-4099-9b8a-c42f80a75ab0
   - guid: main-camera
     tag: main_camera
     components:

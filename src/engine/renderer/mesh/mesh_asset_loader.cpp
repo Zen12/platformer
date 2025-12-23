@@ -30,9 +30,9 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
     Assimp::Importer importer;
 
     // Optimized flags for faster loading - removed OptimizeMeshes which is slow for large meshes
+    // Removed aiProcess_FlipUVs as GLB files from Blender have correct UV orientation
     const aiScene* scene = importer.ReadFile(path,
         aiProcess_Triangulate |
-        aiProcess_FlipUVs |
         aiProcess_JoinIdenticalVertices
     );
 
