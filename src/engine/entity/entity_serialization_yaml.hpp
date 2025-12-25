@@ -6,8 +6,12 @@
 #include "../esc/transform/transform_component_serialization_yaml.hpp"
 #include "../esc/mesh_renderer/mesh_renderer_component_serialization.hpp"
 #include "../esc/mesh_renderer/mesh_renderer_component_serialization_yaml.hpp"
+#include "../esc/skinned_mesh_renderer/skinned_mesh_renderer_component_serialization.hpp"
+#include "../esc/skinned_mesh_renderer/skinned_mesh_renderer_component_serialization_yaml.hpp"
 #include "../esc/camera/camera_component_serialization.hpp"
 #include "../esc/camera/camera_component_serialization_yaml.hpp"
+#include "../esc/animation/simple_animation_component_serialization.hpp"
+#include "../esc/animation/simple_animation_component_serialization_yaml.hpp"
 
 namespace YAML {
     template <>
@@ -55,6 +59,8 @@ namespace YAML {
                 { "camera",                [](const YAML::Node& n){ return Parse<CameraComponentSerialization>(n); } },
                 { "transform",             [](const YAML::Node& n){ return Parse<TransformComponentSerialization>(n); } },
                 { "mesh_renderer",         [](const YAML::Node& n){ return Parse<MeshRendererComponentSerialization>(n); } },
+                { "skinned_mesh_renderer", [](const YAML::Node& n){ return Parse<SkinnedMeshRendererComponentSerialization>(n); } },
+                { "simple_animation",      [](const YAML::Node& n){ return Parse<SimpleAnimationComponentSerialization>(n); } },
             };
 
             if (const auto it = pairs.find(type); it != pairs.end()) {

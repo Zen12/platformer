@@ -86,7 +86,17 @@ std::shared_ptr<Mesh> Scene::GetMesh(const std::string &guid) {
             }
 
             const auto meshData = assetManager->LoadSourceByGuid<MeshData>(guid);
-            const auto mesh = std::make_shared<Mesh>(meshData.Vertices, meshData.Indices, meshData.HasTexCoords);
+            std::shared_ptr<Mesh> mesh;
+            if (meshData.HasSkeleton) {
+                mesh = std::make_shared<Mesh>(meshData.Vertices, meshData.Indices, meshData.HasTexCoords,
+                                               meshData.BoneWeights, meshData.BoneIndices);
+                // Store bone names, offsets, and hierarchy for animation mapping
+                _meshBoneNames[guid] = meshData.BoneNames;
+                _meshBoneOffsets[guid] = meshData.BoneOffsets;
+                _meshBoneParents[guid] = meshData.BoneParents;
+            } else {
+                mesh = std::make_shared<Mesh>(meshData.Vertices, meshData.Indices, meshData.HasTexCoords);
+            }
             _meshes[guid] = mesh;
             return mesh;
         }
@@ -120,6 +130,22 @@ std::shared_ptr<Font> Scene::GetFont(const std::string &guid) {
             return font;
         }
         return _fonts[guid];
+    }
+    return {};
+}
+
+std::shared_ptr<AnimationData> Scene::GetAnimation(const std::string &guid) {
+    if (guid.empty())
+        return {};
+
+    if (const auto assetManager = _assetManager.lock()) {
+        if (_animations.find(guid) == _animations.end()) {
+            auto animData = assetManager->LoadSourceByGuid<AnimationData>(guid);
+            const auto animation = std::make_shared<AnimationData>(std::move(animData));
+            _animations[guid] = animation;
+            return animation;
+        }
+        return _animations[guid];
     }
     return {};
 }

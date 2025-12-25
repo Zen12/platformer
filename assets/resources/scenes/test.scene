@@ -3,17 +3,19 @@ type: scene
 entities:
   - components:
       - type: transform
-        position: [0.0, 0.0, -5.0]
-        rotation: [-90.0, -90.0, 0.0]
-        scale: [7.0, 7.0, 7.0]
-      - type: mesh_renderer
-        material: fd97df0e-6ef6-4d36-842f-f0f03b4ab178
+        position: [0.0, -5.0, -5.0]
+        rotation: [-90.0, 90.0, 0.0]
+        scale: [5.0, 5.0, 5.0]
+      - type: skinned_mesh_renderer
+        material: 6cc7aff6-26f0-45ed-a454-d0bc6d0c879d
         mesh: 82740789-12ed-4099-9b8a-c42f80a75ab0
+      - type: simple_animation
+        animation: ba28fc7c-dfdb-41f5-93dc-b18f442be93e
   - guid: main-camera
     tag: main_camera
     components:
       - type: transform
-        position: [0.0, 0.0, 0.0]
+        position: [0, 0.0, 0.0]
         rotation: [0.0, 0.0, 0.0]
         scale: [1.0, 1.0, 1.0]
       - type: camera

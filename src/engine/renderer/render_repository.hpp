@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <optional>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -14,6 +15,7 @@ struct RenderData final {
     const glm::mat4 ModelMatrix;
     const glm::mat4 ViewMatrix;
     const glm::mat4 ProjectionMatrix;
+    const std::optional<std::vector<glm::mat4>> BoneTransforms;
 };
 
 struct RenderId final {
@@ -75,23 +77,28 @@ namespace std {
     };
 }
 
+struct InstanceData final {
+    glm::mat4 ModelMatrix;
+    std::optional<std::vector<glm::mat4>> BoneTransforms;
+};
+
 class RenderRepository final {
 private:
-    std::unordered_map<RenderId, std::vector<glm::mat4>> _renderData{};
+    std::unordered_map<RenderId, std::vector<InstanceData>> _renderData{};
 
 
 public:
     void Add(const RenderData &renderData) noexcept {
         const auto &id = RenderId(renderData.MaterialGuid, renderData.MeshGuid, renderData.ViewMatrix, renderData.ProjectionMatrix);
         if (_renderData.find(id) == _renderData.end()) {
-            _renderData[id] = std::vector{renderData.ModelMatrix};
+            _renderData[id] = std::vector{InstanceData{renderData.ModelMatrix, renderData.BoneTransforms}};
             return;
         }
 
-        _renderData[id].push_back(renderData.ModelMatrix);
+        _renderData[id].push_back(InstanceData{renderData.ModelMatrix, renderData.BoneTransforms});
     }
 
-    [[nodiscard]] const std::unordered_map<RenderId, std::vector<glm::mat4>> &GetData() const noexcept {
+    [[nodiscard]] const std::unordered_map<RenderId, std::vector<InstanceData>> &GetData() const noexcept {
         return _renderData;
     }
 

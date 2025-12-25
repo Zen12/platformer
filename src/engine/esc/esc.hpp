@@ -1,10 +1,15 @@
 #pragma once
 
+#include "animation/simple_animation_component.hpp"
+#include "animation/simple_animation_component_serialization.hpp"
+#include "animation/simple_animation_system.hpp"
 #include "camera/camera_component.hpp"
 #include "camera/camera_system.hpp"
 #include "entt/entt.hpp"
 #include "mesh_renderer/mesh_renderer_component.hpp"
 #include "mesh_renderer/mesh_render_system.hpp"
+#include "skinned_mesh_renderer/skinned_mesh_renderer_component.hpp"
+#include "skinned_mesh_renderer/skinned_mesh_render_system.hpp"
 #include "tag/tag_component.hpp"
 #include "time/time_component.hpp"
 #include "transform/transform_component.hpp"
@@ -51,6 +56,12 @@ public:
                     } if (const auto &meshSerialization = dynamic_cast<MeshRendererComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<MeshRendererComponent>();
                         view->emplace(entity, *meshSerialization);
+                    } else if (const auto &skinnedMeshSerialization = dynamic_cast<SkinnedMeshRendererComponentSerialization*>(component.get())) {
+                        const auto &view = registry->view<SkinnedMeshRendererComponent>();
+                        view->emplace(entity, *skinnedMeshSerialization);
+                    } else if (const auto &animationSerialization = dynamic_cast<SimpleAnimationComponentSerialization*>(component.get())) {
+                        const auto &view = registry->view<SimpleAnimationComponent>();
+                        view->emplace(entity, SimpleAnimationComponent(animationSerialization->AnimationGuid));
                     }
                 }
             }
@@ -71,6 +82,13 @@ public:
             _systems.emplace_back(std::make_unique<CameraSystem>(registry->view<WindowComponent>(),registry->view<CameraComponentV2, TransformComponentV2>()));
 
             _systems.emplace_back(std::make_unique<MeshRenderSystem>(registry->view<MeshRendererComponent, TransformComponentV2>(),
+               registry->view<CameraComponentV2>(), renderRepository ));
+
+            // Animation system must run BEFORE skinned mesh renderer to compute bone transforms
+            _systems.emplace_back(std::make_unique<SimpleAnimationSystem>(registry->view<SimpleAnimationComponent, SkinnedMeshRendererComponent>(),
+               registry->view<DeltaTimeComponent>(), scenePtr));
+
+            _systems.emplace_back(std::make_unique<SkinnedMeshRenderSystem>(registry->view<SkinnedMeshRendererComponent, TransformComponentV2>(),
                registry->view<CameraComponentV2>(), renderRepository ));
         }
     }

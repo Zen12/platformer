@@ -27,6 +27,13 @@ public:
         const bool& useTexture);
 
     Mesh(
+        const std::vector<float> &vertices,
+        const std::vector<uint32_t> &indices,
+        const bool& useTexture,
+        const std::vector<float> &boneWeights,
+        const std::vector<int> &boneIndices);
+
+    Mesh(
     const Rml::Span<const Rml::Vertex> &vertices,
     const Rml::Span<const int> &indices);
 

@@ -17,6 +17,8 @@
 #include "../renderer/ui/ui_page.hpp"
 #include "../renderer/ui/ui_page_asset.hpp"
 #include "../renderer/ui/ui_page_asset_yaml.hpp"
+#include "../renderer/animation/animation_data.hpp"
+#include "../renderer/animation/animation_asset_loader.hpp"
 
 
 struct PrefabInstantiateData {
@@ -35,6 +37,10 @@ private:
     std::unordered_map<std::string, std::shared_ptr<Texture>> _textures{};
     std::unordered_map<std::string, std::shared_ptr<Font>> _fonts{};
     std::unordered_map<std::string, std::shared_ptr<Mesh>> _meshes{};
+    std::unordered_map<std::string, std::shared_ptr<AnimationData>> _animations{};
+    std::unordered_map<std::string, std::vector<std::string>> _meshBoneNames{};
+    std::unordered_map<std::string, std::vector<glm::mat4>> _meshBoneOffsets{};
+    std::unordered_map<std::string, std::vector<int>> _meshBoneParents{};
 
     std::weak_ptr<Window> _window;
     std::weak_ptr<AssetManager> _assetManager;
@@ -80,6 +86,32 @@ public:
     [[nodiscard]] std::shared_ptr<Font> GetFont(const std::string &guid);
 
     [[nodiscard]] std::shared_ptr<UiPage> GetUiPage(const std::string &guid);
+
+    [[nodiscard]] std::shared_ptr<AnimationData> GetAnimation(const std::string &guid);
+
+    [[nodiscard]] std::vector<std::string> GetMeshBoneNames(const std::string &guid) const {
+        auto it = _meshBoneNames.find(guid);
+        if (it != _meshBoneNames.end()) {
+            return it->second;
+        }
+        return {};
+    }
+
+    [[nodiscard]] std::vector<glm::mat4> GetMeshBoneOffsets(const std::string &guid) const {
+        auto it = _meshBoneOffsets.find(guid);
+        if (it != _meshBoneOffsets.end()) {
+            return it->second;
+        }
+        return {};
+    }
+
+    [[nodiscard]] std::vector<int> GetMeshBoneParents(const std::string &guid) const {
+        auto it = _meshBoneParents.find(guid);
+        if (it != _meshBoneParents.end()) {
+            return it->second;
+        }
+        return {};
+    }
 
     void RequestToLoadScene(const std::string &sceneGuid) noexcept {
         _requestToLoadScene = sceneGuid;

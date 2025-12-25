@@ -38,6 +38,65 @@ Mesh::Mesh(
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
+Mesh::Mesh(
+    const std::vector<float> &vertices,
+    const std::vector<uint32_t> &indices,
+    const bool &useTexture,
+    const std::vector<float> &boneWeights,
+    const std::vector<int> &boneIndices)
+{
+    _verticesCount = vertices.size();
+    _indicesCount = indices.size();
+
+    glGenVertexArrays(1, &_vao);
+    glGenBuffers(1, &_vbo);
+    glGenBuffers(1, &_ebo);
+    glBindVertexArray(_vao);
+
+    // Upload vertices
+    glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+    glBufferData(GL_ARRAY_BUFFER, static_cast<long>(vertices.size() * sizeof(float)), vertices.data(), GL_DYNAMIC_DRAW);
+
+    // Upload indices
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<long>(indices.size() * sizeof(uint32_t)), indices.data(), GL_DYNAMIC_DRAW);
+
+    int32_t stride = useTexture ? static_cast<int32_t>(5 * sizeof(float)) : static_cast<int32_t>(3 * sizeof(float));
+
+    // Position attribute (location 0)
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void *)0);
+    glEnableVertexAttribArray(0);
+
+    // Texture coords (location 1)
+    if (useTexture) {
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void *)(3 * sizeof(float)));
+        glEnableVertexAttribArray(1);
+    }
+
+    // Bone weights and indices in separate VBOs
+    if (!boneWeights.empty() && !boneIndices.empty()) {
+        uint32_t boneWeightsVBO, boneIndicesVBO;
+
+        // Bone weights (location 2) - 4 floats per vertex
+        glGenBuffers(1, &boneWeightsVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, boneWeightsVBO);
+        glBufferData(GL_ARRAY_BUFFER, static_cast<long>(boneWeights.size() * sizeof(float)),
+                     boneWeights.data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)0);
+        glEnableVertexAttribArray(2);
+
+        // Bone indices (location 3) - 4 ints per vertex
+        glGenBuffers(1, &boneIndicesVBO);
+        glBindBuffer(GL_ARRAY_BUFFER, boneIndicesVBO);
+        glBufferData(GL_ARRAY_BUFFER, static_cast<long>(boneIndices.size() * sizeof(int)),
+                     boneIndices.data(), GL_STATIC_DRAW);
+        glVertexAttribIPointer(3, 4, GL_INT, 4 * sizeof(int), (void *)0);
+        glEnableVertexAttribArray(3);
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 Mesh::Mesh(const Rml::Span<const Rml::Vertex> &vertices, const Rml::Span<const int> &indices) {
 
     _verticesCount = vertices.size();

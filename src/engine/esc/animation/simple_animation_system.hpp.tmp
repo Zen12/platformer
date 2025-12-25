@@ -1,0 +1,191 @@
+#pragma once
+#include "../esc_core.hpp"
+#include "simple_animation_component.hpp"
+#include "../skinned_mesh_renderer/skinned_mesh_renderer_component.hpp"
+#include "../time/time_component.hpp"
+#include "../../renderer/animation/animation_data.hpp"
+#include "../../scene/scene.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <cmath>
+#include <iostream>
+#include <unordered_map>
+
+class SimpleAnimationSystem final : public ISystemView<SimpleAnimationComponent, SkinnedMeshRendererComponent> {
+private:
+    using TypeDeltaTime = decltype(std::declval<entt::registry>().view<DeltaTimeComponent>());
+    const TypeDeltaTime _deltaTimeView;
+    const std::weak_ptr<Scene> _scene;
+    std::unordered_map<std::string, std::shared_ptr<AnimationData>> _loadedAnimations;
+
+    // Helper: Try to match animation bone name to mesh bone name
+    // Handles different naming conventions (mixamorig:LeftHand -> Hand.L, etc.)
+    static std::string TryMatchBoneName(const std::string& animBoneName, const std::unordered_map<std::string, int>& boneMap) {
+        // Try exact match first
+        if (boneMap.find(animBoneName) != boneMap.end()) {
+            return animBoneName;
+        }
+
+        // Strip "mixamorig:" prefix
+        std::string boneName = animBoneName;
+        const std::string mixamoPrefix = "mixamorig:";
+        if (boneName.substr(0, mixamoPrefix.length()) == mixamoPrefix) {
+            boneName = boneName.substr(mixamoPrefix.length());
+        }
+
+        // Try direct match after prefix strip
+        if (boneMap.find(boneName) != boneMap.end()) {
+            return boneName;
+        }
+
+        // Common bone name substitutions (Mixamo -> Mesh)
+        static const std::unordered_map<std::string, std::string> nameSubstitutions = {
+            {"Arm", "UpperArm"},
+            {"ForeArm", "Forearm"},
+            {"Foot", "Foot"},
+            {"Leg", "Thigh"}
+        };
+
+        // Convert LeftXXX/RightXXX to XXX.L/XXX.R with substitutions
+        if (boneName.substr(0, 4) == "Left") {
+            std::string baseName = boneName.substr(4);
+
+            // Try with substitution first
+            for (const auto& [from, to] : nameSubstitutions) {
+                if (baseName == from) {
+                    std::string substituted = to + ".L";
+                    if (boneMap.find(substituted) != boneMap.end()) {
+                        return substituted;
+                    }
+                }
+            }
+
+            // Try direct conversion
+            std::string directName = baseName + ".L";
+            if (boneMap.find(directName) != boneMap.end()) {
+                return directName;
+            }
+        } else if (boneName.substr(0, 5) == "Right") {
+            std::string baseName = boneName.substr(5);
+
+            // Try with substitution first
+            for (const auto& [from, to] : nameSubstitutions) {
+                if (baseName == from) {
+                    std::string substituted = to + ".R";
+                    if (boneMap.find(substituted) != boneMap.end()) {
+                        return substituted;
+                    }
+                }
+            }
+
+            // Try direct conversion
+            std::string directName = baseName + ".R";
+            if (boneMap.find(directName) != boneMap.end()) {
+                return directName;
+            }
+        }
+
+        // No match found
+        return "";
+    }
+
+public:
+    explicit SimpleAnimationSystem(const TypeView &view, const TypeDeltaTime &deltaTimeView, const std::weak_ptr<Scene> &scene)
+        : ISystemView(view), _deltaTimeView(deltaTimeView), _scene(scene) {
+    }
+
+    // Helper: Find keyframe index for sampling
+    template<typename T>
+    static size_t FindKeyIndex(const std::vector<T>& keys, float time) {
+        for (size_t i = 0; i < keys.size() - 1; i++) {
+            if (time < keys[i + 1].Time) {
+                return i;
+            }
+        }
+        return keys.size() - 2;
+    }
+
+    // Sample position at given time
+    static glm::vec3 SamplePosition(const std::vector<PositionKey>& keys, float time) {
+        if (keys.empty()) return glm::vec3(0.0f);
+        if (keys.size() == 1 || time <= keys[0].Time) return keys[0].Value;
+        if (time >= keys.back().Time) return keys.back().Value;
+
+        size_t index = FindKeyIndex(keys, time);
+        float t = (time - keys[index].Time) / (keys[index + 1].Time - keys[index].Time);
+        return glm::mix(keys[index].Value, keys[index + 1].Value, t);
+    }
+
+    // Sample rotation at given time
+    static glm::quat SampleRotation(const std::vector<RotationKey>& keys, float time) {
+        if (keys.empty()) return glm::quat(1, 0, 0, 0);
+        if (keys.size() == 1 || time <= keys[0].Time) return keys[0].Value;
+        if (time >= keys.back().Time) return keys.back().Value;
+
+        size_t index = FindKeyIndex(keys, time);
+        float t = (time - keys[index].Time) / (keys[index + 1].Time - keys[index].Time);
+        return glm::slerp(keys[index].Value, keys[index + 1].Value, t);
+    }
+
+    // Sample scale at given time
+    static glm::vec3 SampleScale(const std::vector<ScaleKey>& keys, float time) {
+        if (keys.empty()) return glm::vec3(1.0f);
+        if (keys.size() == 1 || time <= keys[0].Time) return keys[0].Value;
+        if (time >= keys.back().Time) return keys.back().Value;
+
+        size_t index = FindKeyIndex(keys, time);
+        float t = (time - keys[index].Time) / (keys[index + 1].Time - keys[index].Time);
+        return glm::mix(keys[index].Value, keys[index + 1].Value, t);
+    }
+
+    void OnTick() override {
+        float deltaTime = 0.016f; // Default 60fps
+
+        // Get delta time
+        for (const auto &[_, dt] : _deltaTimeView.each()) {
+            deltaTime = dt.Delta;
+        }
+
+        auto scene = _scene.lock();
+        if (!scene) return;
+
+        for (const auto &[_, anim, skinnedMesh] : View.each()) {
+            if (!anim.Enabled || anim.AnimationGuid.empty()) continue;
+
+            // Populate bone names, offsets, and hierarchy on first access
+            if (skinnedMesh.BoneNames.empty()) {
+                skinnedMesh.BoneNames = scene->GetMeshBoneNames(skinnedMesh.Guid);
+                skinnedMesh.BoneOffsets = scene->GetMeshBoneOffsets(skinnedMesh.Guid);
+                skinnedMesh.BoneParents = scene->GetMeshBoneParents(skinnedMesh.Guid);
+                if (!skinnedMesh.BoneNames.empty()) {
+                    std::cout << "Loaded " << skinnedMesh.BoneNames.size() << " bones with hierarchy for mesh" << std::endl;
+                }
+            }
+
+            // Load animation if not already loaded
+            if (_loadedAnimations.find(anim.AnimationGuid) == _loadedAnimations.end()) {
+                auto animData = scene->GetAnimation(anim.AnimationGuid);
+                if (animData) {
+                    _loadedAnimations[anim.AnimationGuid] = animData;
+                    std::cout << "Loaded animation: " << animData->Name << " (" << animData->Duration << "s)" << std::endl;
+                } else {
+                    std::cerr << "Failed to load animation: " << anim.AnimationGuid << std::endl;
+                    anim.Enabled = false;
+                    continue;
+                }
+            }
+
+            auto animData = _loadedAnimations[anim.AnimationGuid];
+            if (!animData) continue;
+
+            // Update animation time
+            anim.Time += deltaTime;
+            if (anim.Loop && anim.Time > animData->Duration) {
+                anim.Time = fmod(anim.Time, animData->Duration);
+            }
+
+        }
+    }
+};

@@ -41,8 +41,14 @@ public:
             mat->SetMat4("projection", renderId.CameraProjection);
 
             // Draw each instance separately for now (will optimize later)
-            for (const auto& modelMatrix : matrixVector) {
-                mat->SetMat4("model", modelMatrix);
+            for (const auto& instanceData : matrixVector) {
+                mat->SetMat4("model", instanceData.ModelMatrix);
+
+                // Set bone transforms if this is a skinned mesh
+                if (instanceData.BoneTransforms.has_value()) {
+                    mat->SetMat4Array("boneMatrices", instanceData.BoneTransforms.value());
+                }
+
                 glDrawElements(GL_TRIANGLES, static_cast<int32_t>(meshPtr->GetIndicesCount()), GL_UNSIGNED_INT, nullptr);
             }
         }

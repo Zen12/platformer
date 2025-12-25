@@ -1,6 +1,6 @@
 #pragma once
 #include "GL/glew.h"
-#include "mesh_renderer_component.hpp"
+#include "skinned_mesh_renderer_component.hpp"
 #include "../esc_core.hpp"
 #include "../../renderer/render_repository.hpp"
 #include "../../renderer/frustum.hpp"
@@ -9,7 +9,7 @@
 #include "../transform/transform_component.hpp"
 
 
-class MeshRenderSystem final : public ISystemView<MeshRendererComponent, TransformComponentV2>{
+class SkinnedMeshRenderSystem final : public ISystemView<SkinnedMeshRendererComponent, TransformComponentV2>{
 private:
 
     using TypeCamera = decltype(std::declval<entt::registry>().view<CameraComponentV2>());
@@ -19,7 +19,7 @@ private:
     const std::shared_ptr<RenderRepository> _repository;
 
 public:
-    explicit MeshRenderSystem(
+    explicit SkinnedMeshRenderSystem(
         const TypeView &view,
         const TypeCamera &camera,
         const std::shared_ptr<RenderRepository> &repository)
@@ -33,7 +33,7 @@ public:
             const glm::mat4 viewProjection = camera.Projection * camera.View;
             frustum.ExtractPlanes(viewProjection);
 
-            for (const auto &[_, mesh, transform] : View.each()) {
+            for (const auto &[_, skinnedMesh, transform] : View.each()) {
                 const auto &model = transform.GetModel();
 
                 // Extract position from model matrix (last column)
@@ -44,11 +44,12 @@ public:
                 constexpr float boundingRadius = 5.0f;
 
                 // Perform frustum culling
-                if (!frustum.IsSphereVisible(position, boundingRadius)) {
-                    continue; // Skip this mesh, it's outside the frustum
-                }
+                //if (!frustum.IsSphereVisible(position, boundingRadius)) {
+                //    continue; // Skip this mesh, it's outside the frustum
+                //}
 
-                _repository->Add(RenderData{mesh.MaterialGuid, mesh.Guid, model, camera.View, camera.Projection, std::nullopt});
+                // Pass bone transforms to renderer
+                _repository->Add(RenderData{skinnedMesh.MaterialGuid, skinnedMesh.Guid, model, camera.View, camera.Projection, skinnedMesh.BoneTransforms});
             }
         }
     }

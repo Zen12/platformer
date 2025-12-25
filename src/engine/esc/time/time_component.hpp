@@ -18,7 +18,7 @@ public:
     }
 
     void OnTick() override {
-        const auto deltaTimeValue = _deltaTime.GetResetDeltaFps();
+        const auto deltaTimeValue = _deltaTime.GetResetDelta();  // Get actual delta time in seconds, not FPS
         for (const auto &[_, deltaTime]: View.each()) {
             deltaTime.Delta = deltaTimeValue;
         }
