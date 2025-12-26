@@ -77,32 +77,42 @@ std::shared_ptr<Material> Scene::GetMaterial(const std::string &guid) {
 }
 
 std::shared_ptr<Mesh> Scene::GetMesh(const std::string &guid) {
+    std::cout << "[SCENE] GetMesh called for GUID: " << guid << std::endl;
     if (const auto assetManager = _assetManager.lock()) {
         if (_meshes.find(guid) == _meshes.end()) {
+            std::cout << "[SCENE] Mesh not cached, loading from asset manager..." << std::endl;
             if (guid == "sprite") {
+                std::cout << "[SCENE] Generating sprite mesh" << std::endl;
                 const auto meshAsset = std::shared_ptr<Mesh>(Mesh::GenerateSpritePtr());
                 _meshes[guid] = meshAsset;
                 return meshAsset;
             }
 
             const auto meshData = assetManager->LoadSourceByGuid<MeshData>(guid);
+            std::cout << "[SCENE] Loaded mesh data - HasSkeleton: " << (meshData.HasSkeleton ? "yes" : "no") << std::endl;
             std::shared_ptr<Mesh> mesh;
             if (meshData.HasSkeleton) {
+                std::cout << "[SCENE] Creating skinned mesh with " << meshData.BoneNames.size() << " bones" << std::endl;
                 mesh = std::make_shared<Mesh>(meshData.Vertices, meshData.Indices, meshData.HasTexCoords,
                                                meshData.BoneWeights, meshData.BoneIndices);
                 // Store bone names, offsets, and hierarchy for animation mapping
                 _meshBoneNames[guid] = meshData.BoneNames;
                 _meshBoneOffsets[guid] = meshData.BoneOffsets;
                 _meshBoneParents[guid] = meshData.BoneParents;
+                std::cout << "[SCENE] Stored bone data for GUID: " << guid << std::endl;
             } else {
+                std::cout << "[SCENE] Creating standard mesh (no skeleton)" << std::endl;
                 mesh = std::make_shared<Mesh>(meshData.Vertices, meshData.Indices, meshData.HasTexCoords);
             }
             _meshes[guid] = mesh;
+            std::cout << "[SCENE] Mesh cached successfully" << std::endl;
             return mesh;
         }
+        std::cout << "[SCENE] Returning cached mesh" << std::endl;
         return _meshes[guid];
     }
 
+    std::cerr << "[SCENE] ERROR: AssetManager lock failed for GUID: " << guid << std::endl;
     return {};
 }
 

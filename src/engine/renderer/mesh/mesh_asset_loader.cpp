@@ -3,6 +3,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <algorithm>
 #include <chrono>
@@ -27,24 +28,175 @@ void AssetLoader<MeshData>::Init() {
 }
 
 MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
+    std::cout << "[MESH_LOADER] Starting to load: " << path << std::endl;
+    std::cout << "[MESH_LOADER] Path length: " << path.length() << " bytes" << std::endl;
+    std::cout.flush(); // Force flush to ensure log appears before crash
+
+#ifdef __EMSCRIPTEN__
+    std::cout << "[MESH_LOADER] Running in EMSCRIPTEN/WASM environment" << std::endl;
+#else
+    std::cout << "[MESH_LOADER] Running in native environment" << std::endl;
+#endif
+    std::cout.flush();
+
+    // Check if file exists (basic check)
+    std::ifstream fileCheck(path, std::ios::binary);
+    if (!fileCheck.good()) {
+        std::cerr << "[MESH_LOADER] ERROR: Cannot open file at path: " << path << std::endl;
+        std::cerr << "[MESH_LOADER] File does not exist or is not accessible" << std::endl;
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+    }
+    fileCheck.seekg(0, std::ios::end);
+    std::streamsize fileSize = fileCheck.tellg();
+    fileCheck.close();
+    std::cout << "[MESH_LOADER] File exists, size: " << fileSize << " bytes" << std::endl;
+    std::cout.flush();
+
     auto start = std::chrono::high_resolution_clock::now();
 
+    std::cout << "[MESH_LOADER] Creating Assimp::Importer..." << std::endl;
+    std::cout.flush();
     Assimp::Importer importer;
 
-    // Optimized flags for faster loading - removed OptimizeMeshes which is slow for large meshes
-    // Removed aiProcess_FlipUVs as GLB files from Blender have correct UV orientation
-    const aiScene* scene = importer.ReadFile(path,
-        aiProcess_Triangulate |
-        aiProcess_JoinIdenticalVertices
-    );
+#ifdef __EMSCRIPTEN__
+    // Log available importers in WASM build
+    std::cout << "[MESH_LOADER] Checking available importers..." << std::endl;
+
+    // Get extension list
+    aiString extensionList;
+    importer.GetExtensionList(extensionList);
+    std::cout << "[MESH_LOADER] Supported extensions: " << extensionList.C_Str() << std::endl;
+    std::cout.flush();
+
+    // Check if GLB is supported
+    bool glbSupported = importer.IsExtensionSupported(".glb");
+    bool gltfSupported = importer.IsExtensionSupported(".gltf");
+    std::cout << "[MESH_LOADER] GLB format supported: " << (glbSupported ? "YES" : "NO") << std::endl;
+    std::cout << "[MESH_LOADER] GLTF format supported: " << (gltfSupported ? "YES" : "NO") << std::endl;
+    std::cout.flush();
+
+    if (!glbSupported) {
+        std::cerr << "[MESH_LOADER] ERROR: GLB importer is NOT compiled into this Assimp build!" << std::endl;
+        std::cerr << "[MESH_LOADER] You need to rebuild Assimp with ASSIMP_BUILD_GLTF_IMPORTER=ON" << std::endl;
+        std::cerr << "[MESH_LOADER] Available formats: " << extensionList.C_Str() << std::endl;
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+    }
+#endif
+
+    // Use minimal flags for WASM to avoid crashes
+    unsigned int importFlags;
+#ifdef __EMSCRIPTEN__
+    // WASM: Try with NO flags first to see if it loads at all
+    importFlags = 0;
+    std::cout << "[MESH_LOADER] Using WASM-safe flags: NONE (0) - raw import only" << std::endl;
+#else
+    // Native: Use optimized flags
+    importFlags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices;
+    std::cout << "[MESH_LOADER] Using native flags: aiProcess_Triangulate | aiProcess_JoinIdenticalVertices" << std::endl;
+#endif
+    std::cout.flush();
+
+    const aiScene* scene = nullptr;
+
+#ifdef __EMSCRIPTEN__
+    // WASM: Load file into memory first, then use ReadFileFromMemory
+    // This avoids potential WASM filesystem issues with Assimp
+    std::cout << "[MESH_LOADER] WASM: Loading file into memory buffer..." << std::endl;
+    std::cout.flush();
+
+    std::ifstream file(path, std::ios::binary | std::ios::ate);
+    if (!file.is_open()) {
+        std::cerr << "[MESH_LOADER] ERROR: Failed to open file for memory loading" << std::endl;
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+    }
+
+    std::streamsize size = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    std::vector<char> buffer(size);
+    if (!file.read(buffer.data(), size)) {
+        std::cerr << "[MESH_LOADER] ERROR: Failed to read file into buffer" << std::endl;
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+    }
+    file.close();
+
+    std::cout << "[MESH_LOADER] Loaded " << size << " bytes into memory" << std::endl;
+
+    // Detect format from file extension
+    std::string hint = path.substr(path.find_last_of('.') + 1);
+    std::cout << "[MESH_LOADER] File format hint: " << hint << std::endl;
+    std::cout << "[MESH_LOADER] Buffer address: " << static_cast<const void*>(buffer.data()) << std::endl;
+    std::cout << "[MESH_LOADER] Buffer size: " << buffer.size() << std::endl;
+    std::cout << "[MESH_LOADER] Import flags: " << importFlags << std::endl;
+    std::cout.flush();
+
+    std::cout << "[MESH_LOADER] About to call ReadFileFromMemory..." << std::endl;
+    std::cout << "[MESH_LOADER] This may crash - checking console for errors..." << std::endl;
+    std::cout.flush();
+
+    // Set a very conservative read limit for WASM
+    importer.SetPropertyInteger(AI_CONFIG_PP_LBW_MAX_WEIGHTS, 4);
+
+    std::cout << "[MESH_LOADER] Calling ReadFileFromMemory NOW..." << std::endl;
+    std::cout.flush();
+
+    scene = importer.ReadFileFromMemory(buffer.data(), buffer.size(), importFlags, hint.c_str());
+
+    std::cout << "[MESH_LOADER] !!! ReadFileFromMemory completed successfully !!!" << std::endl;
+    std::cout.flush();
+
+    // Check error even if no exception was thrown
+    if (!scene) {
+        std::cerr << "[MESH_LOADER] ERROR: ReadFileFromMemory returned null" << std::endl;
+        std::cerr << "[MESH_LOADER] Assimp error: " << importer.GetErrorString() << std::endl;
+        std::cerr.flush();
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+    }
+
+    std::cout << "[MESH_LOADER] Scene loaded successfully!" << std::endl;
+#else
+    // Native: Use direct file reading
+    std::cout << "[MESH_LOADER] Calling importer.ReadFile..." << std::endl;
+    std::cout.flush();
+
+    try {
+        scene = importer.ReadFile(path, importFlags);
+    } catch (const std::exception& e) {
+        std::cerr << "[MESH_LOADER] EXCEPTION during ReadFile: " << e.what() << std::endl;
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+    } catch (...) {
+        std::cerr << "[MESH_LOADER] UNKNOWN EXCEPTION during ReadFile" << std::endl;
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+    }
+#endif
+
+    std::cout << "[MESH_LOADER] ReadFile returned, scene pointer: " << (scene ? "valid" : "null") << std::endl;
+    std::cout.flush();
 
     auto loadTime = std::chrono::high_resolution_clock::now();
     auto loadDuration = std::chrono::duration_cast<std::chrono::milliseconds>(loadTime - start).count();
+    std::cout << "[MESH_LOADER] ReadFile took " << loadDuration << "ms" << std::endl;
 
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-        std::cerr << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
+    if (!scene) {
+        std::cerr << "[MESH_LOADER] ERROR: Scene is null" << std::endl;
+        std::cerr << "[MESH_LOADER] Assimp error: " << importer.GetErrorString() << std::endl;
         return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
     }
+
+    if (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) {
+        std::cerr << "[MESH_LOADER] ERROR: Scene has INCOMPLETE flag" << std::endl;
+        std::cerr << "[MESH_LOADER] Assimp error: " << importer.GetErrorString() << std::endl;
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+    }
+
+    if (!scene->mRootNode) {
+        std::cerr << "[MESH_LOADER] ERROR: Scene has no root node" << std::endl;
+        std::cerr << "[MESH_LOADER] Assimp error: " << importer.GetErrorString() << std::endl;
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+    }
+
+    std::cout << "[MESH_LOADER] Assimp loaded scene successfully" << std::endl;
+    std::cout << "[MESH_LOADER] Number of meshes in scene: " << scene->mNumMeshes << std::endl;
 
     // Pre-calculate total sizes to avoid vector reallocations
     size_t totalVertices = 0;
@@ -78,19 +230,25 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
     }
 
     // Reserve capacity to avoid reallocations (major performance boost for large meshes)
+    std::cout << "[MESH_LOADER] Pre-calculated sizes - vertices: " << totalVertices << ", indices: " << totalIndices << std::endl;
     vertices.reserve(totalVertices * 5); // 5 floats per vertex (x,y,z,u,v) max
     indices.reserve(totalIndices);
     if (hasSkeleton) {
         boneWeights.reserve(totalVertices * 4); // 4 weights per vertex
         boneIndices.reserve(totalVertices * 4); // 4 bone indices per vertex
+        std::cout << "[MESH_LOADER] Mesh has skeleton, reserved bone data" << std::endl;
     }
 
     auto processStart = std::chrono::high_resolution_clock::now();
+    std::cout << "[MESH_LOADER] Starting mesh processing..." << std::endl;
 
     for (unsigned int meshIdx = 0; meshIdx < scene->mNumMeshes; meshIdx++) {
         const aiMesh* mesh = scene->mMeshes[meshIdx];
+        std::cout << "[MESH_LOADER] Processing mesh " << meshIdx << "/" << scene->mNumMeshes
+                  << " - vertices: " << mesh->mNumVertices << ", faces: " << mesh->mNumFaces << std::endl;
 
         if (!(mesh->mPrimitiveTypes & aiPrimitiveType_TRIANGLE)) {
+            std::cout << "[MESH_LOADER] Skipping non-triangle mesh" << std::endl;
             continue;
         }
 
@@ -252,9 +410,13 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
     }
 
     if (vertices.empty() || indices.empty()) {
-        std::cerr << "ERROR::MESH_LOADER: No mesh data found in " << path << std::endl;
+        std::cerr << "[MESH_LOADER] ERROR: No mesh data found in " << path << std::endl;
+        std::cerr << "[MESH_LOADER] vertices.size()=" << vertices.size() << ", indices.size()=" << indices.size() << std::endl;
         return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
     }
+
+    std::cout << "[MESH_LOADER] Mesh processing complete - final data sizes:" << std::endl;
+    std::cout << "[MESH_LOADER]   vertices: " << vertices.size() << ", indices: " << indices.size() << std::endl;
 
     auto processEnd = std::chrono::high_resolution_clock::now();
     auto processDuration = std::chrono::duration_cast<std::chrono::milliseconds>(processEnd - processStart).count();

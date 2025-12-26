@@ -8,12 +8,15 @@ Mesh::Mesh(
     const std::vector<uint32_t> &indices,
     const bool &useTexture)
 {
+    std::cout << "[MESH] Creating mesh - vertices: " << vertices.size() << ", indices: " << indices.size()
+              << ", useTexture: " << (useTexture ? "yes" : "no") << std::endl;
     _verticesCount = vertices.size();
     _indicesCount = indices.size();
 
     glGenVertexArrays(1, &_vao);
     glGenBuffers(1, &_vbo);
     glGenBuffers(1, &_ebo);
+    std::cout << "[MESH] Generated OpenGL buffers - VAO: " << _vao << ", VBO: " << _vbo << ", EBO: " << _ebo << std::endl;
     // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
     glBindVertexArray(_vao);
 
@@ -45,12 +48,15 @@ Mesh::Mesh(
     const std::vector<float> &boneWeights,
     const std::vector<int> &boneIndices)
 {
+    std::cout << "[MESH] Creating SKINNED mesh - vertices: " << vertices.size() << ", indices: " << indices.size() << std::endl;
+    std::cout << "[MESH]   Bone weights: " << boneWeights.size() << ", Bone indices: " << boneIndices.size() << std::endl;
     _verticesCount = vertices.size();
     _indicesCount = indices.size();
 
     glGenVertexArrays(1, &_vao);
     glGenBuffers(1, &_vbo);
     glGenBuffers(1, &_ebo);
+    std::cout << "[MESH] Generated OpenGL buffers - VAO: " << _vao << ", VBO: " << _vbo << ", EBO: " << _ebo << std::endl;
     glBindVertexArray(_vao);
 
     // Upload vertices
@@ -75,6 +81,7 @@ Mesh::Mesh(
 
     // Bone weights and indices in separate VBOs
     if (!boneWeights.empty() && !boneIndices.empty()) {
+        std::cout << "[MESH] Setting up bone data VBOs..." << std::endl;
         uint32_t boneWeightsVBO, boneIndicesVBO;
 
         // Bone weights (location 2) - 4 floats per vertex
@@ -84,6 +91,7 @@ Mesh::Mesh(
                      boneWeights.data(), GL_STATIC_DRAW);
         glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void *)0);
         glEnableVertexAttribArray(2);
+        std::cout << "[MESH] Created bone weights VBO: " << boneWeightsVBO << std::endl;
 
         // Bone indices (location 3) - 4 ints per vertex
         glGenBuffers(1, &boneIndicesVBO);
@@ -92,6 +100,9 @@ Mesh::Mesh(
                      boneIndices.data(), GL_STATIC_DRAW);
         glVertexAttribIPointer(3, 4, GL_INT, 4 * sizeof(int), (void *)0);
         glEnableVertexAttribArray(3);
+        std::cout << "[MESH] Created bone indices VBO: " << boneIndicesVBO << std::endl;
+    } else {
+        std::cout << "[MESH] No bone data to set up (skinned mesh without bones?)" << std::endl;
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -169,6 +180,13 @@ Mesh::~Mesh()
 void Mesh::Bind() const noexcept
 {
     glBindVertexArray(_vao);
+#ifndef NDEBUG
+    GLint currentVAO;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &currentVAO);
+    if (currentVAO != static_cast<GLint>(_vao)) {
+        std::cerr << "[MESH] WARNING: Bind failed! Expected VAO " << _vao << " but got " << currentVAO << std::endl;
+    }
+#endif
 }
 
 size_t Mesh::GetVertexCount() const noexcept

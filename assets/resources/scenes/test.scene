@@ -4,7 +4,7 @@ entities:
   - components:
       - type: transform
         position: [0.0, -5.0, -5.0]
-        rotation: [-90.0, 90.0, 0.0]
+        rotation: [-90.0, -45.0, 0.0]
         scale: [5.0, 5.0, 5.0]
       - type: skinned_mesh_renderer
         material: 6cc7aff6-26f0-45ed-a454-d0bc6d0c879d
