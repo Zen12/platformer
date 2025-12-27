@@ -12,14 +12,6 @@
 #include "../esc/camera/camera_component_serialization_yaml.hpp"
 #include "../esc/animation/simple_animation_component_serialization.hpp"
 #include "../esc/animation/simple_animation_component_serialization_yaml.hpp"
-#include "../esc/ozz_animation/ozz_animation_component_serialization.hpp"
-#include "../esc/ozz_animation/ozz_animation_component_serialization_yaml.hpp"
-#include "../esc/ozz_animation/ozz_skeleton_component_serialization.hpp"
-#include "../esc/ozz_animation/ozz_skeleton_component_serialization_yaml.hpp"
-#include "../esc/ozz_animation/ozz_ik_component_serialization.hpp"
-#include "../esc/ozz_animation/ozz_ik_component_serialization_yaml.hpp"
-#include "../esc/ozz_animation/mouse_ik_controller_component_serialization.hpp"
-#include "../esc/ozz_animation/mouse_ik_controller_component_serialization_yaml.hpp"
 
 namespace YAML {
     template <>
@@ -69,10 +61,6 @@ namespace YAML {
                 { "mesh_renderer",         [](const YAML::Node& n){ return Parse<MeshRendererComponentSerialization>(n); } },
                 { "skinned_mesh_renderer", [](const YAML::Node& n){ return Parse<SkinnedMeshRendererComponentSerialization>(n); } },
                 { "simple_animation",      [](const YAML::Node& n){ return Parse<SimpleAnimationComponentSerialization>(n); } },
-                { "ozz_animation",         [](const YAML::Node& n){ return Parse<OzzAnimationComponentSerialization>(n); } },
-                { "ozz_skeleton",          [](const YAML::Node& n){ return Parse<OzzSkeletonComponentSerialization>(n); } },
-                { "ozz_ik",                [](const YAML::Node& n){ return Parse<OzzIKComponentSerialization>(n); } },
-                { "mouse_ik_controller",   [](const YAML::Node& n){ return Parse<MouseIKControllerComponentSerialization>(n); } },
             };
 
             if (const auto it = pairs.find(type); it != pairs.end()) {

@@ -3,16 +3,6 @@
 #include "animation/simple_animation_component.hpp"
 #include "animation/simple_animation_component_serialization.hpp"
 #include "animation/simple_animation_system.hpp"
-#include "ozz_animation/ozz_animation_component.hpp"
-#include "ozz_animation/ozz_animation_component_serialization.hpp"
-#include "ozz_animation/ozz_skeleton_component.hpp"
-#include "ozz_animation/ozz_skeleton_component_serialization.hpp"
-#include "ozz_animation/ozz_ik_component.hpp"
-#include "ozz_animation/ozz_ik_component_serialization.hpp"
-#include "ozz_animation/mouse_ik_controller_component.hpp"
-#include "ozz_animation/mouse_ik_controller_component_serialization.hpp"
-#include "ozz_animation/ozz_animation_system.hpp"
-#include "ozz_animation/mouse_ik_controller_system.hpp"
 #include "camera/camera_component.hpp"
 #include "camera/camera_system.hpp"
 #include "entt/entt.hpp"
@@ -72,38 +62,6 @@ public:
                     } else if (const auto &animationSerialization = dynamic_cast<SimpleAnimationComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<SimpleAnimationComponent>();
                         view->emplace(entity, SimpleAnimationComponent(animationSerialization->AnimationGuid));
-                    } else if (const auto &ozzAnimSerialization = dynamic_cast<OzzAnimationComponentSerialization*>(component.get())) {
-                        const auto &view = registry->view<OzzAnimationComponent>();
-                        OzzAnimationComponent comp(ozzAnimSerialization->AnimationGuid);
-                        comp.PlaybackSpeed = ozzAnimSerialization->PlaybackSpeed;
-                        comp.Loop = ozzAnimSerialization->Loop;
-                        comp.Playing = ozzAnimSerialization->Playing;
-                        view->emplace(entity, comp);
-                    } else if (const auto &ozzSkelSerialization = dynamic_cast<OzzSkeletonComponentSerialization*>(component.get())) {
-                        const auto &view = registry->view<OzzSkeletonComponent>();
-                        view->emplace(entity, OzzSkeletonComponent(ozzSkelSerialization->SkeletonGuid));
-                    } else if (const auto &ozzIkSerialization = dynamic_cast<OzzIKComponentSerialization*>(component.get())) {
-                        const auto &view = registry->view<OzzIKComponent>();
-                        OzzIKComponent comp;
-                        comp.Type = ozzIkSerialization->Type == "two_bone" ? IKType::TwoBone : IKType::Aim;
-                        comp.Enabled = ozzIkSerialization->Enabled;
-                        comp.Weight = ozzIkSerialization->Weight;
-                        comp.StartBoneName = ozzIkSerialization->StartBoneName;
-                        comp.MidBoneName = ozzIkSerialization->MidBoneName;
-                        comp.EndBoneName = ozzIkSerialization->EndBoneName;
-                        comp.Target = ozzIkSerialization->Target;
-                        comp.PoleVector = ozzIkSerialization->PoleVector;
-                        comp.AimAxis = ozzIkSerialization->AimAxis;
-                        comp.UpAxis = ozzIkSerialization->UpAxis;
-                        view->emplace(entity, comp);
-                    } else if (const auto &mouseIkSerialization = dynamic_cast<MouseIKControllerComponentSerialization*>(component.get())) {
-                        const auto &view = registry->view<MouseIKControllerComponent>();
-                        MouseIKControllerComponent comp;
-                        comp.Enabled = mouseIkSerialization->Enabled;
-                        comp.PlaneNormal = mouseIkSerialization->PlaneNormal;
-                        comp.PlaneDistance = mouseIkSerialization->PlaneDistance;
-                        comp.TargetOffset = mouseIkSerialization->TargetOffset;
-                        view->emplace(entity, comp);
                     }
                 }
             }
@@ -128,16 +86,6 @@ public:
 
             // Animation systems must run BEFORE skinned mesh renderer to compute bone transforms
             _systems.emplace_back(std::make_unique<SimpleAnimationSystem>(registry->view<SimpleAnimationComponent, SkinnedMeshRendererComponent>(),
-               registry->view<DeltaTimeComponent>(), scenePtr));
-
-            // Mouse IK controller must run BEFORE animation system to update IK targets
-            if (auto inputSystem = scenePtr->GetInputSystem().lock()) {
-                _systems.emplace_back(std::make_unique<MouseIKControllerSystem>(
-                    registry->view<MouseIKControllerComponent, OzzIKComponent>(),
-                    inputSystem));
-            }
-
-            _systems.emplace_back(std::make_unique<OzzAnimationSystem>(registry->view<OzzAnimationComponent, OzzSkeletonComponent, SkinnedMeshRendererComponent>(),
                registry->view<DeltaTimeComponent>(), scenePtr));
 
             _systems.emplace_back(std::make_unique<SkinnedMeshRenderSystem>(registry->view<SkinnedMeshRendererComponent, TransformComponentV2>(),

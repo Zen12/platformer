@@ -10,29 +10,6 @@ entities:
       - type: skinned_mesh_renderer
         material: 6cc7aff6-26f0-45ed-a454-d0bc6d0c879d
         mesh: fa9252ad-5501-47bc-8828-8eab8822bc81
-      - type: ozz_skeleton
-        skeleton_guid: fa9252ad-5501-47bc-8828-8eab8822bc81
-      - type: ozz_animation
-        animation_guid: d871319b-00ba-4003-b4b1-91d9f1b1fb8f
-        playback_speed: 1.0
-        loop: true
-        playing: true
-      - type: ozz_ik
-        ik_type: "aim"
-        enabled: true
-        weight: 1.0
-        start_bone: "Hand.L"
-        mid_bone: ""
-        end_bone: ""
-        target: [0.0, 0.0, 0.0]
-        pole_vector: [0.0, 1.0, 0.0]
-        aim_axis: [0.0, 1.0, 0.0]
-        up_axis: [0.0, 0.0, 1.0]
-      - type: mouse_ik_controller
-        enabled: true
-        plane_normal: [0.0, 1.0, 0.0]
-        plane_distance: 0.0
-        target_offset: [0.0, 0.0, 0.0]
   - guid: main-camera
     tag: main_camera
     components:
