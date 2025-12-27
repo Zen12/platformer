@@ -29,10 +29,17 @@ USAGE - As Python Module:
         "/path/to/idle_18bones.glb"
     )
 
+COORDINATE SYSTEM CONVERSION:
+    Automatically converts from Mixamo/Blender Z-up to Game Engine Y-up:
+    - Step 1: Rotate -90° around X-axis (Z-up → Y-up)
+    - Step 2: Rotate +90° around Z-axis (fix facing direction)
+
+    Result: Exported GLB works with default scene settings (rotation: [0, 0, 0])
+
 WORKFLOW:
-    1. Download animation from Mixamo (FBX format)
-    2. Run this script to retarget to 18 bones
-    3. Generate metadata: python3 mcp_tools/server/generate_asset_metadata.py
+    1. Download animation from Mixamo (FBX format, "With Skin")
+    2. Run this script to retarget to 18 bones (automatic coordinate conversion)
+    3. Generate metadata: python3 mcp_tools/import.py
     4. Update scene to use new animation GUID
     5. Build and test: ./run_debug.sh
 
@@ -97,7 +104,6 @@ def retarget_mixamo_animation(input_fbx_path, output_glb_path):
     bpy.ops.object.delete()
 
     # Import Mixamo FBX
-    print(f"Importing {input_fbx_path}...")
     bpy.ops.import_scene.fbx(filepath=input_fbx_path)
 
     # Find armature
@@ -108,11 +114,9 @@ def retarget_mixamo_animation(input_fbx_path, output_glb_path):
             break
 
     if not armature_obj:
-        print("ERROR: No armature found in FBX file")
         return False
 
     armature = armature_obj.data
-    print(f"Found armature: {armature_obj.name}")
 
     # Define bone mapping (17 Mixamo bones to keep)
     # These map to the 18-bone structure (+ Root) used by the game engine
@@ -144,15 +148,12 @@ def retarget_mixamo_animation(input_fbx_path, output_glb_path):
     hips_bone = armature.edit_bones.get("mixamorig:Hips")
     if hips_bone:
         hips_y_pos = hips_bone.head.y
-        print(f"Original Hips position (local): {hips_bone.head}")
     else:
-        print("WARNING: Hips bone not found")
         hips_y_pos = 0
 
     # Delete bones not in the mapping
     bones_to_delete = [bone.name for bone in armature.edit_bones
                       if bone.name not in bones_to_keep]
-    print(f"Deleting {len(bones_to_delete)} bones...")
     for bone_name in bones_to_delete:
         armature.edit_bones.remove(armature.edit_bones[bone_name])
 
@@ -191,6 +192,28 @@ def retarget_mixamo_animation(input_fbx_path, output_glb_path):
     bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
     print("Applied transform to armature")
 
+    # CRITICAL: Rotate all objects (armature + mesh) to convert Z-up to Y-up
+    # Select all objects and rotate together to maintain relative positions
+    import math
+
+    # Make sure we're in object mode
+    bpy.ops.object.mode_set(mode='OBJECT')
+
+    # Select all objects
+    bpy.ops.object.select_all(action='SELECT')
+
+    # Step 1: Rotate -90° around X-axis (Z-up -> Y-up)
+    bpy.ops.transform.rotate(value=math.radians(-90), orient_axis='X', orient_type='GLOBAL')
+    print("Rotated all objects -90° around X-axis (Z-up -> Y-up)")
+
+    # Step 2: Rotate 90° around Z-axis (fix facing direction)
+    bpy.ops.transform.rotate(value=math.radians(90), orient_axis='Z', orient_type='GLOBAL')
+    print("Rotated all objects 90° around Z-axis (fix facing direction)")
+
+    # Apply transform to bake rotation into mesh and bones
+    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+    print("Applied rotation to all objects")
+
     # Verify final bone count
     bone_count = len(armature.bones)
     print(f"=== Final bone count: {bone_count} ===")
@@ -213,6 +236,7 @@ def retarget_mixamo_animation(input_fbx_path, output_glb_path):
         export_force_sampling=True,
         export_def_bones=True,
         export_rest_position_armature=False
+        # Note: Not using export_yup since we manually rotated the scene
     )
     print("=== EXPORT COMPLETE ===")
 

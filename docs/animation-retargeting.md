@@ -35,6 +35,18 @@ The retargeting process keeps these 17 bones from Mixamo and adds a Root bone:
 
 **Deleted bones:** Fingers, toes, shoulders, extra spine bones (48 total)
 
+### Coordinate System Conversion
+
+The retargeting script automatically converts from **Mixamo/Blender Z-up** to **Game Engine Y-up** orientation:
+
+**Default Rotation Applied:**
+1. **-90° around X-axis** - Converts Z-up to Y-up
+2. **+90° around Z-axis** - Fixes facing direction (character faces forward)
+
+This ensures animations work correctly in the game engine without requiring rotation adjustments in scene files.
+
+**Result:** Exported GLB files are ready to use with default scene settings (rotation: [0, 0, 0])
+
 ### Usage
 
 There are three ways to retarget animations:

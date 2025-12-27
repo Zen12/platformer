@@ -1,5 +1,5 @@
 name: shooter_skinned
-is_culling: True
+is_culling: False
 blend_mode: 0
 shader_opengl:
   vertex: 71755ee0-39f9-4365-a071-b61707333037
@@ -7,4 +7,4 @@ shader_opengl:
 shader_gles:
   vertex: 1cc79072-1e1a-4e91-8d6a-4b0c20d5626a
   fragment: d049c781-34bd-4d34-b0fa-7d51482588af
-image: 70327bbb-792e-4e9d-bdb3-43d0b3bbf0be
+image: c6296066-8c0e-4d0e-a30d-aa816f7fb807
