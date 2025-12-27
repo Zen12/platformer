@@ -1,4 +1,7 @@
 #include "scene.hpp"
+#include "../renderer/ozz/ozz_skeleton_loader.hpp"
+#include "../renderer/ozz/ozz_animation_loader.hpp"
+#include <iostream>
 
 std::weak_ptr<AssetManager> Scene::GetAssetManager() const noexcept {
     return _assetManager;
@@ -160,3 +163,76 @@ std::shared_ptr<AnimationData> Scene::GetAnimation(const std::string &guid) {
     return {};
 }
 
+
+
+// Ozz animation getters
+std::shared_ptr<ozz::animation::Skeleton> Scene::GetOzzSkeleton(const std::string &guid) {
+    if (guid.empty())
+        return {};
+
+    // Check cache first
+    if (_ozzSkeletons.find(guid) != _ozzSkeletons.end()) {
+        return _ozzSkeletons[guid];
+    }
+
+    // Load from asset manager
+    if (const auto assetManager = _assetManager.lock()) {
+        try {
+            // For now, treat guid as direct file path or resolve via asset manager
+            // This will load the skeleton from the mesh file (e.g., shooter.glb)
+            std::string assetPath = assetManager->GetPathFromGuid(guid);
+            if (assetPath.empty()) {
+                std::cerr << "[SCENE] Failed to resolve GUID to path: " << guid << std::endl;
+                return {};
+            }
+
+            auto skeleton = OzzSkeletonLoader::Load(assetPath);
+            if (skeleton) {
+                _ozzSkeletons[guid] = skeleton;
+                return skeleton;
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "[SCENE] Error loading ozz skeleton: " << e.what() << std::endl;
+        }
+    }
+    return {};
+}
+
+std::shared_ptr<ozz::animation::Animation> Scene::GetOzzAnimation(const std::string &guid) {
+    if (guid.empty())
+        return {};
+
+    // Check cache first
+    if (_ozzAnimations.find(guid) != _ozzAnimations.end()) {
+        return _ozzAnimations[guid];
+    }
+
+    // Load from asset manager
+    if (const auto assetManager = _assetManager.lock()) {
+        try {
+            std::string assetPath = assetManager->GetPathFromGuid(guid);
+            if (assetPath.empty()) {
+                std::cerr << "[SCENE] Failed to resolve GUID to path: " << guid << std::endl;
+                return {};
+            }
+
+            // Need skeleton first for animation loading
+            // For now, assume animation GUID points to same file as skeleton
+            // In production, you might have separate animation files
+            auto skeleton = GetOzzSkeleton(guid); // Use same GUID for skeleton
+            if (!skeleton) {
+                std::cerr << "[SCENE] Cannot load animation without skeleton" << std::endl;
+                return {};
+            }
+
+            auto animation = OzzAnimationLoader::Load(assetPath, *skeleton);
+            if (animation) {
+                _ozzAnimations[guid] = animation;
+                return animation;
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "[SCENE] Error loading ozz animation: " << e.what() << std::endl;
+        }
+    }
+    return {};
+}

@@ -62,6 +62,7 @@ The Blender MCP server provides:
 - **Save Blender File** - Save scenes to .blend files
 - **Get Blender Info** - View Blender version and system information
 - **List Blender Objects** - List all objects in a scene or .blend file
+- **Retarget Mixamo Animation** - Convert Mixamo animations (65 bones) to game engine skeleton (18 bones)
 
 ## Usage Examples
 
@@ -86,6 +87,7 @@ The Blender MCP server provides:
 - "Save the Blender scene to assets/models/my_scene.blend"
 - "Get Blender version information"
 - "Create a monkey head mesh and save it as monkey.blend"
+- "Retarget Mixamo idle animation for the character"
 ```
 
 ### Command Line
@@ -152,4 +154,13 @@ The `.mcp.json` configuration uses `${PROJECT_ROOT}` for portability across diff
 - `mcp_tools/delete.py` - Safe asset deletion with reference checking
 
 ### Blender Integration
-- `mcp_tools/blender_server.py` - Blender MCP server for 3D modeling and automation
+- `mcp_tools/server/blender_server.py` - Blender MCP server for 3D modeling and automation
+- `mcp_tools/retarget_mixamo_animation.py` - Standalone Mixamo animation retargeting script
+
+### GIMP Integration
+- `mcp_tools/server/gimp_server.py` - GIMP MCP server for 2D image creation and editing
+
+## Additional Documentation
+
+- **[Skinned Mesh Workflow](skinned-mesh-workflow.md)** - Complete guide for creating and animating skinned meshes
+- **[Animation Retargeting](animation-retargeting.md)** - Retargeting Mixamo animations to 18-bone skeleton

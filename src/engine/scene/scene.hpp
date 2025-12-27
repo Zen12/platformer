@@ -19,6 +19,8 @@
 #include "../renderer/ui/ui_page_asset_yaml.hpp"
 #include "../renderer/animation/animation_data.hpp"
 #include "../renderer/animation/animation_asset_loader.hpp"
+#include <ozz/animation/runtime/skeleton.h>
+#include <ozz/animation/runtime/animation.h>
 
 
 struct PrefabInstantiateData {
@@ -41,6 +43,10 @@ private:
     std::unordered_map<std::string, std::vector<std::string>> _meshBoneNames{};
     std::unordered_map<std::string, std::vector<glm::mat4>> _meshBoneOffsets{};
     std::unordered_map<std::string, std::vector<int>> _meshBoneParents{};
+
+    // Ozz animation assets
+    std::unordered_map<std::string, std::shared_ptr<ozz::animation::Skeleton>> _ozzSkeletons{};
+    std::unordered_map<std::string, std::shared_ptr<ozz::animation::Animation>> _ozzAnimations{};
 
     std::weak_ptr<Window> _window;
     std::weak_ptr<AssetManager> _assetManager;
@@ -88,6 +94,10 @@ public:
     [[nodiscard]] std::shared_ptr<UiPage> GetUiPage(const std::string &guid);
 
     [[nodiscard]] std::shared_ptr<AnimationData> GetAnimation(const std::string &guid);
+
+    // Ozz animation getters
+    [[nodiscard]] std::shared_ptr<ozz::animation::Skeleton> GetOzzSkeleton(const std::string &guid);
+    [[nodiscard]] std::shared_ptr<ozz::animation::Animation> GetOzzAnimation(const std::string &guid);
 
     [[nodiscard]] std::vector<std::string> GetMeshBoneNames(const std::string &guid) const {
         auto it = _meshBoneNames.find(guid);

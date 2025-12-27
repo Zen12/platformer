@@ -1,16 +1,38 @@
 name: test_scene
 type: scene
 entities:
-  - components:
+  - tag: "character"
+    components:
       - type: transform
         position: [0.0, -5.0, -5.0]
-        rotation: [-90.0, -45.0, 0.0]
+        rotation: [-90.0, -90.0, 0.0]
         scale: [5.0, 5.0, 5.0]
       - type: skinned_mesh_renderer
         material: 6cc7aff6-26f0-45ed-a454-d0bc6d0c879d
         mesh: 82740789-12ed-4099-9b8a-c42f80a75ab0
-      - type: simple_animation
-        animation: ba28fc7c-dfdb-41f5-93dc-b18f442be93e
+      - type: ozz_skeleton
+        skeleton_guid: 82740789-12ed-4099-9b8a-c42f80a75ab0
+      - type: ozz_animation
+        animation_guid: 1187b40d-d488-4112-b45e-14acc850d725
+        playback_speed: 1.0
+        loop: true
+        playing: true
+      - type: ozz_ik
+        ik_type: "aim"
+        enabled: false
+        weight: 0.5
+        start_bone: "Root"
+        mid_bone: ""
+        end_bone: ""
+        target: [0.0, 0.0, 0.0]
+        pole_vector: [0.0, 1.0, 0.0]
+        aim_axis: [0.0, 1.0, 0.0]
+        up_axis: [0.0, 0.0, 1.0]
+      - type: mouse_ik_controller
+        enabled: true
+        plane_normal: [0.0, 1.0, 0.0]
+        plane_distance: 0.0
+        target_offset: [0.0, 0.0, 0.0]
   - guid: main-camera
     tag: main_camera
     components:

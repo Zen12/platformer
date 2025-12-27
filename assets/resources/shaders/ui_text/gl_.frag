@@ -9,9 +9,15 @@ uniform bool useTexture;
 
 void main()
 {
+    vec4 color;
     if (useTexture) {
-        FragColor = vertexColor * texture(tex, texCoord);
+        color = vertexColor * texture(tex, texCoord);
     } else {
-        FragColor = vertexColor;
+        color = vertexColor;
     }
+
+    if (color.a < 0.1)
+        discard;
+
+    FragColor = color;
 }

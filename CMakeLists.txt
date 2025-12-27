@@ -27,6 +27,7 @@ find_package(EnTT REQUIRED)
 find_package(RmlUi REQUIRED)
 find_package(FREETYPE REQUIRED)
 find_package(ASSIMP REQUIRED)
+find_package(Ozz REQUIRED)
 
 # Desktop-only dependencies
 if (NOT PLATFORM_WEB)
@@ -73,12 +74,12 @@ if (PLATFORM_WEB)
 
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s USE_WEBGL2=1 -s FULL_ES3=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s STACK_SIZE=5MB -s INITIAL_MEMORY=256MB -s ASSERTIONS=1 -s EXCEPTION_DEBUG=1 -s NO_DISABLE_EXCEPTION_CATCHING --shell-file ${CMAKE_SOURCE_DIR}/template/html/simple.html --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets")
 
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE GLM::GLM freetype yaml-cpp EnTT::EnTT rmlui_core assimp)
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE GLM::GLM freetype yaml-cpp EnTT::EnTT rmlui_core assimp ozz_animation ozz_animation_offline ozz_base)
     target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR})
 
 else()
     # Desktop build
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw GLM::GLM freetype yaml-cpp EnTT::EnTT rmlui_core assimp)
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw GLM::GLM freetype yaml-cpp EnTT::EnTT rmlui_core assimp ozz_animation ozz_animation_offline ozz_base)
     target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR})
 
     set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES

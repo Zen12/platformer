@@ -74,5 +74,6 @@
 
 ## Backlog
 - [ ] Proper fix retina issue on webgl and macOS
+- [ ] Proper bounce component or part of renderer, need to filet by bounds and not hardcoded vals
 
 🇲🇩
