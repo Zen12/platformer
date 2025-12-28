@@ -82,10 +82,7 @@ void Engine::Tick() {
     _inputSystem->Update();
     _fsmController->Update();
 
-    // Always clear the framebuffer at the start of each frame
-    glClearColor(0.53f, 0.81f, 0.98f, 1.0f);  // Light blue (sky blue)
-    glDepthMask(GL_TRUE);  // Ensure depth writes are enabled before clearing depth buffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear depth buffer for 3D rendering
+    _renderController->Reset();
 
     // Forward mouse input to UI
     const auto mousePos = _inputSystem->GetMouseWindowPosition();

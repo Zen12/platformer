@@ -10,10 +10,12 @@
 #include "../../scene/load_scene_action.hpp"
 #include "action/set_system_trigger_action.hpp"
 #include "action/log_action.hpp"
+#include "action/animation_state_action.hpp"
+#include "action/animation_state_transition_action.hpp"
 
 class StateNode final {
 public:
-    using AllActionVariants = std::variant<UiPageAction, LoadSceneAction, ButtonListenerAction, TriggerSetterButtonListenerAction, SetSystemTriggerAction, LogAction>;
+    using AllActionVariants = std::variant<UiPageAction, LoadSceneAction, ButtonListenerAction, TriggerSetterButtonListenerAction, SetSystemTriggerAction, LogAction, AnimationStateAction, AnimationStateTransitionAction>;
 private:
     std::vector<AllActionVariants> _states{};
 public:

@@ -13,6 +13,9 @@
 #include "fsm_asset.hpp"
 #include "system_triggers.hpp"
 
+// Forward declaration
+class FsmAnimationComponent;
+
 class FsmController final {
 private:
     std::unordered_map<std::string, StateNode> _stateNodes{};
@@ -29,7 +32,6 @@ private:
 
 private:
     void ChangeState(const std::string &state) {
-        std::cout << "ChangeState: " << state << std::endl;
         auto currentNode = _stateNodes.at(_currentState);
         currentNode.ExitAll();
 
@@ -40,14 +42,14 @@ private:
 
 
 public:
-    explicit FsmController(const FsmAsset& fsmAsset, const std::shared_ptr<SceneManager> &sceneManager, const std::shared_ptr<UIManager> &uiManager)
+    explicit FsmController(const FsmAsset& fsmAsset, const std::shared_ptr<SceneManager> &sceneManager, const std::shared_ptr<UIManager> &uiManager, const std::weak_ptr<FsmAnimationComponent> &animationComponent = std::weak_ptr<FsmAnimationComponent>())
         :   _currentState(fsmAsset.StartNode),
             _sceneManager (sceneManager),
             _uiManager(uiManager),
             _wasEntered(false)
     {
         // Create ActionFactory with dependencies
-        ActionFactory actionFactory(uiManager, sceneManager, _triggers, _systemTrigger);
+        ActionFactory actionFactory(uiManager, sceneManager, _triggers, _systemTrigger, animationComponent);
 
         // Convert StateNodeSerialization to StateNode
         for (const auto& nodeSer : fsmAsset.StateNodeSerialization) {
@@ -67,6 +69,10 @@ public:
                     actions.emplace_back(actionFactory.CreateSetSystemTriggerAction(actionData.Param));
                 } else if (actionData.Type == "log") {
                     actions.emplace_back(actionFactory.CreateLogAction(actionData.Param));
+                } else if (actionData.Type == "animation_state") {
+                    actions.emplace_back(actionFactory.CreateAnimationStateAction(actionData.Param, actionData.Param2));
+                } else if (actionData.Type == "animation_state_transition") {
+                    actions.emplace_back(actionFactory.CreateAnimationStateTransitionAction(actionData.Param, actionData.Param2, std::stof(actionData.Param3), actionData.Param4));
                 }
             }
 
@@ -104,6 +110,10 @@ public:
             return false;
 
         return _systemTrigger.at(triggerName);
+    }
+
+    void SetTrigger(const std::string& triggerName) {
+        _triggers[triggerName] = true;
     }
 
     void Update() {

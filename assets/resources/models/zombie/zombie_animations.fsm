@@ -1,0 +1,57 @@
+name: zombie_walk_fsm
+start_node: "walkState"
+nodes:
+- name: "Zombie Walk"
+  guid: "walkState"
+  actions:
+    - type: animation_state
+      animation_guid: 9df5a4bb-b644-4274-9c11-1799cfd3d98b
+      on_complete_trigger: "walk_complete"
+- name: "Walk to Walk1 Transition"
+  guid: "walkToWalk1State"
+  actions:
+    - type: animation_state_transition
+      from_animation_guid: 9df5a4bb-b644-4274-9c11-1799cfd3d98b
+      to_animation_guid: 511ca21d-91a9-4650-8296-18f72d2f5431
+      transition_time: 0.3
+      on_complete_trigger: "walk_to_walk1_complete"
+- name: "Zombie Walk1"
+  guid: "walk1State"
+  actions:
+    - type: animation_state
+      animation_guid: 511ca21d-91a9-4650-8296-18f72d2f5431
+      on_complete_trigger: "walk1_complete"
+- name: "Walk1 to Walk Transition"
+  guid: "walk1ToWalkState"
+  actions:
+    - type: animation_state_transition
+      from_animation_guid: 511ca21d-91a9-4650-8296-18f72d2f5431
+      to_animation_guid: 9df5a4bb-b644-4274-9c11-1799cfd3d98b
+      transition_time: 0.3
+      on_complete_trigger: "walk1_to_walk_complete"
+conditions:
+  - type: trigger_check
+    guid: "cond_walk_complete"
+    trigger_name: walk_complete
+  - type: trigger_check
+    guid: "cond_walk1_complete"
+    trigger_name: walk1_complete
+  - type: trigger_check
+    guid: "cond_walk_to_walk1_complete"
+    trigger_name: walk_to_walk1_complete
+  - type: trigger_check
+    guid: "cond_walk1_to_walk_complete"
+    trigger_name: walk1_to_walk_complete
+connections:
+  - nodes: ["walkState", "walkToWalk1State"]
+    conditions: ["cond_walk_complete"]
+    condition_type: 0  # When walk completes, start transition to walk1
+  - nodes: ["walkToWalk1State", "walk1State"]
+    conditions: ["cond_walk_to_walk1_complete"]
+    condition_type: 0  # Transition completes after 0.3s, trigger set by system
+  - nodes: ["walk1State", "walk1ToWalkState"]
+    conditions: ["cond_walk1_complete"]
+    condition_type: 0  # When walk1 completes, start transition to walk
+  - nodes: ["walk1ToWalkState", "walkState"]
+    conditions: ["cond_walk1_to_walk_complete"]
+    condition_type: 0  # Transition completes after 0.3s, trigger set by system

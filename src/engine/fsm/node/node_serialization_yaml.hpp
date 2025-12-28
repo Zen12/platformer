@@ -19,6 +19,12 @@
 #include "action/log_action.hpp"
 #include "action/log_action_serialization.hpp"
 #include "action/log_action_serialization_yaml.hpp"
+#include "action/animation_state_action.hpp"
+#include "action/animation_state_action_serialization.hpp"
+#include "action/animation_state_action_serialization_yaml.hpp"
+#include "action/animation_state_transition_action.hpp"
+#include "action/animation_state_transition_action_serialization.hpp"
+#include "action/animation_state_transition_action_serialization_yaml.hpp"
 #include "action/action_serialization_data.hpp"
 
 namespace YAML {
@@ -49,6 +55,16 @@ namespace YAML {
             } else if (type == "log") {
                 const auto serialization = node.as<LogActionSerialization>();
                 data.Param = serialization.Message;
+            } else if (type == "animation_state") {
+                const auto serialization = node.as<AnimationStateActionSerialization>();
+                data.Param = serialization.AnimationGuid;
+                data.Param2 = serialization.OnCompleteTrigger;
+            } else if (type == "animation_state_transition") {
+                const auto serialization = node.as<AnimationStateTransitionActionSerialization>();
+                data.Param = serialization.FromAnimationGuid;
+                data.Param2 = serialization.ToAnimationGuid;
+                data.Param3 = std::to_string(serialization.TransitionTime);
+                data.Param4 = serialization.OnCompleteTrigger;
             }
 
             return data;

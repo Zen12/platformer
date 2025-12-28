@@ -1,0 +1,57 @@
+name: male_animations_fsm
+start_node: "walkState"
+nodes:
+- name: "Male Walk"
+  guid: "walkState"
+  actions:
+    - type: animation_state
+      animation_guid: b624e619-5108-4ae7-9ff3-9392feee577e
+      on_complete_trigger: "walk_complete"
+- name: "Walk to Jump Transition"
+  guid: "walkToJumpState"
+  actions:
+    - type: animation_state_transition
+      from_animation_guid: b624e619-5108-4ae7-9ff3-9392feee577e
+      to_animation_guid: ec13a822-9d95-44c8-8284-8829bc53f4bc
+      transition_time: 0.3
+      on_complete_trigger: "walk_to_jump_complete"
+- name: "Male Jump"
+  guid: "jumpState"
+  actions:
+    - type: animation_state
+      animation_guid: ec13a822-9d95-44c8-8284-8829bc53f4bc
+      on_complete_trigger: "jump_complete"
+- name: "Jump to Walk Transition"
+  guid: "jumpToWalkState"
+  actions:
+    - type: animation_state_transition
+      from_animation_guid: ec13a822-9d95-44c8-8284-8829bc53f4bc
+      to_animation_guid: b624e619-5108-4ae7-9ff3-9392feee577e
+      transition_time: 0.3
+      on_complete_trigger: "jump_to_walk_complete"
+conditions:
+  - type: trigger_check
+    guid: "cond_walk_complete"
+    trigger_name: walk_complete
+  - type: trigger_check
+    guid: "cond_jump_complete"
+    trigger_name: jump_complete
+  - type: trigger_check
+    guid: "cond_walk_to_jump_complete"
+    trigger_name: walk_to_jump_complete
+  - type: trigger_check
+    guid: "cond_jump_to_walk_complete"
+    trigger_name: jump_to_walk_complete
+connections:
+  - nodes: ["walkState", "walkToJumpState"]
+    conditions: ["cond_walk_complete"]
+    condition_type: 0  # When walk completes, start transition to jump
+  - nodes: ["walkToJumpState", "jumpState"]
+    conditions: ["cond_walk_to_jump_complete"]
+    condition_type: 0  # Transition completes after 0.3s, trigger set by system
+  - nodes: ["jumpState", "jumpToWalkState"]
+    conditions: ["cond_jump_complete"]
+    condition_type: 0  # When jump completes, start transition to walk
+  - nodes: ["jumpToWalkState", "walkState"]
+    conditions: ["cond_jump_to_walk_complete"]
+    condition_type: 0  # Transition completes after 0.3s, trigger set by system

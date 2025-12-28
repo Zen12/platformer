@@ -1,0 +1,39 @@
+Zombie Animation Export Settings
+=================================
+
+IMPORTANT: These FBX animations use Z-up orientation and must be exported with specific settings.
+
+Correct Export Settings:
+------------------------
+When exporting these FBX files to GLB using Blender:
+
+1. FBX Import: Use default settings
+   bpy.ops.import_scene.fbx(filepath=fbx_path)
+
+2. GLB Export: Disable Y-up conversion to preserve Z-up orientation
+   bpy.ops.export_scene.gltf(
+       filepath=output_path,
+       export_format='GLB',
+       export_animations=True,
+       export_yup=False  # CRITICAL: Keep Z-up orientation
+   )
+
+Available Animations:
+--------------------
+- Zombie1.FBX (base mesh)
+- Zombie@Z_Attack.FBX
+- Zombie@Z_FallingBack.FBX
+- Zombie@Z_FallingForward.FBX
+- Zombie@Z_Idle.FBX
+- Zombie@Z_Run.FBX
+- Zombie@Z_Run_InPlace.FBX
+- Zombie@Z_Walk.FBX
+- Zombie@Z_Walk1.FBX
+- Zombie@Z_Walk1_InPlace.FBX ✓ (exported with correct settings)
+- Zombie@Z_Walk_InPlace.FBX
+
+Notes:
+------
+- The zombie.glb (base mesh) was already exported correctly
+- All animations in this set likely need export_yup=False
+- If animation appears rotated/wrong orientation, verify export_yup=False is used

@@ -3,6 +3,9 @@
 #include "animation/simple_animation_component.hpp"
 #include "animation/simple_animation_component_serialization.hpp"
 #include "animation/simple_animation_system.hpp"
+#include "animation/fsm_animation_component.hpp"
+#include "animation/fsm_animation_component_serialization.hpp"
+#include "animation/fsm_animation_system.hpp"
 #include "camera/camera_component.hpp"
 #include "camera/camera_system.hpp"
 #include "camera/camera_controller_component.hpp"
@@ -68,6 +71,13 @@ public:
                         animComp.ApplyRootMotion = animationSerialization->ApplyRootMotion;
                         animComp.RootBoneName = animationSerialization->RootBoneName;
                         view->emplace(entity, animComp);
+                    } else if (const auto &fsmAnimationSerialization = dynamic_cast<FsmAnimationComponentSerialization*>(component.get())) {
+                        const auto &view = registry->view<FsmAnimationComponent>();
+                        FsmAnimationComponent fsmAnimComp(fsmAnimationSerialization->FsmGuid);
+                        fsmAnimComp.Loop = fsmAnimationSerialization->Loop;
+                        fsmAnimComp.ApplyRootMotion = fsmAnimationSerialization->ApplyRootMotion;
+                        fsmAnimComp.RootBoneName = fsmAnimationSerialization->RootBoneName;
+                        view->emplace(entity, fsmAnimComp);
                     } else if (const auto &cameraControllerSerialization = dynamic_cast<CameraControllerComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<CameraControllerComponent>();
                         CameraControllerComponent controller;
@@ -101,6 +111,9 @@ public:
 
             // Animation systems must run BEFORE skinned mesh renderer to compute bone transforms
             _systems.emplace_back(std::make_unique<SimpleAnimationSystem>(registry->view<SimpleAnimationComponent, SkinnedMeshRendererComponent, TransformComponentV2>(),
+               registry->view<DeltaTimeComponent>(), scenePtr));
+
+            _systems.emplace_back(std::make_unique<FsmAnimationSystem>(registry->view<FsmAnimationComponent, SkinnedMeshRendererComponent, TransformComponentV2>(),
                registry->view<DeltaTimeComponent>(), scenePtr));
 
             _systems.emplace_back(std::make_unique<SkinnedMeshRenderSystem>(registry->view<SkinnedMeshRendererComponent, TransformComponentV2>(),

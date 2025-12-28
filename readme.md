@@ -19,8 +19,8 @@
 - 🏢 Platform
   - [x] macOS
   - [x] web
-  - [ ] windows
-  - [ ] linux
+  - [ ] windows (0.2+)
+  - [ ] linux (0.2+)
 - 🔳 UI system 
   - [x] Page system
   - [x] Hooks
@@ -28,10 +28,10 @@
 - 📀 Asset management
   - [x] Lazy load 
   - [x] .Meta file support
-  - [ ] Ref count 
+  - [ ] Ref count (0.2+)
 - 🚀 ESC
-  - [x] Single thread support
-  - [ ] Multi thread support
+  - [x] Single-thread support
+  - [ ] Multi-thread support (0.2+)
 - 🔦 Basic mesh 3d rendering
   - [x] Material abstraction
   - [x] Instance rendering (per mesh+material)
@@ -39,9 +39,9 @@
   - [ ] PBR
 - 💃 Skinned mesh rendering 
   - [x] Bones support
-  - [ ] Animation via state (FSM)
-  - [ ] IK
-  - [ ] Instance rendering
+  - [x] Animation via state (FSM)
+  - [ ] IK (0.2+)
+  - [ ] Instance rendering (0.2+)
 - 🧠 Nav mesh
   - [ ] 2d builder
   - [ ] AStar
@@ -51,22 +51,27 @@
   - [x] Scene management Action
   - [x] UI management Action
   - [x] Conditions
-  - [ ] SubFSM
+  - [ ] SubFSM (0.2+)
 - 💫 MCP
   - [x] Claude support
   - [x] Asset management with .meta
   - [x] Import/export systems for .blend and .glb
   - [x] Hooks to blender and gimp mcp
   - [x] Scene awareness (fast scene builder)
-  - [ ] File lock system (support for multiple agents)
-- 💠❌Prefab (ROADMAP)
+  - [ ] File lock system for multiple agents (0.2+)
+- 🔊Sound
+  - [ ] One shot clip
+  - [ ] Loop clip
+  - [ ] Mixer (0.2+)
+- 💠Prefab (0.2+)
   - [ ] Entity prefab
   - [ ] Nested prefab
-- ▶️❌Editor (ROADMAP)
+- ▶️Editor (0.2+)
   - [ ] Gameplayer recorder
   - [ ] Scene visualize 
-  - [ ] Undo system
-  - [ ] Hooks to MCP
+  - [ ] MCP as Editor
+- 💥Particle System (0.2+)
+
  
 ## 🔨 Project structure
 ``` 
@@ -93,14 +98,6 @@
 
 # 🏃 Roadmap
 
-## 0.1.5 Mesh Rendering
-- [x] Mesh Loader (GLB format via Assimp)
-- [x] Coordinate system conversion (Blender Y-up to Engine Y-forward)
-- [x] Debug logging and performance timing
-- [x] Frustum Culling
-- [x] Animations/Skinned Mesh
-- [ ] Link animation to FSM
-
 ## 0.1.6 NavMesh
 - [ ] Video recorder 
 - [ ] NavMesh builder (floating and fix point), grid based for determinism, 2d only
@@ -111,9 +108,15 @@
 - [ ] Proper bounce component or part of renderer, need to filet by bounds and not hardcoded vals
 - [ ] One level of 3d platformer with horde AI(Alien shooter?)
 
+## 0.1.8 Basic polish
+- [ ] Simple particles
+- [ ] Simple audio
+
 ## Backlog
 - [ ] Proper fix retina issue on webgl and macOS
 - [ ] Instance rendering for skinned mesh (per mesh+material)
 - [ ] Proper AssetManager (not link to scene), some refcount solution
+- [ ] Proper Audio system
+- [ ] Proper Particle system 
 
 🇲🇩
