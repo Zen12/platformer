@@ -42,38 +42,33 @@ AnimationData AssetLoader<AnimationData>::LoadImpl(const std::string& path) {
         BoneAnimationChannel boneChannel;
         boneChannel.BoneName = channel->mNodeName.C_Str();
 
-        // Load position keys with coordinate conversion
-        // Blender (Y-up): X=right, Y=up, Z=back
-        // Engine (Z-up):  X=right, Y=forward, Z=up
-        // Transformation: Engine(x,y,z) = Blender(x,z,y)
+        // Load position keys - import as-is from Blender (no coordinate transformation)
         for (unsigned int j = 0; j < channel->mNumPositionKeys; j++) {
             const aiVectorKey& key = channel->mPositionKeys[j];
             PositionKey posKey;
             posKey.Time = key.mTime / animData.TicksPerSecond;
-            // Convert from Blender to Engine coordinates: swap Y and Z
-            posKey.Value = glm::vec3(key.mValue.x, key.mValue.z, key.mValue.y);
+            // Import as-is from Blender (no coordinate transformation)
+            posKey.Value = glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z);
             boneChannel.PositionKeys.push_back(posKey);
         }
 
-        // Load rotation keys with coordinate conversion
-        // Quaternion components need to be swapped to match coordinate system
+        // Load rotation keys - import as-is from Blender (no coordinate transformation)
         for (unsigned int j = 0; j < channel->mNumRotationKeys; j++) {
             const aiQuatKey& key = channel->mRotationKeys[j];
             RotationKey rotKey;
             rotKey.Time = key.mTime / animData.TicksPerSecond;
-            // Convert quaternion from Blender to Engine coordinates: swap Y and Z components
-            rotKey.Value = glm::quat(key.mValue.w, key.mValue.x, key.mValue.z, key.mValue.y);
+            // Import as-is from Blender (no coordinate transformation)
+            rotKey.Value = glm::quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z);
             boneChannel.RotationKeys.push_back(rotKey);
         }
 
-        // Load scale keys with coordinate conversion
-        // Scale axes also need to be swapped
+        // Load scale keys - import as-is from Blender (no coordinate transformation)
         for (unsigned int j = 0; j < channel->mNumScalingKeys; j++) {
             const aiVectorKey& key = channel->mScalingKeys[j];
             ScaleKey scaleKey;
             scaleKey.Time = key.mTime / animData.TicksPerSecond;
-            // Convert from Blender to Engine coordinates: swap Y and Z
-            scaleKey.Value = glm::vec3(key.mValue.x, key.mValue.z, key.mValue.y);
+            // Import as-is from Blender (no coordinate transformation)
+            scaleKey.Value = glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z);
             boneChannel.ScaleKeys.push_back(scaleKey);
         }
 

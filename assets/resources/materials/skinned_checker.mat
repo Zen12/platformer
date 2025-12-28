@@ -1,0 +1,9 @@
+name: skinned_checker
+is_culling: True
+blend_mode: 0
+shader_opengl:
+  vertex: f713028d-1730-43f1-aa86-8c1bc47d90ca
+  fragment: 5dbd2b6e-5ca9-423f-8c46-970a14225125
+shader_gles:
+  vertex: 97ccaed1-a6ca-4697-af7a-5d9e306dd5f3
+  fragment: 7131e254-7849-4b0a-9eeb-0690bba5b844

@@ -31,4 +31,24 @@ public:
     [[nodiscard]] const glm::vec3& GetPosition() const noexcept {
         return _position;
     }
+
+    [[nodiscard]] const glm::vec3& GetEulerRotation() const noexcept {
+        return _eulerRotation;
+    }
+
+    void SetPosition(const glm::vec3& position) noexcept {
+        _position = position;
+    }
+
+    void SetEulerRotation(const glm::vec3& rotation) noexcept {
+        _eulerRotation = rotation;
+    }
+
+    void AddPosition(const glm::vec3& deltaPosition) noexcept {
+        _position += deltaPosition;
+    }
+
+    void AddRotationY(float deltaAngle) noexcept {
+        _eulerRotation.y += deltaAngle;
+    }
 };

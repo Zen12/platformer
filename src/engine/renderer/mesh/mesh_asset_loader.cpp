@@ -257,17 +257,10 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
         }
 
         for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-            // Convert from FBX Y-up coordinates to renderer coordinates (Y-forward, Z-up)
-            // FBX:      X=right, Y=up,      Z=back
-            // Renderer: X=right, Y=forward, Z=up
-            // Transformation: Renderer(x,y,z) = FBX(x, z, y)
-            const float fbx_x = mesh->mVertices[i].x;
-            const float fbx_y = mesh->mVertices[i].y;
-            const float fbx_z = mesh->mVertices[i].z;
-
-            vertices.push_back(fbx_x);   // X stays the same
-            vertices.push_back(fbx_z);   // Z becomes Y
-            vertices.push_back(fbx_y);   // Y becomes Z
+            // Import vertices as-is from Blender (no coordinate transformation)
+            vertices.push_back(mesh->mVertices[i].x);
+            vertices.push_back(mesh->mVertices[i].y);
+            vertices.push_back(mesh->mVertices[i].z);
 
             if (hasTexCoords && mesh->mTextureCoords[0]) {
                 vertices.push_back(mesh->mTextureCoords[0][i].x);
@@ -277,17 +270,9 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
 
         for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
             const aiFace& face = mesh->mFaces[i];
-            // Reverse winding order because coordinate transformation flips handedness
-            // Original: 0, 1, 2 -> Reversed: 0, 2, 1
-            if (face.mNumIndices == 3) {
-                indices.push_back(face.mIndices[0] + indexOffset);
-                indices.push_back(face.mIndices[2] + indexOffset);
-                indices.push_back(face.mIndices[1] + indexOffset);
-            } else {
-                // Non-triangle faces (shouldn't happen with aiProcess_Triangulate)
-                for (unsigned int j = 0; j < face.mNumIndices; j++) {
-                    indices.push_back(face.mIndices[j] + indexOffset);
-                }
+            // Import indices as-is from Blender (no winding order change)
+            for (unsigned int j = 0; j < face.mNumIndices; j++) {
+                indices.push_back(face.mIndices[j] + indexOffset);
             }
         }
 
@@ -301,32 +286,20 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
                 boneNames.reserve(mesh->mNumBones);
                 boneOffsets.reserve(mesh->mNumBones);
 
-                // Coordinate transformation matrix: Blender (Y-up) -> Engine (Z-up, Y-forward)
-                // Swaps Y and Z axes: Engine(x,y,z) = Blender(x,z,y)
-                const glm::mat4 coordTransform(
-                    1.0f, 0.0f, 0.0f, 0.0f,
-                    0.0f, 0.0f, 1.0f, 0.0f,
-                    0.0f, 1.0f, 0.0f, 0.0f,
-                    0.0f, 0.0f, 0.0f, 1.0f
-                );
-
                 for (unsigned int boneIdx = 0; boneIdx < mesh->mNumBones; boneIdx++) {
                     const aiBone* bone = mesh->mBones[boneIdx];
                     boneNames.push_back(bone->mName.C_Str());
 
                     // Convert aiMatrix4x4 to glm::mat4 (Assimp uses row-major, GLM uses column-major)
+                    // Import as-is from Blender (no coordinate transformation)
                     const aiMatrix4x4& m = bone->mOffsetMatrix;
-                    glm::mat4 offsetBlender(
+                    glm::mat4 offset(
                         m.a1, m.b1, m.c1, m.d1,
                         m.a2, m.b2, m.c2, m.d2,
                         m.a3, m.b3, m.c3, m.d3,
                         m.a4, m.b4, m.c4, m.d4
                     );
-
-                    // Transform offset matrix to engine coordinates: T * offset * T^-1
-                    // Since T is symmetric (swaps Y and Z), T^-1 = T
-                    glm::mat4 offsetEngine = coordTransform * offsetBlender * coordTransform;
-                    boneOffsets.push_back(offsetEngine);
+                    boneOffsets.push_back(offset);
                 }
             }
 

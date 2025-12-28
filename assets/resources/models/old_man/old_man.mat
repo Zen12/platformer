@@ -1,0 +1,10 @@
+name: old_man
+is_culling: True
+blend_mode: 0
+shader_opengl:
+  vertex: 71755ee0-39f9-4365-a071-b61707333037
+  fragment: 494667a0-6950-4940-a7a1-72ea7743580f
+shader_gles:
+  vertex: 1cc79072-1e1a-4e91-8d6a-4b0c20d5626a
+  fragment: 7cf6d018-2a37-4344-af60-78bd68e9ea16
+image: 3a2a2175-b65c-4210-9ad2-89cdfc998fcd

@@ -61,7 +61,10 @@ public:
                         view->emplace(entity, *skinnedMeshSerialization);
                     } else if (const auto &animationSerialization = dynamic_cast<SimpleAnimationComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<SimpleAnimationComponent>();
-                        view->emplace(entity, SimpleAnimationComponent(animationSerialization->AnimationGuid));
+                        SimpleAnimationComponent animComp(animationSerialization->AnimationGuid);
+                        animComp.ApplyRootMotion = animationSerialization->ApplyRootMotion;
+                        animComp.RootBoneName = animationSerialization->RootBoneName;
+                        view->emplace(entity, animComp);
                     }
                 }
             }
@@ -85,7 +88,7 @@ public:
                registry->view<CameraComponentV2>(), renderRepository ));
 
             // Animation systems must run BEFORE skinned mesh renderer to compute bone transforms
-            _systems.emplace_back(std::make_unique<SimpleAnimationSystem>(registry->view<SimpleAnimationComponent, SkinnedMeshRendererComponent>(),
+            _systems.emplace_back(std::make_unique<SimpleAnimationSystem>(registry->view<SimpleAnimationComponent, SkinnedMeshRendererComponent, TransformComponentV2>(),
                registry->view<DeltaTimeComponent>(), scenePtr));
 
             _systems.emplace_back(std::make_unique<SkinnedMeshRenderSystem>(registry->view<SkinnedMeshRendererComponent, TransformComponentV2>(),

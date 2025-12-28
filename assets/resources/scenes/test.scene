@@ -4,12 +4,15 @@ entities:
   - tag: "character"
     components:
       - type: transform
-        position: [0.0, 0.0, -5.0]
+        position: [0.0, 0.0, -40.0]
         rotation: [0.0, 0.0, 0.0]
-        scale: [5.0, 5.0, 5.0]
+        scale: [0.1, 0.1, 0.1]
       - type: skinned_mesh_renderer
-        material: 6cc7aff6-26f0-45ed-a454-d0bc6d0c879d
-        mesh: fa9252ad-5501-47bc-8828-8eab8822bc81
+        material: 9b0e0aa7-16d2-48ab-a0fa-3daf042ce0f4
+        mesh: 56336d98-d467-4425-b4af-437dd611fb6f
+      - type: simple_animation
+        animation: a9b8c7d6-e5f4-4a3b-9c8d-7e6f5a4b3c2d
+        apply_root_motion: false
   - guid: main-camera
     tag: main_camera
     components:
