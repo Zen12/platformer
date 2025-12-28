@@ -111,6 +111,8 @@
 ## 0.1.8 Basic polish
 - [ ] Simple particles
 - [ ] Simple audio
+- [ ] PBR
+- [ ] Basic UI (+ data-bindings)
 
 ## Backlog
 - [ ] Proper fix retina issue on webgl and macOS
