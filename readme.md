@@ -61,7 +61,8 @@
 - [x] Coordinate system conversion (Blender Y-up to Engine Y-forward)
 - [x] Debug logging and performance timing
 - [x] Frustum Culling
-- [ ] IK/Animations/Skinned Mesh
+- [x] Animations/Skinned Mesh
+- [ ] Link animation to FSM
 
 ## 0.1.6 NavMesh
 - [ ] NavMesh builder (floating and fix point), grid based for determinism, backed

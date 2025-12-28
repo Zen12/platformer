@@ -34,6 +34,29 @@ public:
             frustum.ExtractPlanes(viewProjection);
 
             for (const auto &[entity, skinnedMesh, transform] : View.each()) {
+                // Initialize bone transforms to bind pose if not yet initialized
+                // (for meshes without animation components)
+                static bool initialized = false;
+                if (!initialized && skinnedMesh.BoneOffsets.size() > 0) {
+                    // Check if this mesh has identity transforms (not yet initialized by animation)
+                    bool needsInit = true;
+                    if (skinnedMesh.BoneTransforms.size() > 0) {
+                        // Check if first bone is identity - if not, assume it's been initialized
+                        const auto& firstBone = skinnedMesh.BoneTransforms[0];
+                        if (firstBone != glm::mat4(1.0f)) {
+                            needsInit = false;
+                        }
+                    }
+
+                    if (needsInit) {
+                        // Set bind pose: just use bone offsets directly
+                        // The mesh is in bind pose when bone transforms equal bone offsets
+                        for (size_t i = 0; i < skinnedMesh.BoneOffsets.size() && i < skinnedMesh.BoneTransforms.size(); i++) {
+                            skinnedMesh.BoneTransforms[i] = skinnedMesh.BoneOffsets[i];
+                        }
+                    }
+                }
+
                 const auto &model = transform.GetModel();
 
                 // Extract position from model matrix (last column)

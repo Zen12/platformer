@@ -14,6 +14,9 @@ public:
     // Bone transformation matrices (will be updated by animation system)
     std::vector<glm::mat4> BoneTransforms;
 
+    // Local bone transforms (before hierarchy computation)
+    std::vector<glm::mat4> LocalBoneTransforms;
+
     // Bone names (for mapping animation bone names to indices)
     std::vector<std::string> BoneNames;
 

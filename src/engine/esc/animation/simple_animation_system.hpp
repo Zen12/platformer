@@ -218,23 +218,18 @@ public:
                 boneNameToIndex[skinnedMesh.BoneNames[i]] = static_cast<int>(i);
             }
 
-            // Step 1: Collect local transforms from animation
-            std::vector<glm::mat4> localTransforms(skinnedMesh.BoneNames.size(), glm::mat4(1.0f));
+            // Initialize local transforms storage if needed
+            if (skinnedMesh.LocalBoneTransforms.size() != skinnedMesh.BoneNames.size()) {
+                skinnedMesh.LocalBoneTransforms.resize(skinnedMesh.BoneNames.size(), glm::mat4(1.0f));
+            }
 
-            static bool loggedOnce = false;
-            int matchedBones = 0;
+            // Step 1: Collect local transforms from animation
+            std::vector<glm::mat4>& localTransforms = skinnedMesh.LocalBoneTransforms;
+
             for (const auto& channel : animData->Channels) {
                 std::string meshBoneName = TryMatchBoneName(channel.BoneName, boneNameToIndex);
                 if (meshBoneName.empty()) {
-                    if (!loggedOnce) {
-                        std::cout << "[ANIM] No match for animation bone: " << channel.BoneName << std::endl;
-                    }
                     continue;
-                } else {
-                    matchedBones++;
-                }
-                if (!loggedOnce) {
-                    std::cout << "[ANIM] Matched: " << channel.BoneName << " -> " << meshBoneName << std::endl;
                 }
 
                 const int boneIndex = boneNameToIndex[meshBoneName];
@@ -300,16 +295,6 @@ public:
                         }
                     }
                 }
-            }
-
-            if (!loggedOnce) {
-                std::cout << "[ANIM] Matched " << matchedBones << " / " << animData->Channels.size() << " animation bones" << std::endl;
-                std::cout << "[ANIM] Mesh has " << skinnedMesh.BoneNames.size() << " bones" << std::endl;
-                std::cout << "[ANIM] All mesh bones:" << std::endl;
-                for (size_t i = 0; i < skinnedMesh.BoneNames.size(); i++) {
-                    std::cout << "  [" << i << "] " << skinnedMesh.BoneNames[i] << std::endl;
-                }
-                loggedOnce = true;
             }
 
             // Step 2: Compute world-space transforms using bone hierarchy
