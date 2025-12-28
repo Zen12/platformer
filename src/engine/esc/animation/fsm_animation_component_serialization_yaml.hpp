@@ -12,12 +12,6 @@ namespace YAML {
             if (node["loop"]) {
                 rhs.Loop = node["loop"].as<bool>();
             }
-            if (node["apply_root_motion"]) {
-                rhs.ApplyRootMotion = node["apply_root_motion"].as<bool>();
-            }
-            if (node["root_bone_name"]) {
-                rhs.RootBoneName = node["root_bone_name"].as<std::string>();
-            }
             return true;
         }
     };

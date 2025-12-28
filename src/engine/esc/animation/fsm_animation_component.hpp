@@ -2,6 +2,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <utility>
 
 class FsmAnimationComponent final {
 public:
@@ -21,13 +22,7 @@ public:
     float TransitionDuration = 0.0f;
     float TransitionProgress = 0.0f;
 
-    bool ApplyRootMotion = false;
-    std::string RootBoneName = "mixamorig:Hips_01";
-    glm::vec3 PreviousRootPosition = glm::vec3(0.0f);
-    glm::quat PreviousRootRotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
-    bool FirstFrame = true;
-
     FsmAnimationComponent() = default;
-    explicit FsmAnimationComponent(const std::string& fsmGuid)
-        : FsmGuid(fsmGuid) {}
+    explicit FsmAnimationComponent(std::string  fsmGuid)
+        : FsmGuid(std::move(fsmGuid)) {}
 };

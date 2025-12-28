@@ -22,94 +22,10 @@ private:
     std::unordered_map<std::string, std::shared_ptr<AnimationData>> _loadedAnimations;
 
     // Helper: Try to match animation bone name to mesh bone name
-    // Handles different naming conventions (Mixamo -> Rigify, etc.)
     static std::string TryMatchBoneName(const std::string& animBoneName, const std::unordered_map<std::string, int>& boneMap) {
-        // Try exact match first
         if (boneMap.find(animBoneName) != boneMap.end()) {
             return animBoneName;
         }
-
-        // Strip "mixamorig:" prefix
-        std::string boneName = animBoneName;
-        const std::string mixamoPrefix = "mixamorig:";
-        if (boneName.substr(0, mixamoPrefix.length()) == mixamoPrefix) {
-            boneName = boneName.substr(mixamoPrefix.length());
-        }
-
-        // Try direct match after prefix strip
-        if (boneMap.find(boneName) != boneMap.end()) {
-            return boneName;
-        }
-
-        // Mixamo -> Rigify bone name mapping
-        static const std::unordered_map<std::string, std::string> mixamoToRigify = {
-            // Central bones
-            {"Hips", "hip"},
-            {"Spine", "hip"},  // Map to hip as base
-            {"Spine1", "chest"},
-            {"Spine2", "chest"},  // Both spine bones map to chest
-            {"Neck", "neck"},
-            {"Head", "head"},
-
-            // Left arm
-            {"LeftShoulder", "KTF.L"},
-            {"LeftArm", "upperarm.L"},
-            {"LeftForeArm", "lowerarm.L"},
-            {"LeftHand", "hand.L"},
-
-            // Right arm
-            {"RightShoulder", "KTF.R"},
-            {"RightArm", "upperarm.R"},
-            {"RightForeArm", "lowerarm.R"},
-            {"RightHand", "hand.R"},
-
-            // Left leg
-            {"LeftUpLeg", "upperleg.L"},
-            {"LeftLeg", "lowerleg.L"},
-            {"LeftFoot", "foot.L"},
-            {"LeftToeBase", "toose.L"},
-
-            // Right leg
-            {"RightUpLeg", "upperleg.R"},
-            {"RightLeg", "lowerleg.R"},
-            {"RightFoot", "foot.R"},
-            {"RightToeBase", "toose.R"},
-
-            // Fingers - Left hand
-            {"LeftHandThumb1", "thumb.01.L"},
-            {"LeftHandThumb2", "thumb.02.L"},
-            {"LeftHandIndex1", "f_index.01.L"},
-            {"LeftHandIndex2", "f_index.02.L"},
-            {"LeftHandMiddle1", "f_middle.01.L"},
-            {"LeftHandMiddle2", "f_middle.02.L"},
-            {"LeftHandRing1", "f_ring.01.L"},
-            {"LeftHandRing2", "f_ring.02.L"},
-            {"LeftHandPinky1", "f_pinky.01.L"},
-            {"LeftHandPinky2", "f_pinky.02.L"},
-
-            // Fingers - Right hand
-            {"RightHandThumb1", "thumb.01.R"},
-            {"RightHandThumb2", "thumb.02.R"},
-            {"RightHandIndex1", "f_index.01.R"},
-            {"RightHandIndex2", "f_index.02.R"},
-            {"RightHandMiddle1", "f_middle.01.R"},
-            {"RightHandMiddle2", "f_middle.02.R"},
-            {"RightHandRing1", "f_ring.01.R"},
-            {"RightHandRing2", "f_ring.02.R"},
-            {"RightHandPinky1", "f_pinky.01.R"},
-            {"RightHandPinky2", "f_pinky.02.R"},
-        };
-
-        // Try Mixamo -> Rigify mapping
-        auto it = mixamoToRigify.find(boneName);
-        if (it != mixamoToRigify.end()) {
-            const std::string& rigifyName = it->second;
-            if (boneMap.find(rigifyName) != boneMap.end()) {
-                return rigifyName;
-            }
-        }
-
-        // No match found
         return "";
     }
 
@@ -246,55 +162,6 @@ public:
                 localTransform = glm::scale(localTransform, scale);
 
                 localTransforms[boneIndex] = localTransform;
-            }
-
-            // Root motion extraction and application
-            if (anim.ApplyRootMotion && !anim.RootBoneName.empty()) {
-                auto rootBoneIt = boneNameToIndex.find(anim.RootBoneName);
-                if (rootBoneIt != boneNameToIndex.end()) {
-                    const int rootBoneIndex = rootBoneIt->second;
-
-                    // Find the root bone channel in animation
-                    for (const auto& channel : animData->Channels) {
-                        std::string meshBoneName = TryMatchBoneName(channel.BoneName, boneNameToIndex);
-                        if (meshBoneName == anim.RootBoneName) {
-                            // Sample current root position and rotation
-                            glm::vec3 currentRootPos = SamplePosition(channel.PositionKeys, anim.Time);
-                            glm::quat currentRootRot = SampleRotation(channel.RotationKeys, anim.Time);
-
-                            if (anim.FirstFrame) {
-                                // First frame - just store, don't apply
-                                anim.PreviousRootPosition = currentRootPos;
-                                anim.PreviousRootRotation = currentRootRot;
-                                anim.FirstFrame = false;
-                            } else {
-                                // Calculate delta movement (XZ only for horizontal movement)
-                                glm::vec3 deltaPos = currentRootPos - anim.PreviousRootPosition;
-                                deltaPos.y = 0.0f; // Ignore vertical movement
-
-                                // Apply delta directly without rotation transform
-                                transform.AddPosition(deltaPos);
-
-                                // Store current as previous
-                                anim.PreviousRootPosition = currentRootPos;
-                                anim.PreviousRootRotation = currentRootRot;
-
-                                // Remove root motion from bone animation (set to zero delta)
-                                // This prevents the character from "sliding" while also moving
-                                glm::vec3 position(0.0f);
-                                glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
-                                glm::vec3 scale = SampleScale(channel.ScaleKeys, anim.Time);
-
-                                glm::mat4 localTransform = glm::mat4(1.0f);
-                                localTransform = glm::translate(localTransform, position);
-                                localTransform = localTransform * glm::toMat4(rotation);
-                                localTransform = glm::scale(localTransform, scale);
-                                localTransforms[rootBoneIndex] = localTransform;
-                            }
-                            break;
-                        }
-                    }
-                }
             }
 
             // Step 2: Compute world-space transforms using bone hierarchy

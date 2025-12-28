@@ -9,8 +9,6 @@ protected:
         if (const auto comp = component.lock()) {
             comp->FsmGuid = serialization.FsmGuid;
             comp->Loop = serialization.Loop;
-            comp->ApplyRootMotion = serialization.ApplyRootMotion;
-            comp->RootBoneName = serialization.RootBoneName;
         }
     }
 };

@@ -24,7 +24,6 @@ public:
                 comp->Time = 0.0f;
             }
             comp->CurrentAnimationGuid = _animationGuid;
-            comp->FirstFrame = true;
             comp->OnCompleteTrigger = _onCompleteTrigger;
             comp->HasCompletedOnce = false;
         }

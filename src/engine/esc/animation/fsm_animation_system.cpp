@@ -63,7 +63,6 @@ void FsmAnimationSystem::OnTick() {
                 anim.IsTransitioning = false;
                 anim.CurrentAnimationGuid = anim.ToAnimationGuid;
                 // Don't reset Time - let animation continue from accumulated time during transition
-                anim.FirstFrame = true;
                 anim.TransitionProgress = 0.0f;
                 anim.HasCompletedOnce = false;  // Reset for next animation state
             }
@@ -206,48 +205,6 @@ void FsmAnimationSystem::OnTick() {
                 localTransform = glm::scale(localTransform, scale);
 
                 localTransforms[boneIndex] = localTransform;
-            }
-        }
-
-        // Root motion (only for non-transitioning animations)
-        if (!anim.IsTransitioning && anim.ApplyRootMotion && !anim.RootBoneName.empty()) {
-            auto rootBoneIt = boneNameToIndex.find(anim.RootBoneName);
-            if (rootBoneIt != boneNameToIndex.end()) {
-                const int rootBoneIndex = rootBoneIt->second;
-
-                auto animData = _loadedAnimations[anim.CurrentAnimationGuid];
-                if (animData) {
-                    for (const auto& channel : animData->Channels) {
-                        std::string meshBoneName = TryMatchBoneName(channel.BoneName, boneNameToIndex);
-                        if (meshBoneName == anim.RootBoneName) {
-                            glm::vec3 currentRootPos = SamplePosition(channel.PositionKeys, anim.Time);
-                            glm::quat currentRootRot = SampleRotation(channel.RotationKeys, anim.Time);
-
-                            if (anim.FirstFrame) {
-                                anim.PreviousRootPosition = currentRootPos;
-                                anim.PreviousRootRotation = currentRootRot;
-                                anim.FirstFrame = false;
-                            } else {
-                                glm::vec3 deltaPos = currentRootPos - anim.PreviousRootPosition;
-                                deltaPos.y = 0.0f;
-                                transform.AddPosition(deltaPos);
-                                anim.PreviousRootPosition = currentRootPos;
-                                anim.PreviousRootRotation = currentRootRot;
-
-                                glm::vec3 position(0.0f);
-                                glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
-                                glm::vec3 scale = SampleScale(channel.ScaleKeys, anim.Time);
-
-                                glm::mat4 localTransform = glm::mat4(1.0f);
-                                localTransform = glm::translate(localTransform, position);
-                                localTransform = localTransform * glm::toMat4(rotation);
-                                localTransform = glm::scale(localTransform, scale);
-                                localTransforms[rootBoneIndex] = localTransform;
-                            }
-                            break;
-                        }
-                    }
-                }
             }
         }
 

@@ -68,15 +68,11 @@ public:
                     } else if (const auto &animationSerialization = dynamic_cast<SimpleAnimationComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<SimpleAnimationComponent>();
                         SimpleAnimationComponent animComp(animationSerialization->AnimationGuid);
-                        animComp.ApplyRootMotion = animationSerialization->ApplyRootMotion;
-                        animComp.RootBoneName = animationSerialization->RootBoneName;
                         view->emplace(entity, animComp);
                     } else if (const auto &fsmAnimationSerialization = dynamic_cast<FsmAnimationComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<FsmAnimationComponent>();
                         FsmAnimationComponent fsmAnimComp(fsmAnimationSerialization->FsmGuid);
                         fsmAnimComp.Loop = fsmAnimationSerialization->Loop;
-                        fsmAnimComp.ApplyRootMotion = fsmAnimationSerialization->ApplyRootMotion;
-                        fsmAnimComp.RootBoneName = fsmAnimationSerialization->RootBoneName;
                         view->emplace(entity, fsmAnimComp);
                     } else if (const auto &cameraControllerSerialization = dynamic_cast<CameraControllerComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<CameraControllerComponent>();
