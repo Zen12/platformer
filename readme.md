@@ -16,15 +16,58 @@
 - [FSM System](docs/fsm-system.md) - Finite State Machine architecture and workflow
 
 ## 🦾 Features
-- 🏢 macOS, windows, web
-- 🔳 UI system (HTML/CSS-like)
+- 🏢 Platform
+  - [x] macOS
+  - [x] web
+  - [ ] windows
+  - [ ] linux
+- 🔳 UI system 
+  - [x] Page system
+  - [x] Hooks
+  - [ ] Data-binding
 - 📀 Asset management
+  - [x] Lazy load 
+  - [x] .Meta file support
+  - [ ] Ref count 
 - 🚀 ESC
+  - [x] Single thread support
+  - [ ] Multi thread support
 - 🔦 Basic mesh 3d rendering
+  - [x] Material abstraction
+  - [x] Instance rendering (per mesh+material)
+  - [x] Frustum culling
+  - [ ] PBR
+- 💃 Skinned mesh rendering 
+  - [x] Bones support
+  - [ ] Animation via state (FSM)
+  - [ ] IK
+  - [ ] Instance rendering
 - 🧠 Nav mesh
-- 🔄 FSM
+  - [ ] 2d builder
+  - [ ] AStar
+  - [ ] RVO
+- 🔄 FSM 
+  - [x] Node support for multiple actions
+  - [x] Scene management Action
+  - [x] UI management Action
+  - [x] Conditions
+  - [ ] SubFSM
 - 💫 MCP
-
+  - [x] Claude support
+  - [x] Asset management with .meta
+  - [x] Import/export systems for .blend and .glb
+  - [x] Hooks to blender and gimp mcp
+  - [x] Scene awareness (fast scene builder)
+  - [ ] File lock system (support for multiple agents)
+- 💠❌Prefab (ROADMAP)
+  - [ ] Entity prefab
+  - [ ] Nested prefab
+- ▶️❌Editor (ROADMAP)
+  - [ ] Gameplayer recorder
+  - [ ] Scene visualize 
+  - [ ] Undo system
+  - [ ] Hooks to MCP
+ 
 ## 🔨 Project structure
 ``` 
 ⚙️ .gitignore 
@@ -33,8 +76,8 @@
     └─ 🗒️ project.yaml
 📦 bin                  # build folder for ./run.sh
 📚 cmake                # packages
-    ├─ ⚙️ Find***.cmake
-🛠️ mcp              
+    └─ ⚙️ Find***.cmake
+🛠️ mcp_tools              
 💻 src                  # source code
     ├─ 🚀 main.cpp      # entry point 
     └─ 🧠 engine
@@ -50,12 +93,6 @@
 
 # 🏃 Roadmap
 
-## 0.1.4 Model Context Protocol (MCP)
-- [x] Python scripts for fsm
-- [x] Python scripts for import
-- [x] Python scripts for ui
-- [x] Python scripts for shader/materials/images
-
 ## 0.1.5 Mesh Rendering
 - [x] Mesh Loader (GLB format via Assimp)
 - [x] Coordinate system conversion (Blender Y-up to Engine Y-forward)
@@ -66,16 +103,17 @@
 
 ## 0.1.6 NavMesh
 - [ ] Video recorder 
-- [ ] NavMesh builder (floating and fix point), grid based for determinism, backed
-- [ ] Astar navigation (path query with smooth path)
+- [ ] NavMesh builder (floating and fix point), grid based for determinism, 2d only
+- [ ] Astar navigation (path query with smooth path) + RVO
 
 ## 0.1.7 3d platformer game
 - [ ] Behaviour Tree as ESC
-- [ ] Horde-skinned-instance rendering
+- [ ] Proper bounce component or part of renderer, need to filet by bounds and not hardcoded vals
 - [ ] One level of 3d platformer with horde AI(Alien shooter?)
 
 ## Backlog
 - [ ] Proper fix retina issue on webgl and macOS
-- [ ] Proper bounce component or part of renderer, need to filet by bounds and not hardcoded vals
+- [ ] Instance rendering for skinned mesh (per mesh+material)
+- [ ] Proper AssetManager (not link to scene), some refcount solution
 
 🇲🇩
