@@ -12,6 +12,10 @@ namespace YAML {
             rhs.BlendMode = node["blend_mode"].as<int>();
             rhs.IsCulling = node["is_culling"].as<bool>();
 
+            if (node["is_depth_test"]) {
+                rhs.IsDepthTest = node["is_depth_test"].as<bool>();
+            }
+
 #ifdef __EMSCRIPTEN__
             if (const auto shaderNode = node["shader_gles"]) {
                 rhs.VertexShaderGuid = shaderNode["vertex"].as<std::string>();

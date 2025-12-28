@@ -10,6 +10,8 @@
 #include "../esc/skinned_mesh_renderer/skinned_mesh_renderer_component_serialization_yaml.hpp"
 #include "../esc/camera/camera_component_serialization.hpp"
 #include "../esc/camera/camera_component_serialization_yaml.hpp"
+#include "../esc/camera/camera_controller_component_serialization.hpp"
+#include "../esc/camera/camera_controller_component_serialization_yaml.hpp"
 #include "../esc/animation/simple_animation_component_serialization.hpp"
 #include "../esc/animation/simple_animation_component_serialization_yaml.hpp"
 
@@ -57,6 +59,7 @@ namespace YAML {
             using ComponentSerialization = std::function<std::unique_ptr<ComponentSerialization>(const YAML::Node&)>;
             static const std::unordered_map<std::string, ComponentSerialization> pairs = {
                 { "camera",                [](const YAML::Node& n){ return Parse<CameraComponentSerialization>(n); } },
+                { "camera_controller",     [](const YAML::Node& n){ return Parse<CameraControllerComponentSerialization>(n); } },
                 { "transform",             [](const YAML::Node& n){ return Parse<TransformComponentSerialization>(n); } },
                 { "mesh_renderer",         [](const YAML::Node& n){ return Parse<MeshRendererComponentSerialization>(n); } },
                 { "skinned_mesh_renderer", [](const YAML::Node& n){ return Parse<SkinnedMeshRendererComponentSerialization>(n); } },

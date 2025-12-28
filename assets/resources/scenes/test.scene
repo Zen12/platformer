@@ -1,18 +1,8 @@
 name: test_scene
 type: scene
 entities:
-  - components:
-      - type: transform
-        position: [-5.0, 0.0, -40.0]
-        rotation: [0.0, 0.0, 0.0]
-        scale: [0.1, 0.1, 0.1]
-      - type: skinned_mesh_renderer
-        material: 1f675ea6-d9c2-442a-a22a-c601695d537d
-        mesh: 54664be6-1926-4333-8e75-1a3dd4d001a3
-      - type: simple_animation
-        animation: 9df5a4bb-b644-4274-9c11-1799cfd3d98b
-        apply_root_motion: false
-  - components:
+  - tag: "zombie"
+    components:
       - type: transform
         position: [5.0, 0.0, -40.0]
         rotation: [0.0, 0.0, 0.0]
@@ -28,7 +18,7 @@ entities:
       - type: transform
         position: [0.0, 0.0, -40.0]
         rotation: [0.0, 0.0, 0.0]
-        scale: [0.1, 0.1, 0.1]
+        scale: [9.0, 9.0, 9.0]
       - type: skinned_mesh_renderer
         material: edb1cb63-5e34-47b8-9abe-9bace664825a
         mesh: 9cfdfa5d-180d-4a9b-a780-e5042e17367c
@@ -45,6 +35,9 @@ entities:
       - type: camera
         perspectiveNearPlane: 0.1
         perspectiveFarPlane: 100.0
-        perspectiveAspect: 130
+        perspectiveAspect: 60
         orthographicAspect: 70
         isPerspective: true
+      - type: camera_controller
+        move_speed: 10.0
+        mouse_sensitivity: 0.1

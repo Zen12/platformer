@@ -1,5 +1,6 @@
 name: zombie
 is_culling: True
+is_depth_test: True
 blend_mode: 0
 shader_opengl:
   vertex: 71755ee0-39f9-4365-a071-b61707333037

@@ -9,4 +9,5 @@ struct MaterialAsset
     std::string Image{};
     int BlendMode = 0;
     bool IsCulling = false;
+    bool IsDepthTest = false;
 };

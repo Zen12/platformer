@@ -75,7 +75,7 @@ public:
         const auto material = _material.lock();
         if (!material) return;
 
-        material->UseShader();
+        material->Bind();  // This sets up depth testing, blend mode, and culling
 
         // Set projection matrix
         glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(_window.lock()->GetWidth()),

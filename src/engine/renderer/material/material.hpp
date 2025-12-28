@@ -9,12 +9,14 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
 
 
 enum class BlendMode {
     None = 0,
     AlphaAdditive = 1,
     ColorAdditive = 2,
+    StandardAlpha = 3,
 };
 
 class Material
@@ -24,6 +26,7 @@ private:
     std::weak_ptr<Font> _font{};
     std::vector<std::weak_ptr<Texture>> _textures{};
     bool _isFaceCulled{};
+    bool _isDepthTestEnabled{};
     BlendMode _blendMode{};
 
 
@@ -75,6 +78,14 @@ public:
 
     [[nodiscard]] bool GetCulling() const noexcept {
         return _isFaceCulled;
+    }
+
+    void SetDepthTest(const bool &depthTest) noexcept {
+        _isDepthTestEnabled = depthTest;
+    }
+
+    [[nodiscard]] bool GetDepthTest() const noexcept {
+        return _isDepthTestEnabled;
     }
 
     [[nodiscard]] int32_t GetShaderId() const noexcept

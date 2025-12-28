@@ -16,9 +16,19 @@ void Material::Bind() const
     if (const auto shader = _shader.lock())
     {
         if (_isFaceCulled) {
-            glEnable(GL_CULL_FACE); // spine runtime requires
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
         } else {
             glDisable(GL_CULL_FACE);
+        }
+
+        if (_isDepthTestEnabled) {
+            glEnable(GL_DEPTH_TEST);
+            glDepthFunc(GL_LESS);
+            glDepthMask(GL_TRUE);  // Enable depth writes for 3D
+        } else {
+            glDisable(GL_DEPTH_TEST);
+            glDepthMask(GL_FALSE);  // Disable depth writes for UI
         }
 
         switch (_blendMode) {
@@ -32,6 +42,10 @@ void Material::Bind() const
             case BlendMode::ColorAdditive:
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+                break;
+            case BlendMode::StandardAlpha:
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 break;
         }
 

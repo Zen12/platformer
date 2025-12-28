@@ -5,6 +5,9 @@
 #include "animation/simple_animation_system.hpp"
 #include "camera/camera_component.hpp"
 #include "camera/camera_system.hpp"
+#include "camera/camera_controller_component.hpp"
+#include "camera/camera_controller_component_serialization.hpp"
+#include "camera/camera_controller_system.hpp"
 #include "entt/entt.hpp"
 #include "mesh_renderer/mesh_renderer_component.hpp"
 #include "mesh_renderer/mesh_render_system.hpp"
@@ -65,6 +68,12 @@ public:
                         animComp.ApplyRootMotion = animationSerialization->ApplyRootMotion;
                         animComp.RootBoneName = animationSerialization->RootBoneName;
                         view->emplace(entity, animComp);
+                    } else if (const auto &cameraControllerSerialization = dynamic_cast<CameraControllerComponentSerialization*>(component.get())) {
+                        const auto &view = registry->view<CameraControllerComponent>();
+                        CameraControllerComponent controller;
+                        controller.SetMoveSpeed(cameraControllerSerialization->MoveSpeed);
+                        controller.SetMouseSensitivity(cameraControllerSerialization->MouseSensitivity);
+                        view->emplace(entity, controller);
                     }
                 }
             }
@@ -81,6 +90,9 @@ public:
             _systems.emplace_back(std::make_unique<WindowSystem>(windowView, scenePtr->GetWindow()));
 
             _systems.emplace_back(std::make_unique<DeltaTimeSystem>(registry->view<DeltaTimeComponent>()));
+
+            _systems.emplace_back(std::make_unique<CameraControllerSystem>(registry->view<CameraControllerComponent, TransformComponentV2>(),
+                registry->view<DeltaTimeComponent>(), scenePtr));
 
             _systems.emplace_back(std::make_unique<CameraSystem>(registry->view<WindowComponent>(),registry->view<CameraComponentV2, TransformComponentV2>()));
 

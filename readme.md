@@ -65,6 +65,7 @@
 - [ ] Link animation to FSM
 
 ## 0.1.6 NavMesh
+- [ ] Video recorder 
 - [ ] NavMesh builder (floating and fix point), grid based for determinism, backed
 - [ ] Astar navigation (path query with smooth path)
 
