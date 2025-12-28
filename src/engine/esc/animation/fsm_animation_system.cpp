@@ -18,24 +18,21 @@ void FsmAnimationSystem::OnTick() {
 
     for (const auto &[entity, anim, skinnedMesh, transform] : View.each()) {
         // Create FsmController if not exists
-        if (!anim.FsmGuid.empty() && _fsmControllers.find(entity) == _fsmControllers.end()) {
+        if (!anim.FsmGuid.empty() && !anim.Controller) {
             if (auto assetManager = scene->GetAssetManager().lock()) {
                 try {
                     auto fsmAsset = assetManager->LoadAssetByGuid<FsmAsset>(anim.FsmGuid);
 
                     // Create shared_ptr to animation component with custom no-op deleter
                     // (component is owned by ECS registry, not by this shared_ptr)
-                    auto animCompPtr = std::shared_ptr<FsmAnimationComponent>(&anim, [](FsmAnimationComponent*){});
-
-                    // Store the shared_ptr to keep it alive
-                    _animationComponentPtrs[entity] = animCompPtr;
+                    anim.SelfPtr = std::shared_ptr<FsmAnimationComponent>(&anim, [](FsmAnimationComponent*){});
 
                     // Create FsmController (managers are nullptr since animation FSMs don't need UI/scene management)
-                    _fsmControllers[entity] = std::make_shared<FsmController>(
+                    anim.Controller = std::make_shared<FsmController>(
                         fsmAsset,
                         nullptr,
                         nullptr,
-                        animCompPtr
+                        anim.SelfPtr
                     );
 
                     std::cout << "Created FSM controller for entity with FSM: " << fsmAsset.Name << std::endl;
@@ -46,8 +43,8 @@ void FsmAnimationSystem::OnTick() {
         }
 
         // Update FsmController
-        if (_fsmControllers.find(entity) != _fsmControllers.end()) {
-            _fsmControllers[entity]->Update();
+        if (anim.Controller) {
+            anim.Controller->Update();
         }
 
         // Update transition
@@ -56,8 +53,8 @@ void FsmAnimationSystem::OnTick() {
             if (anim.TransitionProgress >= anim.TransitionDuration) {
                 // Transition complete
                 // Set trigger if specified
-                if (!anim.OnCompleteTrigger.empty() && _fsmControllers.find(entity) != _fsmControllers.end()) {
-                    _fsmControllers[entity]->SetTrigger(anim.OnCompleteTrigger);
+                if (!anim.OnCompleteTrigger.empty() && anim.Controller) {
+                    anim.Controller->SetTrigger(anim.OnCompleteTrigger);
                 }
 
                 anim.IsTransitioning = false;
@@ -179,8 +176,8 @@ void FsmAnimationSystem::OnTick() {
             if (anim.Time >= animData->Duration && !anim.HasCompletedOnce) {
                 anim.HasCompletedOnce = true;
                 // Set trigger if specified
-                if (!anim.OnCompleteTrigger.empty() && _fsmControllers.find(entity) != _fsmControllers.end()) {
-                    _fsmControllers[entity]->SetTrigger(anim.OnCompleteTrigger);
+                if (!anim.OnCompleteTrigger.empty() && anim.Controller) {
+                    anim.Controller->SetTrigger(anim.OnCompleteTrigger);
                 }
             }
 

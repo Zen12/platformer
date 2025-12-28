@@ -25,8 +25,6 @@ private:
     const TypeDeltaTime _deltaTimeView;
     const std::weak_ptr<Scene> _scene;
     std::unordered_map<std::string, std::shared_ptr<AnimationData>> _loadedAnimations;
-    std::unordered_map<entt::entity, std::shared_ptr<FsmController>> _fsmControllers;
-    std::unordered_map<entt::entity, std::shared_ptr<FsmAnimationComponent>> _animationComponentPtrs;
 
     // Helper: Try to match animation bone name to mesh bone name
     static std::string TryMatchBoneName(const std::string& animBoneName, const std::unordered_map<std::string, int>& boneMap) {
