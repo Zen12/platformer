@@ -25,6 +25,12 @@
 #include "action/animation_state_transition_action.hpp"
 #include "action/animation_state_transition_action_serialization.hpp"
 #include "action/animation_state_transition_action_serialization_yaml.hpp"
+#include "action/start_video_recording_action.hpp"
+#include "action/start_video_recording_action_serialization.hpp"
+#include "action/start_video_recording_action_serialization_yaml.hpp"
+#include "action/stop_video_recording_action.hpp"
+#include "action/stop_video_recording_action_serialization.hpp"
+#include "action/stop_video_recording_action_serialization_yaml.hpp"
 #include "action/action_serialization_data.hpp"
 
 namespace YAML {
@@ -65,6 +71,12 @@ namespace YAML {
                 data.Param2 = serialization.ToAnimationGuid;
                 data.Param3 = std::to_string(serialization.TransitionTime);
                 data.Param4 = serialization.OnCompleteTrigger;
+            } else if (type == "start_video_recording") {
+                const auto serialization = node.as<StartVideoRecordingActionSerialization>();
+                data.Param = serialization.OutputFile;
+                data.Param2 = std::to_string(serialization.Fps);
+            } else if (type == "stop_video_recording") {
+                // No parameters needed for stop action
             }
 
             return data;

@@ -12,6 +12,7 @@
 #include "fsm/fsm_controller.hpp"
 #include "renderer/ui_manager.hpp"
 #include "renderer/controller/opengl_render_controller.hpp"
+#include "renderer/video/video_recorder.hpp"
 #include "scene/scene_manager.hpp"
 
 class Engine {
@@ -23,6 +24,7 @@ private:
     std::shared_ptr<UIManager> _uiManager;
     std::shared_ptr<Window> _window;
     std::shared_ptr<OpenGLRenderController> _renderController;
+    std::shared_ptr<VideoRecorder> _videoRecorder;
 
     std::filesystem::path _projectPath;
     ProjectAsset _projectAsset;
@@ -44,4 +46,6 @@ public:
     [[nodiscard]] bool IsTickable() const;
 
     [[nodiscard]] bool IsReloadRequested() const;
+
+    [[nodiscard]] std::shared_ptr<VideoRecorder> GetVideoRecorder() const { return _videoRecorder; }
 };

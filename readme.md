@@ -67,7 +67,7 @@
   - [ ] Entity prefab
   - [ ] Nested prefab
 - ▶️Editor (0.2+)
-  - [ ] Gameplayer recorder
+  - [x] Gameplayer recorder
   - [ ] Scene visualize 
   - [ ] MCP as Editor
 - 💥Particle System (0.2+)
@@ -92,6 +92,7 @@
 🐛 run_debug.sh         # debug build desktop
 🌐 run_web.sh           # release build webgl
 💫 run_claude.sh        # setup and run claude
+▶️ run_record.sh        # setup and record video
 ⚙️ CMakeLists.txt
 📘 readme.md
  ```
@@ -99,7 +100,7 @@
 # 🏃 Roadmap
 
 ## 0.1.6 NavMesh
-- [ ] Video recorder 
+- [x] Video recorder 
 - [ ] NavMesh builder (floating and fix point), grid based for determinism, 2d only
 - [ ] Astar navigation (path query with smooth path) + RVO
 

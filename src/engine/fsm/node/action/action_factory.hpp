@@ -14,6 +14,11 @@
 #include "log_action.hpp"
 #include "animation_state_action.hpp"
 #include "animation_state_transition_action.hpp"
+#include "start_video_recording_action.hpp"
+#include "stop_video_recording_action.hpp"
+
+// Forward declaration
+class VideoRecorder;
 
 class ActionFactory {
 private:
@@ -21,6 +26,7 @@ private:
     std::shared_ptr<SceneManager> _sceneManager;
     std::unordered_map<std::string, bool>& _triggers;
     std::unordered_map<SystemTriggers, bool>& _systemTriggers;
+    std::shared_ptr<VideoRecorder> _videoRecorder;  // Optional, for video recording
     std::weak_ptr<FsmAnimationComponent> _animationComponent;  // Optional, for animation FSMs
 
 public:
@@ -28,11 +34,13 @@ public:
                   std::shared_ptr<SceneManager> sceneManager,
                   std::unordered_map<std::string, bool>& triggers,
                   std::unordered_map<SystemTriggers, bool>& systemTriggers,
+                  std::shared_ptr<VideoRecorder> videoRecorder = nullptr,
                   std::weak_ptr<FsmAnimationComponent> animationComponent = std::weak_ptr<FsmAnimationComponent>())
         : _uiManager(std::move(uiManager)),
           _sceneManager(std::move(sceneManager)),
           _triggers(triggers),
           _systemTriggers(systemTriggers),
+          _videoRecorder(std::move(videoRecorder)),
           _animationComponent(std::move(animationComponent)) {}
 
     [[nodiscard]] UiPageAction CreateUiPageAction(const std::string& pageGuid) const {
@@ -73,5 +81,13 @@ public:
 
     [[nodiscard]] AnimationStateTransitionAction CreateAnimationStateTransitionAction(const std::string& fromAnimationGuid, const std::string& toAnimationGuid, float transitionTime, const std::string& onCompleteTrigger = "") const {
         return {fromAnimationGuid, toAnimationGuid, transitionTime, onCompleteTrigger, _animationComponent};
+    }
+
+    [[nodiscard]] StartVideoRecordingAction CreateStartVideoRecordingAction(const std::string& outputPath, int fps) const {
+        return {outputPath, fps, _videoRecorder};
+    }
+
+    [[nodiscard]] StopVideoRecordingAction CreateStopVideoRecordingAction() const {
+        return StopVideoRecordingAction(_videoRecorder);
     }
 };

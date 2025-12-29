@@ -26,12 +26,13 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
     _sceneManager = std::make_shared<SceneManager>(_window, _assetManager, _inputSystem);
     _uiManager = std::make_shared<UIManager>(_assetManager, _sceneManager, _window);
     _renderController = std::make_shared<OpenGLRenderController>(_sceneManager);
+    _videoRecorder = std::make_shared<VideoRecorder>();
 
     _window->WinInit();
     _assetManager->Init();
 
     const auto mainFsm = _assetManager->LoadAssetByGuid<FsmAsset>(_projectAsset.MainFsm);
-    _fsmController = std::make_unique<FsmController>(mainFsm, _sceneManager, _uiManager);
+    _fsmController = std::make_unique<FsmController>(mainFsm, _sceneManager, _uiManager, _videoRecorder);
 
     _uiManager->Initialize();
 
@@ -98,6 +99,11 @@ void Engine::Tick() {
 
     _renderController->Render(_sceneManager->GetRenderRepository());
     _uiManager->Update();
+
+    // Capture frame for video recording if active
+    if (_videoRecorder->IsRecording()) {
+        _videoRecorder->CaptureFrame();
+    }
 
     _sceneManager->ClearRenderRepository();
     _window->SwapBuffers();

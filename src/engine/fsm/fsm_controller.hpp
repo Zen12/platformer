@@ -13,8 +13,9 @@
 #include "fsm_asset.hpp"
 #include "system_triggers.hpp"
 
-// Forward declaration
+// Forward declarations
 class FsmAnimationComponent;
+class VideoRecorder;
 
 class FsmController final {
 private:
@@ -27,6 +28,7 @@ private:
     std::string _currentState;
     std::shared_ptr<SceneManager> _sceneManager;
     std::shared_ptr<UIManager> _uiManager;
+    std::shared_ptr<VideoRecorder> _videoRecorder;
 
     bool _wasEntered;
 
@@ -42,14 +44,15 @@ private:
 
 
 public:
-    explicit FsmController(const FsmAsset& fsmAsset, const std::shared_ptr<SceneManager> &sceneManager, const std::shared_ptr<UIManager> &uiManager, const std::weak_ptr<FsmAnimationComponent> &animationComponent = std::weak_ptr<FsmAnimationComponent>())
+    explicit FsmController(const FsmAsset& fsmAsset, const std::shared_ptr<SceneManager> &sceneManager, const std::shared_ptr<UIManager> &uiManager, const std::shared_ptr<VideoRecorder> &videoRecorder = nullptr, const std::weak_ptr<FsmAnimationComponent> &animationComponent = std::weak_ptr<FsmAnimationComponent>())
         :   _currentState(fsmAsset.StartNode),
             _sceneManager (sceneManager),
             _uiManager(uiManager),
+            _videoRecorder(videoRecorder),
             _wasEntered(false)
     {
         // Create ActionFactory with dependencies
-        ActionFactory actionFactory(uiManager, sceneManager, _triggers, _systemTrigger, animationComponent);
+        ActionFactory actionFactory(uiManager, sceneManager, _triggers, _systemTrigger, videoRecorder, animationComponent);
 
         // Convert StateNodeSerialization to StateNode
         for (const auto& nodeSer : fsmAsset.StateNodeSerialization) {
@@ -73,6 +76,12 @@ public:
                     actions.emplace_back(actionFactory.CreateAnimationStateAction(actionData.Param, actionData.Param2));
                 } else if (actionData.Type == "animation_state_transition") {
                     actions.emplace_back(actionFactory.CreateAnimationStateTransitionAction(actionData.Param, actionData.Param2, std::stof(actionData.Param3), actionData.Param4));
+                } else if (actionData.Type == "start_video_recording") {
+                    // Param: output_file, Param2: fps
+                    int fps = !actionData.Param2.empty() ? std::stoi(actionData.Param2) : 60;
+                    actions.emplace_back(actionFactory.CreateStartVideoRecordingAction(actionData.Param, fps));
+                } else if (actionData.Type == "stop_video_recording") {
+                    actions.emplace_back(actionFactory.CreateStopVideoRecordingAction());
                 }
             }
 

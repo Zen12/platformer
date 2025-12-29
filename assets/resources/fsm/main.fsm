@@ -4,6 +4,9 @@ nodes:
 - name: "Load UI Node"
   guid: "firstNode"
   actions:
+    - type: start_video_recording
+      output_file: "test_recording.mp4"
+      fps: 60
     - type: load_scene
       scene_guid: 963d3fa8-8f5c-45aa-beab-1aa887e30816
     - type: load_ui_page
@@ -14,6 +17,7 @@ nodes:
 - name: "Close the game"
   guid: "closeGame"
   actions:
+    - type: stop_video_recording
     - type: log
       message: "Exit"
 conditions:

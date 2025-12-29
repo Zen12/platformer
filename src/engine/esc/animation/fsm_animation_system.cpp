@@ -32,6 +32,7 @@ void FsmAnimationSystem::OnTick() {
                         fsmAsset,
                         nullptr,
                         nullptr,
+                        nullptr,  // videoRecorder (animation FSMs don't need it)
                         anim.SelfPtr
                     );
 
