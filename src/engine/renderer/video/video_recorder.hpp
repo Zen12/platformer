@@ -13,6 +13,7 @@ extern "C" {
 #include <string>
 #include <vector>
 #include <memory>
+#include <chrono>
 
 class VideoRecorder {
 private:
@@ -32,6 +33,7 @@ private:
     int _fps = 60;
     int _frameCount = 0;
     std::string _outputPath;
+    std::chrono::steady_clock::time_point _startTime;
 
     // Frame buffer for OpenGL data
     std::vector<uint8_t> _frameBuffer;

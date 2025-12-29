@@ -101,7 +101,7 @@
 
 ## 0.1.6 NavMesh
 - [x] Video recorder 
-- [ ] NavMesh builder (floating and fix point), grid based for determinism, 2d only
+- [ ] NavMesh builder, grid based
 - [ ] Astar navigation (path query with smooth path) + RVO
 
 ## 0.1.7 3d platformer game

@@ -27,6 +27,7 @@ bool VideoRecorder::StartRecording(const std::string& outputPath, int fps) {
     _height = viewportHeight; // Use actual viewport height
     _fps = fps;
     _frameCount = 0;
+    _startTime = std::chrono::steady_clock::now();
 
     // Allocate frame buffer for OpenGL readback
     _frameBuffer.resize(_width * _height * 3);  // RGB
@@ -212,8 +213,16 @@ void VideoRecorder::CaptureFrame() {
 
     av_frame_free(&rgbFrame);
 
-    // Set frame timestamp
-    _frame->pts = _frameCount++;
+    // Set frame timestamp based on actual elapsed time
+    auto currentTime = std::chrono::steady_clock::now();
+    auto elapsedTime = std::chrono::duration_cast<std::chrono::microseconds>(currentTime - _startTime);
+    double elapsedSeconds = elapsedTime.count() / 1000000.0;
+
+    // Convert to PTS using the video's timebase (1/fps)
+    // PTS = elapsed_seconds * fps
+    _frame->pts = static_cast<int64_t>(elapsedSeconds * _fps);
+
+    _frameCount++;
 
     // Encode frame
     WriteFrame(_frame);
