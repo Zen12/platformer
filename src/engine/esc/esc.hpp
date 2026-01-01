@@ -21,6 +21,11 @@
 #include "transform/transform_component.hpp"
 #include "window/window_component.hpp"
 #include "window/window_system.hpp"
+#include "navmesh_agent/navmesh_agent_component.hpp"
+#include "navmesh_agent/navmesh_agent_component_serialization.hpp"
+#include "navmesh_agent/navmesh_agent_system.hpp"
+#include "navmesh_agent/random_navigation_component.hpp"
+#include "navmesh_agent/random_navigation_system.hpp"
 
 
 class EscSystem {
@@ -80,6 +85,12 @@ public:
                         controller.SetMoveSpeed(cameraControllerSerialization->MoveSpeed);
                         controller.SetMouseSensitivity(cameraControllerSerialization->MouseSensitivity);
                         view->emplace(entity, controller);
+                    } else if (const auto &navmeshAgentSerialization = dynamic_cast<NavmeshAgentComponentSerialization*>(component.get())) {
+                        const auto &view = registry->view<NavmeshAgentComponent>();
+                        view->emplace(entity, *navmeshAgentSerialization);
+
+                        const auto &randomNavView = registry->view<RandomNavigationComponent>();
+                        randomNavView->emplace(entity, RandomNavigationComponent());
                     }
                 }
             }
@@ -114,6 +125,12 @@ public:
 
             _systems.emplace_back(std::make_unique<SkinnedMeshRenderSystem>(registry->view<SkinnedMeshRendererComponent, TransformComponentV2>(),
                registry->view<CameraComponentV2>(), renderRepository ));
+
+            _systems.emplace_back(std::make_unique<RandomNavigationSystem>(registry->view<RandomNavigationComponent, NavmeshAgentComponent, TransformComponentV2>(),
+               registry->view<DeltaTimeComponent>()));
+
+            _systems.emplace_back(std::make_unique<NavmeshAgentSystem>(registry->view<NavmeshAgentComponent, TransformComponentV2>(),
+               registry->view<DeltaTimeComponent>(), scenePtr->GetNavigationManager(), scenePtr));
         }
     }
 

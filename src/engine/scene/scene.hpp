@@ -19,6 +19,7 @@
 #include "../renderer/ui/ui_page_asset_yaml.hpp"
 #include "../renderer/animation/animation_data.hpp"
 #include "../renderer/animation/animation_asset_loader.hpp"
+#include "../navigation/navigation_manager.hpp"
 
 
 struct PrefabInstantiateData {
@@ -47,6 +48,7 @@ private:
     std::weak_ptr<InputSystem> _inputSystem;
 
     std::shared_ptr<entt::registry> _entityRegistry{};
+    std::shared_ptr<NavigationManager> _navigationManager{};
 
 
     std::string _requestToLoadScene{};
@@ -62,6 +64,7 @@ public:
     {
 
         _entityRegistry = std::make_shared<entt::registry>();
+        _navigationManager = std::make_shared<NavigationManager>();
     }
 
 
@@ -73,6 +76,10 @@ public:
 
     [[nodiscard]] std::shared_ptr<entt::registry> GetEntityRegistry() const noexcept {
         return _entityRegistry;
+    }
+
+    [[nodiscard]] std::shared_ptr<NavigationManager> GetNavigationManager() const noexcept {
+        return _navigationManager;
     }
 
     [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid);

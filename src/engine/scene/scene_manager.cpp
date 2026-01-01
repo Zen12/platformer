@@ -15,6 +15,17 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
 
     if (const auto assetManager = _assetManager.lock()) {
         _scene = std::make_shared<Scene> (_window,_assetManager, _inputSystem);
+
+        if (const auto navigationManager = _scene->GetNavigationManager()) {
+            if (sceneAsset.Navmesh.has_value()) {
+                const auto& navmesh = sceneAsset.Navmesh.value();
+                navigationManager->Initialize(navmesh.Width, navmesh.Height, navmesh.Depth,
+                                            navmesh.CellSize, navmesh.Origin);
+            } else {
+                navigationManager->Initialize(50, 1, 50, 1.0f, glm::vec3(-25.0f, 0.0f, -25.0f));
+            }
+        }
+
         LoadEntities(sceneAsset.Entities);
     }
 }
@@ -51,7 +62,7 @@ void SceneManager::Update() {
 #if DEBUG_ENGINE_SCENE_MANAGER_PROFILE
     PROFILE_SCOPE("  SceneManager::Update");
 #endif
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if (_escSystem) {
         _escSystem->Update(); // ATM single threaded

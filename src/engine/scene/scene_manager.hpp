@@ -66,8 +66,13 @@ public:
         return nullptr;
     }
 
-private:
     [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) const;
+
+    [[nodiscard]] std::shared_ptr<Scene> GetScene() const {
+        return _scene;
+    }
+
+private:
 
 
     [[nodiscard]] std::shared_ptr<Texture> GetTexture(const std::string& guid) const;

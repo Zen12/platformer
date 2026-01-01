@@ -1,5 +1,11 @@
 name: test_scene
 type: scene
+navmesh:
+  width: 100
+  height: 1
+  depth: 100
+  cell_size: 1.0
+  origin: [-50.0, 0.0, -50.0]
 entities:
   - tag: "zombie"
     components:
@@ -13,6 +19,10 @@ entities:
       - type: fsm_animation
         fsm_guid: b9fcf65a-3a68-4990-aa56-e4a5945b0093
         loop: true
+      - type: navmesh_agent
+        radius: 0.5
+        max_speed: 3.0
+        enabled: true
   - tag: "male"
     components:
       - type: transform
@@ -25,12 +35,16 @@ entities:
       - type: fsm_animation
         fsm_guid: 0dd46701-6ea4-47fc-9644-b6ffa0ce0da3
         loop: true
+      - type: navmesh_agent
+        radius: 0.8
+        max_speed: 5.0
+        enabled: true
   - guid: main-camera
     tag: main_camera
     components:
       - type: transform
-        position: [0, 0.0, 0.0]
-        rotation: [0.0, 0.0, 0.0]
+        position: [0, 20.0, 30.0]
+        rotation: [-30.0, 0.0, 0.0]
         scale: [1.0, 1.0, 1.0]
       - type: camera
         perspectiveNearPlane: 0.1

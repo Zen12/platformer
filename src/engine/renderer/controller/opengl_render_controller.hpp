@@ -2,10 +2,18 @@
 #include "../render_repository.hpp"
 #include <GL/glew.h>
 #include <iostream>
+#include <glm/glm.hpp>
 
+class SceneManager;
 
 class OpenGLRenderController final {
     std::shared_ptr<SceneManager> _sceneManager{};
+
+    // Navmesh grid rendering
+    GLuint _gridVAO = 0;
+    GLuint _gridVBO = 0;
+    int _gridVertexCount = 0;
+    bool _gridInitialized = false;
 
 public:
 
@@ -19,37 +27,18 @@ public:
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear depth buffer for 3D rendering
     }
 
-    void Render(const std::shared_ptr<RenderRepository>& repository) const noexcept {
-        const auto renderData = repository->GetData();
+    void Render(const std::shared_ptr<RenderRepository>& repository) noexcept;
+    void RenderNavmeshGrid(const glm::mat4& view, const glm::mat4& projection);
 
-        for (const auto &[renderId, matrixVector] : renderData) {
-            const auto mat = _sceneManager->GetMaterial(renderId.MaterialGuid);
-            const auto meshPtr = _sceneManager->GetMesh(renderId.MeshGuid);
-
-            if (!mat || !meshPtr) {
-                continue;
-            }
-
-            mat->Bind();
-            meshPtr->Bind();
-
-            mat->SetMat4("view", renderId.CameraView);
-            mat->SetMat4("projection", renderId.CameraProjection);
-
-            // Draw each instance separately for now (will optimize later)
-            for (size_t i = 0; i < matrixVector.size(); i++) {
-                const auto& instanceData = matrixVector[i];
-                mat->SetMat4("model", instanceData.ModelMatrix);
-
-                // Set bone transforms if this is a skinned mesh
-                if (instanceData.BoneTransforms.has_value()) {
-                    const auto& bones = instanceData.BoneTransforms.value();
-                    mat->SetMat4Array("boneMatrices", bones);
-                }
-
-                glDrawElements(GL_TRIANGLES, static_cast<int32_t>(meshPtr->GetIndicesCount()), GL_UNSIGNED_INT, nullptr);
-            }
+    ~OpenGLRenderController() {
+        if (_gridVAO != 0) {
+            glDeleteVertexArrays(1, &_gridVAO);
+        }
+        if (_gridVBO != 0) {
+            glDeleteBuffers(1, &_gridVBO);
         }
     }
 
+private:
+    void InitializeNavmeshGrid();
 };

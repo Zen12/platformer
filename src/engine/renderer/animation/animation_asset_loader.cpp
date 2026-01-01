@@ -2,7 +2,15 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+
+#define DEBUG_ANIM_LOADER 0
+
+#if DEBUG_ANIM_LOADER
 #include <iostream>
+#define ANIM_LOG if(1) std::cout
+#else
+#define ANIM_LOG if(0) std::cout
+#endif
 
 void AssetLoader<AnimationData>::Init() {
 }
@@ -30,10 +38,10 @@ AnimationData AssetLoader<AnimationData>::LoadImpl(const std::string& path) {
     animData.TicksPerSecond = anim->mTicksPerSecond != 0 ? anim->mTicksPerSecond : 30.0f;
     animData.Duration = anim->mDuration / animData.TicksPerSecond;
 
-    std::cout << "ANIM_LOADER: Loading animation '" << animData.Name << "'" << std::endl;
-    std::cout << "  Duration: " << animData.Duration << "s (" << anim->mDuration << " ticks @ "
+    ANIM_LOG << "ANIM_LOADER: Loading animation '" << animData.Name << "'" << std::endl;
+    ANIM_LOG << "  Duration: " << animData.Duration << "s (" << anim->mDuration << " ticks @ "
               << animData.TicksPerSecond << " tps)" << std::endl;
-    std::cout << "  Channels: " << anim->mNumChannels << std::endl;
+    ANIM_LOG << "  Channels: " << anim->mNumChannels << std::endl;
 
     // Load all bone animation channels
     for (unsigned int i = 0; i < anim->mNumChannels; i++) {
@@ -75,15 +83,15 @@ AnimationData AssetLoader<AnimationData>::LoadImpl(const std::string& path) {
         animData.Channels.push_back(boneChannel);
     }
 
-    std::cout << "  Loaded " << animData.Channels.size() << " bone channels" << std::endl;
+    ANIM_LOG << "  Loaded " << animData.Channels.size() << " bone channels" << std::endl;
 
     // Print first few bone names for debugging
-    std::cout << "  First bones: ";
+    ANIM_LOG << "  First bones: ";
     for (size_t i = 0; i < std::min(size_t(5), animData.Channels.size()); i++) {
-        std::cout << animData.Channels[i].BoneName;
-        if (i < std::min(size_t(5), animData.Channels.size()) - 1) std::cout << ", ";
+        ANIM_LOG << animData.Channels[i].BoneName;
+        if (i < std::min(size_t(5), animData.Channels.size()) - 1) ANIM_LOG << ", ";
     }
-    std::cout << std::endl;
+    ANIM_LOG << std::endl;
 
     return animData;
 }

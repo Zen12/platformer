@@ -2,13 +2,21 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include <iostream>
 #include <fstream>
 #include <vector>
 #include <algorithm>
 #include <chrono>
 #include <functional>
 #include <unordered_map>
+
+#define DEBUG_MESH_LOADER 0
+
+#if DEBUG_MESH_LOADER
+#include <iostream>
+#define MESH_LOG if(1) std::cout
+#else
+#define MESH_LOG if(0) std::cout
+#endif
 
 // Mesh loader using Assimp library
 // Recommended format: GLB (5-50x faster than FBX, optimized for real-time)
@@ -28,16 +36,14 @@ void AssetLoader<MeshData>::Init() {
 }
 
 MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
-    std::cout << "[MESH_LOADER] Starting to load: " << path << std::endl;
-    std::cout << "[MESH_LOADER] Path length: " << path.length() << " bytes" << std::endl;
-    std::cout.flush(); // Force flush to ensure log appears before crash
+    MESH_LOG << "[MESH_LOADER] Starting to load: " << path << std::endl;
+    MESH_LOG << "[MESH_LOADER] Path length: " << path.length() << " bytes" << std::endl;
 
 #ifdef __EMSCRIPTEN__
-    std::cout << "[MESH_LOADER] Running in EMSCRIPTEN/WASM environment" << std::endl;
+    MESH_LOG << "[MESH_LOADER] Running in EMSCRIPTEN/WASM environment" << std::endl;
 #else
-    std::cout << "[MESH_LOADER] Running in native environment" << std::endl;
+    MESH_LOG << "[MESH_LOADER] Running in native environment" << std::endl;
 #endif
-    std::cout.flush();
 
     // Check if file exists (basic check)
     std::ifstream fileCheck(path, std::ios::binary);
@@ -49,31 +55,27 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
     fileCheck.seekg(0, std::ios::end);
     std::streamsize fileSize = fileCheck.tellg();
     fileCheck.close();
-    std::cout << "[MESH_LOADER] File exists, size: " << fileSize << " bytes" << std::endl;
-    std::cout.flush();
+    MESH_LOG << "[MESH_LOADER] File exists, size: " << fileSize << " bytes" << std::endl;
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    std::cout << "[MESH_LOADER] Creating Assimp::Importer..." << std::endl;
-    std::cout.flush();
+    MESH_LOG << "[MESH_LOADER] Creating Assimp::Importer..." << std::endl;
     Assimp::Importer importer;
 
 #ifdef __EMSCRIPTEN__
     // Log available importers in WASM build
-    std::cout << "[MESH_LOADER] Checking available importers..." << std::endl;
+    MESH_LOG << "[MESH_LOADER] Checking available importers..." << std::endl;
 
     // Get extension list
     aiString extensionList;
     importer.GetExtensionList(extensionList);
-    std::cout << "[MESH_LOADER] Supported extensions: " << extensionList.C_Str() << std::endl;
-    std::cout.flush();
+    MESH_LOG << "[MESH_LOADER] Supported extensions: " << extensionList.C_Str() << std::endl;
 
     // Check if GLB is supported
     bool glbSupported = importer.IsExtensionSupported(".glb");
     bool gltfSupported = importer.IsExtensionSupported(".gltf");
-    std::cout << "[MESH_LOADER] GLB format supported: " << (glbSupported ? "YES" : "NO") << std::endl;
-    std::cout << "[MESH_LOADER] GLTF format supported: " << (gltfSupported ? "YES" : "NO") << std::endl;
-    std::cout.flush();
+    MESH_LOG << "[MESH_LOADER] GLB format supported: " << (glbSupported ? "YES" : "NO") << std::endl;
+    MESH_LOG << "[MESH_LOADER] GLTF format supported: " << (gltfSupported ? "YES" : "NO") << std::endl;
 
     if (!glbSupported) {
         std::cerr << "[MESH_LOADER] ERROR: GLB importer is NOT compiled into this Assimp build!" << std::endl;
@@ -88,21 +90,19 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
 #ifdef __EMSCRIPTEN__
     // WASM: Try with NO flags first to see if it loads at all
     importFlags = 0;
-    std::cout << "[MESH_LOADER] Using WASM-safe flags: NONE (0) - raw import only" << std::endl;
+    MESH_LOG << "[MESH_LOADER] Using WASM-safe flags: NONE (0) - raw import only" << std::endl;
 #else
     // Native: Use optimized flags
     importFlags = aiProcess_Triangulate | aiProcess_JoinIdenticalVertices;
-    std::cout << "[MESH_LOADER] Using native flags: aiProcess_Triangulate | aiProcess_JoinIdenticalVertices" << std::endl;
+    MESH_LOG << "[MESH_LOADER] Using native flags: aiProcess_Triangulate | aiProcess_JoinIdenticalVertices" << std::endl;
 #endif
-    std::cout.flush();
 
     const aiScene* scene = nullptr;
 
 #ifdef __EMSCRIPTEN__
     // WASM: Load file into memory first, then use ReadFileFromMemory
     // This avoids potential WASM filesystem issues with Assimp
-    std::cout << "[MESH_LOADER] WASM: Loading file into memory buffer..." << std::endl;
-    std::cout.flush();
+    MESH_LOG << "[MESH_LOADER] WASM: Loading file into memory buffer..." << std::endl;
 
     std::ifstream file(path, std::ios::binary | std::ios::ate);
     if (!file.is_open()) {
@@ -120,30 +120,26 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
     }
     file.close();
 
-    std::cout << "[MESH_LOADER] Loaded " << size << " bytes into memory" << std::endl;
+    MESH_LOG << "[MESH_LOADER] Loaded " << size << " bytes into memory" << std::endl;
 
     // Detect format from file extension
     std::string hint = path.substr(path.find_last_of('.') + 1);
-    std::cout << "[MESH_LOADER] File format hint: " << hint << std::endl;
-    std::cout << "[MESH_LOADER] Buffer address: " << static_cast<const void*>(buffer.data()) << std::endl;
-    std::cout << "[MESH_LOADER] Buffer size: " << buffer.size() << std::endl;
-    std::cout << "[MESH_LOADER] Import flags: " << importFlags << std::endl;
-    std::cout.flush();
+    MESH_LOG << "[MESH_LOADER] File format hint: " << hint << std::endl;
+    MESH_LOG << "[MESH_LOADER] Buffer address: " << static_cast<const void*>(buffer.data()) << std::endl;
+    MESH_LOG << "[MESH_LOADER] Buffer size: " << buffer.size() << std::endl;
+    MESH_LOG << "[MESH_LOADER] Import flags: " << importFlags << std::endl;
 
-    std::cout << "[MESH_LOADER] About to call ReadFileFromMemory..." << std::endl;
-    std::cout << "[MESH_LOADER] This may crash - checking console for errors..." << std::endl;
-    std::cout.flush();
+    MESH_LOG << "[MESH_LOADER] About to call ReadFileFromMemory..." << std::endl;
+    MESH_LOG << "[MESH_LOADER] This may crash - checking console for errors..." << std::endl;
 
     // Set a very conservative read limit for WASM
     importer.SetPropertyInteger(AI_CONFIG_PP_LBW_MAX_WEIGHTS, 4);
 
-    std::cout << "[MESH_LOADER] Calling ReadFileFromMemory NOW..." << std::endl;
-    std::cout.flush();
+    MESH_LOG << "[MESH_LOADER] Calling ReadFileFromMemory NOW..." << std::endl;
 
     scene = importer.ReadFileFromMemory(buffer.data(), buffer.size(), importFlags, hint.c_str());
 
-    std::cout << "[MESH_LOADER] !!! ReadFileFromMemory completed successfully !!!" << std::endl;
-    std::cout.flush();
+    MESH_LOG << "[MESH_LOADER] !!! ReadFileFromMemory completed successfully !!!" << std::endl;
 
     // Check error even if no exception was thrown
     if (!scene) {
@@ -153,11 +149,10 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
         return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
     }
 
-    std::cout << "[MESH_LOADER] Scene loaded successfully!" << std::endl;
+    MESH_LOG << "[MESH_LOADER] Scene loaded successfully!" << std::endl;
 #else
     // Native: Use direct file reading
-    std::cout << "[MESH_LOADER] Calling importer.ReadFile..." << std::endl;
-    std::cout.flush();
+    MESH_LOG << "[MESH_LOADER] Calling importer.ReadFile..." << std::endl;
 
     try {
         scene = importer.ReadFile(path, importFlags);
@@ -170,12 +165,11 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
     }
 #endif
 
-    std::cout << "[MESH_LOADER] ReadFile returned, scene pointer: " << (scene ? "valid" : "null") << std::endl;
-    std::cout.flush();
+    MESH_LOG << "[MESH_LOADER] ReadFile returned, scene pointer: " << (scene ? "valid" : "null") << std::endl;
 
     auto loadTime = std::chrono::high_resolution_clock::now();
     auto loadDuration = std::chrono::duration_cast<std::chrono::milliseconds>(loadTime - start).count();
-    std::cout << "[MESH_LOADER] ReadFile took " << loadDuration << "ms" << std::endl;
+    MESH_LOG << "[MESH_LOADER] ReadFile took " << loadDuration << "ms" << std::endl;
 
     if (!scene) {
         std::cerr << "[MESH_LOADER] ERROR: Scene is null" << std::endl;
@@ -195,8 +189,8 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
         return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
     }
 
-    std::cout << "[MESH_LOADER] Assimp loaded scene successfully" << std::endl;
-    std::cout << "[MESH_LOADER] Number of meshes in scene: " << scene->mNumMeshes << std::endl;
+    MESH_LOG << "[MESH_LOADER] Assimp loaded scene successfully" << std::endl;
+    MESH_LOG << "[MESH_LOADER] Number of meshes in scene: " << scene->mNumMeshes << std::endl;
 
     // Pre-calculate total sizes to avoid vector reallocations
     size_t totalVertices = 0;
@@ -230,25 +224,25 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
     }
 
     // Reserve capacity to avoid reallocations (major performance boost for large meshes)
-    std::cout << "[MESH_LOADER] Pre-calculated sizes - vertices: " << totalVertices << ", indices: " << totalIndices << std::endl;
+    MESH_LOG << "[MESH_LOADER] Pre-calculated sizes - vertices: " << totalVertices << ", indices: " << totalIndices << std::endl;
     vertices.reserve(totalVertices * 5); // 5 floats per vertex (x,y,z,u,v) max
     indices.reserve(totalIndices);
     if (hasSkeleton) {
         boneWeights.reserve(totalVertices * 4); // 4 weights per vertex
         boneIndices.reserve(totalVertices * 4); // 4 bone indices per vertex
-        std::cout << "[MESH_LOADER] Mesh has skeleton, reserved bone data" << std::endl;
+        MESH_LOG << "[MESH_LOADER] Mesh has skeleton, reserved bone data" << std::endl;
     }
 
     auto processStart = std::chrono::high_resolution_clock::now();
-    std::cout << "[MESH_LOADER] Starting mesh processing..." << std::endl;
+    MESH_LOG << "[MESH_LOADER] Starting mesh processing..." << std::endl;
 
     for (unsigned int meshIdx = 0; meshIdx < scene->mNumMeshes; meshIdx++) {
         const aiMesh* mesh = scene->mMeshes[meshIdx];
-        std::cout << "[MESH_LOADER] Processing mesh " << meshIdx << "/" << scene->mNumMeshes
+        MESH_LOG << "[MESH_LOADER] Processing mesh " << meshIdx << "/" << scene->mNumMeshes
                   << " - vertices: " << mesh->mNumVertices << ", faces: " << mesh->mNumFaces << std::endl;
 
         if (!(mesh->mPrimitiveTypes & aiPrimitiveType_TRIANGLE)) {
-            std::cout << "[MESH_LOADER] Skipping non-triangle mesh" << std::endl;
+            MESH_LOG << "[MESH_LOADER] Skipping non-triangle mesh" << std::endl;
             continue;
         }
 
@@ -374,12 +368,12 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
         // Start from root node
         processNode(scene->mRootNode, -1);
 
-        std::cout << "  Built bone hierarchy: ";
+        MESH_LOG << "  Built bone hierarchy: ";
         int rootBones = 0;
         for (int parent : boneParents) {
             if (parent == -1) rootBones++;
         }
-        std::cout << rootBones << " root bones" << std::endl;
+        MESH_LOG << rootBones << " root bones" << std::endl;
     }
 
     if (vertices.empty() || indices.empty()) {
@@ -388,31 +382,31 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
         return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
     }
 
-    std::cout << "[MESH_LOADER] Mesh processing complete - final data sizes:" << std::endl;
-    std::cout << "[MESH_LOADER]   vertices: " << vertices.size() << ", indices: " << indices.size() << std::endl;
+    MESH_LOG << "[MESH_LOADER] Mesh processing complete - final data sizes:" << std::endl;
+    MESH_LOG << "[MESH_LOADER]   vertices: " << vertices.size() << ", indices: " << indices.size() << std::endl;
 
     auto processEnd = std::chrono::high_resolution_clock::now();
     auto processDuration = std::chrono::duration_cast<std::chrono::milliseconds>(processEnd - processStart).count();
     auto totalDuration = std::chrono::duration_cast<std::chrono::milliseconds>(processEnd - start).count();
 
-    std::cout << "MESH_LOADER: Loaded " << path << std::endl;
-    std::cout << "  Total vertices: " << (hasTexCoords ? vertices.size() / 5 : vertices.size() / 3) << std::endl;
-    std::cout << "  Total indices: " << indices.size() << std::endl;
-    std::cout << "  Has texture coords: " << (hasTexCoords ? "yes" : "no") << std::endl;
-    std::cout << "  Has skeleton: " << (hasSkeleton ? "yes" : "no") << std::endl;
+    MESH_LOG << "MESH_LOADER: Loaded " << path << std::endl;
+    MESH_LOG << "  Total vertices: " << (hasTexCoords ? vertices.size() / 5 : vertices.size() / 3) << std::endl;
+    MESH_LOG << "  Total indices: " << indices.size() << std::endl;
+    MESH_LOG << "  Has texture coords: " << (hasTexCoords ? "yes" : "no") << std::endl;
+    MESH_LOG << "  Has skeleton: " << (hasSkeleton ? "yes" : "no") << std::endl;
     if (hasSkeleton) {
-        std::cout << "  Bone data: " << (boneWeights.size() / 4) << " vertices with bone weights" << std::endl;
-        std::cout << "  Bone count: " << boneNames.size() << std::endl;
+        MESH_LOG << "  Bone data: " << (boneWeights.size() / 4) << " vertices with bone weights" << std::endl;
+        MESH_LOG << "  Bone count: " << boneNames.size() << std::endl;
         if (!boneNames.empty()) {
-            std::cout << "  First bones: ";
+            MESH_LOG << "  First bones: ";
             for (size_t i = 0; i < std::min<size_t>(5, boneNames.size()); i++) {
-                std::cout << boneNames[i];
-                if (i < std::min<size_t>(5, boneNames.size()) - 1) std::cout << ", ";
+                MESH_LOG << boneNames[i];
+                if (i < std::min<size_t>(5, boneNames.size()) - 1) MESH_LOG << ", ";
             }
-            std::cout << std::endl;
+            MESH_LOG << std::endl;
         }
     }
-    std::cout << "  Load time: " << loadDuration << "ms, Process time: " << processDuration << "ms, Total: " << totalDuration << "ms" << std::endl;
+    MESH_LOG << "  Load time: " << loadDuration << "ms, Process time: " << processDuration << "ms, Total: " << totalDuration << "ms" << std::endl;
 
     if (!vertices.empty()) {
         float minX = vertices[0], maxX = vertices[0];
@@ -429,7 +423,7 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
             maxZ = std::max(maxZ, vertices[i + 2]);
         }
 
-        std::cout << "  Bounds: X[" << minX << ", " << maxX << "] "
+        MESH_LOG << "  Bounds: X[" << minX << ", " << maxX << "] "
                   << "Y[" << minY << ", " << maxY << "] "
                   << "Z[" << minZ << ", " << maxZ << "]" << std::endl;
     }
