@@ -4,6 +4,10 @@
 #include <GL/glew.h>
 #include <fstream>
 #include "../renderer/controller/ui_opengl_render_controller.hpp"
+#include "../esc/transform/transform_component.hpp"
+#include "../esc/transform/transform_component_serialization.hpp"
+#include "../esc/mesh_renderer/mesh_renderer_component.hpp"
+#include "../esc/mesh_renderer/mesh_renderer_component_serialization.hpp"
 
 #define DEBUG_ENGINE_SCENE_MANAGER_PROFILE 0
 
@@ -19,11 +23,12 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
         if (const auto navigationManager = _scene->GetNavigationManager()) {
             if (sceneAsset.Navmesh.has_value()) {
                 const auto& navmesh = sceneAsset.Navmesh.value();
-                navigationManager->Initialize(navmesh.Width, navmesh.Height, navmesh.Depth,
+                navigationManager->Initialize(navmesh.Width, navmesh.Height,
                                             navmesh.CellSize, navmesh.Origin);
             } else {
-                navigationManager->Initialize(50, 1, 50, 1.0f, glm::vec3(-25.0f, 0.0f, -25.0f));
+                navigationManager->Initialize(50, 50, 1.0f, glm::vec3(0.0f, 0.0f, 0.0f));
             }
+
         }
 
         LoadEntities(sceneAsset.Entities);

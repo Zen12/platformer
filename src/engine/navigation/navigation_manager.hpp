@@ -11,7 +11,7 @@ private:
 public:
     NavigationManager() = default;
 
-    void Initialize(int width, int height, int depth, float cellSize, const glm::vec3& origin);
+    void Initialize(int width, int height, float cellSize, const glm::vec3& origin);
 
     void Update(float deltaTime);
 

@@ -1,0 +1,9 @@
+name: line
+is_culling: False
+blend_mode: 0
+shader_opengl:
+  vertex: eb906e88-a87a-4081-a2b2-6269c21987c7
+  fragment: 2fff5f66-253f-4d04-9ccc-2026af98c2eb
+shader_gles:
+  vertex: eb906e88-a87a-4081-a2b2-6269c21987c7
+  fragment: 2fff5f66-253f-4d04-9ccc-2026af98c2eb

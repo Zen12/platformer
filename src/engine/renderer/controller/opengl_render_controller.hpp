@@ -1,22 +1,18 @@
 #pragma once
 #include "../render_repository.hpp"
 #include <GL/glew.h>
-#include <iostream>
 #include <glm/glm.hpp>
+#include <iostream>
+#include <memory>
+#include <vector>
 
 class SceneManager;
+class Mesh;
 
 class OpenGLRenderController final {
     std::shared_ptr<SceneManager> _sceneManager{};
 
-    // Navmesh grid rendering
-    GLuint _gridVAO = 0;
-    GLuint _gridVBO = 0;
-    int _gridVertexCount = 0;
-    bool _gridInitialized = false;
-
 public:
-
     explicit OpenGLRenderController(const std::shared_ptr<SceneManager> &sceneManager)
         : _sceneManager(sceneManager) {}
 
@@ -28,17 +24,4 @@ public:
     }
 
     void Render(const std::shared_ptr<RenderRepository>& repository) noexcept;
-    void RenderNavmeshGrid(const glm::mat4& view, const glm::mat4& projection);
-
-    ~OpenGLRenderController() {
-        if (_gridVAO != 0) {
-            glDeleteVertexArrays(1, &_gridVAO);
-        }
-        if (_gridVBO != 0) {
-            glDeleteBuffers(1, &_gridVBO);
-        }
-    }
-
-private:
-    void InitializeNavmeshGrid();
 };

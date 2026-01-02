@@ -34,7 +34,6 @@ public:
                 agent.Destination = glm::vec3(x, 0.0f, z);
                 agent.HasDestination = true;
                 randomNav.CurrentWaitTime = 0.0f;
-                std::cout << "[RandomNavigationSystem] Set new destination: (" << x << ", 0.0, " << z << ")" << std::endl;
             } else {
                 const glm::vec3 currentPos = transform.GetPosition();
                 const float distToDestination = glm::length(agent.Destination - currentPos);
@@ -43,7 +42,6 @@ public:
                     randomNav.CurrentWaitTime += deltaTime;
 
                     if (randomNav.CurrentWaitTime >= randomNav.WaitTime) {
-                        std::cout << "[RandomNavigationSystem] Reached destination, clearing..." << std::endl;
                         agent.HasDestination = false;
                     }
                 }

@@ -7,8 +7,7 @@
 
 struct NavmeshConfig {
     int Width = 50;
-    int Height = 1;
-    int Depth = 50;
+    int Height = 50;
     float CellSize = 1.0f;
     glm::vec3 Origin = glm::vec3(-25.0f, 0.0f, -25.0f);
 };

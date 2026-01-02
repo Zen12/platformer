@@ -11,7 +11,6 @@ namespace YAML {
         {
             if (node["width"]) rhs.Width = node["width"].as<int>();
             if (node["height"]) rhs.Height = node["height"].as<int>();
-            if (node["depth"]) rhs.Depth = node["depth"].as<int>();
             if (node["cell_size"]) rhs.CellSize = node["cell_size"].as<float>();
             if (node["origin"]) {
                 auto origin = node["origin"].as<std::vector<float>>();

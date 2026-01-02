@@ -26,6 +26,8 @@
 #include "navmesh_agent/navmesh_agent_system.hpp"
 #include "navmesh_agent/random_navigation_component.hpp"
 #include "navmesh_agent/random_navigation_system.hpp"
+#include "navmesh_grid_renderer/navmesh_grid_render_system.hpp"
+#include "navmesh_path_renderer/navmesh_path_render_system.hpp"
 
 
 class EscSystem {
@@ -131,6 +133,12 @@ public:
 
             _systems.emplace_back(std::make_unique<NavmeshAgentSystem>(registry->view<NavmeshAgentComponent, TransformComponentV2>(),
                registry->view<DeltaTimeComponent>(), scenePtr->GetNavigationManager(), scenePtr));
+
+            _systems.emplace_back(std::make_unique<NavmeshGridRenderSystem>(registry->view<CameraComponentV2>(),
+               scenePtr, renderRepository));
+
+            _systems.emplace_back(std::make_unique<NavmeshPathRenderSystem>(registry->view<NavmeshAgentComponent>(),
+               registry->view<CameraComponentV2>(), renderRepository, scenePtr->GetNavigationManager()));
         }
     }
 

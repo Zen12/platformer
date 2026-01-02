@@ -3,100 +3,90 @@
 #include <cmath>
 #include <limits>
 
-NavmeshGrid::NavmeshGrid(int width, int height, int depth, float cellSize, const glm::vec3& origin)
-    : _width(width), _height(height), _depth(depth), _cellSize(cellSize), _origin(origin) {
+NavmeshGrid::NavmeshGrid(int width, int height, float cellSize, const glm::vec3& origin)
+    : _width(width), _height(height), _cellSize(cellSize), _origin(origin) {
 
-    _cells.resize(width * height * depth);
+    _cells.resize(width * height);
 
-    for (int z = 0; z < depth; ++z) {
-        for (int y = 0; y < height; ++y) {
-            for (int x = 0; x < width; ++x) {
-                const int idx = GridToIndex(x, y, z);
-                _cells[idx].X = x;
-                _cells[idx].Y = y;
-                _cells[idx].Z = z;
-                _cells[idx].Walkable = true;
-                _cells[idx].Cost = 1.0f;
-            }
+    for (int z = 0; z < height; ++z) {
+        for (int x = 0; x < width; ++x) {
+            const int idx = GridToIndex(x, z);
+            _cells[idx].X = x;
+            _cells[idx].Z = z;
+            _cells[idx].Walkable = true;
+            _cells[idx].Cost = 1.0f;
         }
     }
 }
 
-glm::ivec3 NavmeshGrid::WorldToGrid(const glm::vec3& worldPos) const noexcept {
+glm::ivec2 NavmeshGrid::WorldToGrid(const glm::vec3& worldPos) const noexcept {
     const glm::vec3 localPos = worldPos - _origin;
-    return glm::ivec3(
+    return glm::ivec2(
         static_cast<int>(std::floor(localPos.x / _cellSize)),
-        static_cast<int>(std::floor(localPos.y / _cellSize)),
         static_cast<int>(std::floor(localPos.z / _cellSize))
     );
 }
 
-glm::vec3 NavmeshGrid::GridToWorld(const glm::ivec3& gridPos) const noexcept {
-    return GridToWorld(gridPos.x, gridPos.y, gridPos.z);
+glm::vec3 NavmeshGrid::GridToWorld(const glm::ivec2& gridPos) const noexcept {
+    return GridToWorld(gridPos.x, gridPos.y);
 }
 
-glm::vec3 NavmeshGrid::GridToWorld(int x, int y, int z) const noexcept {
+glm::vec3 NavmeshGrid::GridToWorld(int x, int z) const noexcept {
     return _origin + glm::vec3(
         (static_cast<float>(x) + 0.5f) * _cellSize,
-        (static_cast<float>(y) + 0.5f) * _cellSize,
+        0.0f,
         (static_cast<float>(z) + 0.5f) * _cellSize
     );
 }
 
-int NavmeshGrid::GridToIndex(int x, int y, int z) const noexcept {
-    return z * (_width * _height) + y * _width + x;
+int NavmeshGrid::GridToIndex(int x, int z) const noexcept {
+    return z * _width + x;
 }
 
-glm::ivec3 NavmeshGrid::IndexToGrid(int index) const noexcept {
-    const int z = index / (_width * _height);
-    const int remainder = index % (_width * _height);
-    const int y = remainder / _width;
-    const int x = remainder % _width;
-    return glm::ivec3(x, y, z);
+glm::ivec2 NavmeshGrid::IndexToGrid(int index) const noexcept {
+    const int z = index / _width;
+    const int x = index % _width;
+    return glm::ivec2(x, z);
 }
 
-bool NavmeshGrid::IsValidCell(int x, int y, int z) const noexcept {
-    return x >= 0 && x < _width && y >= 0 && y < _height && z >= 0 && z < _depth;
+bool NavmeshGrid::IsValidCell(int x, int z) const noexcept {
+    return x >= 0 && x < _width && z >= 0 && z < _height;
 }
 
-bool NavmeshGrid::IsWalkable(int x, int y, int z) const noexcept {
-    if (!IsValidCell(x, y, z)) return false;
-    return _cells[GridToIndex(x, y, z)].Walkable;
+bool NavmeshGrid::IsWalkable(int x, int z) const noexcept {
+    if (!IsValidCell(x, z)) return false;
+    return _cells[GridToIndex(x, z)].Walkable;
 }
 
-void NavmeshGrid::SetCellWalkable(int x, int y, int z, bool walkable) noexcept {
-    if (IsValidCell(x, y, z)) {
-        _cells[GridToIndex(x, y, z)].Walkable = walkable;
+void NavmeshGrid::SetCellWalkable(int x, int z, bool walkable) noexcept {
+    if (IsValidCell(x, z)) {
+        _cells[GridToIndex(x, z)].Walkable = walkable;
     }
 }
 
-void NavmeshGrid::SetCellCost(int x, int y, int z, float cost) noexcept {
-    if (IsValidCell(x, y, z)) {
-        _cells[GridToIndex(x, y, z)].Cost = cost;
+void NavmeshGrid::SetCellCost(int x, int z, float cost) noexcept {
+    if (IsValidCell(x, z)) {
+        _cells[GridToIndex(x, z)].Cost = cost;
     }
 }
 
 std::vector<int> NavmeshGrid::GetNeighbors(int index) const {
     std::vector<int> neighbors;
-    neighbors.reserve(26);
+    neighbors.reserve(8);
 
-    const glm::ivec3 gridPos = IndexToGrid(index);
+    const glm::ivec2 gridPos = IndexToGrid(index);
     const int x = gridPos.x;
-    const int y = gridPos.y;
-    const int z = gridPos.z;
+    const int z = gridPos.y;
 
     for (int dz = -1; dz <= 1; ++dz) {
-        for (int dy = -1; dy <= 1; ++dy) {
-            for (int dx = -1; dx <= 1; ++dx) {
-                if (dx == 0 && dy == 0 && dz == 0) continue;
+        for (int dx = -1; dx <= 1; ++dx) {
+            if (dx == 0 && dz == 0) continue;
 
-                const int nx = x + dx;
-                const int ny = y + dy;
-                const int nz = z + dz;
+            const int nx = x + dx;
+            const int nz = z + dz;
 
-                if (IsWalkable(nx, ny, nz)) {
-                    neighbors.push_back(GridToIndex(nx, ny, nz));
-                }
+            if (IsWalkable(nx, nz)) {
+                neighbors.push_back(GridToIndex(nx, nz));
             }
         }
     }
@@ -105,8 +95,8 @@ std::vector<int> NavmeshGrid::GetNeighbors(int index) const {
     return neighbors;
 }
 
-float NavmeshGrid::ManhattanDistance(int x1, int y1, int z1, int x2, int y2, int z2) const noexcept {
-    return static_cast<float>(std::abs(x1 - x2) + std::abs(y1 - y2) + std::abs(z1 - z2));
+float NavmeshGrid::ManhattanDistance(int x1, int z1, int x2, int z2) const noexcept {
+    return static_cast<float>(std::abs(x1 - x2) + std::abs(z1 - z2));
 }
 
 std::vector<glm::vec3> NavmeshGrid::ReconstructPath(const std::unordered_map<int, AStarNode>& nodes, int endIdx) const {
@@ -115,7 +105,7 @@ std::vector<glm::vec3> NavmeshGrid::ReconstructPath(const std::unordered_map<int
 
     while (idx != -1) {
         const NavCell& cell = _cells[idx];
-        path.push_back(GridToWorld(cell.X, cell.Y, cell.Z));
+        path.push_back(GridToWorld(cell.X, cell.Z));
 
         const auto it = nodes.find(idx);
         if (it == nodes.end()) break;
@@ -127,19 +117,19 @@ std::vector<glm::vec3> NavmeshGrid::ReconstructPath(const std::unordered_map<int
 }
 
 std::vector<glm::vec3> NavmeshGrid::FindPath(const glm::vec3& start, const glm::vec3& end) {
-    const glm::ivec3 startGrid = WorldToGrid(start);
-    const glm::ivec3 endGrid = WorldToGrid(end);
+    const glm::ivec2 startGrid = WorldToGrid(start);
+    const glm::ivec2 endGrid = WorldToGrid(end);
 
-    if (!IsWalkable(startGrid.x, startGrid.y, startGrid.z)) {
+    if (!IsWalkable(startGrid.x, startGrid.y)) {
         return {};
     }
 
-    if (!IsWalkable(endGrid.x, endGrid.y, endGrid.z)) {
+    if (!IsWalkable(endGrid.x, endGrid.y)) {
         return {};
     }
 
-    const int startIdx = GridToIndex(startGrid.x, startGrid.y, startGrid.z);
-    const int endIdx = GridToIndex(endGrid.x, endGrid.y, endGrid.z);
+    const int startIdx = GridToIndex(startGrid.x, startGrid.y);
+    const int endIdx = GridToIndex(endGrid.x, endGrid.y);
 
     if (startIdx == endIdx) {
         return {start, end};
@@ -161,7 +151,7 @@ std::vector<glm::vec3> NavmeshGrid::FindPath(const glm::vec3& start, const glm::
         startIdx,
         -1,
         0.0f,
-        ManhattanDistance(startGrid.x, startGrid.y, startGrid.z, endGrid.x, endGrid.y, endGrid.z)
+        ManhattanDistance(startGrid.x, startGrid.y, endGrid.x, endGrid.y)
     };
 
     openSet.push(startNode);
@@ -187,21 +177,20 @@ std::vector<glm::vec3> NavmeshGrid::FindPath(const glm::vec3& start, const glm::
             if (closedSet.count(neighborIdx)) continue;
 
             const NavCell& neighborCell = _cells[neighborIdx];
-            const glm::ivec3 neighborGrid = IndexToGrid(neighborIdx);
-            const glm::ivec3 currentGrid = IndexToGrid(current.Index);
+            const glm::ivec2 neighborGrid = IndexToGrid(neighborIdx);
+            const glm::ivec2 currentGrid = IndexToGrid(current.Index);
 
-            const float movementCost = glm::length(glm::vec3(
+            const float movementCost = glm::length(glm::vec2(
                 static_cast<float>(neighborGrid.x - currentGrid.x),
-                static_cast<float>(neighborGrid.y - currentGrid.y),
-                static_cast<float>(neighborGrid.z - currentGrid.z)
+                static_cast<float>(neighborGrid.y - currentGrid.y)
             ));
 
             const float tentativeG = current.GCost + movementCost * neighborCell.Cost;
 
             if (!nodes.count(neighborIdx) || tentativeG < nodes[neighborIdx].GCost) {
                 const float hCost = ManhattanDistance(
-                    neighborCell.X, neighborCell.Y, neighborCell.Z,
-                    endGrid.x, endGrid.y, endGrid.z
+                    neighborCell.X, neighborCell.Z,
+                    endGrid.x, endGrid.y
                 );
 
                 AStarNode neighborNode{
@@ -221,11 +210,11 @@ std::vector<glm::vec3> NavmeshGrid::FindPath(const glm::vec3& start, const glm::
 }
 
 bool NavmeshGrid::HasLineOfSight(const glm::vec3& from, const glm::vec3& to) const noexcept {
-    const glm::ivec3 fromGrid = WorldToGrid(from);
-    const glm::ivec3 toGrid = WorldToGrid(to);
+    const glm::ivec2 fromGrid = WorldToGrid(from);
+    const glm::ivec2 toGrid = WorldToGrid(to);
 
-    if (!IsWalkable(fromGrid.x, fromGrid.y, fromGrid.z)) return false;
-    if (!IsWalkable(toGrid.x, toGrid.y, toGrid.z)) return false;
+    if (!IsWalkable(fromGrid.x, fromGrid.y)) return false;
+    if (!IsWalkable(toGrid.x, toGrid.y)) return false;
 
     const glm::vec3 direction = to - from;
     const float distance = glm::length(direction);
@@ -238,9 +227,9 @@ bool NavmeshGrid::HasLineOfSight(const glm::vec3& from, const glm::vec3& to) con
 
     for (int i = 1; i < steps; ++i) {
         const glm::vec3 checkPos = from + step * (static_cast<float>(i) * checkInterval);
-        const glm::ivec3 checkGrid = WorldToGrid(checkPos);
+        const glm::ivec2 checkGrid = WorldToGrid(checkPos);
 
-        if (!IsWalkable(checkGrid.x, checkGrid.y, checkGrid.z)) {
+        if (!IsWalkable(checkGrid.x, checkGrid.y)) {
             return false;
         }
     }
@@ -284,14 +273,12 @@ void NavmeshGrid::BakeFromGeometry(const std::vector<glm::vec3>& vertices, const
         const glm::vec3 minBound = glm::min(glm::min(v0, v1), v2);
         const glm::vec3 maxBound = glm::max(glm::max(v0, v1), v2);
 
-        const glm::ivec3 minGrid = WorldToGrid(minBound);
-        const glm::ivec3 maxGrid = WorldToGrid(maxBound);
+        const glm::ivec2 minGrid = WorldToGrid(minBound);
+        const glm::ivec2 maxGrid = WorldToGrid(maxBound);
 
-        for (int z = std::max(0, minGrid.z); z <= std::min(_depth - 1, maxGrid.z); ++z) {
-            for (int y = std::max(0, minGrid.y); y <= std::min(_height - 1, maxGrid.y); ++y) {
-                for (int x = std::max(0, minGrid.x); x <= std::min(_width - 1, maxGrid.x); ++x) {
-                    SetCellWalkable(x, y, z, true);
-                }
+        for (int z = std::max(0, minGrid.y); z <= std::min(_height - 1, maxGrid.y); ++z) {
+            for (int x = std::max(0, minGrid.x); x <= std::min(_width - 1, maxGrid.x); ++x) {
+                SetCellWalkable(x, z, true);
             }
         }
     }

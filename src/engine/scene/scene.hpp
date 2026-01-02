@@ -127,4 +127,8 @@ public:
     [[nodiscard]] std::string GetLoadSceneRequestGuid() const noexcept {
         return _requestToLoadScene;
     }
+
+    void RegisterMesh(const std::string &guid, std::shared_ptr<Mesh> mesh) noexcept {
+        _meshes[guid] = std::move(mesh);
+    }
 };

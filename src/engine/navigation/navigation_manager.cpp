@@ -1,7 +1,7 @@
 #include "navigation_manager.hpp"
 
-void NavigationManager::Initialize(int width, int height, int depth, float cellSize, const glm::vec3& origin) {
-    _navmesh = std::make_shared<NavmeshGrid>(width, height, depth, cellSize, origin);
+void NavigationManager::Initialize(int width, int height, float cellSize, const glm::vec3& origin) {
+    _navmesh = std::make_shared<NavmeshGrid>(width, height, cellSize, origin);
     _crowd = std::make_shared<RVOCrowd>();
 }
 
