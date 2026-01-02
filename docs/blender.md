@@ -186,6 +186,27 @@ print(f"Created {len(bpy.data.objects)} objects in spiral pattern")
 
 ## Exporting for the Game Engine
 
+### ⚠️ IMPORTANT: Check note.txt Files First
+
+**Before exporting any model, check if a `note.txt` file exists in the model directory.**
+
+These files contain specific export settings required for that model/animation:
+
+```bash
+# Check for note.txt
+ls assets/resources/models/zombie/original/note.txt
+
+# Read it if it exists
+cat assets/resources/models/zombie/original/note.txt
+```
+
+**Example note.txt content:**
+- Export settings (e.g., `--no-yup` for Z-up orientation)
+- Required parameters (scale, compression, etc.)
+- Model-specific instructions
+
+**Always follow the settings in note.txt if present!**
+
 ### GLB Format (Recommended)
 
 **GLB (GL Binary)** is the recommended format for the game engine. It provides:
@@ -195,7 +216,150 @@ print(f"Created {len(bpy.data.objects)} objects in spiral pattern")
 - 🎮 **Optimized for real-time** - data ready for GPU upload
 - 🌐 **Industry standard** - supported by Unity, Unreal, Godot, Three.js
 
-### Basic GLB Export
+### Using the MCP Tool (Easiest)
+
+**You can use the `export_to_glb()` MCP tool directly from Claude Code:**
+
+```
+# Ask Claude Code:
+"Export assets/resources/models/my_model.blend to GLB"
+
+# Claude will use:
+export_to_glb(
+    input_blend="assets/resources/models/my_model.blend",
+    output_glb="assets/resources/models/my_model.glb"
+)
+
+# With animations:
+export_to_glb(
+    input_blend="assets/resources/models/character.blend",
+    output_glb="assets/resources/models/character.glb",
+    export_animations=True
+)
+
+# With compression (for large models):
+export_to_glb(
+    input_blend="assets/resources/models/large_model.blend",
+    output_glb="assets/resources/models/large_model.glb",
+    use_compression=True,
+    compression_level=6
+)
+
+# With custom scale (e.g., scale up by 10x):
+export_to_glb(
+    input_blend="assets/resources/models/small_model.blend",
+    output_glb="assets/resources/models/small_model.glb",
+    scale_factor=10.0
+)
+
+# For Z-up models (as specified in note.txt):
+export_to_glb(
+    input_blend="assets/resources/models/zombie/original/Zombie@Z_Idle.FBX",
+    output_glb="assets/resources/models/zombie/idle.glb",
+    export_animations=True,
+    export_yup=False  # Preserve Z-up orientation
+)
+```
+
+### Using the Export Script
+
+**A reusable export script is available at `mcp_tools/export_to_glb.py`** for command-line use:
+
+```bash
+# Basic export
+blender --background --python mcp_tools/export_to_glb.py -- \\
+    assets/resources/models/my_model.blend \\
+    assets/resources/models/my_model.glb
+
+# Export with Draco compression (for large models)
+blender --background --python mcp_tools/export_to_glb.py -- \\
+    assets/resources/models/large_model.blend \\
+    assets/resources/models/large_model.glb \\
+    --compress --compression-level 6
+
+# Export with animations
+blender --background --python mcp_tools/export_to_glb.py -- \\
+    assets/resources/models/character.blend \\
+    assets/resources/models/character.glb \\
+    --animations
+
+# Export with custom scale (scale up by 10x)
+blender --background --python mcp_tools/export_to_glb.py -- \\
+    assets/resources/models/small_model.blend \\
+    assets/resources/models/small_model.glb \\
+    --scale 10.0
+
+# Export Z-up model (preserve orientation, as per note.txt)
+blender --background --python mcp_tools/export_to_glb.py -- \\
+    assets/resources/models/zombie/original/Zombie@Z_Idle.FBX \\
+    assets/resources/models/zombie/idle.glb \\
+    --animations --no-yup
+```
+
+**As Python module:**
+
+```python
+from mcp_tools.export_to_glb import export_to_glb
+
+# Basic export
+export_to_glb("model.blend", "model.glb")
+
+# With compression
+export_to_glb("model.blend", "model.glb", use_compression=True, compression_level=6)
+
+# With animations
+export_to_glb("model.blend", "model.glb", export_animations=True)
+
+# With custom scale
+export_to_glb("model.blend", "model.glb", scale_factor=10.0)
+
+# For Z-up models (check note.txt)
+export_to_glb("zombie.fbx", "zombie.glb", export_animations=True, export_yup=False)
+```
+
+See the script's docstring for complete usage and options.
+
+### Export Options Reference
+
+| Option | CLI Flag | Python Param | Default | Description |
+|--------|----------|--------------|---------|-------------|
+| Compression | `--compress` | `use_compression=True` | False | Enable Draco mesh compression |
+| Compression Level | `--compression-level N` | `compression_level=N` | 6 | Compression level 0-10 |
+| Animations | `--animations` | `export_animations=True` | False | Include animations |
+| Selection Only | `--selection-only` | `export_selection_only=True` | False | Export selected objects only |
+| Apply Modifiers | `--no-apply-modifiers` | `apply_modifiers=False` | True | Apply modifiers before export |
+| Scale Factor | `--scale N` | `scale_factor=N` | 1.0 | Scale mesh and bones |
+| Y-up Conversion | `--no-yup` | `export_yup=False` | True | Convert to Y-up (False = keep Z-up) |
+
+### note.txt File Format
+
+Place a `note.txt` file in your model directory to document export settings:
+
+```
+Model Name Export Settings
+===========================
+
+IMPORTANT: Special export requirements for this model.
+
+Correct Export Settings:
+------------------------
+blender --background --python mcp_tools/export_to_glb.py -- \
+    input.fbx \
+    output.glb \
+    --animations --no-yup --scale 10.0
+
+Or via MCP tool:
+export_to_glb("input.fbx", "output.glb", export_animations=True,
+              export_yup=False, scale_factor=10.0)
+
+Notes:
+------
+- Explain why these settings are needed
+- List all animations in this set
+- Mark which ones are already exported correctly (✓)
+```
+
+### Manual GLB Export (Inline)
 
 ```python
 import bpy

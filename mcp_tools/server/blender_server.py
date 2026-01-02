@@ -316,176 +316,189 @@ bpy.ops.wm.open_mainfile(filepath="{blend_file}")
 
 
 @mcp.tool()
-def retarget_mixamo_animation(input_fbx: str, output_glb: str) -> str:
+def export_to_glb(
+    input_blend: str,
+    output_glb: str,
+    use_compression: bool = False,
+    compression_level: int = 6,
+    export_animations: bool = False,
+    scale_factor: float = 1.0,
+    export_yup: bool = True
+) -> str:
     """
-    Retarget Mixamo animation (65 bones) to game engine skeleton (18 bones).
+    Export Blender file to GLB format.
 
-    This tool converts Mixamo animations to a simplified 18-bone skeleton compatible
-    with the game engine's Ozz animation system. It deletes 48 bones (fingers, toes,
-    extra spine bones), renames the remaining 17 bones, adds a Root bone, and aligns
-    the rest pose to origin.
+    Exports a .blend file to GLB (GL Binary) format optimized for the game engine.
+    GLB provides 5-50x faster loading compared to FBX with smaller file sizes.
+
+    IMPORTANT: Check for note.txt files in the model directory before exporting.
+    These files contain specific export settings for that model/animation.
 
     Args:
-        input_fbx: Path to Mixamo FBX animation file (65 bones)
-        output_glb: Path to save retargeted GLB file (18 bones)
+        input_blend: Path to Blender file (.blend) or FBX file (.fbx)
+        output_glb: Path to save GLB file
+        use_compression: Enable Draco mesh compression for large models (default: False)
+        compression_level: Compression level 0-10, higher = smaller file (default: 6)
+        export_animations: Include animations in export (default: False)
+        scale_factor: Scale factor for mesh and bones (default: 1.0)
+        export_yup: Convert to Y-up orientation (default: True, set False for Z-up models)
 
     Returns:
-        str: Result of retargeting operation with bone count and file size
+        str: Result of export operation with file size
 
     Example:
-        retarget_mixamo_animation(
-            "assets/resources/models/shooter/Idle.fbx",
-            "assets/resources/models/shooter/idle_18bones.glb"
+        export_to_glb(
+            "assets/resources/models/my_model.blend",
+            "assets/resources/models/my_model.glb"
+        )
+
+        export_to_glb(
+            "assets/resources/models/character.blend",
+            "assets/resources/models/character.glb",
+            export_animations=True
+        )
+
+        export_to_glb(
+            "assets/resources/models/small_model.blend",
+            "assets/resources/models/small_model.glb",
+            scale_factor=10.0
+        )
+
+        # For Z-up models (check note.txt if available)
+        export_to_glb(
+            "assets/resources/models/zombie/original/Zombie@Z_Idle.FBX",
+            "assets/resources/models/zombie/idle.glb",
+            export_animations=True,
+            export_yup=False
         )
 
     Post-processing:
-        After retargeting, run: python3 mcp_tools/server/generate_asset_metadata.py
+        After export, run: python3 mcp_tools/import.py to generate .meta file
     """
-    logger.info(f"Retargeting Mixamo animation: {input_fbx} -> {output_glb}")
+    logger.info(f"Exporting to GLB: {input_blend} -> {output_glb}")
 
     # Make paths absolute
-    input_fbx = os.path.abspath(input_fbx)
+    input_blend = os.path.abspath(input_blend)
     output_glb = os.path.abspath(output_glb)
 
     # Verify input exists
-    if not os.path.exists(input_fbx):
-        return f"Error: Input FBX file not found: {input_fbx}"
+    if not os.path.exists(input_blend):
+        return f"Error: Input .blend file not found: {input_blend}"
 
     # Ensure output directory exists
     os.makedirs(os.path.dirname(output_glb), exist_ok=True)
 
-    # Build retargeting script (inline to avoid import issues in Blender)
+    # Build export script
+    file_ext = os.path.splitext(input_blend)[1].lower()
+
     script = f"""import bpy
-import sys
-from mathutils import Vector
+import os
 
-def retarget_mixamo_animation(input_fbx_path, output_glb_path):
-    # Clear default scene
+# Load file (detect format)
+print("Loading: {input_blend}")
+file_ext = "{file_ext}"
+
+if file_ext == '.fbx':
+    # Import FBX file
+    bpy.ops.import_scene.fbx(filepath="{input_blend}")
+    print(f"Imported FBX: {input_blend}")
+elif file_ext == '.blend':
+    # Open blend file
+    bpy.ops.wm.open_mainfile(filepath="{input_blend}")
+    print(f"Opened blend file: {input_blend}")
+else:
+    print(f"Error: Unsupported file format: {{file_ext}}")
+    print("Supported formats: .blend, .fbx")
+    import sys
+    sys.exit(1)
+
+print(f"Loaded {{len(bpy.data.objects)}} objects")
+
+# List objects
+for obj in bpy.data.objects:
+    print(f"  - {{obj.name}} ({{obj.type}})")
+
+# Apply scale factor if not 1.0
+scale_factor = {scale_factor}
+if scale_factor != 1.0:
+    print(f"Applying scale factor: {{scale_factor}}")
     bpy.ops.object.select_all(action='SELECT')
-    bpy.ops.object.delete()
+    bpy.ops.transform.resize(value=(scale_factor, scale_factor, scale_factor))
 
-    # Import Mixamo FBX
-    print(f"Importing {{input_fbx_path}}...")
-    bpy.ops.import_scene.fbx(filepath=input_fbx_path)
-
-    # Find armature
-    armature_obj = None
+    # Apply scale to bake it into the mesh and armature
     for obj in bpy.data.objects:
-        if obj.type == 'ARMATURE':
-            armature_obj = obj
-            break
+        if obj.type in ['MESH', 'ARMATURE']:
+            bpy.context.view_layer.objects.active = obj
+            bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+            print(f"  Applied scale to: {{obj.name}}")
 
-    if not armature_obj:
-        print("ERROR: No armature found in FBX file")
-        return False
+    print("Scale applied and baked into objects")
 
-    armature = armature_obj.data
-    print(f"Found armature: {{armature_obj.name}}")
+# Fix Y-forward to Z-forward for models that use Y as forward axis
+# Rotate -90 degrees around Z axis to convert Y-forward to Z-forward
+export_yup = {str(export_yup)}
+if not export_yup:  # Only for Z-up models (like zombie)
+    print("Converting Y-forward to Z-forward (rotating -90° around Z axis)")
+    bpy.ops.object.select_all(action='SELECT')
+    import math
+    bpy.ops.transform.rotate(value=math.radians(-90), orient_axis='Z', orient_type='GLOBAL')
 
-    # Define bone mapping (17 Mixamo bones to keep)
-    bones_to_keep = {{
-        "mixamorig:Hips": "Hips",
-        "mixamorig:Spine": "Spine",
-        "mixamorig:Spine1": "Chest",
-        "mixamorig:Neck": "Neck",
-        "mixamorig:Head": "Head",
-        "mixamorig:LeftArm": "UpperArm.L",
-        "mixamorig:LeftForeArm": "Forearm.L",
-        "mixamorig:LeftHand": "Hand.L",
-        "mixamorig:RightArm": "UpperArm.R",
-        "mixamorig:RightForeArm": "Forearm.R",
-        "mixamorig:RightHand": "Hand.R",
-        "mixamorig:LeftUpLeg": "Thigh.L",
-        "mixamorig:LeftLeg": "Shin.L",
-        "mixamorig:LeftFoot": "Foot.L",
-        "mixamorig:RightUpLeg": "Thigh.R",
-        "mixamorig:RightLeg": "Shin.R",
-        "mixamorig:RightFoot": "Foot.R",
-    }}
+    # Apply rotation to bake it
+    for obj in bpy.data.objects:
+        if obj.type in ['MESH', 'ARMATURE']:
+            bpy.context.view_layer.objects.active = obj
+            bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+            print(f"  Applied rotation to: {{obj.name}}")
 
-    # Switch to edit mode
-    bpy.context.view_layer.objects.active = armature_obj
-    bpy.ops.object.mode_set(mode='EDIT')
+    print("Y-forward to Z-forward conversion applied")
 
-    # Get Hips position before modifications
-    hips_bone = armature.edit_bones.get("mixamorig:Hips")
-    if hips_bone:
-        hips_y_pos = hips_bone.head.y
-        print(f"Original Hips Y position: {{hips_y_pos}}")
-    else:
-        print("WARNING: Hips bone not found")
-        hips_y_pos = 0
+# Build export options
+export_options = {{
+    'filepath': "{output_glb}",
+    'export_format': 'GLB',
+    'use_selection': False,
+    'export_apply': True,
+}}
 
-    # Delete bones not in the mapping
-    bones_to_delete = [bone.name for bone in armature.edit_bones
-                      if bone.name not in bones_to_keep]
-    print(f"Deleting {{len(bones_to_delete)}} bones...")
-    for bone_name in bones_to_delete:
-        armature.edit_bones.remove(armature.edit_bones[bone_name])
+# Animation export
+export_animations = {str(export_animations)}
+if export_animations:
+    export_options['export_animations'] = True
+    export_options['export_frame_range'] = True
+    export_options['export_force_sampling'] = True
+    print("Animation export enabled")
+    if bpy.data.actions:
+        print(f"Found {{len(bpy.data.actions)}} animation(s):")
+        for action in bpy.data.actions:
+            print(f"  - {{action.name}}, frames: {{int(action.frame_range[0])}} - {{int(action.frame_range[1])}}")
 
-    # Rename kept bones
-    for old_name, new_name in bones_to_keep.items():
-        if old_name in armature.edit_bones:
-            armature.edit_bones[old_name].name = new_name
+# Compression
+use_compression = {str(use_compression)}
+if use_compression:
+    export_options['export_draco_mesh_compression_enable'] = True
+    export_options['export_draco_mesh_compression_level'] = {compression_level}
+    print(f"Draco compression enabled (level {compression_level})")
 
-    # Add Root bone at origin with Hips as child
-    root_bone = armature.edit_bones.new("Root")
-    hips_bone = armature.edit_bones.get("Hips")
-    if hips_bone:
-        root_bone.head = Vector((0, 0, 0))
-        root_bone.tail = Vector((0, 0, 0.1))
-        hips_bone.parent = root_bone
-        print("Created Root bone")
-    else:
-        print("ERROR: Could not find Hips bone for reparenting")
-        return False
+# Coordinate system conversion
+export_yup = {str(export_yup)}
+export_options['export_yup'] = export_yup
+if not export_yup:
+    print("Preserving Z-up orientation (export_yup=False)")
+else:
+    print("Converting to Y-up orientation (export_yup=True)")
 
-    # Switch to object mode
-    bpy.ops.object.mode_set(mode='OBJECT')
+# Export to GLB
+print("=== EXPORTING TO GLB ===")
+bpy.ops.export_scene.gltf(**export_options)
+print("=== EXPORT COMPLETE ===")
 
-    # CRITICAL: Offset armature to align Root at world origin
-    print(f"Original armature location: {{armature_obj.location}}")
-    armature_obj.location.y -= hips_y_pos
-    print(f"New armature location: {{armature_obj.location}}")
-
-    # Apply transform to bake offset into skeleton
-    bpy.ops.object.select_all(action='DESELECT')
-    armature_obj.select_set(True)
-    bpy.context.view_layer.objects.active = armature_obj
-    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
-    print("Applied transform to armature")
-
-    # Verify final bone count
-    bone_count = len(armature.bones)
-    print(f"Final bone count: {{bone_count}}")
-
-    # Export to GLB
-    print("Exporting to GLB...")
-    bpy.ops.export_scene.gltf(
-        filepath=output_glb_path,
-        export_format='GLB',
-        use_selection=False,
-        export_animations=True,
-        export_frame_range=True,
-        export_force_sampling=True,
-        export_def_bones=True,
-        export_rest_position_armature=False
-    )
-    print("Export complete")
-
-    # Check file size
-    import os
-    if os.path.exists(output_glb_path):
-        size_kb = os.path.getsize(output_glb_path) / 1024
-        print(f"File size: {{size_kb:.1f}} KB")
-        return True
-    else:
-        print("ERROR: Export failed")
-        return False
-
-# Run retargeting
-success = retarget_mixamo_animation("{input_fbx}", "{output_glb}")
-sys.exit(0 if success else 1)
+# Report file size
+if os.path.exists("{output_glb}"):
+    size_kb = os.path.getsize("{output_glb}") / 1024
+    print(f"✅ Successfully exported to: {output_glb}")
+    print(f"   File size: {{size_kb:.1f}} KB")
+else:
+    print("❌ ERROR: Export failed")
 """
 
     try:
@@ -494,14 +507,23 @@ sys.exit(0 if success else 1)
         # Build result
         result = ""
         if returncode == 0:
-            result += "✓ Animation retargeted successfully\n\n"
+            result += "✓ GLB export successful\n\n"
         else:
-            result += f"⚠️  Retargeting failed with code {{returncode}}\n\n"
+            result += f"⚠️  Export failed with code {returncode}\n\n"
 
         # Filter output
         filtered_lines = []
         for line in stdout.split('\n'):
-            if any(skip in line for skip in ['Blender', 'Read prefs:', 'found bundled python:', 'Read blend:', 'Saved session', 'Blender quit']):
+            if any(skip in line for skip in [
+                'Blender',
+                'Read prefs:',
+                'found bundled python:',
+                'Read blend:',
+                'Saved session',
+                'Blender quit',
+                'color management',
+                'libpng warning'
+            ]):
                 continue
             if line.strip():
                 filtered_lines.append(line)
@@ -512,13 +534,21 @@ sys.exit(0 if success else 1)
             result += "No output"
 
         if stderr and returncode != 0:
-            result += "\n\nErrors:\n" + stderr
+            # Filter stderr
+            filtered_stderr = []
+            for line in stderr.split('\n'):
+                if any(skip in line for skip in ['color management', 'ALSA', 'OSL', 'libpng warning']):
+                    continue
+                if line.strip():
+                    filtered_stderr.append(line)
+            if filtered_stderr:
+                result += "\n\nErrors:\n" + '\n'.join(filtered_stderr)
 
-        logger.info(f"Retargeting completed with code {{returncode}}")
+        logger.info(f"Export completed with code {returncode}")
         return result
 
     except Exception as e:
-        error_msg = f"Error retargeting animation: {{str(e)}}"
+        error_msg = f"Error exporting to GLB: {str(e)}"
         logger.error(error_msg, exc_info=True)
         return error_msg
 

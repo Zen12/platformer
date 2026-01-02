@@ -37,7 +37,7 @@ ls -la .claude/rules/
 
 **Check `docs/` for:**
 - `mcp.md` - MCP tools and workflows
-- `animation-retargeting.md` - Animation workflows
+- `blender.md` - Blender integration and export workflows
 - Other technical documentation
 
 ## Task-Specific Documentation
@@ -71,12 +71,12 @@ ls -la .claude/rules/
 
 **Why:** Follow existing patterns, naming conventions, and build workflow.
 
-### Before Retargeting Animations
+### Before Exporting 3D Models
 **MUST READ:**
-- `docs/animation-retargeting.md` - Retargeting workflow
-- `mcp_tools/retarget_mixamo_animation.py` - Script usage
+- `docs/blender.md` - Blender export workflows
+- `mcp_tools/export_to_glb.py` - Script usage
 
-**Why:** Understand bone mapping, MCP tools, and proper workflow.
+**Why:** Understand GLB export, MCP tools, and proper workflow.
 
 ## How to Read Documentation
 
@@ -96,7 +96,7 @@ Read(file_path="/Users/.../docs/mcp.md", offset=0, limit=100)
 # Find relevant docs by keyword
 grep -r "asset deletion" docs/
 grep -r "MCP tools" docs/
-grep -r "retarget" docs/
+grep -r "export" docs/
 ```
 
 ### 3. Check Rule Files
@@ -186,32 +186,32 @@ Claude: *uses python3 mcp_tools/find.py*
 
 ## Example: Correct Workflow
 
-**User request:** "Retarget Mixamo animation for the shooter"
+**User request:** "Export my Blender model to GLB for the game"
 
 **✅ Correct approach:**
 
 1. **Check for docs:**
    ```bash
-   ls docs/*animation* docs/*retarget*
-   # Found: docs/animation-retargeting.md
+   ls docs/*blender* docs/*export*
+   # Found: docs/blender.md
    ```
 
 2. **Read documentation:**
    ```python
-   Read(file_path="docs/animation-retargeting.md")
+   Read(file_path="docs/blender.md")
    # Learn about MCP server method and standalone script
    ```
 
 3. **Check for scripts:**
    ```bash
-   ls mcp_tools/*retarget*
-   # Found: mcp_tools/retarget_mixamo_animation.py
+   ls mcp_tools/*export*
+   # Found: mcp_tools/export_to_glb.py
    ```
 
 4. **Use existing tools:**
    ```python
    # Use MCP server method (recommended in docs)
-   retarget_mixamo_animation(input_fbx="...", output_glb="...")
+   export_to_glb(input_blend="...", output_glb="...")
    ```
 
 **❌ WRONG approach:**

@@ -31,26 +31,6 @@ std::shared_ptr<Shader> Scene::GetShader(const std::string &vertexGuid, const st
     return {};
 }
 
-std::shared_ptr<UiPage> Scene::GetUiPage(const std::string &guid) {
-    if (const auto assetManager = _assetManager.lock()) {
-        if (_uiPages.find(guid) == _uiPages.end()) {
-            const auto uiPageAsset = assetManager->LoadAssetByGuid<UiPageAsset>(guid);
-
-            const auto uiPage = std::make_shared<UiPage>();
-            uiPage->Rml = assetManager->LoadSourceByGuid<std::string>(uiPageAsset.RmlGuid);
-            uiPage->Material = GetMaterial(uiPageAsset.MaterialGuid);
-            uiPage->FontPath = assetManager->GetPathFromGuid(uiPageAsset.FontGuid);
-            uiPage->Css = assetManager->LoadSourceByGuid<std::string>(uiPageAsset.CssGuid);
-
-            _uiPages[guid] = uiPage;
-            return uiPage;
-        }
-        return _uiPages[guid];
-    }
-
-    return {};
-}
-
 std::shared_ptr<Material> Scene::GetMaterial(const std::string &guid) {
     if (const auto assetManager = _assetManager.lock()) {
         if (_materials.find(guid) == _materials.end()) {
@@ -91,7 +71,7 @@ std::shared_ptr<Mesh> Scene::GetMesh(const std::string &guid) {
             std::shared_ptr<Mesh> mesh;
             if (meshData.HasSkeleton) {
                 mesh = std::make_shared<Mesh>(meshData.Vertices, meshData.Indices, meshData.HasTexCoords,
-                                               meshData.BoneWeights, meshData.BoneIndices);
+                                              meshData.BoneWeights, meshData.BoneIndices);
                 // Store bone names, offsets, and hierarchy for animation mapping
                 _meshBoneNames[guid] = meshData.BoneNames;
                 _meshBoneOffsets[guid] = meshData.BoneOffsets;
@@ -136,6 +116,26 @@ std::shared_ptr<Font> Scene::GetFont(const std::string &guid) {
     return {};
 }
 
+std::shared_ptr<UiPage> Scene::GetUiPage(const std::string &guid) {
+    if (const auto assetManager = _assetManager.lock()) {
+        if (_uiPages.find(guid) == _uiPages.end()) {
+            const auto uiPageAsset = assetManager->LoadAssetByGuid<UiPageAsset>(guid);
+
+            const auto uiPage = std::make_shared<UiPage>();
+            uiPage->Rml = assetManager->LoadSourceByGuid<std::string>(uiPageAsset.RmlGuid);
+            uiPage->Material = GetMaterial(uiPageAsset.MaterialGuid);
+            uiPage->FontPath = assetManager->GetPathFromGuid(uiPageAsset.FontGuid);
+            uiPage->Css = assetManager->LoadSourceByGuid<std::string>(uiPageAsset.CssGuid);
+
+            _uiPages[guid] = uiPage;
+            return uiPage;
+        }
+        return _uiPages[guid];
+    }
+
+    return {};
+}
+
 std::shared_ptr<AnimationData> Scene::GetAnimation(const std::string &guid) {
     if (guid.empty())
         return {};
@@ -148,6 +148,27 @@ std::shared_ptr<AnimationData> Scene::GetAnimation(const std::string &guid) {
             return animation;
         }
         return _animations[guid];
+    }
+    return {};
+}
+
+std::vector<std::string> Scene::GetMeshBoneNames(const std::string &guid) const {
+    if (const auto it = _meshBoneNames.find(guid); it != _meshBoneNames.end()) {
+        return it->second;
+    }
+    return {};
+}
+
+std::vector<glm::mat4> Scene::GetMeshBoneOffsets(const std::string &guid) const noexcept {
+    if (const auto it = _meshBoneOffsets.find(guid); it != _meshBoneOffsets.end()) {
+        return it->second;
+    }
+    return {};
+}
+
+std::vector<int> Scene::GetMeshBoneParents(const std::string &guid) const noexcept {
+    if (const auto it = _meshBoneParents.find(guid); it != _meshBoneParents.end()) {
+        return it->second;
     }
     return {};
 }

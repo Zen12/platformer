@@ -1,16 +1,14 @@
 # Skinned Mesh Workflow Guide
 
-Complete guide for creating, exporting, and animating skinned meshes with Mixamo animations.
+Complete guide for creating, exporting, and animating skinned meshes for the game engine.
 
 ## Table of Contents
 
 1. [Overview](#overview)
 2. [Blender: Creating Skinned Meshes](#blender-creating-skinned-meshes)
 3. [Blender: Exporting to GLB](#blender-exporting-to-glb)
-4. [Mixamo: Downloading Animations](#mixamo-downloading-animations)
-5. [Retargeting Mixamo Animations](#retargeting-mixamo-animations)
-6. [Game Engine Integration](#game-engine-integration)
-7. [Troubleshooting](#troubleshooting)
+4. [Game Engine Integration](#game-engine-integration)
+5. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -46,7 +44,7 @@ assets/resources/models/character/
 ├── character_preview.png.meta
 ├── character_texture.png   # Diffuse texture
 ├── character_texture.png.meta
-├── idle.fbx               # Mixamo animation (source)
+├── idle.fbx               # Animation source (if using FBX)
 ├── idle.fbx.meta
 ├── idle_18bones.glb       # Retargeted animation
 └── idle_18bones.glb.meta
@@ -291,120 +289,6 @@ bpy.ops.export_scene.gltf(
 
 ---
 
-## Mixamo: Downloading Animations
-
-### Step 1: Get Character on Mixamo
-
-**Option A: Upload Your Character**
-
-1. Go to [Mixamo.com](https://www.mixamo.com)
-2. Click "Upload Character"
-3. Upload your character FBX/OBJ
-4. Mixamo auto-rigs it (adds 65-bone skeleton)
-
-**Option B: Use Mixamo Character**
-
-1. Browse Mixamo characters
-2. Select one as base
-
-### Step 2: Choose Animation
-
-1. **Browse Animations**
-   - Idle, Walk, Run, Jump, Attack, etc.
-   - Preview in real-time
-
-2. **Adjust Settings**
-   - Trim animation if needed
-   - Adjust "Character Arm-Space" for weapon poses
-   - In Place / With Root Motion
-
-### Step 3: Download Animation
-
-**CRITICAL Download Settings:**
-
-```
-Format: FBX (.fbx)
-Skin: ✓ With Skin (IMPORTANT!)
-Frame Rate: 30 fps (or match your game's fps)
-Keyframe Reduction: None (keep all keyframes)
-```
-
-**Why "With Skin"?**
-- Includes bone hierarchy data
-- Needed for retargeting to 18-bone skeleton
-- Without skin = animation data only (won't work)
-
-**Download saves as:** `Idle.fbx` (or animation name)
-
----
-
-## Retargeting Mixamo Animations
-
-Mixamo animations have **65 bones**, but our engine uses **18 bones**. We must retarget.
-
-### Automatic Retargeting (Recommended)
-
-**Method 1: MCP Server (Easiest)**
-
-```python
-# In Claude Code:
-retarget_mixamo_animation(
-    input_fbx="assets/resources/models/character/idle.fbx",
-    output_glb="assets/resources/models/character/idle_18bones.glb"
-)
-```
-
-**Method 2: Command Line**
-
-```bash
-blender --background --python mcp_tools/retarget_mixamo_animation.py -- \
-    assets/resources/models/character/idle.fbx \
-    assets/resources/models/character/idle_18bones.glb
-```
-
-**What it does:**
-1. Imports Mixamo FBX (65 bones)
-2. Deletes 48 bones (fingers, toes, extra spine bones)
-3. Renames 17 bones to match engine naming
-4. Adds Root bone at origin
-5. Offsets armature to align rest pose
-6. Exports to GLB (18 bones)
-
-**See:** [Animation Retargeting Guide](animation-retargeting.md) for details.
-
-### Manual Retargeting (Advanced)
-
-If you need custom bone mapping:
-
-1. **Import Mixamo FBX** to Blender
-2. **Switch to Edit Mode** on armature
-3. **Delete unwanted bones:**
-   - All finger bones (LeftHandThumb1-3, etc.)
-   - All toe bones
-   - Extra spine bones (Spine2 if you only need Spine1)
-   - Shoulder bones (LeftShoulder, RightShoulder)
-
-4. **Rename bones** to match engine convention:
-   ```
-   mixamorig:Hips → Hips
-   mixamorig:Spine → Spine
-   mixamorig:Spine1 → Chest
-   mixamorig:LeftArm → UpperArm.L
-   ... (see bone mapping table in animation-retargeting.md)
-   ```
-
-5. **Add Root bone:**
-   - Create new bone "Root" at (0, 0, 0)
-   - Make Hips a child of Root
-
-6. **Offset armature:**
-   - Object mode: Move armature so Root is at origin
-   - Apply transform (Ctrl+A → Location)
-
-7. **Export to GLB** (with animation)
-
----
-
 ## Game Engine Integration
 
 ### Step 1: Generate Metadata
@@ -581,7 +465,7 @@ entities:
 - External textures preferred over embedded (faster loading)
 
 ### Animations
-- Download from Mixamo with "With Skin" enabled
+- Create animations in Blender or import from external sources
 - Always retarget to 18 bones before use
 - Use 30 fps or match game's target fps
 - Trim unnecessary frames to reduce file size
@@ -593,7 +477,7 @@ models/character/
 ├── character.glb          # Engine format (mesh + skeleton)
 ├── character_preview.png  # For asset browser
 ├── character_texture.png  # Diffuse map
-├── idle.fbx              # Mixamo source (can delete after retargeting)
+├── idle.fbx              # Animation source (optional)
 ├── idle_18bones.glb      # Retargeted animation (keep)
 ├── walk_18bones.glb      # More animations...
 └── *.meta                # Metadata for all files
@@ -638,7 +522,7 @@ Foot.L/R          # Foot
 - [ ] Generated .meta file
 
 ### Animation Checklist
-- [ ] Downloaded from Mixamo "With Skin"
+- [ ] Animation created or imported
 - [ ] Retargeted to 18 bones
 - [ ] Exported to GLB format
 - [ ] Generated .meta file
@@ -649,7 +533,7 @@ Foot.L/R          # Foot
 
 ## See Also
 
-- [Animation Retargeting Guide](animation-retargeting.md) - Detailed retargeting workflow
+- [Blender Documentation](blender.md) - Blender MCP server and GLB export
 - [MCP Tools Documentation](mcp.md) - Asset management tools
 - [Asset Creation Guidelines](../README.md) - General asset rules
 - [Coding Style - Component Factory](../.claude/rules/coding-style.md) - Adding new components
@@ -659,5 +543,4 @@ Foot.L/R          # Foot
 ## Credits
 
 - **Ozz Animation Library** - [GitHub](https://github.com/guillaumeblanc/ozz-animation)
-- **Mixamo** - [mixamo.com](https://www.mixamo.com)
 - **Blender** - [blender.org](https://www.blender.org)

@@ -5,12 +5,36 @@ IMPORTANT: These FBX animations use Z-up orientation and must be exported with s
 
 Correct Export Settings:
 ------------------------
-When exporting these FBX files to GLB using Blender:
+When exporting these FBX files to GLB using the export script:
 
+Command line (RECOMMENDED):
+blender --background --python mcp_tools/export_to_glb.py -- \
+    assets/resources/models/zombie/original/Zombie1.FBX \
+    assets/resources/models/zombie/zombie_scaled.glb \
+    --animations --scale 0.01 --no-yup
+
+MCP Tool:
+export_to_glb(
+    "assets/resources/models/zombie/original/Zombie1.FBX",
+    "assets/resources/models/zombie/zombie_scaled.glb",
+    export_animations=True,
+    scale_factor=0.01,
+    export_yup=False
+)
+
+Manual Blender Export (if needed):
 1. FBX Import: Use default settings
    bpy.ops.import_scene.fbx(filepath=fbx_path)
 
-2. GLB Export: Disable Y-up conversion to preserve Z-up orientation
+2. Apply 100x downscale to all objects (mesh + armature):
+   bpy.ops.object.select_all(action='SELECT')
+   bpy.ops.transform.resize(value=(0.01, 0.01, 0.01))
+   for obj in bpy.data.objects:
+       if obj.type in ['MESH', 'ARMATURE']:
+           bpy.context.view_layer.objects.active = obj
+           bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+
+3. GLB Export: Preserve Z-up orientation
    bpy.ops.export_scene.gltf(
        filepath=output_path,
        export_format='GLB',
@@ -18,22 +42,123 @@ When exporting these FBX files to GLB using Blender:
        export_yup=False  # CRITICAL: Keep Z-up orientation
    )
 
+In-Place Animation Export (CRITICAL for InPlace animations):
+-------------------------------------------------------------
+For animations that should stay in one location (e.g., Run_InPlace, Walk_InPlace),
+the root bone (Base HumanPelvis) must have its location zeroed out.
+
+Blender Python Script (REQUIRED for InPlace animations):
+```python
+import bpy
+
+# 1. Import FBX
+bpy.ops.wm.read_homefile(use_empty=True)
+bpy.ops.import_scene.fbx(filepath="path/to/animation.fbx")
+
+# 2. Find armature and zero out root bone location
+armature = None
+for obj in bpy.data.objects:
+    if obj.type == 'ARMATURE':
+        armature = obj
+        break
+
+if armature:
+    # Set armature to origin
+    armature.location = (0, 0, 0)
+
+    # Zero out root bone (Base HumanPelvis) location for all frames
+    if armature.animation_data and armature.animation_data.action:
+        action = armature.animation_data.action
+        root_bone_name = "Base HumanPelvis"
+
+        if root_bone_name in armature.pose.bones:
+            pose_bone = armature.pose.bones[root_bone_name]
+            frame_start = int(action.frame_range[0])
+            frame_end = int(action.frame_range[1])
+
+            # Insert zero location keyframes for all frames
+            for frame in range(frame_start, frame_end + 1):
+                bpy.context.scene.frame_set(frame)
+                pose_bone.location = (0, 0, 0)
+                pose_bone.keyframe_insert(data_path="location", frame=frame)
+
+# 3. Apply scale (100x downscale)
+bpy.ops.object.select_all(action='SELECT')
+bpy.ops.transform.resize(value=(0.01, 0.01, 0.01))
+for obj in bpy.data.objects:
+    if obj.type in ['MESH', 'ARMATURE']:
+        bpy.context.view_layer.objects.active = obj
+        bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
+
+# 4. Export to GLB
+bpy.ops.export_scene.gltf(
+    filepath="output.glb",
+    export_format='GLB',
+    export_animations=True,
+    export_yup=False
+)
+```
+
+Why this is needed:
+- InPlace animations have root bone translation baked in
+- This causes the character to move around instead of staying in place
+- Zeroing out root bone location keeps character stationary
+- Bone-local animation (limb movement) is preserved
+
 Available Animations:
 --------------------
-- Zombie1.FBX (base mesh)
+- Zombie1.FBX (base mesh) ✓ (exported with scale 0.01, no animation, export_yup=False, -90° X rotation)
 - Zombie@Z_Attack.FBX
 - Zombie@Z_FallingBack.FBX
 - Zombie@Z_FallingForward.FBX
 - Zombie@Z_Idle.FBX
 - Zombie@Z_Run.FBX
-- Zombie@Z_Run_InPlace.FBX
+- Zombie@Z_Run_InPlace.FBX ✓ (exported with root motion removed)
 - Zombie@Z_Walk.FBX
 - Zombie@Z_Walk1.FBX
-- Zombie@Z_Walk1_InPlace.FBX ✓ (exported with correct settings)
+- Zombie@Z_Walk1_InPlace.FBX ✓ (exported with root motion removed)
 - Zombie@Z_Walk_InPlace.FBX
+
+Export Details:
+---------------
+- Scale: 0.01 (100x downscale)
+  * Applied to BOTH mesh AND armature (bones are scaled)
+  * Scale is baked into geometry before export
+- Orientation: Z-up preserved (export_yup=False)
+  * **CRITICAL**: Y-forward to Z-forward conversion automatically applied
+  * Rotates -90° around X axis to fix forward direction
+  * Original uses Y-forward, converted to Z-forward for game engine
+- Animations: Not included (animations loaded separately)
+  * Base mesh only (no animation data in zombie_scaled.glb)
+
+Troubleshooting:
+----------------
+If animations don't work or model appears incorrectly oriented:
+
+1. **Y-Forward Issue (FIXED)**:
+   - The FBX uses Z-up, Y-forward coordinate system
+   - Export script now automatically converts Y-forward to Z-forward
+   - Applies -90° rotation around X axis when export_yup=False
+   - Rotation is baked into mesh and armature before GLB export
+   - Output GLB: Z-up, Z-forward (compatible with game engine)
+
+2. **Bones Not Scaling**:
+   - Verify scale is applied to ARMATURE object (not just mesh)
+   - Check export output for "Applied scale to: Armature"
+   - Bones must be scaled the same as mesh (0.01)
+
+3. **Animation Not Playing**:
+   - Verify animation is embedded in GLB (check "Found 1 animation(s)" in export log)
+   - Check animation name matches what engine expects
+   - Ensure skeleton bone count matches (Zombie1.FBX has specific bone structure)
+
+4. **Matrix Warnings**:
+   - "divide by zero" and "overflow" warnings during export are expected
+   - They occur due to extreme scaling (0.01) but don't affect output
+   - Final GLB is valid despite warnings
 
 Notes:
 ------
-- The zombie.glb (base mesh) was already exported correctly
-- All animations in this set likely need export_yup=False
-- If animation appears rotated/wrong orientation, verify export_yup=False is used
+- All animations in this set require export_yup=False
+- Scale 0.01 is required to match game engine units
+- Both mesh and armature MUST be scaled together

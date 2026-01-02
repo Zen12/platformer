@@ -21,15 +21,6 @@
 #include "../renderer/animation/animation_asset_loader.hpp"
 #include "../navigation/navigation_manager.hpp"
 
-
-struct PrefabInstantiateData {
-    std::string Id{};
-    std::string Creator{};
-    glm::vec3 Position{glm::vec3(1)};
-    glm::vec3 Rotation{glm::vec3(0)};
-    glm::vec3 Scale{glm::vec3(1)};
-};
-
 class Scene {
 private:
     std::unordered_map<std::string, std::shared_ptr<Shader>> _shaders{};
@@ -96,29 +87,11 @@ public:
 
     [[nodiscard]] std::shared_ptr<AnimationData> GetAnimation(const std::string &guid);
 
-    [[nodiscard]] std::vector<std::string> GetMeshBoneNames(const std::string &guid) const {
-        auto it = _meshBoneNames.find(guid);
-        if (it != _meshBoneNames.end()) {
-            return it->second;
-        }
-        return {};
-    }
+    [[nodiscard]] std::vector<std::string> GetMeshBoneNames(const std::string &guid) const;
 
-    [[nodiscard]] std::vector<glm::mat4> GetMeshBoneOffsets(const std::string &guid) const {
-        auto it = _meshBoneOffsets.find(guid);
-        if (it != _meshBoneOffsets.end()) {
-            return it->second;
-        }
-        return {};
-    }
+    [[nodiscard]] std::vector<glm::mat4> GetMeshBoneOffsets(const std::string &guid) const noexcept;
 
-    [[nodiscard]] std::vector<int> GetMeshBoneParents(const std::string &guid) const {
-        auto it = _meshBoneParents.find(guid);
-        if (it != _meshBoneParents.end()) {
-            return it->second;
-        }
-        return {};
-    }
+    [[nodiscard]] std::vector<int> GetMeshBoneParents(const std::string &guid) const noexcept;
 
     void RequestToLoadScene(const std::string &sceneGuid) noexcept {
         _requestToLoadScene = sceneGuid;

@@ -36,7 +36,6 @@ void FsmAnimationSystem::OnTick() {
                         anim.SelfPtr
                     );
 
-                    std::cout << "Created FSM controller for entity with FSM: " << fsmAsset.Name << std::endl;
                 } catch (const std::exception& e) {
                     std::cerr << "Failed to load FSM: " << anim.FsmGuid << " - " << e.what() << std::endl;
                 }
