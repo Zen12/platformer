@@ -17,7 +17,7 @@ private:
     std::shared_ptr<NavigationManager> _navigationManager;
     std::string _materialGuid = "b53dc63c-0c57-46b1-80e5-7570f2445f8a"; // line.mat
 
-    [[nodiscard]] std::vector<float> CalculatePathVertices() const noexcept {
+    [[nodiscard]] std::vector<glm::vec3> CalculatePathPositions() const noexcept {
         if (!_navigationManager) {
             return {};
         }
@@ -27,7 +27,7 @@ private:
             return {};
         }
 
-        std::vector<float> vertices;
+        std::vector<glm::vec3> positions;
 
         for (const auto &[_, agent] : View.each()) {
             if (!agent.Enabled || agent.CrowdAgentId == -1) {
@@ -44,28 +44,18 @@ private:
                 const auto& p1 = crowdAgent->Path[i];
                 const auto& p2 = crowdAgent->Path[i + 1];
 
-                vertices.push_back(p1.x);
-                vertices.push_back(p1.y + 0.5f);
-                vertices.push_back(p1.z);
-
-                vertices.push_back(p2.x);
-                vertices.push_back(p2.y + 0.5f);
-                vertices.push_back(p2.z);
+                positions.emplace_back(p1.x, p1.y + 0.5f, p1.z);
+                positions.emplace_back(p2.x, p2.y + 0.5f, p2.z);
             }
 
             // Draw line from agent position to first waypoint
             if (!crowdAgent->Path.empty()) {
-                vertices.push_back(crowdAgent->Position.x);
-                vertices.push_back(crowdAgent->Position.y + 0.5f);
-                vertices.push_back(crowdAgent->Position.z);
-
-                vertices.push_back(crowdAgent->Path[0].x);
-                vertices.push_back(crowdAgent->Path[0].y + 0.5f);
-                vertices.push_back(crowdAgent->Path[0].z);
+                positions.emplace_back(crowdAgent->Position.x, crowdAgent->Position.y + 0.5f, crowdAgent->Position.z);
+                positions.emplace_back(crowdAgent->Path[0].x, crowdAgent->Path[0].y + 0.5f, crowdAgent->Path[0].z);
             }
         }
 
-        return vertices;
+        return positions;
     }
 
 public:
@@ -78,22 +68,23 @@ public:
           _repository(repository), _navigationManager(navigationManager) {}
 
     void OnTick() override {
-        const auto vertices = CalculatePathVertices();
+        const auto positions = CalculatePathPositions();
 
-        if (vertices.empty()) {
+        if (positions.empty()) {
             return;
         }
 
         for (const auto &[_, camera] : _cameraView.each()) {
             _repository->Add(RenderData{
                 _materialGuid,
-                "",  // No mesh GUID needed for direct vertex rendering
+                "",  // No mesh GUID needed for direct position rendering
                 glm::mat4(1.0f),
                 camera.View,
                 camera.Projection,
                 std::nullopt,
                 PrimitiveType::Lines,
-                vertices
+                positions,
+                glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)  // Green color for AI agent paths
             });
         }
     }

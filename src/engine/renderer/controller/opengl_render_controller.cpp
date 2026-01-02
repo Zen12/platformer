@@ -5,22 +5,21 @@
 void OpenGLRenderController::Render(const std::shared_ptr<RenderRepository>& repository) noexcept {
     const auto renderData = repository->GetData();
 
-    for (const auto &[renderId, matrixVector] : renderData) {
+    for (const auto &[renderId, instance] : renderData) {
         const auto mat = _sceneManager->GetMaterial(renderId.MaterialGuid);
 
         if (!mat) {
             continue;
         }
 
-        const GLenum primitiveType = static_cast<GLenum>(renderId.Primitive);
+        const auto primitiveType = renderId.Primitive;
 
         mat->Bind();
         mat->SetMat4("view", renderId.CameraView);
         mat->SetMat4("projection", renderId.CameraProjection);
 
-        // Draw each instance separately for now (will optimize later)
-        for (size_t i = 0; i < matrixVector.size(); i++) {
-            const auto& instanceData = matrixVector[i];
+        for (size_t i = 0; i < instance.size(); i++) {
+            const auto& instanceData = instance[i];
             mat->SetMat4("model", instanceData.ModelMatrix);
 
             // Set bone transforms if this is a skinned mesh
@@ -29,14 +28,23 @@ void OpenGLRenderController::Render(const std::shared_ptr<RenderRepository>& rep
                 mat->SetMat4Array("boneMatrices", bones);
             }
 
-            // Check if we have direct vertex data (for lines) or a mesh
-            if (instanceData.Vertices.has_value()) {
-                // Direct vertex rendering (for lines)
-                const auto& vertices = instanceData.Vertices.value();
-                const int vertexCount = static_cast<int>(vertices.size() / 3);
+            if (primitiveType == PrimitiveType::Lines) {
+                // Direct position rendering (for lines)
+                const auto& positions = instanceData.Positions.value();
+                const int vertexCount = static_cast<int>(positions.size());
 
-                // Set line color to red
-                mat->SetVec4("lineColor", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+                // Convert positions to vertex data (flat float array)
+                std::vector<float> vertices;
+                vertices.reserve(vertexCount * 3);
+                for (const auto& pos : positions) {
+                    vertices.push_back(pos.x);
+                    vertices.push_back(pos.y);
+                    vertices.push_back(pos.z);
+                }
+
+                // Set line color from InstanceData or use default white
+                const auto lineColor = instanceData.LineColor.value_or(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+                mat->SetVec4("lineColor", lineColor);
 
                 GLuint vao, vbo;
                 glGenVertexArrays(1, &vao);
@@ -49,19 +57,18 @@ void OpenGLRenderController::Render(const std::shared_ptr<RenderRepository>& rep
                 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
                 glEnableVertexAttribArray(0);
 
-                glDrawArrays(primitiveType, 0, vertexCount);
+                glDrawArrays(GL_LINES, 0, vertexCount);
 
                 glDeleteVertexArrays(1, &vao);
                 glDeleteBuffers(1, &vbo);
             } else {
-                // Mesh rendering (traditional path)
                 const auto meshPtr = _sceneManager->GetMesh(renderId.MeshGuid);
                 if (!meshPtr) {
                     continue;
                 }
 
                 meshPtr->Bind();
-                glDrawElements(primitiveType, static_cast<int32_t>(meshPtr->GetIndicesCount()), GL_UNSIGNED_INT, nullptr);
+                glDrawElements(GL_TRIANGLES, static_cast<int32_t>(meshPtr->GetIndicesCount()), GL_UNSIGNED_INT, nullptr);
             }
         }
     }

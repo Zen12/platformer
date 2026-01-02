@@ -8,11 +8,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <GL/glew.h>
 
 enum class PrimitiveType {
-    Triangles = GL_TRIANGLES,
-    Lines = GL_LINES
+    Triangles = 0,
+    Lines = 1
 };
 
 struct RenderData final {
@@ -23,7 +22,8 @@ struct RenderData final {
     const glm::mat4 ProjectionMatrix;
     const std::optional<std::vector<glm::mat4>> BoneTransforms;
     const PrimitiveType Primitive = PrimitiveType::Triangles;
-    const std::optional<std::vector<float>> Vertices = std::nullopt;  // Direct vertex data for lines (positions only: x,y,z,x,y,z,...)
+    const std::optional<std::vector<glm::vec3>> Positions = std::nullopt;  // Direct position data for lines
+    const std::optional<glm::vec4> LineColor = std::nullopt;  // Color for line rendering (RGBA)
 };
 
 struct RenderId final {
@@ -93,7 +93,8 @@ namespace std {
 struct InstanceData final {
     glm::mat4 ModelMatrix;
     std::optional<std::vector<glm::mat4>> BoneTransforms;
-    std::optional<std::vector<float>> Vertices;
+    std::optional<std::vector<glm::vec3>> Positions;
+    std::optional<glm::vec4> LineColor;
 };
 
 class RenderRepository final {
@@ -104,11 +105,11 @@ public:
     void Add(const RenderData &renderData) noexcept {
         const auto &id = RenderId(renderData.MaterialGuid, renderData.MeshGuid, renderData.ViewMatrix, renderData.ProjectionMatrix, renderData.Primitive);
         if (_renderData.find(id) == _renderData.end()) {
-            _renderData[id] = std::vector{InstanceData{renderData.ModelMatrix, renderData.BoneTransforms, renderData.Vertices}};
+            _renderData[id] = std::vector{InstanceData{renderData.ModelMatrix, renderData.BoneTransforms, renderData.Positions, renderData.LineColor}};
             return;
         }
 
-        _renderData[id].push_back(InstanceData{renderData.ModelMatrix, renderData.BoneTransforms, renderData.Vertices});
+        _renderData[id].push_back(InstanceData{renderData.ModelMatrix, renderData.BoneTransforms, renderData.Positions, renderData.LineColor});
     }
 
     [[nodiscard]] const std::unordered_map<RenderId, std::vector<InstanceData>> &GetData() const noexcept {

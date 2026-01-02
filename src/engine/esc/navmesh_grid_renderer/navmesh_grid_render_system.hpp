@@ -16,9 +16,9 @@ private:
     std::weak_ptr<Scene> _scene;
     std::shared_ptr<RenderRepository> _repository;
     std::string _materialGuid = "b53dc63c-0c57-46b1-80e5-7570f2445f8a"; // line.mat
-    std::vector<float> _gridVertices;
+    std::vector<glm::vec3> _gridPositions;
 
-    void CalculateGridVertices() noexcept {
+    void CalculateGridPositions() noexcept {
         if (const auto scene = _scene.lock()) {
             if (const auto navManager = scene->GetNavigationManager()) {
                 if (const auto navmesh = navManager->GetNavmesh()) {
@@ -27,7 +27,7 @@ private:
                     const float cellSize = navmesh->GetCellSize();
                     const glm::vec3 origin = navmesh->GetOrigin();
 
-                    _gridVertices.clear();
+                    _gridPositions.clear();
 
                     for (int x = 0; x <= width; ++x) {
                         for (int z = 0; z <= height; ++z) {
@@ -35,13 +35,8 @@ private:
                                 const float worldX = origin.x + static_cast<float>(x) * cellSize;
                                 const float worldZ = origin.z + static_cast<float>(z) * cellSize;
 
-                                _gridVertices.push_back(worldX);
-                                _gridVertices.push_back(0.0f);
-                                _gridVertices.push_back(worldZ);
-
-                                _gridVertices.push_back(worldX);
-                                _gridVertices.push_back(3.0f);
-                                _gridVertices.push_back(worldZ);
+                                _gridPositions.emplace_back(worldX, 0.0f, worldZ);
+                                _gridPositions.emplace_back(worldX, 3.0f, worldZ);
                             }
                         }
                     }
@@ -56,24 +51,25 @@ public:
         const std::weak_ptr<Scene> &scene,
         const std::shared_ptr<RenderRepository> &repository)
         : _cameraView(cameraView), _scene(scene), _repository(repository) {
-        CalculateGridVertices();
+        CalculateGridPositions();
     }
 
     void OnTick() override {
-        if (_gridVertices.empty()) {
+        if (_gridPositions.empty()) {
             return;
         }
 
         for (const auto &[_, camera] : _cameraView.each()) {
             _repository->Add(RenderData{
                 _materialGuid,
-                "",  // No mesh GUID needed for direct vertex rendering
+                "",  // No mesh GUID needed for direct position rendering
                 glm::mat4(1.0f),
                 camera.View,
                 camera.Projection,
                 std::nullopt,
                 PrimitiveType::Lines,
-                _gridVertices
+                _gridPositions,
+                glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)  // Red color for navmesh grid
             });
         }
     }
