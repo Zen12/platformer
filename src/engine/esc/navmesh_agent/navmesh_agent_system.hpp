@@ -44,6 +44,14 @@ public:
         for (auto [entity, agent, transform] : View.each()) {
             if (!agent.Enabled) continue;
 
+            // Check if agent is on unwalkable terrain and teleport to closest walkable point
+            const glm::vec3 currentPos = transform.GetPosition();
+            const glm::ivec2 gridPos = navmesh->WorldToGrid(currentPos);
+            if (!navmesh->IsWalkable(gridPos.x, gridPos.y)) {
+                const glm::vec3 closestWalkable = navmesh->FindClosestWalkablePoint(currentPos);
+                transform.SetPosition(closestWalkable);
+            }
+
             if (agent.CrowdAgentId == -1) {
                 agent.CrowdAgentId = crowd->AddAgent(transform.GetPosition(), agent.Radius, agent.MaxSpeed);
             }
@@ -51,10 +59,18 @@ public:
             auto crowdAgent = crowd->GetAgent(agent.CrowdAgentId);
             if (!crowdAgent) continue;
 
+            // Check if agent has completed its path
+            if (agent.HasDestination && !crowdAgent->Path.empty() && crowdAgent->CurrentWaypoint >= crowdAgent->Path.size()) {
+                agent.HasDestination = false;
+                crowdAgent->Path.clear();
+                crowdAgent->CurrentWaypoint = 0;
+            }
+
             if (agent.HasDestination && crowdAgent->Path.empty()) {
                 const auto path = navmesh->FindPath(transform.GetPosition(), agent.Destination);
                 if (!path.empty()) {
                     crowd->SetAgentPath(agent.CrowdAgentId, path);
+                    crowdAgent->CurrentWaypoint = 0;
                 } else {
                     agent.HasDestination = false;
                 }

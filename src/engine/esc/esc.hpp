@@ -129,7 +129,7 @@ public:
                registry->view<CameraComponentV2>(), renderRepository ));
 
             _systems.emplace_back(std::make_unique<RandomNavigationSystem>(registry->view<RandomNavigationComponent, NavmeshAgentComponent, TransformComponentV2>(),
-               registry->view<DeltaTimeComponent>()));
+               registry->view<DeltaTimeComponent>(), scenePtr->GetNavigationManager()));
 
             _systems.emplace_back(std::make_unique<NavmeshAgentSystem>(registry->view<NavmeshAgentComponent, TransformComponentV2>(),
                registry->view<DeltaTimeComponent>(), scenePtr->GetNavigationManager(), scenePtr));

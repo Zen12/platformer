@@ -18,6 +18,9 @@ namespace YAML {
                     rhs.Origin = glm::vec3(origin[0], origin[1], origin[2]);
                 }
             }
+            if (node["walkability_grid"]) {
+                rhs.WalkabilityGrid = node["walkability_grid"].as<std::vector<std::vector<int>>>();
+            }
             return true;
         }
     };

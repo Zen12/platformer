@@ -39,19 +39,23 @@ private:
                 continue;
             }
 
-            // Draw lines connecting path waypoints
-            for (size_t i = 0; i < crowdAgent->Path.size() - 1; ++i) {
+            // Only render remaining path (from CurrentWaypoint onwards)
+            if (crowdAgent->CurrentWaypoint >= crowdAgent->Path.size()) {
+                continue; // Agent reached destination
+            }
+
+            // Draw line from agent's current position to current waypoint
+            const auto& currentWaypoint = crowdAgent->Path[crowdAgent->CurrentWaypoint];
+            positions.emplace_back(crowdAgent->Position.x, crowdAgent->Position.y + 0.5f, crowdAgent->Position.z);
+            positions.emplace_back(currentWaypoint.x, currentWaypoint.y + 0.5f, currentWaypoint.z);
+
+            // Draw lines connecting remaining waypoints
+            for (size_t i = crowdAgent->CurrentWaypoint; i < crowdAgent->Path.size() - 1; ++i) {
                 const auto& p1 = crowdAgent->Path[i];
                 const auto& p2 = crowdAgent->Path[i + 1];
 
                 positions.emplace_back(p1.x, p1.y + 0.5f, p1.z);
                 positions.emplace_back(p2.x, p2.y + 0.5f, p2.z);
-            }
-
-            // Draw line from agent position to first waypoint
-            if (!crowdAgent->Path.empty()) {
-                positions.emplace_back(crowdAgent->Position.x, crowdAgent->Position.y + 0.5f, crowdAgent->Position.z);
-                positions.emplace_back(crowdAgent->Path[0].x, crowdAgent->Path[0].y + 0.5f, crowdAgent->Path[0].z);
             }
         }
 

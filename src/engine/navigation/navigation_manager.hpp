@@ -11,7 +11,8 @@ private:
 public:
     NavigationManager() = default;
 
-    void Initialize(int width, int height, float cellSize, const glm::vec3& origin);
+    void Initialize(int width, int height, float cellSize, const glm::vec3& origin,
+                    const std::vector<std::vector<int>>& walkabilityGrid = {});
 
     void Update(float deltaTime);
 

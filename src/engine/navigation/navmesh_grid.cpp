@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <queue>
 
 NavmeshGrid::NavmeshGrid(int width, int height, float cellSize, const glm::vec3& origin)
     : _width(width), _height(height), _cellSize(cellSize), _origin(origin) {
@@ -258,6 +259,52 @@ std::vector<glm::vec3> NavmeshGrid::SmoothPath(const std::vector<glm::vec3>& pat
     }
 
     return smoothed;
+}
+
+glm::vec3 NavmeshGrid::FindClosestWalkablePoint(const glm::vec3& worldPos) const noexcept {
+    const glm::ivec2 gridPos = WorldToGrid(worldPos);
+
+    // If current position is walkable, return it
+    if (IsWalkable(gridPos.x, gridPos.y)) {
+        return GridToWorld(gridPos.x, gridPos.y);
+    }
+
+    // BFS to find closest walkable cell
+    std::queue<glm::ivec2> queue;
+    std::unordered_set<int> visited;
+
+    queue.push(gridPos);
+    visited.insert(GridToIndex(gridPos.x, gridPos.y));
+
+    while (!queue.empty()) {
+        const glm::ivec2 current = queue.front();
+        queue.pop();
+
+        // Check 8 neighbors
+        for (int dz = -1; dz <= 1; ++dz) {
+            for (int dx = -1; dx <= 1; ++dx) {
+                if (dx == 0 && dz == 0) continue;
+
+                const int nx = current.x + dx;
+                const int nz = current.y + dz;
+
+                if (!IsValidCell(nx, nz)) continue;
+
+                const int idx = GridToIndex(nx, nz);
+                if (visited.count(idx)) continue;
+
+                if (IsWalkable(nx, nz)) {
+                    return GridToWorld(nx, nz);
+                }
+
+                visited.insert(idx);
+                queue.push(glm::ivec2(nx, nz));
+            }
+        }
+    }
+
+    // Fallback: return origin (center of grid)
+    return GridToWorld(_width / 2, _height / 2);
 }
 
 void NavmeshGrid::BakeFromGeometry(const std::vector<glm::vec3>& vertices, const std::vector<uint32_t>& indices) {

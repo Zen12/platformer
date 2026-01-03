@@ -49,6 +49,8 @@ public:
     [[nodiscard]] bool IsValidCell(int x, int z) const noexcept;
     [[nodiscard]] std::vector<int> GetNeighbors(int index) const;
 
+    [[nodiscard]] glm::vec3 FindClosestWalkablePoint(const glm::vec3& worldPos) const noexcept;
+
     void SetCellWalkable(int x, int z, bool walkable) noexcept;
     void SetCellCost(int x, int z, float cost) noexcept;
 
