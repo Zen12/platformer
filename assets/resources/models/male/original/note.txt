@@ -1,0 +1,149 @@
+# Male Model Animation Export Notes
+
+## Available Animations in male.blend
+
+The male.blend file contains 21 animations:
+- **air** (0.83s) - Airborne/jumping pose
+- **walk** (1.50s) - Walking animation
+- **run** (1.17s) - Running animation
+- climb_init (0.83s)
+- climb_up (0.83s)
+- crashed_wake (1.54s)
+- crashing (1.42s)
+- falling (1.25s)
+- gun_firing (0.62s)
+- gun_pointing (2.50s)
+- gun_reload (3.58s)
+- idle (2.50s)
+- idle_pistol (2.50s)
+- idle_tired (2.50s)
+- jumping (0.00s) - EMPTY, use "air" instead
+- landing (1.25s)
+- pick_pistol (0.58s)
+- t-pose (0.00s) - EMPTY
+- walk_back (1.50s)
+- walk_left (1.50s)
+- walk_right (1.50s)
+
+## Exported Animations
+
+Currently exported:
+- **male_walk.glb** - Contains ONLY "walk" animation (GUID: b624e619-5108-4ae7-9ff3-9392feee577e)
+- **male_run.glb** - Contains ONLY "run" animation (GUID: d8c5c713-c87c-4d4a-9c37-11962d07824e)
+- **male_jump.glb** - Contains ONLY "air" animation (GUID: ec13a822-9d95-44c8-8284-8829bc53f4bc)
+
+## Export Settings
+
+**CRITICAL**: Each GLB file must contain ONLY ONE animation!
+
+**CRITICAL**: Armature must be positioned so character feet are at Z=0 (ground level)!
+
+When exporting from Blender:
+1. Load male.blend (armature already positioned correctly at Z=0.043, feet at Z=0)
+2. Delete all animations EXCEPT the one you want to export
+3. Export to GLB with these settings:
+   - export_animations=True
+   - export_yup=True (convert to Y-up orientation)
+
+## Armature Positioning (IMPORTANT!)
+
+The armature has been positioned so that:
+- **Character feet**: Z = 0.000 (ground level)
+- **Character head**: Z = 2.876
+- **Armature root (hips)**: Z = 0.043
+
+This ensures the animation root (origin) is at the bottom of the mesh,
+not at the hips or head. The character will stand correctly on the ground
+in the game engine.
+
+## Armature Offset Fix (CRITICAL!)
+
+**Problem**: Animations have a constant Y-offset (e.g., -1 unit)
+**Cause**: GLB exporter moves armature location during export, causing offset in game engine
+**Solution**: Apply transforms to armature and mesh BEFORE export
+
+Without this fix:
+- Armature exports at (0, -0.0277, 1.2301) instead of (0, 0, 0)
+- This causes character to be offset from intended position
+
+## Export Process (Python Script)
+
+```python
+import bpy
+
+# 1. Load the blend file
+bpy.ops.wm.open_mainfile(filepath="path/to/male.blend")
+
+# 2. Keep only the desired animation (e.g., "walk")
+walk_action = None
+animations_to_delete = []
+for action in bpy.data.actions:
+    if action.name == "walk":  # Change "walk" to desired animation
+        walk_action = action
+    else:
+        animations_to_delete.append(action)
+
+for action in animations_to_delete:
+    bpy.data.actions.remove(action)
+
+# 3. Find armature and mesh
+armature = None
+mesh = None
+for obj in bpy.data.objects:
+    if obj.type == 'ARMATURE':
+        armature = obj
+    elif obj.type == 'MESH':
+        mesh = obj
+
+if armature:
+    # Assign the walk action to the armature
+    if not armature.animation_data:
+        armature.animation_data_create()
+    armature.animation_data.action = walk_action
+
+    # 4. CRITICAL: Apply transforms to fix armature offset
+    bpy.context.view_layer.objects.active = armature
+    armature.select_set(True)
+    if mesh:
+        mesh.select_set(True)
+
+    # This ensures armature stays at (0, 0, 0) in exported GLB
+    bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+
+    # 5. Export to GLB
+    bpy.ops.export_scene.gltf(
+        filepath="path/to/male_walk.glb",
+        export_format='GLB',
+        use_selection=False,
+        export_animations=True,
+        export_yup=True
+    )
+```
+
+## Animation FSM
+
+The male_animations.fsm controls the animation state machine:
+- Start: walkState
+- Flow: walk → run → air → walk (cycles)
+- Transitions have 0.2-0.3s blend time
+
+## Troubleshooting
+
+**Problem**: Animation loading with wrong name (e.g., "air" instead of "walk")
+**Cause**: GLB file contains multiple animations, loader picks first alphabetically
+**Solution**: Re-export GLB with ONLY the desired animation
+
+**Problem**: Animation is empty or 0.0s duration
+**Cause**: Source animation in Blender has no keyframes (e.g., "jumping", "t-pose")
+**Solution**: Use a different animation (e.g., "air" instead of "jumping")
+
+**Problem**: Animation has constant Y-offset (character positioned incorrectly)
+**Cause**: GLB exporter moves armature location during export
+**Solution**: Apply transforms before export (see "Armature Offset Fix" section above)
+
+## Last Updated
+2026-01-03
+- Fixed walk/run/jump animations by exporting each animation separately
+- Fixed armature Y-offset issue by applying transforms before export
+- Armature now correctly positioned at (0, 0, 0) in exported GLB files
+- Re-exported all three animations: male_walk.glb, male_run.glb, male_jump.glb

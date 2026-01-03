@@ -1,6 +1,7 @@
 #pragma once
 #include <utility>
 #include <vector>
+#include <iostream>
 
 #include "condition/condition.hpp"
 #include "condition/core_types/trigger_check_condition.hpp"
@@ -34,6 +35,8 @@ private:
 
 private:
     void ChangeState(const std::string &state) {
+        std::cout << "[FSM] State transition: " << _currentState << " -> " << state << std::endl;
+
         auto currentNode = _stateNodes.at(_currentState);
         currentNode.ExitAll();
 
@@ -122,6 +125,7 @@ public:
     }
 
     void SetTrigger(const std::string& triggerName) {
+        std::cout << "[FSM] Trigger set: " << triggerName << " (current state: " << _currentState << ")" << std::endl;
         _triggers[triggerName] = true;
     }
 
@@ -129,6 +133,7 @@ public:
         const auto currentNode = _stateNodes.at(_currentState);
 
         if (!_wasEntered) {
+            std::cout << "[FSM] Entering state: " << _currentState << std::endl;
             currentNode.EnterAll();
             _wasEntered = true;
         }

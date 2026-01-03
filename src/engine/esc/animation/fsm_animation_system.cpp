@@ -57,6 +57,8 @@ void FsmAnimationSystem::OnTick() {
                     anim.Controller->SetTrigger(anim.OnCompleteTrigger);
                 }
 
+                std::cout << "[ANIM] Transition complete: " << anim.FromAnimationGuid
+                          << " -> " << anim.ToAnimationGuid << std::endl;
                 anim.IsTransitioning = false;
                 anim.CurrentAnimationGuid = anim.ToAnimationGuid;
                 // Don't reset Time - let animation continue from accumulated time during transition
@@ -160,6 +162,8 @@ void FsmAnimationSystem::OnTick() {
                 auto animData = scene->GetAnimation(anim.CurrentAnimationGuid);
                 if (animData) {
                     _loadedAnimations[anim.CurrentAnimationGuid] = animData;
+                    std::cout << "[ANIM] Loaded animation: " << anim.CurrentAnimationGuid
+                              << " Duration: " << animData->Duration << "s" << std::endl;
                 } else {
                     std::cerr << "Failed to load animation: " << anim.CurrentAnimationGuid << std::endl;
                     continue;
@@ -175,6 +179,8 @@ void FsmAnimationSystem::OnTick() {
             // Check for animation completion
             if (anim.Time >= animData->Duration && !anim.HasCompletedOnce) {
                 anim.HasCompletedOnce = true;
+                std::cout << "[ANIM] Animation completed: " << anim.CurrentAnimationGuid
+                          << " Trigger: " << anim.OnCompleteTrigger << std::endl;
                 // Set trigger if specified
                 if (!anim.OnCompleteTrigger.empty() && anim.Controller) {
                     anim.Controller->SetTrigger(anim.OnCompleteTrigger);

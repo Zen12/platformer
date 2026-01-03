@@ -3,6 +3,7 @@
 #include "../../../esc/animation/fsm_animation_component.hpp"
 #include <memory>
 #include <string>
+#include <iostream>
 
 struct AnimationStateAction final : public Action {
 private:
@@ -22,6 +23,10 @@ public:
             // (preserve time when coming from a transition)
             if (comp->CurrentAnimationGuid != _animationGuid) {
                 comp->Time = 0.0f;
+                std::cout << "[ANIM STATE] Switching animation: " << comp->CurrentAnimationGuid
+                          << " -> " << _animationGuid << std::endl;
+            } else {
+                std::cout << "[ANIM STATE] Entering state with same animation: " << _animationGuid << std::endl;
             }
             comp->CurrentAnimationGuid = _animationGuid;
             comp->OnCompleteTrigger = _onCompleteTrigger;
