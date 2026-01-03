@@ -1,8 +1,0 @@
-tag: ground
-components:
-    - type: transform
-      position: [-8.0, -7.0, 0.0]
-      rotation: [0.0, 0.0, 0.0]
-      scale: [1.0, 1.0, 1.0]
-    - type: mesh_renderer
-      material: f22681f4-45d1-4542-a838-99f854890c18

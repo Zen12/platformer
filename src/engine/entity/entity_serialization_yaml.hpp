@@ -18,6 +18,8 @@
 #include "../esc/animation/fsm_animation_component_serialization_yaml.hpp"
 #include "../esc/navmesh_agent/navmesh_agent_component_serialization.hpp"
 #include "../esc/navmesh_agent/navmesh_agent_component_serialization_yaml.hpp"
+#include "../esc/spawner/spawner_component_serialization.hpp"
+#include "../esc/spawner/spawner_component_serialization_yaml.hpp"
 
 namespace YAML {
     template <>
@@ -70,6 +72,7 @@ namespace YAML {
                 { "simple_animation",      [](const YAML::Node& n){ return Parse<SimpleAnimationComponentSerialization>(n); } },
                 { "fsm_animation",         [](const YAML::Node& n){ return Parse<FsmAnimationComponentSerialization>(n); } },
                 { "navmesh_agent",         [](const YAML::Node& n){ return Parse<NavmeshAgentComponentSerialization>(n); } },
+                { "spawner",               [](const YAML::Node& n){ return Parse<SpawnerComponentSerialization>(n); } },
             };
 
             if (const auto it = pairs.find(type); it != pairs.end()) {

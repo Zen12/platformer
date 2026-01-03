@@ -26,8 +26,10 @@
 #include "navmesh_agent/navmesh_agent_system.hpp"
 #include "navmesh_agent/random_navigation_component.hpp"
 #include "navmesh_agent/random_navigation_system.hpp"
-#include "navmesh_grid_renderer/navmesh_grid_render_system.hpp"
 #include "navmesh_path_renderer/navmesh_path_render_system.hpp"
+#include "spawner/spawner_component.hpp"
+#include "spawner/spawner_component_serialization.hpp"
+#include "spawner/spawner_system.hpp"
 
 
 class EscSystem {
@@ -93,6 +95,10 @@ public:
 
                         const auto &randomNavView = registry->view<RandomNavigationComponent>();
                         randomNavView->emplace(entity, RandomNavigationComponent());
+                    } else if (const auto &spawnerSerialization = dynamic_cast<SpawnerComponentSerialization*>(component.get())) {
+                        const auto &view = registry->view<SpawnerComponent>();
+                        SpawnerComponent spawner(spawnerSerialization->PrefabGuid, spawnerSerialization->SpawnCount, spawnerSerialization->SpawnPositions, spawnerSerialization->SpawnOnNavmesh, spawnerSerialization->SpawnOnAllCells);
+                        view->emplace(entity, spawner);
                     }
                 }
             }
@@ -134,11 +140,10 @@ public:
             _systems.emplace_back(std::make_unique<NavmeshAgentSystem>(registry->view<NavmeshAgentComponent, TransformComponentV2>(),
                registry->view<DeltaTimeComponent>(), scenePtr->GetNavigationManager(), scenePtr));
 
-            _systems.emplace_back(std::make_unique<NavmeshGridRenderSystem>(registry->view<CameraComponentV2>(),
-               scenePtr, renderRepository));
-
             _systems.emplace_back(std::make_unique<NavmeshPathRenderSystem>(registry->view<NavmeshAgentComponent>(),
                registry->view<CameraComponentV2>(), renderRepository, scenePtr->GetNavigationManager()));
+
+            _systems.emplace_back(std::make_unique<SpawnerSystem>(registry->view<SpawnerComponent>(), scenePtr));
         }
     }
 

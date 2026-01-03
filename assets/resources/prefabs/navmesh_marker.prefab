@@ -1,0 +1,9 @@
+tag: "navmesh_marker"
+components:
+  - type: transform
+    position: [0.0, 0.0, 0.0]
+    rotation: [0.0, 0.0, 0.0]
+    scale: [1.0, 0.2, 1.0]
+  - type: mesh_renderer
+    material: 566ef6f8-bc3f-4ca9-bdfb-d2c2f9ee5b47
+    mesh: abfa5b28-e3b8-4886-aceb-b84fea74d22b
