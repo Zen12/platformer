@@ -21,5 +21,8 @@ fi
 # Set platform-specific flags
 CMAKE_PLATFORM_FLAG="-DPLATFORM_${PLATFORM}=ON"
 
-cmake -H. -Bbin/debug/desktop ${CMAKE_PLATFORM_FLAG} -DPLATFORM_DESKTOP=ON -DIS_PLATFORM_DEFINED=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_SKIP_TEST_ALL_DEPENDENCY=OFF &&
+echo "Building in OFFLINE mode (will fail if dependencies not cached)"
+echo "If this fails, run ./run_debug.sh first to download dependencies"
+
+cmake -H. -Bbin/debug/desktop ${CMAKE_PLATFORM_FLAG} -DPLATFORM_DESKTOP=ON -DIS_PLATFORM_DEFINED=ON -DCMAKE_BUILD_TYPE=Debug -DOFFLINE_BUILD=ON &&
 cmake --build bin/debug/desktop/ --target run -- $PARALLEL_FLAG

@@ -3,12 +3,46 @@ project(Engine-Demo)
 
 include(FetchContent)
 
+# Offline build support
+# OFFLINE_BUILD=ON: Fully offline, fails if packages not cached
+# OFFLINE_BUILD=OFF (default): Downloads missing packages, skips update checks for cached ones
+option(OFFLINE_BUILD "Fully offline build (fails if dependencies not cached)" OFF)
+
+if(OFFLINE_BUILD)
+    message(STATUS "Offline build mode: FULLY_DISCONNECTED (will fail if dependencies not cached)")
+    set(FETCHCONTENT_FULLY_DISCONNECTED ON)
+else()
+    message(STATUS "Online build mode: Will download missing dependencies, skip updates for cached ones")
+    set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+endif()
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set minimum policy version for compatibility
 cmake_policy(SET CMP0000 NEW)
+
+# Auto-detect platform if not defined by build scripts
+if(NOT IS_PLATFORM_DEFINED)
+    message(STATUS "IS_PLATFORM_DEFINED not set, auto-detecting platform...")
+    set(PLATFORM_DESKTOP ON)
+
+    if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+        set(PLATFORM_DESKTOP_OSX ON)
+        message(STATUS "Auto-detected platform: macOS")
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        set(PLATFORM_DESKTOP_LINUX ON)
+        message(STATUS "Auto-detected platform: Linux")
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        set(PLATFORM_DESKTOP_WINDOWS ON)
+        message(STATUS "Auto-detected platform: Windows")
+    else()
+        message(FATAL_ERROR "Unsupported platform: ${CMAKE_SYSTEM_NAME}")
+    endif()
+else()
+    message(STATUS "Using platform settings from build script")
+endif()
 
 # Dependencies
 find_package(YAMLCPP REQUIRED)
@@ -27,14 +61,6 @@ endif()
 if (VIDEO_RECORDING)
     find_package(FFMPEG REQUIRED)
 endif()
-
-# stb - header-only library
-FetchContent_Declare(
-    stb
-    GIT_REPOSITORY https://github.com/nothings/stb.git
-    GIT_TAG master
-)
-FetchContent_MakeAvailable(stb)
 
 # --- Source files ---
 file(GLOB_RECURSE HEADER_FILES "src/*.hpp")

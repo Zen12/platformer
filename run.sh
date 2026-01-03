@@ -21,5 +21,5 @@ fi
 # Set platform-specific flags
 CMAKE_PLATFORM_FLAG="-DPLATFORM_${PLATFORM}=ON"
 
-cmake -H. -Bbin/release/desktop ${CMAKE_PLATFORM_FLAG} -DPLATFORM_DESKTOP=ON -DCMAKE_BUILD_TYPE=Release &&
+cmake -H. -Bbin/release/desktop ${CMAKE_PLATFORM_FLAG} -DPLATFORM_DESKTOP=ON -DIS_PLATFORM_DEFINED=ON -DCMAKE_BUILD_TYPE=Release &&
 cmake --build bin/release/desktop --target run -- $PARALLEL_FLAG
