@@ -24,6 +24,7 @@
 #include "../tag/tag_component.hpp"
 #include <memory>
 #include <random>
+#include <DetourNavMesh.h>
 
 class SpawnerSystem final : public ISystemView<SpawnerComponent> {
 private:
@@ -109,20 +110,34 @@ public:
                     const auto navManager = scenePtr->GetNavigationManager();
                     if (navManager) {
                         const auto navmesh = navManager->GetNavmesh();
-                        if (navmesh) {
-                            const glm::vec3 origin = navmesh->GetOrigin();
-                            const float cellSize = navmesh->GetCellSize();
-                            const int width = navmesh->GetWidth();
-                            const int height = navmesh->GetHeight();
+                        if (navmesh && navmesh->GetNavMesh()) {
+                            const dtNavMesh* dtNavMeshPtr = navmesh->GetNavMesh();
 
-                            for (int z = 0; z < height; ++z) {
-                                for (int x = 0; x < width; ++x) {
-                                    if (navmesh->IsWalkable(x, z)) {
-                                        const float worldX = origin.x + (x * cellSize) + (cellSize * 0.5f);
-                                        const float worldZ = origin.z + (z * cellSize) + (cellSize * 0.5f);
-                                        const glm::vec3 cellCenter(worldX, 0.0f, worldZ);
-                                        SpawnEntity(registry, prefabData, cellCenter);
+                            // Iterate through all tiles and polygons in the navmesh
+                            for (int i = 0; i < dtNavMeshPtr->getMaxTiles(); ++i) {
+                                const dtMeshTile* tile = dtNavMeshPtr->getTile(i);
+                                if (!tile || !tile->header) continue;
+
+                                // Iterate through all polygons in the tile
+                                for (int j = 0; j < tile->header->polyCount; ++j) {
+                                    const dtPoly* poly = &tile->polys[j];
+
+                                    // Only spawn on walkable polygons
+                                    if (poly->getType() != DT_POLYTYPE_GROUND) continue;
+
+                                    // Calculate polygon center
+                                    glm::vec3 center(0.0f);
+                                    for (int k = 0; k < poly->vertCount; ++k) {
+                                        const float* v = &tile->verts[poly->verts[k] * 3];
+                                        center.x += v[0];
+                                        center.y += v[1];
+                                        center.z += v[2];
                                     }
+                                    center.x /= poly->vertCount;
+                                    center.y /= poly->vertCount;
+                                    center.z /= poly->vertCount;
+
+                                    SpawnEntity(registry, prefabData, center);
                                 }
                             }
                         }
@@ -145,9 +160,9 @@ public:
                             for (int i = 0; i < spawnCount; ++i) {
                                 const float randX = minX + (maxX - minX) * _dist(_rng);
                                 const float randZ = minZ + (maxZ - minZ) * _dist(_rng);
-                                const glm::vec3 randomPos(randX, 0.0f, randZ);
+                                const glm::vec3 randomPos(randX, origin.y, randZ);
 
-                                const glm::vec3 walkablePos = navmesh->FindClosestWalkablePoint(randomPos);
+                                const glm::vec3 walkablePos = navmesh->FindNearestPoint(randomPos);
                                 SpawnEntity(registry, prefabData, walkablePos);
                             }
                         }

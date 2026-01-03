@@ -101,8 +101,8 @@
 
 ## 0.1.6 NavMesh
 - [x] Video recorder 
-- [ ] NavMesh builder, grid based
-- [ ] Astar navigation (path query with smooth path) + RVO
+- [x] NavMesh builder, grid based
+- [x] Astar navigation (path query with smooth path) + RVO
 
 ## 0.1.7 3d platformer game
 - [ ] Behaviour Tree as ESC

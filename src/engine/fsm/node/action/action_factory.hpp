@@ -16,6 +16,7 @@
 #include "animation_state_transition_action.hpp"
 #include "start_video_recording_action.hpp"
 #include "stop_video_recording_action.hpp"
+#include "fps_display_action.hpp"
 
 // Forward declaration
 class VideoRecorder;
@@ -89,5 +90,9 @@ public:
 
     [[nodiscard]] StopVideoRecordingAction CreateStopVideoRecordingAction() const {
         return StopVideoRecordingAction(_videoRecorder);
+    }
+
+    [[nodiscard]] FpsDisplayAction CreateFpsDisplayAction(const std::string& elementId) const {
+        return {elementId, _uiManager, _sceneManager};
     }
 };

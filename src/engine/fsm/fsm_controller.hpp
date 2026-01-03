@@ -3,6 +3,14 @@
 #include <vector>
 #include <iostream>
 
+#define DEBUG_FSM_CONTROLLER 0
+
+#if DEBUG_FSM_CONTROLLER
+#define FSM_LOG if(1) std::cout
+#else
+#define FSM_LOG if(0) std::cout
+#endif
+
 #include "condition/condition.hpp"
 #include "condition/core_types/trigger_check_condition.hpp"
 #include "condition/core_types/trigger_check_condition_serialization.hpp"
@@ -11,6 +19,7 @@
 #include "node/action/action_factory.hpp"
 #include "node/action/set_system_trigger_action.hpp"
 #include "node/action/log_action.hpp"
+#include "node/action/fps_display_action.hpp"
 #include "fsm_asset.hpp"
 #include "system_triggers.hpp"
 
@@ -35,7 +44,7 @@ private:
 
 private:
     void ChangeState(const std::string &state) {
-        std::cout << "[FSM] State transition: " << _currentState << " -> " << state << std::endl;
+        FSM_LOG << "[FSM] State transition: " << _currentState << " -> " << state << std::endl;
 
         auto currentNode = _stateNodes.at(_currentState);
         currentNode.ExitAll();
@@ -85,6 +94,8 @@ public:
                     actions.emplace_back(actionFactory.CreateStartVideoRecordingAction(actionData.Param, fps));
                 } else if (actionData.Type == "stop_video_recording") {
                     actions.emplace_back(actionFactory.CreateStopVideoRecordingAction());
+                } else if (actionData.Type == "fps_display") {
+                    actions.emplace_back(actionFactory.CreateFpsDisplayAction(actionData.Param));
                 }
             }
 
@@ -125,7 +136,7 @@ public:
     }
 
     void SetTrigger(const std::string& triggerName) {
-        std::cout << "[FSM] Trigger set: " << triggerName << " (current state: " << _currentState << ")" << std::endl;
+        FSM_LOG << "[FSM] Trigger set: " << triggerName << " (current state: " << _currentState << ")" << std::endl;
         _triggers[triggerName] = true;
     }
 
@@ -133,7 +144,7 @@ public:
         const auto currentNode = _stateNodes.at(_currentState);
 
         if (!_wasEntered) {
-            std::cout << "[FSM] Entering state: " << _currentState << std::endl;
+            FSM_LOG << "[FSM] Entering state: " << _currentState << std::endl;
             currentNode.EnterAll();
             _wasEntered = true;
         }

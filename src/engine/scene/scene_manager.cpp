@@ -25,7 +25,7 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
                 const auto& navmesh = sceneAsset.Navmesh.value();
                 navigationManager->Initialize(navmesh.Width, navmesh.Height,
                                             navmesh.CellSize, navmesh.Origin,
-                                            navmesh.WalkabilityGrid);
+                                            navmesh.WalkabilityGrid, navmesh.MaxAgents);
             } else {
                 navigationManager->Initialize(50, 50, 1.0f, glm::vec3(0.0f, 0.0f, 0.0f));
             }

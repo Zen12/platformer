@@ -5,6 +5,14 @@
 #include <string>
 #include <iostream>
 
+#define DEBUG_ANIM_STATE_ACTION 0
+
+#if DEBUG_ANIM_STATE_ACTION
+#define ANIM_STATE_LOG if(1) std::cout
+#else
+#define ANIM_STATE_LOG if(0) std::cout
+#endif
+
 struct AnimationStateAction final : public Action {
 private:
     std::string _animationGuid;
@@ -23,10 +31,10 @@ public:
             // (preserve time when coming from a transition)
             if (comp->CurrentAnimationGuid != _animationGuid) {
                 comp->Time = 0.0f;
-                std::cout << "[ANIM STATE] Switching animation: " << comp->CurrentAnimationGuid
-                          << " -> " << _animationGuid << std::endl;
+                ANIM_STATE_LOG << "[ANIM STATE] Switching animation: " << comp->CurrentAnimationGuid
+                               << " -> " << _animationGuid << std::endl;
             } else {
-                std::cout << "[ANIM STATE] Entering state with same animation: " << _animationGuid << std::endl;
+                ANIM_STATE_LOG << "[ANIM STATE] Entering state with same animation: " << _animationGuid << std::endl;
             }
             comp->CurrentAnimationGuid = _animationGuid;
             comp->OnCompleteTrigger = _onCompleteTrigger;

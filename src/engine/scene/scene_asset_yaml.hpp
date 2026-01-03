@@ -21,6 +21,9 @@ namespace YAML {
             if (node["walkability_grid"]) {
                 rhs.WalkabilityGrid = node["walkability_grid"].as<std::vector<std::vector<int>>>();
             }
+            if (node["max_agents"]) {
+                rhs.MaxAgents = node["max_agents"].as<int>();
+            }
             return true;
         }
     };

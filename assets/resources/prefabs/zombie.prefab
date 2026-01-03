@@ -11,6 +11,7 @@ components:
     fsm_guid: b9fcf65a-3a68-4990-aa56-e4a5945b0093
     loop: true
   - type: navmesh_agent
-    radius: 0.5
-    max_speed: 3.0
+    radius: 0.1
+    max_speed: 1.0
+    rotation_speed: 15.0
     enabled: true

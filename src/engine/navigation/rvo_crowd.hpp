@@ -4,6 +4,9 @@
 #include <glm/glm.hpp>
 #include <unordered_map>
 
+// Forward declaration
+class NavmeshGrid;
+
 struct CrowdAgent {
     int Id = -1;
     glm::vec3 Position = glm::vec3(0);
@@ -22,9 +25,8 @@ private:
     std::unordered_map<int, std::shared_ptr<CrowdAgent>> _agents;
     int _nextAgentId = 0;
     float _timeHorizon = 2.5f;
-    float _timeHorizonObstacles = 2.0f;
 
-    [[nodiscard]] glm::vec3 ComputeRVOVelocity(const CrowdAgent& agent, float deltaTime) const;
+    [[nodiscard]] glm::vec3 ComputeRVOVelocity(const CrowdAgent& agent) const;
     [[nodiscard]] glm::vec3 ComputeAvoidanceVelocity(const CrowdAgent& agent, const std::vector<std::pair<float, const CrowdAgent*>>& nearbyAgents) const;
 
 public:

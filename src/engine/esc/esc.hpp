@@ -27,6 +27,7 @@
 #include "navmesh_agent/random_navigation_component.hpp"
 #include "navmesh_agent/random_navigation_system.hpp"
 #include "navmesh_path_renderer/navmesh_path_render_system.hpp"
+#include "navmesh_debug_renderer/navmesh_debug_render_system.hpp"
 #include "spawner/spawner_component.hpp"
 #include "spawner/spawner_component_serialization.hpp"
 #include "spawner/spawner_system.hpp"
@@ -139,10 +140,13 @@ public:
 
             _systems.emplace_back(std::make_unique<NavmeshAgentSystem>(registry->view<NavmeshAgentComponent, TransformComponentV2>(),
                registry->view<DeltaTimeComponent>(), scenePtr->GetNavigationManager(), scenePtr));
-
+#ifndef NDEBUG
             _systems.emplace_back(std::make_unique<NavmeshPathRenderSystem>(registry->view<NavmeshAgentComponent>(),
                registry->view<CameraComponentV2>(), renderRepository, scenePtr->GetNavigationManager()));
 
+            _systems.emplace_back(std::make_unique<NavmeshDebugRenderSystem>(
+               registry->view<CameraComponentV2>(), renderRepository, scenePtr->GetNavigationManager()));
+#endif
             _systems.emplace_back(std::make_unique<SpawnerSystem>(registry->view<SpawnerComponent>(), scenePtr));
         }
     }

@@ -12,6 +12,9 @@ namespace YAML {
             if (node["max_speed"]) {
                 rhs.MaxSpeed = node["max_speed"].as<float>();
             }
+            if (node["rotation_speed"]) {
+                rhs.RotationSpeed = node["rotation_speed"].as<float>();
+            }
             if (node["enabled"]) {
                 rhs.Enabled = node["enabled"].as<bool>();
             }

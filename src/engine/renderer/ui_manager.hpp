@@ -165,6 +165,16 @@ public:
         }
     }
 
+    void UpdateElementText(const std::string& elementId, const std::string& text) {
+        if (_rmlContext) {
+            if (Rml::ElementDocument* document = _rmlContext->GetDocument(0)) {
+                if (Rml::Element* element = document->GetElementById(elementId)) {
+                    element->SetInnerRML(text);
+                }
+            }
+        }
+    }
+
     void Update() {
         // Render RmlUi with proper 2D OpenGL state
         if (_rmlContext) {

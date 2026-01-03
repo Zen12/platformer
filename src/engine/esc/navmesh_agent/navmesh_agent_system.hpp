@@ -46,45 +46,64 @@ public:
 
             // Check if agent is on unwalkable terrain and teleport to closest walkable point
             const glm::vec3 currentPos = transform.GetPosition();
-            const glm::ivec2 gridPos = navmesh->WorldToGrid(currentPos);
-            if (!navmesh->IsWalkable(gridPos.x, gridPos.y)) {
-                const glm::vec3 closestWalkable = navmesh->FindClosestWalkablePoint(currentPos);
+            if (!navmesh->IsWalkable(currentPos)) {
+                const glm::vec3 closestWalkable = navmesh->FindNearestPoint(currentPos);
                 transform.SetPosition(closestWalkable);
             }
 
+            // Create agent if needed
             if (agent.CrowdAgentId == -1) {
-                agent.CrowdAgentId = crowd->AddAgent(transform.GetPosition(), agent.Radius, agent.MaxSpeed);
+                agent.CrowdAgentId = crowd->AddAgent(transform.GetPosition(), agent.Radius, 2.0f, agent.MaxSpeed);
             }
 
-            auto crowdAgent = crowd->GetAgent(agent.CrowdAgentId);
-            if (!crowdAgent) continue;
-
-            // Check if agent has completed its path
-            if (agent.HasDestination && !crowdAgent->Path.empty() && crowdAgent->CurrentWaypoint >= crowdAgent->Path.size()) {
-                agent.HasDestination = false;
-                crowdAgent->Path.clear();
-                crowdAgent->CurrentWaypoint = 0;
+            // Check if agent is still active
+            if (!crowd->IsAgentActive(agent.CrowdAgentId)) {
+                continue;
             }
 
-            if (agent.HasDestination && crowdAgent->Path.empty()) {
-                const auto path = navmesh->FindPath(transform.GetPosition(), agent.Destination);
-                if (!path.empty()) {
-                    crowd->SetAgentPath(agent.CrowdAgentId, path);
-                    crowdAgent->CurrentWaypoint = 0;
-                } else {
-                    agent.HasDestination = false;
-                }
+            // Set destination when it changes
+            if (agent.HasDestination && agent.DestinationChanged) {
+                crowd->SetAgentTarget(agent.CrowdAgentId, agent.Destination);
+                agent.DestinationChanged = false;
+
+                // Also cache path for visualization
+                agent.PathWaypoints = navmesh->FindPath(currentPos, agent.Destination);
+                agent.CurrentWaypointIndex = 0;
             }
 
-            transform.SetPosition(crowdAgent->Position);
+            // Update transform from crowd (Detour handles RVO)
+            const glm::vec3 agentPos = crowd->GetAgentPosition(agent.CrowdAgentId);
+            transform.SetPosition(agentPos);
 
-            // Rotate agent towards movement direction
-            const float speed = glm::length(crowdAgent->Velocity);
-            if (speed > 0.01f) {
-                const float targetYaw = glm::degrees(std::atan2(crowdAgent->Velocity.x, crowdAgent->Velocity.z));
+            // Rotate agent towards movement direction with simple lerp
+            const glm::vec3 velocity = crowd->GetAgentVelocity(agent.CrowdAgentId);
+            const float speed = glm::length(velocity);
+            if (speed > 0.1f) {
+                const float targetYaw = glm::degrees(std::atan2(velocity.x, velocity.z));
                 auto rotation = transform.GetEulerRotation();
-                rotation.y = targetYaw;
+
+                // Calculate shortest angle difference
+                float angleDiff = targetYaw - rotation.y;
+                while (angleDiff > 180.0f) angleDiff -= 360.0f;
+                while (angleDiff < -180.0f) angleDiff += 360.0f;
+
+                // Simple lerp rotation
+                rotation.y += angleDiff * std::min(1.0f, agent.RotationSpeed * deltaTime);
+
                 transform.SetEulerRotation(rotation);
+            }
+
+            // Update path visualization waypoint index
+            if (!agent.PathWaypoints.empty()) {
+                while (agent.CurrentWaypointIndex < static_cast<int>(agent.PathWaypoints.size())) {
+                    const auto& wp = agent.PathWaypoints[agent.CurrentWaypointIndex];
+                    const float dist = glm::length(glm::vec2(wp.x - agentPos.x, wp.z - agentPos.z));
+                    if (dist < 0.5f) {
+                        agent.CurrentWaypointIndex++;
+                    } else {
+                        break;
+                    }
+                }
             }
         }
 

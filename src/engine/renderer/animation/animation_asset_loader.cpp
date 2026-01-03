@@ -3,7 +3,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#define DEBUG_ANIM_LOADER 1
+#define DEBUG_ANIM_LOADER 0
 
 #if DEBUG_ANIM_LOADER
 #include <iostream>

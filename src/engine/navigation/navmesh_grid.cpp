@@ -73,22 +73,26 @@ void NavmeshGrid::SetCellCost(int x, int z, float cost) noexcept {
 
 std::vector<int> NavmeshGrid::GetNeighbors(int index) const {
     std::vector<int> neighbors;
-    neighbors.reserve(8);
+    neighbors.reserve(4);
 
     const glm::ivec2 gridPos = IndexToGrid(index);
     const int x = gridPos.x;
     const int z = gridPos.y;
 
-    for (int dz = -1; dz <= 1; ++dz) {
-        for (int dx = -1; dx <= 1; ++dx) {
-            if (dx == 0 && dz == 0) continue;
+    // Only check 4 cardinal directions (no diagonals)
+    const int directions[4][2] = {
+        {0, -1},  // North
+        {0, 1},   // South
+        {-1, 0},  // West
+        {1, 0}    // East
+    };
 
-            const int nx = x + dx;
-            const int nz = z + dz;
+    for (const auto& dir : directions) {
+        const int nx = x + dir[0];
+        const int nz = z + dir[1];
 
-            if (IsWalkable(nx, nz)) {
-                neighbors.push_back(GridToIndex(nx, nz));
-            }
+        if (IsWalkable(nx, nz)) {
+            neighbors.push_back(GridToIndex(nx, nz));
         }
     }
 
@@ -217,48 +221,58 @@ bool NavmeshGrid::HasLineOfSight(const glm::vec3& from, const glm::vec3& to) con
     if (!IsWalkable(fromGrid.x, fromGrid.y)) return false;
     if (!IsWalkable(toGrid.x, toGrid.y)) return false;
 
-    const glm::vec3 direction = to - from;
-    const float distance = glm::length(direction);
+    // DDA (Digital Differential Analyzer) - checks all cells the line intersects
+    int x0 = fromGrid.x;
+    int z0 = fromGrid.y;
+    const int x1 = toGrid.x;
+    const int z1 = toGrid.y;
 
-    if (distance < 0.0001f) return true;
+    const int dx = x1 - x0;
+    const int dz = z1 - z0;
+    const int steps = std::max(std::abs(dx), std::abs(dz));
 
-    const glm::vec3 step = direction / distance;
-    constexpr float checkInterval = 0.5f;
-    const int steps = static_cast<int>(distance / checkInterval);
+    if (steps == 0) return true;
 
-    for (int i = 1; i < steps; ++i) {
-        const glm::vec3 checkPos = from + step * (static_cast<float>(i) * checkInterval);
-        const glm::ivec2 checkGrid = WorldToGrid(checkPos);
+    const float xIncrement = static_cast<float>(dx) / static_cast<float>(steps);
+    const float zIncrement = static_cast<float>(dz) / static_cast<float>(steps);
 
-        if (!IsWalkable(checkGrid.x, checkGrid.y)) {
+    float x = static_cast<float>(x0);
+    float z = static_cast<float>(z0);
+
+    for (int i = 0; i <= steps; ++i) {
+        const int cellX = static_cast<int>(std::round(x));
+        const int cellZ = static_cast<int>(std::round(z));
+
+        if (!IsWalkable(cellX, cellZ)) {
             return false;
         }
+
+        // Also check adjacent cells that the line might pass through
+        // This handles diagonal movement across cell corners
+        if (i > 0 && i < steps) {
+            const float prevX = x - xIncrement;
+            const float prevZ = z - zIncrement;
+            const int prevCellX = static_cast<int>(std::round(prevX));
+            const int prevCellZ = static_cast<int>(std::round(prevZ));
+
+            // If we crossed a diagonal, check both adjacent cells
+            if (cellX != prevCellX && cellZ != prevCellZ) {
+                if (!IsWalkable(cellX, prevCellZ) || !IsWalkable(prevCellX, cellZ)) {
+                    return false;
+                }
+            }
+        }
+
+        x += xIncrement;
+        z += zIncrement;
     }
 
     return true;
 }
 
 std::vector<glm::vec3> NavmeshGrid::SmoothPath(const std::vector<glm::vec3>& path) {
-    if (path.size() <= 2) return path;
-
-    std::vector<glm::vec3> smoothed;
-    smoothed.push_back(path[0]);
-
-    size_t i = 0;
-    while (i < path.size() - 1) {
-        size_t farthest = i + 1;
-
-        for (size_t j = i + 2; j < path.size(); ++j) {
-            if (HasLineOfSight(path[i], path[j])) {
-                farthest = j;
-            }
-        }
-
-        smoothed.push_back(path[farthest]);
-        i = farthest;
-    }
-
-    return smoothed;
+    // Path smoothing disabled
+    return path;
 }
 
 glm::vec3 NavmeshGrid::FindClosestWalkablePoint(const glm::vec3& worldPos) const noexcept {

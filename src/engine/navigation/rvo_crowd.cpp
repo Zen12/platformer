@@ -1,4 +1,5 @@
 #include "rvo_crowd.hpp"
+#include "navmesh_grid.hpp"
 #include <algorithm>
 #include <cmath>
 
@@ -78,7 +79,7 @@ glm::vec3 RVOCrowd::ComputeAvoidanceVelocity(const CrowdAgent& agent, const std:
     return avoidanceVel;
 }
 
-glm::vec3 RVOCrowd::ComputeRVOVelocity(const CrowdAgent& agent, float deltaTime) const {
+glm::vec3 RVOCrowd::ComputeRVOVelocity(const CrowdAgent& agent) const {
     glm::vec3 preferredVel = agent.PreferredVelocity;
 
     std::vector<std::pair<float, const CrowdAgent*>> nearbyAgents;
@@ -96,23 +97,40 @@ glm::vec3 RVOCrowd::ComputeRVOVelocity(const CrowdAgent& agent, float deltaTime)
     std::sort(nearbyAgents.begin(), nearbyAgents.end(),
         [](const auto& a, const auto& b) { return a.first < b.first; });
 
-    const glm::vec3 avoidanceVel = ComputeAvoidanceVelocity(agent, nearbyAgents);
-    glm::vec3 newVel = preferredVel + avoidanceVel;
-
-    const float speed = glm::length(newVel);
-    if (speed > agent.MaxSpeed) {
-        newVel = (newVel / speed) * agent.MaxSpeed;
+    // For grid-based movement, use RVO to adjust speed only (keep cardinal direction)
+    const float preferredSpeed = glm::length(preferredVel);
+    if (preferredSpeed < 0.0001f || nearbyAgents.empty()) {
+        return preferredVel;
     }
 
-    const glm::vec3 velChange = newVel - agent.Velocity;
-    const float velChangeLen = glm::length(velChange);
-    const float maxVelChange = agent.MaxAcceleration * deltaTime;
+    const glm::vec3 preferredDir = preferredVel / preferredSpeed;
+    float adjustedSpeed = preferredSpeed;
 
-    if (velChangeLen > maxVelChange) {
-        return agent.Velocity + (velChange / velChangeLen) * maxVelChange;
+    // Slow down only if very close to agents directly ahead
+    for (const auto& [dist, other] : nearbyAgents) {
+        const glm::vec3 toOther = other->Position - agent.Position;
+        const float toOtherLen = glm::length(toOther);
+        if (toOtherLen < 0.0001f) continue;
+
+        const glm::vec3 toOtherDir = toOther / toOtherLen;
+        const float dotProduct = glm::dot(toOtherDir, preferredDir);
+
+        // Only slow down if other agent is directly ahead (dot > 0.8 means within ~36 degrees)
+        if (dotProduct > 0.8f) {
+            const float minDist = agent.Radius + other->Radius + 0.5f;
+            if (dist < minDist) {
+                // Stop if too close
+                adjustedSpeed = 0.0f;
+                break;
+            } else if (dist < minDist * 2.0f) {
+                // Gentle slowdown in approach zone
+                const float slowdownFactor = (dist - minDist) / minDist;
+                adjustedSpeed = std::min(adjustedSpeed, preferredSpeed * slowdownFactor);
+            }
+        }
     }
 
-    return newVel;
+    return preferredDir * adjustedSpeed;
 }
 
 void RVOCrowd::UpdateAgents(float deltaTime) {
@@ -135,7 +153,20 @@ void RVOCrowd::UpdateAgents(float deltaTime) {
         }
 
         if (dist > 0.0001f) {
-            const glm::vec3 direction = toTarget / dist;
+            // Constrain movement to 4 cardinal directions (no diagonals)
+            // Determine primary movement direction based on which axis has larger distance
+            const float absX = std::abs(toTarget.x);
+            const float absZ = std::abs(toTarget.z);
+
+            glm::vec3 direction;
+            if (absX > absZ) {
+                // Move horizontally (East/West)
+                direction = glm::vec3(toTarget.x > 0 ? 1.0f : -1.0f, 0.0f, 0.0f);
+            } else {
+                // Move vertically (North/South)
+                direction = glm::vec3(0.0f, 0.0f, toTarget.z > 0 ? 1.0f : -1.0f);
+            }
+
             const float targetSpeed = std::min(agent->MaxSpeed, dist / deltaTime);
             agent->PreferredVelocity = direction * targetSpeed;
         } else {
@@ -147,14 +178,15 @@ void RVOCrowd::UpdateAgents(float deltaTime) {
     newVelocities.reserve(_agents.size());
 
     for (const auto& [id, agent] : _agents) {
-        const glm::vec3 newVel = ComputeRVOVelocity(*agent, deltaTime);
+        const glm::vec3 newVel = ComputeRVOVelocity(*agent);
         newVelocities.emplace_back(id, newVel);
     }
 
     for (const auto& [id, newVel] : newVelocities) {
         if (const auto it = _agents.find(id); it != _agents.end()) {
             it->second->Velocity = newVel;
-            it->second->Position += newVel * deltaTime;
+            glm::vec3 newPosition = it->second->Position + newVel * deltaTime;
+            it->second->Position = newPosition;
         }
     }
 }

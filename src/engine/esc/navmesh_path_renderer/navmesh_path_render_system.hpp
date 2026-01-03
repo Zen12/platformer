@@ -23,39 +23,32 @@ private:
         }
 
         auto crowd = _navigationManager->GetCrowd();
-        if (!crowd) {
+        auto navmesh = _navigationManager->GetNavmesh();
+        if (!crowd || !navmesh) {
             return {};
         }
 
         std::vector<glm::vec3> positions;
 
         for (const auto &[_, agent] : View.each()) {
-            if (!agent.Enabled || agent.CrowdAgentId == -1) {
+            if (!agent.Enabled || !agent.HasDestination || agent.CrowdAgentId < 0) {
                 continue;
             }
 
-            auto crowdAgent = crowd->GetAgent(agent.CrowdAgentId);
-            if (!crowdAgent || crowdAgent->Path.empty()) {
-                continue;
-            }
+            // Get fresh path from current agent position to destination
+            const glm::vec3 agentPos = crowd->GetAgentPosition(agent.CrowdAgentId);
+            const auto path = navmesh->FindPath(agentPos, agent.Destination);
 
-            // Only render remaining path (from CurrentWaypoint onwards)
-            if (crowdAgent->CurrentWaypoint >= crowdAgent->Path.size()) {
-                continue; // Agent reached destination
-            }
-
-            // Draw line from agent's current position to current waypoint
-            const auto& currentWaypoint = crowdAgent->Path[crowdAgent->CurrentWaypoint];
-            positions.emplace_back(crowdAgent->Position.x, crowdAgent->Position.y + 0.5f, crowdAgent->Position.z);
-            positions.emplace_back(currentWaypoint.x, currentWaypoint.y + 0.5f, currentWaypoint.z);
-
-            // Draw lines connecting remaining waypoints
-            for (size_t i = crowdAgent->CurrentWaypoint; i < crowdAgent->Path.size() - 1; ++i) {
-                const auto& p1 = crowdAgent->Path[i];
-                const auto& p2 = crowdAgent->Path[i + 1];
-
-                positions.emplace_back(p1.x, p1.y + 0.5f, p1.z);
-                positions.emplace_back(p2.x, p2.y + 0.5f, p2.z);
+            if (path.size() >= 2) {
+                // Draw lines connecting path waypoints
+                for (size_t i = 0; i < path.size() - 1; ++i) {
+                    positions.emplace_back(path[i].x, path[i].y + 0.5f, path[i].z);
+                    positions.emplace_back(path[i + 1].x, path[i + 1].y + 0.5f, path[i + 1].z);
+                }
+            } else {
+                // Direct line to destination
+                positions.emplace_back(agentPos.x, agentPos.y + 0.5f, agentPos.z);
+                positions.emplace_back(agent.Destination.x, agent.Destination.y + 0.5f, agent.Destination.z);
             }
         }
 

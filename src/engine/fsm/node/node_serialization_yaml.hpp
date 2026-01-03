@@ -31,6 +31,9 @@
 #include "action/stop_video_recording_action.hpp"
 #include "action/stop_video_recording_action_serialization.hpp"
 #include "action/stop_video_recording_action_serialization_yaml.hpp"
+#include "action/fps_display_action.hpp"
+#include "action/fps_display_action_serialization.hpp"
+#include "action/fps_display_action_serialization_yaml.hpp"
 #include "action/action_serialization_data.hpp"
 
 namespace YAML {
@@ -77,6 +80,9 @@ namespace YAML {
                 data.Param2 = std::to_string(serialization.Fps);
             } else if (type == "stop_video_recording") {
                 // No parameters needed for stop action
+            } else if (type == "fps_display") {
+                const auto serialization = node.as<FpsDisplayActionSerialization>();
+                data.Param = serialization.ElementId;
             }
 
             return data;
