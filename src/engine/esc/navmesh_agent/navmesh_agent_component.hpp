@@ -16,6 +16,7 @@ public:
 
     // Current movement state (updated by NavmeshAgentSystem)
     float CurrentSpeed = 0.0f;  // Current velocity magnitude
+    glm::vec3 CurrentVelocity{0.0f};  // Current velocity vector
 
     // Manual waypoint following
     std::vector<glm::vec3> PathWaypoints;

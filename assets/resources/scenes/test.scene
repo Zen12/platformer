@@ -73,17 +73,23 @@ entities:
       - type: fsm_animation
         fsm_guid: 0dd46701-6ea4-47fc-9644-b6ffa0ce0da3
         loop: true
+        animation_speed: 2.0
+        velocity_based_speed: true
+        velocity_speed_scale: 1.0
       - type: navmesh_agent
         radius: 0.1
         rotation_speed: 15.0
-        max_speed: 1.0
+        max_speed: 5.0
         enabled: true
+      - type: player_controller
+        move_speed: 5.0
+        destination_distance: 1.0
   - guid: main-camera
     tag: main_camera
     components:
       - type: transform
-        position: [0, 1.0, 30.0]
-        rotation: [-30.0, 0.0, 0.0]
+        position: [0, 15.0, 20.0]
+        rotation: [-90.0, 0.0, 0.0]
         scale: [1.0, 1.0, 1.0]
       - type: camera
         perspectiveNearPlane: 0.1
@@ -91,6 +97,9 @@ entities:
         perspectiveAspect: 60
         orthographicAspect: 70
         isPerspective: true
-      - type: camera_controller
-        move_speed: 10.0
-        mouse_sensitivity: 0.1
+      - type: top_down_camera
+        target_tag: male
+        offset_position: [0.0, 10.0, 10.0]
+        offset_rotation: [-45.0, 0.0, 0.0]
+        max_look_ahead: 7.0
+        smooth: 1.4

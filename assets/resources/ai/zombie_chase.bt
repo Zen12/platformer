@@ -1,0 +1,16 @@
+name: zombie_chase
+root:
+  type: selector
+  children:
+    # Option 1: Find and chase male entity
+    - type: sequence
+      children:
+        - type: find_target_by_tag
+          tag: male
+          radius: 10.0
+        - type: move_to_target
+    # Option 2: No target found - wait and try again
+    - type: sequence
+      children:
+        - type: wait
+          duration: 5.0

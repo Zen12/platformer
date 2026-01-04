@@ -64,12 +64,12 @@ public:
 
                 // Use a conservative bounding sphere radius
                 // TODO: Get actual mesh bounds from mesh data
-                constexpr float boundingRadius = 5.0f;
+                //constexpr float boundingRadius = 5.0f;
 
                 // Perform frustum culling
-                if (!frustum.IsSphereVisible(position, boundingRadius)) {
-                    continue; // Skip this mesh, it's outside the frustum
-                }
+                //if (!frustum.IsSphereVisible(position, boundingRadius)) {
+                //    continue; // Skip this mesh, it's outside the frustum
+                //}
 
                 // Pass bone transforms to renderer with IsSkinned = true for instanced rendering
                 _repository->Add(RenderData{

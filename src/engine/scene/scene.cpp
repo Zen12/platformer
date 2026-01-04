@@ -1,14 +1,14 @@
 #include "scene.hpp"
 #include <iostream>
 
-#define SHADER_LOG_ENABLED 1
+#define SHADER_LOG_ENABLED 0
 #if SHADER_LOG_ENABLED
 #define SHADER_LOG if(1) std::cout
 #else
 #define SHADER_LOG if(0) std::cout
 #endif
 
-#define MATERIAL_LOG_ENABLED 1
+#define MATERIAL_LOG_ENABLED 0
 #if MATERIAL_LOG_ENABLED
 #define MATERIAL_LOG if(1) std::cout
 #else

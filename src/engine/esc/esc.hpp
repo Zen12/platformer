@@ -11,6 +11,12 @@
 #include "camera/camera_controller_component.hpp"
 #include "camera/camera_controller_component_serialization.hpp"
 #include "camera/camera_controller_system.hpp"
+#include "camera/top_down_camera_component.hpp"
+#include "camera/top_down_camera_component_serialization.hpp"
+#include "camera/top_down_camera_system.hpp"
+#include "player_controller/player_controller_component.hpp"
+#include "player_controller/player_controller_component_serialization.hpp"
+#include "player_controller/player_controller_system.hpp"
 #include "entt/entt.hpp"
 #include "mesh_renderer/mesh_renderer_component.hpp"
 #include "mesh_renderer/mesh_render_system.hpp"
@@ -24,13 +30,14 @@
 #include "navmesh_agent/navmesh_agent_component.hpp"
 #include "navmesh_agent/navmesh_agent_component_serialization.hpp"
 #include "navmesh_agent/navmesh_agent_system.hpp"
-#include "navmesh_agent/random_navigation_component.hpp"
-#include "navmesh_agent/random_navigation_system.hpp"
 #include "navmesh_path_renderer/navmesh_path_render_system.hpp"
 #include "navmesh_debug_renderer/navmesh_debug_render_system.hpp"
 #include "spawner/spawner_component.hpp"
 #include "spawner/spawner_component_serialization.hpp"
 #include "spawner/spawner_system.hpp"
+#include "../ai/bt_component.hpp"
+#include "../ai/bt_component_serialization.hpp"
+#include "../ai/bt_system.hpp"
 
 
 class EscSystem {
@@ -83,6 +90,9 @@ public:
                         const auto &view = registry->view<FsmAnimationComponent>();
                         FsmAnimationComponent fsmAnimComp(fsmAnimationSerialization->FsmGuid);
                         fsmAnimComp.Loop = fsmAnimationSerialization->Loop;
+                        fsmAnimComp.AnimationSpeed = fsmAnimationSerialization->AnimationSpeed;
+                        fsmAnimComp.VelocityBasedSpeed = fsmAnimationSerialization->VelocityBasedSpeed;
+                        fsmAnimComp.VelocitySpeedScale = fsmAnimationSerialization->VelocitySpeedScale;
                         view->emplace(entity, fsmAnimComp);
                     } else if (const auto &cameraControllerSerialization = dynamic_cast<CameraControllerComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<CameraControllerComponent>();
@@ -93,13 +103,23 @@ public:
                     } else if (const auto &navmeshAgentSerialization = dynamic_cast<NavmeshAgentComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<NavmeshAgentComponent>();
                         view->emplace(entity, *navmeshAgentSerialization);
-
-                        const auto &randomNavView = registry->view<RandomNavigationComponent>();
-                        randomNavView->emplace(entity, RandomNavigationComponent());
                     } else if (const auto &spawnerSerialization = dynamic_cast<SpawnerComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<SpawnerComponent>();
                         SpawnerComponent spawner(spawnerSerialization->PrefabGuid, spawnerSerialization->SpawnCount, spawnerSerialization->SpawnPositions, spawnerSerialization->SpawnOnNavmesh, spawnerSerialization->SpawnOnAllCells);
                         view->emplace(entity, spawner);
+                    } else if (const auto &btSerialization = dynamic_cast<BehaviorTreeComponentSerialization*>(component.get())) {
+                        const auto &view = registry->view<BehaviorTreeComponent>();
+                        view->emplace(entity, *btSerialization);
+                    } else if (const auto &topDownSerialization = dynamic_cast<TopDownCameraComponentSerialization*>(component.get())) {
+                        const auto &view = registry->view<TopDownCameraComponent>();
+                        TopDownCameraComponent topDown(topDownSerialization->TargetTag,
+                            topDownSerialization->OffsetPosition, topDownSerialization->OffsetRotation,
+                            topDownSerialization->MaxLookAhead, topDownSerialization->SmoothSpeed);
+                        view->emplace(entity, topDown);
+                    } else if (const auto &playerSerialization = dynamic_cast<PlayerControllerComponentSerialization*>(component.get())) {
+                        const auto &view = registry->view<PlayerControllerComponent>();
+                        PlayerControllerComponent player(playerSerialization->MoveSpeed, playerSerialization->DestinationDistance);
+                        view->emplace(entity, player);
                     }
                 }
             }
@@ -122,12 +142,20 @@ public:
 
             _systems.emplace_back(std::make_unique<CameraSystem>(registry->view<WindowComponent>(),registry->view<CameraComponentV2, TransformComponentV2>()));
 
+            // Top-down camera follows target entity with look-ahead
+            _systems.emplace_back(std::make_unique<TopDownCameraSystem>(
+                registry->view<TopDownCameraComponent, TransformComponentV2>(),
+                registry->view<TagComponent, TransformComponentV2>(),
+                registry->view<DeltaTimeComponent>(),
+                *registry));
+
             _systems.emplace_back(std::make_unique<MeshRenderSystem>(registry->view<MeshRendererComponent, TransformComponentV2>(),
                registry->view<CameraComponentV2>(), renderRepository ));
 
-            // Navigation systems must run BEFORE animation to provide CurrentSpeed
-            _systems.emplace_back(std::make_unique<RandomNavigationSystem>(registry->view<RandomNavigationComponent, NavmeshAgentComponent, TransformComponentV2>(),
-               registry->view<DeltaTimeComponent>(), scenePtr->GetNavigationManager()));
+            // Player controller must run BEFORE navmesh agent to set destination
+            _systems.emplace_back(std::make_unique<PlayerControllerSystem>(
+                registry->view<PlayerControllerComponent, NavmeshAgentComponent, TransformComponentV2>(),
+                registry->view<DeltaTimeComponent>(), scenePtr));
 
             _systems.emplace_back(std::make_unique<NavmeshAgentSystem>(registry->view<NavmeshAgentComponent, TransformComponentV2>(),
                registry->view<DeltaTimeComponent>(), scenePtr->GetNavigationManager(), scenePtr));
@@ -149,6 +177,14 @@ public:
                registry->view<CameraComponentV2>(), renderRepository, scenePtr->GetNavigationManager()));
 #endif
             _systems.emplace_back(std::make_unique<SpawnerSystem>(registry->view<SpawnerComponent>(), scenePtr));
+
+            // Behavior tree system - runs after navigation for velocity data
+            _systems.emplace_back(std::make_unique<BehaviorTreeSystem>(
+                registry->view<BehaviorTreeComponent>(),
+                *registry,
+                scenePtr,
+                registry->view<DeltaTimeComponent>(),
+                registry->view<CameraComponentV2, TransformComponentV2>()));
         }
     }
 

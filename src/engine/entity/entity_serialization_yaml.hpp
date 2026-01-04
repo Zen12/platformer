@@ -12,6 +12,10 @@
 #include "../esc/camera/camera_component_serialization_yaml.hpp"
 #include "../esc/camera/camera_controller_component_serialization.hpp"
 #include "../esc/camera/camera_controller_component_serialization_yaml.hpp"
+#include "../esc/camera/top_down_camera_component_serialization.hpp"
+#include "../esc/camera/top_down_camera_component_serialization_yaml.hpp"
+#include "../esc/player_controller/player_controller_component_serialization.hpp"
+#include "../esc/player_controller/player_controller_component_serialization_yaml.hpp"
 #include "../esc/animation/simple_animation_component_serialization.hpp"
 #include "../esc/animation/simple_animation_component_serialization_yaml.hpp"
 #include "../esc/animation/fsm_animation_component_serialization.hpp"
@@ -20,6 +24,8 @@
 #include "../esc/navmesh_agent/navmesh_agent_component_serialization_yaml.hpp"
 #include "../esc/spawner/spawner_component_serialization.hpp"
 #include "../esc/spawner/spawner_component_serialization_yaml.hpp"
+#include "../ai/bt_component_serialization.hpp"
+#include "../ai/bt_component_serialization_yaml.hpp"
 
 namespace YAML {
     template <>
@@ -66,6 +72,8 @@ namespace YAML {
             static const std::unordered_map<std::string, ComponentSerialization> pairs = {
                 { "camera",                [](const YAML::Node& n){ return Parse<CameraComponentSerialization>(n); } },
                 { "camera_controller",     [](const YAML::Node& n){ return Parse<CameraControllerComponentSerialization>(n); } },
+                { "top_down_camera",       [](const YAML::Node& n){ return Parse<TopDownCameraComponentSerialization>(n); } },
+                { "player_controller",     [](const YAML::Node& n){ return Parse<PlayerControllerComponentSerialization>(n); } },
                 { "transform",             [](const YAML::Node& n){ return Parse<TransformComponentSerialization>(n); } },
                 { "mesh_renderer",         [](const YAML::Node& n){ return Parse<MeshRendererComponentSerialization>(n); } },
                 { "skinned_mesh_renderer", [](const YAML::Node& n){ return Parse<SkinnedMeshRendererComponentSerialization>(n); } },
@@ -73,6 +81,7 @@ namespace YAML {
                 { "fsm_animation",         [](const YAML::Node& n){ return Parse<FsmAnimationComponentSerialization>(n); } },
                 { "navmesh_agent",         [](const YAML::Node& n){ return Parse<NavmeshAgentComponentSerialization>(n); } },
                 { "spawner",               [](const YAML::Node& n){ return Parse<SpawnerComponentSerialization>(n); } },
+                { "behavior_tree",         [](const YAML::Node& n){ return Parse<BehaviorTreeComponentSerialization>(n); } },
             };
 
             if (const auto it = pairs.find(type); it != pairs.end()) {

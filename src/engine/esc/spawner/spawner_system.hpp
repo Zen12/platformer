@@ -16,12 +16,17 @@
 #include "../animation/fsm_animation_component_serialization.hpp"
 #include "../navmesh_agent/navmesh_agent_component.hpp"
 #include "../navmesh_agent/navmesh_agent_component_serialization.hpp"
-#include "../navmesh_agent/random_navigation_component.hpp"
 #include "../camera/camera_component.hpp"
 #include "../camera/camera_component_serialization.hpp"
 #include "../camera/camera_controller_component.hpp"
 #include "../camera/camera_controller_component_serialization.hpp"
+#include "../camera/top_down_camera_component.hpp"
+#include "../camera/top_down_camera_component_serialization.hpp"
+#include "../player_controller/player_controller_component.hpp"
+#include "../player_controller/player_controller_component_serialization.hpp"
 #include "../tag/tag_component.hpp"
+#include "../../ai/bt_component.hpp"
+#include "../../ai/bt_component_serialization.hpp"
 #include <memory>
 #include <random>
 #include <DetourNavMesh.h>
@@ -64,9 +69,6 @@ private:
             } else if (const auto navmeshAgentSerialization = dynamic_cast<NavmeshAgentComponentSerialization*>(component.get())) {
                 const auto view = registry->view<NavmeshAgentComponent>();
                 view->emplace(entity, *navmeshAgentSerialization);
-
-                const auto randomNavView = registry->view<RandomNavigationComponent>();
-                randomNavView->emplace(entity, RandomNavigationComponent());
             } else if (const auto cameraSerialization = dynamic_cast<CameraComponentSerialization*>(component.get())) {
                 const auto view = registry->view<CameraComponentV2>();
                 view->emplace(entity, *cameraSerialization);
@@ -76,6 +78,19 @@ private:
                 controller.SetMoveSpeed(cameraControllerSerialization->MoveSpeed);
                 controller.SetMouseSensitivity(cameraControllerSerialization->MouseSensitivity);
                 view->emplace(entity, controller);
+            } else if (const auto btSerialization = dynamic_cast<BehaviorTreeComponentSerialization*>(component.get())) {
+                const auto view = registry->view<BehaviorTreeComponent>();
+                view->emplace(entity, *btSerialization);
+            } else if (const auto topDownSerialization = dynamic_cast<TopDownCameraComponentSerialization*>(component.get())) {
+                const auto view = registry->view<TopDownCameraComponent>();
+                TopDownCameraComponent topDown(topDownSerialization->TargetTag,
+                    topDownSerialization->OffsetPosition, topDownSerialization->OffsetRotation,
+                    topDownSerialization->MaxLookAhead, topDownSerialization->SmoothSpeed);
+                view->emplace(entity, topDown);
+            } else if (const auto playerSerialization = dynamic_cast<PlayerControllerComponentSerialization*>(component.get())) {
+                const auto view = registry->view<PlayerControllerComponent>();
+                PlayerControllerComponent player(playerSerialization->MoveSpeed, playerSerialization->DestinationDistance);
+                view->emplace(entity, player);
             }
         }
     }

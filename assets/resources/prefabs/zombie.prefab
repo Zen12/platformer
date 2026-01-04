@@ -12,9 +12,12 @@ components:
     loop: true
     animation_speed: 2.0
     velocity_based_speed: true
-    velocity_speed_scale: 1.0
+    velocity_speed_scale: 3.0
   - type: navmesh_agent
-    radius: 0.1
-    max_speed: 1.0
+    radius: 0.2
+    max_speed: 4.0
     rotation_speed: 15.0
     enabled: true
+  - type: behavior_tree
+    tree: d962d92b-72f1-4f84-b151-125cdbd76e2d  # zombie_chase.bt
+    tick_priority: 0

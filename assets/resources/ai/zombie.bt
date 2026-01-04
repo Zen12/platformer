@@ -1,0 +1,10 @@
+name: zombie_wander
+root:
+  type: selector
+  children:
+    - type: sequence
+      children:
+        - type: random_wander
+          radius: 10.0
+        - type: wait
+          duration: 2.0

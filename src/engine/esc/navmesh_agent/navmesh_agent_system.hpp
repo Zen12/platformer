@@ -79,7 +79,11 @@ public:
             const glm::vec3 velocity = crowd->GetAgentVelocity(agent.CrowdAgentId);
             const float speed = glm::length(velocity);
             agent.CurrentSpeed = speed;  // Store for animation system
-            if (speed > 0.1f) {
+            agent.CurrentVelocity = velocity;  // Store for camera look-ahead
+
+            // Skip rotation if too close to destination
+            const float distToDest = glm::length(glm::vec2(agent.Destination.x - agentPos.x, agent.Destination.z - agentPos.z));
+            if (speed > agent.MaxSpeed * 0.5 && distToDest > 0.1f) {
                 const float targetYaw = glm::degrees(std::atan2(velocity.x, velocity.z));
                 auto rotation = transform.GetEulerRotation();
 
@@ -89,7 +93,7 @@ public:
                 while (angleDiff < -180.0f) angleDiff += 360.0f;
 
                 // Simple lerp rotation
-                rotation.y += angleDiff * std::min(1.0f, agent.RotationSpeed * deltaTime);
+                rotation.y += angleDiff * std::min(1.0f, agent.RotationSpeed * deltaTime * (speed / agent.MaxSpeed));
 
                 transform.SetEulerRotation(rotation);
             }

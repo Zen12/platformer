@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <utility>
 #include <vector>
 #include <glm/glm.hpp>
 
@@ -13,8 +14,8 @@ private:
     bool _hasSpawned;
 
 public:
-    SpawnerComponent(const std::string& prefabGuid, int spawnCount, const std::vector<glm::vec3>& spawnPositions, bool spawnOnNavmesh, bool spawnOnAllCells)
-        : _prefabGuid(prefabGuid), _spawnCount(spawnCount), _spawnPositions(spawnPositions), _spawnOnNavmesh(spawnOnNavmesh), _spawnOnAllCells(spawnOnAllCells), _hasSpawned(false) {}
+    SpawnerComponent(std::string  prefabGuid, const int &spawnCount, const std::vector<glm::vec3>& spawnPositions, bool spawnOnNavmesh, bool spawnOnAllCells)
+        : _prefabGuid(std::move(prefabGuid)), _spawnCount(spawnCount), _spawnPositions(spawnPositions), _spawnOnNavmesh(spawnOnNavmesh), _spawnOnAllCells(spawnOnAllCells), _hasSpawned(false) {}
 
     [[nodiscard]] std::string GetPrefabGuid() const noexcept { return _prefabGuid; }
     [[nodiscard]] int GetSpawnCount() const noexcept { return _spawnCount; }
