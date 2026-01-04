@@ -78,6 +78,7 @@ public:
             // Rotate agent towards movement direction with simple lerp
             const glm::vec3 velocity = crowd->GetAgentVelocity(agent.CrowdAgentId);
             const float speed = glm::length(velocity);
+            agent.CurrentSpeed = speed;  // Store for animation system
             if (speed > 0.1f) {
                 const float targetYaw = glm::degrees(std::atan2(velocity.x, velocity.z));
                 auto rotation = transform.GetEulerRotation();

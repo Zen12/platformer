@@ -14,6 +14,9 @@ public:
     bool HasDestination = false;
     bool DestinationChanged = false;  // Track if destination needs to be updated
 
+    // Current movement state (updated by NavmeshAgentSystem)
+    float CurrentSpeed = 0.0f;  // Current velocity magnitude
+
     // Manual waypoint following
     std::vector<glm::vec3> PathWaypoints;
     int CurrentWaypointIndex = 0;

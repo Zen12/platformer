@@ -57,6 +57,9 @@ private:
                 const auto view = registry->view<FsmAnimationComponent>();
                 FsmAnimationComponent fsmAnimComp(fsmAnimationSerialization->FsmGuid);
                 fsmAnimComp.Loop = fsmAnimationSerialization->Loop;
+                fsmAnimComp.AnimationSpeed = fsmAnimationSerialization->AnimationSpeed;
+                fsmAnimComp.VelocityBasedSpeed = fsmAnimationSerialization->VelocityBasedSpeed;
+                fsmAnimComp.VelocitySpeedScale = fsmAnimationSerialization->VelocitySpeedScale;
                 view->emplace(entity, fsmAnimComp);
             } else if (const auto navmeshAgentSerialization = dynamic_cast<NavmeshAgentComponentSerialization*>(component.get())) {
                 const auto view = registry->view<NavmeshAgentComponent>();

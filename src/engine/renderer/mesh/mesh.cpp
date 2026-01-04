@@ -206,6 +206,28 @@ size_t Mesh::GetIndicesCount() const noexcept
     return _indicesCount;
 }
 
+void Mesh::ConfigureInstanceAttributes(uint32_t instanceVBO) {
+    glBindVertexArray(_vao);
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+
+    for (int i = 0; i < 4; i++) {
+        glEnableVertexAttribArray(4 + i);
+        glVertexAttribPointer(4 + i, 4, GL_FLOAT, GL_FALSE,
+                              80,
+                              reinterpret_cast<void*>(sizeof(glm::vec4) * i));
+        glVertexAttribDivisor(4 + i, 1);
+    }
+
+    glEnableVertexAttribArray(8);
+    glVertexAttribIPointer(8, 1, GL_INT,
+                           80,
+                           reinterpret_cast<void*>(sizeof(glm::mat4)));
+    glVertexAttribDivisor(8, 1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    _instanceAttributesConfigured = true;
+}
+
 Mesh Mesh::GenerateSquare() {
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------

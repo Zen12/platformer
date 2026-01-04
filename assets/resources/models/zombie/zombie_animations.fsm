@@ -5,6 +5,6 @@ nodes:
   guid: "walkState"
   actions:
     - type: animation_state
-      animation_guid: 9df5a4bb-b644-4274-9c11-1799cfd3d98b
+      animation_guid: 511ca21d-91a9-4650-8296-18f72d2f5431
 conditions: []
 connections: []

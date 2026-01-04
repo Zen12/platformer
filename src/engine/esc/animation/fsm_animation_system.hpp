@@ -4,6 +4,7 @@
 #include "../skinned_mesh_renderer/skinned_mesh_renderer_component.hpp"
 #include "../transform/transform_component.hpp"
 #include "../time/time_component.hpp"
+#include "../navmesh_agent/navmesh_agent_component.hpp"
 #include "../../renderer/animation/animation_data.hpp"
 #include "../../scene/scene.hpp"
 #include <glm/glm.hpp>
@@ -24,6 +25,7 @@ private:
     using TypeDeltaTime = decltype(std::declval<entt::registry>().view<DeltaTimeComponent>());
     const TypeDeltaTime _deltaTimeView;
     const std::weak_ptr<Scene> _scene;
+    entt::registry& _registry;
     std::unordered_map<std::string, std::shared_ptr<AnimationData>> _loadedAnimations;
 
     // Helper: Try to match animation bone name to mesh bone name
@@ -35,8 +37,8 @@ private:
     }
 
 public:
-    explicit FsmAnimationSystem(const TypeView &view, const TypeDeltaTime &deltaTimeView, const std::weak_ptr<Scene> &scene)
-        : ISystemView(view), _deltaTimeView(deltaTimeView), _scene(scene) {
+    explicit FsmAnimationSystem(const TypeView &view, const TypeDeltaTime &deltaTimeView, const std::weak_ptr<Scene> &scene, entt::registry& registry)
+        : ISystemView(view), _deltaTimeView(deltaTimeView), _scene(scene), _registry(registry) {
     }
 
     ~FsmAnimationSystem() override;

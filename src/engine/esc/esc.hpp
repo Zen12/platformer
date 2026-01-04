@@ -125,21 +125,22 @@ public:
             _systems.emplace_back(std::make_unique<MeshRenderSystem>(registry->view<MeshRendererComponent, TransformComponentV2>(),
                registry->view<CameraComponentV2>(), renderRepository ));
 
-            // Animation systems must run BEFORE skinned mesh renderer to compute bone transforms
-            _systems.emplace_back(std::make_unique<SimpleAnimationSystem>(registry->view<SimpleAnimationComponent, SkinnedMeshRendererComponent, TransformComponentV2>(),
-               registry->view<DeltaTimeComponent>(), scenePtr));
-
-            _systems.emplace_back(std::make_unique<FsmAnimationSystem>(registry->view<FsmAnimationComponent, SkinnedMeshRendererComponent, TransformComponentV2>(),
-               registry->view<DeltaTimeComponent>(), scenePtr));
-
-            _systems.emplace_back(std::make_unique<SkinnedMeshRenderSystem>(registry->view<SkinnedMeshRendererComponent, TransformComponentV2>(),
-               registry->view<CameraComponentV2>(), renderRepository ));
-
+            // Navigation systems must run BEFORE animation to provide CurrentSpeed
             _systems.emplace_back(std::make_unique<RandomNavigationSystem>(registry->view<RandomNavigationComponent, NavmeshAgentComponent, TransformComponentV2>(),
                registry->view<DeltaTimeComponent>(), scenePtr->GetNavigationManager()));
 
             _systems.emplace_back(std::make_unique<NavmeshAgentSystem>(registry->view<NavmeshAgentComponent, TransformComponentV2>(),
                registry->view<DeltaTimeComponent>(), scenePtr->GetNavigationManager(), scenePtr));
+
+            // Animation systems must run AFTER navmesh (for velocity) and BEFORE skinned mesh renderer
+            _systems.emplace_back(std::make_unique<SimpleAnimationSystem>(registry->view<SimpleAnimationComponent, SkinnedMeshRendererComponent, TransformComponentV2>(),
+               registry->view<DeltaTimeComponent>(), scenePtr));
+
+            _systems.emplace_back(std::make_unique<FsmAnimationSystem>(registry->view<FsmAnimationComponent, SkinnedMeshRendererComponent, TransformComponentV2>(),
+               registry->view<DeltaTimeComponent>(), scenePtr, *registry));
+
+            _systems.emplace_back(std::make_unique<SkinnedMeshRenderSystem>(registry->view<SkinnedMeshRendererComponent, TransformComponentV2>(),
+               registry->view<CameraComponentV2>(), renderRepository ));
 #ifndef NDEBUG
             _systems.emplace_back(std::make_unique<NavmeshPathRenderSystem>(registry->view<NavmeshAgentComponent>(),
                registry->view<CameraComponentV2>(), renderRepository, scenePtr->GetNavigationManager()));

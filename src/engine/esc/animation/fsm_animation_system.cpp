@@ -1,15 +1,23 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "fsm_animation_system.hpp"
+#include "../navmesh_agent/navmesh_agent_component.hpp"
 #include "../../fsm/fsm_controller.hpp"
 #include "../../fsm/fsm_asset.hpp"
 #include "../../fsm/fsm_asset_yaml.hpp"
 
 #define DEBUG_FSM_ANIM_SYSTEM 0
+#define DEBUG_VELOCITY_ANIM 0
 
 #if DEBUG_FSM_ANIM_SYSTEM
 #define FSM_ANIM_LOG if(1) std::cout
 #else
 #define FSM_ANIM_LOG if(0) std::cout
+#endif
+
+#if DEBUG_VELOCITY_ANIM
+#define VELOCITY_ANIM_LOG if(1) std::cout
+#else
+#define VELOCITY_ANIM_LOG if(0) std::cout
 #endif
 
 FsmAnimationSystem::~FsmAnimationSystem() = default;
@@ -24,7 +32,32 @@ void FsmAnimationSystem::OnTick() {
     auto scene = _scene.lock();
     if (!scene) return;
 
+    static int velBasedCounter = 0;
     for (const auto &[entity, anim, skinnedMesh, transform] : View.each()) {
+        // Calculate effective animation speed
+        float effectiveSpeed = anim.AnimationSpeed;
+        if (anim.VelocityBasedSpeed) {
+            velBasedCounter++;
+            // Check if entity has NavmeshAgentComponent
+            if (const auto* navAgent = _registry.try_get<NavmeshAgentComponent>(entity)) {
+                // Scale animation speed based on velocity ratio
+                const float speedRatio = navAgent->MaxSpeed > 0.0f
+                    ? navAgent->CurrentSpeed / navAgent->MaxSpeed
+                    : 0.0f;
+                effectiveSpeed *= speedRatio * anim.VelocitySpeedScale;
+
+                if (velBasedCounter % 2000 == 1) {
+                    VELOCITY_ANIM_LOG << "[ANIM VEL] Speed=" << navAgent->CurrentSpeed
+                              << " Ratio=" << speedRatio
+                              << " EffectiveSpeed=" << effectiveSpeed << std::endl;
+                }
+            } else {
+                if (velBasedCounter % 2000 == 1) {
+                    VELOCITY_ANIM_LOG << "[ANIM VEL] VelBased=TRUE but No NavmeshAgentComponent!" << std::endl;
+                }
+            }
+        }
+
         // Create FsmController if not exists
         if (!anim.FsmGuid.empty() && !anim.Controller) {
             if (auto assetManager = scene->GetAssetManager().lock()) {
@@ -113,8 +146,8 @@ void FsmAnimationSystem::OnTick() {
             auto toAnimData = _loadedAnimations[anim.ToAnimationGuid];
             if (!fromAnimData || !toAnimData) continue;
 
-            // Update animation time
-            anim.Time += deltaTime;
+            // Update animation time with speed multiplier
+            anim.Time += deltaTime * effectiveSpeed;
             if (anim.Loop && anim.Time > toAnimData->Duration) {
                 anim.Time = fmod(anim.Time, toAnimData->Duration);
             }
@@ -181,8 +214,8 @@ void FsmAnimationSystem::OnTick() {
             auto animData = _loadedAnimations[anim.CurrentAnimationGuid];
             if (!animData) continue;
 
-            // Update animation time
-            anim.Time += deltaTime;
+            // Update animation time with speed multiplier
+            anim.Time += deltaTime * effectiveSpeed;
 
             // Check for animation completion
             if (anim.Time >= animData->Duration && !anim.HasCompletedOnce) {

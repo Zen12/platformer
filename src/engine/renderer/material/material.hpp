@@ -4,6 +4,7 @@
 #include "../texture/texture.hpp"
 #include "../../asset/loaders/asset_loader.hpp"
 #include "../../font/font.hpp"
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -159,6 +160,50 @@ public:
             shader->Use();
             const auto location = shader->GetLocation(name);
             shader->SetFloat(location, value);
+        }
+    }
+
+    void BindTextures() const {
+        for (size_t i = 0; i < _textures.size(); i++) {
+            if (const auto texture = _textures[i].lock()) {
+                texture->Bind(i);
+            }
+        }
+    }
+
+    void ApplyRenderState() const {
+        if (_isFaceCulled) {
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
+        } else {
+            glDisable(GL_CULL_FACE);
+        }
+
+        if (_isDepthTestEnabled) {
+            glEnable(GL_DEPTH_TEST);
+            glDepthFunc(GL_LESS);
+            glDepthMask(GL_TRUE);
+        } else {
+            glDisable(GL_DEPTH_TEST);
+            glDepthMask(GL_FALSE);
+        }
+
+        switch (_blendMode) {
+            case BlendMode::None:
+                glDisable(GL_BLEND);
+                break;
+            case BlendMode::AlphaAdditive:
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+                break;
+            case BlendMode::ColorAdditive:
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+                break;
+            case BlendMode::StandardAlpha:
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                break;
         }
     }
 };

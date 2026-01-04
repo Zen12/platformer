@@ -1,16 +1,25 @@
 #pragma once
 #include "../render_repository.hpp"
+#include "../instancing/skinned_instance_batch.hpp"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <unordered_map>
 
 class SceneManager;
 class Mesh;
+class Shader;
 
 class OpenGLRenderController final {
     std::shared_ptr<SceneManager> _sceneManager{};
+    std::unordered_map<std::string, std::unique_ptr<SkinnedInstanceBatch>> _skinnedBatches{};
+    std::shared_ptr<Shader> _instancedSkinnedShader{};
+    bool _instancedShaderLoaded = false;
+
+    void LoadInstancedShader();
+    void RenderSkinnedInstanced(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept;
 
 public:
     explicit OpenGLRenderController(const std::shared_ptr<SceneManager> &sceneManager)

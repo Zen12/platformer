@@ -18,6 +18,7 @@ private:
     uint32_t _ebo{};
     size_t _verticesCount;
     size_t _indicesCount;
+    bool _instanceAttributesConfigured = false;
 
 public:
     Mesh() = delete;
@@ -55,6 +56,9 @@ public:
 
     [[nodiscard]] size_t GetVertexCount() const noexcept;
     [[nodiscard]] size_t GetIndicesCount() const noexcept;
+
+    void ConfigureInstanceAttributes(uint32_t instanceVBO);
+    [[nodiscard]] bool HasInstanceAttributes() const noexcept { return _instanceAttributesConfigured; }
 
     static Mesh GenerateSquare();
     static std::unique_ptr<Mesh> GenerateSpritePtr();

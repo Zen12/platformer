@@ -5,7 +5,7 @@ navmesh:
   height: 40
   cell_size: 1.0
   origin: [0.0, 0.0, 0.0]
-  max_agents: 2001
+  max_agents: 2100
   walkability_grid:
     # 40x40 grid: 0 = unwalkable (walls/obstacles), 1 = walkable
     # Each row represents Z axis, each column represents X axis
@@ -54,7 +54,7 @@ entities:
     components:
       - type: spawner
         prefab_guid: ee9e7ec4-779d-4d44-a4f6-99f048412b61  # zombie.prefab
-        spawn_count: 2000
+        spawn_count: 1000
         spawn_on_navmesh: true
   - tag: "navmesh_cell_spawner"
     components:

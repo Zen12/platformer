@@ -24,6 +24,7 @@ struct RenderData final {
     const PrimitiveType Primitive = PrimitiveType::Triangles;
     const std::optional<std::vector<glm::vec3>> Positions = std::nullopt;  // Direct position data for lines
     const std::optional<glm::vec4> LineColor = std::nullopt;  // Color for line rendering (RGBA)
+    const bool IsSkinned = false;  // Flag for instanced skinned rendering
 };
 
 struct RenderId final {
@@ -32,17 +33,19 @@ struct RenderId final {
     const glm::mat4 CameraView;
     const glm::mat4 CameraProjection;
     const PrimitiveType Primitive;
+    const bool IsSkinned;
 
-    RenderId(std::string material, std::string mesh, const glm::mat4 &cameraView, const glm::mat4 &cameraProjection, PrimitiveType primitive = PrimitiveType::Triangles)
+    RenderId(std::string material, std::string mesh, const glm::mat4 &cameraView, const glm::mat4 &cameraProjection, PrimitiveType primitive = PrimitiveType::Triangles, bool isSkinned = false)
         :
     MaterialGuid(std::move(material)),
     MeshGuid(std::move(mesh)),
     CameraView(cameraView),
     CameraProjection(cameraProjection),
-    Primitive(primitive) {}
+    Primitive(primitive),
+    IsSkinned(isSkinned) {}
 
     bool operator==(const RenderId &other) const {
-        return MaterialGuid == other.MaterialGuid && MeshGuid == other.MeshGuid && Primitive == other.Primitive;
+        return MaterialGuid == other.MaterialGuid && MeshGuid == other.MeshGuid && Primitive == other.Primitive && IsSkinned == other.IsSkinned;
     }
 
     bool operator!=(const RenderId &other) const {
@@ -64,6 +67,9 @@ namespace std {
 
             // Hash Primitive type
             HashCombine(seed, std::hash<int>{}(static_cast<int>(id.Primitive)));
+
+            // Hash IsSkinned flag
+            HashCombine(seed, std::hash<bool>{}(id.IsSkinned));
 
             // Hash CameraView matrix
             for (int i = 0; i < 4; ++i) {
@@ -103,7 +109,7 @@ private:
 
 public:
     void Add(const RenderData &renderData) noexcept {
-        const auto &id = RenderId(renderData.MaterialGuid, renderData.MeshGuid, renderData.ViewMatrix, renderData.ProjectionMatrix, renderData.Primitive);
+        const auto &id = RenderId(renderData.MaterialGuid, renderData.MeshGuid, renderData.ViewMatrix, renderData.ProjectionMatrix, renderData.Primitive, renderData.IsSkinned);
         if (_renderData.find(id) == _renderData.end()) {
             _renderData[id] = std::vector{InstanceData{renderData.ModelMatrix, renderData.BoneTransforms, renderData.Positions, renderData.LineColor}};
             return;

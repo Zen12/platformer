@@ -9,6 +9,9 @@ protected:
         if (const auto comp = component.lock()) {
             comp->FsmGuid = serialization.FsmGuid;
             comp->Loop = serialization.Loop;
+            comp->AnimationSpeed = serialization.AnimationSpeed;
+            comp->VelocityBasedSpeed = serialization.VelocityBasedSpeed;
+            comp->VelocitySpeedScale = serialization.VelocitySpeedScale;
         }
     }
 };

@@ -15,6 +15,11 @@ public:
     float Time = 0.0f;
     bool Loop = true;
 
+    // Animation speed settings
+    float AnimationSpeed = 1.0f;  // Base animation speed multiplier
+    bool VelocityBasedSpeed = false;  // If true, animation speed scales with agent velocity
+    float VelocitySpeedScale = 1.0f;  // How much velocity affects animation speed (velocity / MaxSpeed * scale)
+
     // Trigger to set when animation completes
     std::string OnCompleteTrigger;
     bool HasCompletedOnce = false;  // Track if non-looping animation has completed
