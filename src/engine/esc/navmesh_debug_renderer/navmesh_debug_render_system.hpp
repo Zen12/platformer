@@ -6,7 +6,6 @@
 #include "../camera/camera_component.hpp"
 #include "../../renderer/render_repository.hpp"
 #include "../../navigation/navigation_manager.hpp"
-#include <DetourNavMesh.h>
 
 class NavmeshDebugRenderSystem final : public ISystem {
 private:
@@ -23,33 +22,54 @@ private:
         }
 
         const auto navmesh = _navigationManager->GetNavmesh();
-        if (!navmesh || !navmesh->GetNavMesh()) {
+        if (!navmesh) {
             return {};
         }
 
+        const auto& grid = navmesh->GetGrid();
+        if (grid.empty()) {
+            return {};
+        }
+
+        const glm::vec3 origin = navmesh->GetOrigin();
+        const float cellSize = navmesh->GetCellSize();
+        const int width = navmesh->GetWidth();
+        const int height = navmesh->GetHeight();
+        const float yOffset = 0.1f;
+
         std::vector<glm::vec3> positions;
-        const dtNavMesh* dtNavMeshPtr = navmesh->GetNavMesh();
 
-        // Iterate through all tiles
-        for (int i = 0; i < dtNavMeshPtr->getMaxTiles(); ++i) {
-            const dtMeshTile* tile = dtNavMeshPtr->getTile(i);
-            if (!tile || !tile->header) continue;
+        // Draw grid cell edges for walkable cells
+        for (int z = 0; z < height && z < static_cast<int>(grid.size()); ++z) {
+            for (int x = 0; x < width && x < static_cast<int>(grid[z].size()); ++x) {
+                if (grid[z][x] == 0) continue;  // Skip non-walkable
 
-            // Iterate through all polygons in the tile
-            for (int j = 0; j < tile->header->polyCount; ++j) {
-                const dtPoly* poly = &tile->polys[j];
+                const float x0 = origin.x + static_cast<float>(x) * cellSize;
+                const float x1 = origin.x + static_cast<float>(x + 1) * cellSize;
+                const float z0 = origin.z + static_cast<float>(z) * cellSize;
+                const float z1 = origin.z + static_cast<float>(z + 1) * cellSize;
+                const float y = origin.y + yOffset;
 
-                // Only draw walkable polygons
-                if (poly->getType() != DT_POLYTYPE_GROUND) continue;
-
-                // Draw polygon edges
-                for (int k = 0; k < poly->vertCount; ++k) {
-                    const float* v0 = &tile->verts[poly->verts[k] * 3];
-                    const float* v1 = &tile->verts[poly->verts[(k + 1) % poly->vertCount] * 3];
-
-                    // Add line from v0 to v1
-                    positions.emplace_back(v0[0], v0[1] + 0.1f, v0[2]);
-                    positions.emplace_back(v1[0], v1[1] + 0.1f, v1[2]);
+                // Draw cell edges (only external edges for cleaner look)
+                // Left edge
+                if (x == 0 || grid[z][x - 1] == 0) {
+                    positions.emplace_back(x0, y, z0);
+                    positions.emplace_back(x0, y, z1);
+                }
+                // Right edge
+                if (x == width - 1 || x + 1 >= static_cast<int>(grid[z].size()) || grid[z][x + 1] == 0) {
+                    positions.emplace_back(x1, y, z0);
+                    positions.emplace_back(x1, y, z1);
+                }
+                // Bottom edge
+                if (z == 0 || grid[z - 1][x] == 0) {
+                    positions.emplace_back(x0, y, z0);
+                    positions.emplace_back(x1, y, z0);
+                }
+                // Top edge
+                if (z == height - 1 || z + 1 >= static_cast<int>(grid.size()) || grid[z + 1][x] == 0) {
+                    positions.emplace_back(x0, y, z1);
+                    positions.emplace_back(x1, y, z1);
                 }
             }
         }

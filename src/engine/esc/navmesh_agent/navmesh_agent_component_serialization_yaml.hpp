@@ -18,6 +18,15 @@ namespace YAML {
             if (node["enabled"]) {
                 rhs.Enabled = node["enabled"].as<bool>();
             }
+            if (node["gravity"]) {
+                rhs.Gravity = node["gravity"].as<float>();
+            }
+            if (node["jump_force"]) {
+                rhs.JumpForce = node["jump_force"].as<float>();
+            }
+            if (node["air_control_multiplier"]) {
+                rhs.AirControlMultiplier = node["air_control_multiplier"].as<float>();
+            }
             return true;
         }
     };

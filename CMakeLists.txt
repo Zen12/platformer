@@ -51,7 +51,7 @@ find_package(EnTT REQUIRED)
 find_package(RmlUi REQUIRED)
 find_package(FREETYPE REQUIRED)
 find_package(ASSIMP REQUIRED)
-find_package(RecastDetour REQUIRED)
+find_package(RVO2 REQUIRED)
 
 if (PLATFORM_DESKTOP)
     find_package(OpenGL REQUIRED)
@@ -71,8 +71,8 @@ file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
 add_executable(${CMAKE_PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 
 # --- Link libraries ---
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE GLM::GLM freetype yaml-cpp EnTT::EnTT rmlui_core assimp Recast Detour DetourCrowd DetourTileCache)
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR} ${RECAST_INCLUDE_DIRS})
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE GLM::GLM freetype yaml-cpp EnTT::EnTT rmlui_core assimp RVO)
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR} ${RVO2_INCLUDE_DIRS})
 
 if (PLATFORM_DESKTOP)
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw)

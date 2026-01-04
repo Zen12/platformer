@@ -3,5 +3,6 @@
     <h1>Hello world</h1>
     <div id="fps-display">FPS: --</div>
     <button id="hello-button">Exit</button>
+    <button id="restart-button">Restart</button>
 </body>
 </rml>

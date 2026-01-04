@@ -16,6 +16,14 @@ nodes:
     - type: action_trigger_setter_button_listener
       button_id: hello-button
       trigger_name: is_close
+    - type: action_trigger_setter_button_listener
+      button_id: restart-button
+      trigger_name: is_restart
+- name: "Restart Node"
+  guid: "restartNode"
+  actions:
+    - type: log
+      message: "Restarting game..."
 - name: "Close the game"
   guid: "closeGame"
   actions:
@@ -26,8 +34,18 @@ conditions:
   - type: trigger_check
     guid: "is_close_condition"
     trigger_name: is_close
+  - type: trigger_check
+    guid: "is_restart_condition"
+    trigger_name: is_restart
+  - type: always_true
+    guid: "always_true_condition"
 connections:
     - nodes: ["firstNode", "closeGame"]
       conditions: ["is_close_condition"]
-      condition_type: 0 # 1
-
+      condition_type: 0
+    - nodes: ["firstNode", "restartNode"]
+      conditions: ["is_restart_condition"]
+      condition_type: 0
+    - nodes: ["restartNode", "firstNode"]
+      conditions: ["always_true_condition"]
+      condition_type: 0

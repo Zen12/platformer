@@ -29,6 +29,11 @@ public:
         auto inputSystem = scene->GetInputSystem().lock();
         if (!inputSystem) return;
 
+        float deltaTime = 0.0f;
+        for (auto [entity, time] : _deltaTimeView.each()) {
+            deltaTime = time.Delta;
+        }
+
         for (auto [entity, controller, navAgent, transform] : View.each()) {
             // Read WASD input
             glm::vec3 inputDir{0.0f};
@@ -49,30 +54,58 @@ public:
             bool hasInput = glm::length(inputDir) > 0.01f;
             bool wasMoving = controller.HasInput();
 
-            if (hasInput) {
-                // Normalize input direction
-                inputDir = glm::normalize(inputDir);
-                controller.SetInputDirection(inputDir);
-                controller.SetHasInput(true);
+            // Handle jump input
+            if (inputSystem->IsKeyPress(InputKey::Space) && navAgent.IsGrounded) {
+                navAgent.IsJumping = true;
+                navAgent.IsGrounded = false;
+                navAgent.VerticalVelocity = navAgent.JumpForce;
+            }
 
-                // Calculate destination ahead of current position
-                glm::vec3 currentPos = transform.GetPosition();
-                float destDist = controller.GetDestinationDistance();
+            // Handle movement based on grounded state
+            if (navAgent.IsGrounded) {
+                // Grounded: use navmesh navigation
+                if (hasInput) {
+                    inputDir = glm::normalize(inputDir);
+                    controller.SetInputDirection(inputDir);
+                    controller.SetHasInput(true);
 
-                glm::vec3 destination = currentPos + inputDir * destDist;
+                    glm::vec3 currentPos = transform.GetPosition();
+                    float destDist = controller.GetDestinationDistance();
+                    glm::vec3 destination = currentPos + inputDir * destDist;
 
-                // Set navmesh agent destination
-                navAgent.Destination = destination;
-                navAgent.HasDestination = true;
-                navAgent.DestinationChanged = true;
-                navAgent.MaxSpeed = controller.GetMoveSpeed();
-            } else if (wasMoving) {
-                // Just released input - stop moving by setting destination to current position
-                controller.SetHasInput(false);
-                glm::vec3 currentPos = transform.GetPosition();
-                navAgent.Destination = currentPos;
-                navAgent.HasDestination = false;
-                navAgent.DestinationChanged = true;
+                    navAgent.Destination = destination;
+                    navAgent.HasDestination = true;
+                    navAgent.DestinationChanged = true;
+                    navAgent.MaxSpeed = controller.GetMoveSpeed();
+                } else if (wasMoving) {
+                    controller.SetHasInput(false);
+                    glm::vec3 currentPos = transform.GetPosition();
+                    navAgent.Destination = currentPos;
+                    navAgent.HasDestination = false;
+                    navAgent.DestinationChanged = true;
+                }
+            } else {
+                // Airborne: direct movement with air control
+                if (hasInput) {
+                    inputDir = glm::normalize(inputDir);
+                    controller.SetInputDirection(inputDir);
+                    controller.SetHasInput(true);
+
+                    // Apply air movement directly to position
+                    float airSpeed = controller.GetMoveSpeed() * navAgent.AirControlMultiplier;
+                    glm::vec3 airVelocity = inputDir * airSpeed;
+
+                    glm::vec3 currentPos = transform.GetPosition();
+                    currentPos.x += airVelocity.x * deltaTime;
+                    currentPos.z += airVelocity.z * deltaTime;
+                    transform.SetPosition(currentPos);
+
+                    // Store velocity for animation
+                    navAgent.CurrentVelocity = airVelocity;
+                } else {
+                    controller.SetHasInput(false);
+                    navAgent.CurrentVelocity = glm::vec3(0.0f);
+                }
             }
         }
     }

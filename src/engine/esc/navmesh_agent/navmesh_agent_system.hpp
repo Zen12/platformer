@@ -44,16 +44,16 @@ public:
         for (auto [entity, agent, transform] : View.each()) {
             if (!agent.Enabled) continue;
 
-            // Check if agent is on unwalkable terrain and teleport to closest walkable point
-            const glm::vec3 currentPos = transform.GetPosition();
-            if (!navmesh->IsWalkable(currentPos)) {
-                const glm::vec3 closestWalkable = navmesh->FindNearestPoint(currentPos);
-                transform.SetPosition(closestWalkable);
+            glm::vec3 currentPos = transform.GetPosition();
+
+            // Initialize GroundY from navmesh origin on first tick
+            if (agent.GroundY == 0.0f) {
+                agent.GroundY = navmesh->GetOrigin().y;
             }
 
-            // Create agent if needed
+            // Create crowd agent if needed
             if (agent.CrowdAgentId == -1) {
-                agent.CrowdAgentId = crowd->AddAgent(transform.GetPosition(), agent.Radius, 2.0f, agent.MaxSpeed);
+                agent.CrowdAgentId = crowd->AddAgent(currentPos, agent.Radius, 2.0f, agent.MaxSpeed);
             }
 
             // Check if agent is still active
@@ -61,52 +61,105 @@ public:
                 continue;
             }
 
-            // Set destination when it changes
-            if (agent.HasDestination && agent.DestinationChanged) {
-                crowd->SetAgentTarget(agent.CrowdAgentId, agent.Destination);
-                agent.DestinationChanged = false;
+            const bool isOverNavmesh = navmesh->IsWalkable(currentPos);
 
-                // Also cache path for visualization
-                agent.PathWaypoints = navmesh->FindPath(currentPos, agent.Destination);
-                agent.CurrentWaypointIndex = 0;
+            // Handle airborne state (jumping or fell off navmesh)
+            if (!agent.IsGrounded) {
+                // Apply gravity
+                agent.VerticalVelocity += agent.Gravity * deltaTime;
+                currentPos.y += agent.VerticalVelocity * deltaTime;
+
+                // Check for landing on navmesh
+                if (currentPos.y <= agent.GroundY && isOverNavmesh) {
+                    // Land on navmesh
+                    currentPos.y = agent.GroundY;
+                    agent.IsGrounded = true;
+                    agent.IsJumping = false;
+                    agent.VerticalVelocity = 0.0f;
+
+                    // Sync crowd agent position
+                    crowd->SetAgentPosition(agent.CrowdAgentId, currentPos);
+                }
+                // Check for void fall (respawn)
+                else if (currentPos.y < -10.0f) {
+                    // Respawn at nearest walkable point
+                    const glm::vec3 respawn = navmesh->FindNearestPoint(glm::vec3(currentPos.x, agent.GroundY, currentPos.z));
+                    currentPos = respawn;
+                    agent.IsGrounded = true;
+                    agent.IsJumping = false;
+                    agent.VerticalVelocity = 0.0f;
+                    crowd->SetAgentPosition(agent.CrowdAgentId, currentPos);
+                }
+
+                transform.SetPosition(currentPos);
+
+                // Update velocity for animation (use horizontal velocity from air movement)
+                agent.CurrentSpeed = glm::length(glm::vec2(agent.CurrentVelocity.x, agent.CurrentVelocity.z));
             }
+            // Handle grounded state
+            else {
+                // Check if walked off navmesh edge
+                if (!isOverNavmesh) {
+                    agent.IsGrounded = false;
+                    agent.VerticalVelocity = 0.0f;  // Start falling
+                    // Don't update position this frame, let gravity handle it next frame
+                }
+                else {
+                    // Normal navmesh navigation
+                    // Set destination when it changes
+                    if (agent.HasDestination && agent.DestinationChanged) {
+                        crowd->SetAgentTarget(agent.CrowdAgentId, agent.Destination);
+                        agent.DestinationChanged = false;
 
-            // Update transform from crowd (Detour handles RVO)
-            const glm::vec3 agentPos = crowd->GetAgentPosition(agent.CrowdAgentId);
-            transform.SetPosition(agentPos);
+                        // Cache path for visualization
+                        agent.PathWaypoints = navmesh->FindPath(currentPos, agent.Destination);
+                        agent.CurrentWaypointIndex = 0;
+                    }
 
-            // Rotate agent towards movement direction with simple lerp
-            const glm::vec3 velocity = crowd->GetAgentVelocity(agent.CrowdAgentId);
-            const float speed = glm::length(velocity);
-            agent.CurrentSpeed = speed;  // Store for animation system
-            agent.CurrentVelocity = velocity;  // Store for camera look-ahead
+                    // Update transform from crowd
+                    glm::vec3 agentPos = crowd->GetAgentPosition(agent.CrowdAgentId);
 
-            // Skip rotation if too close to destination
-            const float distToDest = glm::length(glm::vec2(agent.Destination.x - agentPos.x, agent.Destination.z - agentPos.z));
-            if (speed > agent.MaxSpeed * 0.5 && distToDest > 0.1f) {
-                const float targetYaw = glm::degrees(std::atan2(velocity.x, velocity.z));
-                auto rotation = transform.GetEulerRotation();
+                    // Stay on navmesh
+                    if (!navmesh->IsWalkable(agentPos)) {
+                        agentPos = currentPos;
+                        crowd->SetAgentPosition(agent.CrowdAgentId, agentPos);
+                    }
 
-                // Calculate shortest angle difference
-                float angleDiff = targetYaw - rotation.y;
-                while (angleDiff > 180.0f) angleDiff -= 360.0f;
-                while (angleDiff < -180.0f) angleDiff += 360.0f;
+                    // Keep Y at ground level
+                    agentPos.y = agent.GroundY;
+                    transform.SetPosition(agentPos);
 
-                // Simple lerp rotation
-                rotation.y += angleDiff * std::min(1.0f, agent.RotationSpeed * deltaTime * (speed / agent.MaxSpeed));
+                    // Get velocity for rotation and animation
+                    const glm::vec3 velocity = crowd->GetAgentVelocity(agent.CrowdAgentId);
+                    const float speed = glm::length(velocity);
+                    agent.CurrentSpeed = speed;
+                    agent.CurrentVelocity = velocity;
 
-                transform.SetEulerRotation(rotation);
-            }
+                    // Rotate towards movement direction
+                    const float distToDest = glm::length(glm::vec2(agent.Destination.x - agentPos.x, agent.Destination.z - agentPos.z));
+                    if (speed > agent.MaxSpeed * 0.5f && distToDest > 0.1f) {
+                        const float targetYaw = glm::degrees(std::atan2(velocity.x, velocity.z));
+                        auto rotation = transform.GetEulerRotation();
 
-            // Update path visualization waypoint index
-            if (!agent.PathWaypoints.empty()) {
-                while (agent.CurrentWaypointIndex < static_cast<int>(agent.PathWaypoints.size())) {
-                    const auto& wp = agent.PathWaypoints[agent.CurrentWaypointIndex];
-                    const float dist = glm::length(glm::vec2(wp.x - agentPos.x, wp.z - agentPos.z));
-                    if (dist < 0.5f) {
-                        agent.CurrentWaypointIndex++;
-                    } else {
-                        break;
+                        float angleDiff = targetYaw - rotation.y;
+                        while (angleDiff > 180.0f) angleDiff -= 360.0f;
+                        while (angleDiff < -180.0f) angleDiff += 360.0f;
+
+                        rotation.y += angleDiff * std::min(1.0f, agent.RotationSpeed * deltaTime * (speed / agent.MaxSpeed));
+                        transform.SetEulerRotation(rotation);
+                    }
+
+                    // Update path visualization
+                    if (!agent.PathWaypoints.empty()) {
+                        while (agent.CurrentWaypointIndex < static_cast<int>(agent.PathWaypoints.size())) {
+                            const auto& wp = agent.PathWaypoints[agent.CurrentWaypointIndex];
+                            const float dist = glm::length(glm::vec2(wp.x - agentPos.x, wp.z - agentPos.z));
+                            if (dist < 0.5f) {
+                                agent.CurrentWaypointIndex++;
+                            } else {
+                                break;
+                            }
+                        }
                     }
                 }
             }

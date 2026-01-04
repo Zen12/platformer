@@ -4,6 +4,7 @@
 #include "connection/connection_serialization_yaml.hpp"
 #include "condition/condition_serialization.hpp"
 #include "condition/core_types/trigger_check_condition_serialization_yaml.hpp"
+#include "condition/core_types/always_true_condition_serialization_yaml.hpp"
 #include "yaml-cpp/node/node.h"
 
 
@@ -22,7 +23,8 @@ namespace YAML {
         static std::unique_ptr<ConditionSerialization> DecodeCondition(const YAML::Node& node) {
             using type = std::function<std::unique_ptr<ConditionSerialization>(const YAML::Node&)>;
             static const std::unordered_map<std::string, type> pairs = {
-                { "trigger_check",             [](const YAML::Node& n){ return Parse<TriggerCheckConditionSerialization>(n); } }
+                { "trigger_check", [](const YAML::Node& n){ return Parse<TriggerCheckConditionSerialization>(n); } },
+                { "always_true",   [](const YAML::Node& n){ return Parse<AlwaysTrueConditionSerialization>(n); } }
             };
 
             const auto nodeType = node["type"].as<std::string>();

@@ -68,3 +68,10 @@ button:active {
     font-weight: bold;
     color: #f6470a;
 }
+
+#restart-button {
+    position: absolute;
+    top: 100px;
+    right: 80px;
+    margin-top: 0;
+}

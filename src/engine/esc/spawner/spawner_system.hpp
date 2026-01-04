@@ -29,7 +29,6 @@
 #include "../../ai/bt_component_serialization.hpp"
 #include <memory>
 #include <random>
-#include <DetourNavMesh.h>
 
 class SpawnerSystem final : public ISystemView<SpawnerComponent> {
 private:
@@ -128,34 +127,25 @@ public:
                     const auto navManager = scenePtr->GetNavigationManager();
                     if (navManager) {
                         const auto navmesh = navManager->GetNavmesh();
-                        if (navmesh && navmesh->GetNavMesh()) {
-                            const dtNavMesh* dtNavMeshPtr = navmesh->GetNavMesh();
+                        if (navmesh) {
+                            const auto& grid = navmesh->GetGrid();
+                            const glm::vec3 origin = navmesh->GetOrigin();
+                            const float cellSize = navmesh->GetCellSize();
+                            const int width = navmesh->GetWidth();
+                            const int height = navmesh->GetHeight();
 
-                            // Iterate through all tiles and polygons in the navmesh
-                            for (int i = 0; i < dtNavMeshPtr->getMaxTiles(); ++i) {
-                                const dtMeshTile* tile = dtNavMeshPtr->getTile(i);
-                                if (!tile || !tile->header) continue;
-
-                                // Iterate through all polygons in the tile
-                                for (int j = 0; j < tile->header->polyCount; ++j) {
-                                    const dtPoly* poly = &tile->polys[j];
-
-                                    // Only spawn on walkable polygons
-                                    if (poly->getType() != DT_POLYTYPE_GROUND) continue;
-
-                                    // Calculate polygon center
-                                    glm::vec3 center(0.0f);
-                                    for (int k = 0; k < poly->vertCount; ++k) {
-                                        const float* v = &tile->verts[poly->verts[k] * 3];
-                                        center.x += v[0];
-                                        center.y += v[1];
-                                        center.z += v[2];
+                            // Iterate through all walkable cells
+                            for (int z = 0; z < height && z < static_cast<int>(grid.size()); ++z) {
+                                for (int x = 0; x < width && x < static_cast<int>(grid[z].size()); ++x) {
+                                    if (grid[z][x] != 0) {  // Walkable cell
+                                        // Calculate cell center
+                                        const glm::vec3 center(
+                                            origin.x + (static_cast<float>(x) + 0.5f) * cellSize,
+                                            origin.y,
+                                            origin.z + (static_cast<float>(z) + 0.5f) * cellSize
+                                        );
+                                        SpawnEntity(registry, prefabData, center);
                                     }
-                                    center.x /= poly->vertCount;
-                                    center.y /= poly->vertCount;
-                                    center.z /= poly->vertCount;
-
-                                    SpawnEntity(registry, prefabData, center);
                                 }
                             }
                         }

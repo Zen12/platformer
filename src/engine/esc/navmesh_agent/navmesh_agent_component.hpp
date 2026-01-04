@@ -18,11 +18,22 @@ public:
     float CurrentSpeed = 0.0f;  // Current velocity magnitude
     glm::vec3 CurrentVelocity{0.0f};  // Current velocity vector
 
+    // Jump and gravity
+    float VerticalVelocity = 0.0f;
+    float Gravity = -20.0f;
+    float JumpForce = 10.0f;
+    float GroundY = 0.0f;  // Y level of navmesh
+    bool IsGrounded = true;
+    bool IsJumping = false;
+    float AirControlMultiplier = 0.8f;
+
     // Manual waypoint following
     std::vector<glm::vec3> PathWaypoints;
     int CurrentWaypointIndex = 0;
 
     explicit NavmeshAgentComponent(const NavmeshAgentComponentSerialization &serialization)
         : Radius(serialization.Radius), MaxSpeed(serialization.MaxSpeed),
-          RotationSpeed(serialization.RotationSpeed), Enabled(serialization.Enabled) {}
+          RotationSpeed(serialization.RotationSpeed), Enabled(serialization.Enabled),
+          Gravity(serialization.Gravity), JumpForce(serialization.JumpForce),
+          AirControlMultiplier(serialization.AirControlMultiplier) {}
 };

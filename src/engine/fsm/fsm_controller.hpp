@@ -14,6 +14,8 @@
 #include "condition/condition.hpp"
 #include "condition/core_types/trigger_check_condition.hpp"
 #include "condition/core_types/trigger_check_condition_serialization.hpp"
+#include "condition/core_types/always_true_condition.hpp"
+#include "condition/core_types/always_true_condition_serialization.hpp"
 #include "connection/connection.hpp"
 #include "node/node.hpp"
 #include "node/action/action_factory.hpp"
@@ -124,6 +126,11 @@ public:
                     condition->Guid = triggerCheckSer->Guid;
                     _conditions[triggerCheckSer->Guid] = std::move(condition);
                 }
+            } else if (condSer->Type == "always_true") {
+                auto condition = std::make_unique<AlwaysTrueCondition>();
+                condition->Type = condSer->Type;
+                condition->Guid = condSer->Guid;
+                _conditions[condSer->Guid] = std::move(condition);
             }
         }
     }
@@ -151,43 +158,35 @@ public:
 
         currentNode.UpdateAll();
 
-        const auto &result = std::find_if(_connections.begin(), _connections.end(),
-            [&](const Connection& conn) {
-                return conn.Nodes[0] == _currentState;
-            });
+        // Check ALL connections from current state (not just the first one)
+        for (const auto& conn : _connections) {
+            if (conn.Nodes[0] != _currentState) {
+                continue;
+            }
 
-        // No connection found from current state
-        if (result == _connections.end()) {
-            return;
-        }
+            bool conditionsPassed = false;
 
-        if (result->ConditionType == ConditionType::All) {
-            for (const auto &conditionGuid: result->ConditionGuids) {
-                auto condIt = _conditions.find(conditionGuid);
-                if (condIt == _conditions.end()) {
-                    // Condition not found, treat as failed
-                    return;
+            if (conn.ConditionType == ConditionType::All) {
+                conditionsPassed = true;
+                for (const auto &conditionGuid: conn.ConditionGuids) {
+                    auto condIt = _conditions.find(conditionGuid);
+                    if (condIt == _conditions.end() || !condIt->second->IsSuccess()) {
+                        conditionsPassed = false;
+                        break;
+                    }
                 }
-                const auto &condition = condIt->second;
-                if (!condition->IsSuccess()) {
-                    return; //fail
+            } else if (conn.ConditionType == ConditionType::AtLeastOne) {
+                for (const auto &conditionGuid: conn.ConditionGuids) {
+                    auto condIt = _conditions.find(conditionGuid);
+                    if (condIt != _conditions.end() && condIt->second->IsSuccess()) {
+                        conditionsPassed = true;
+                        break;
+                    }
                 }
             }
-            ChangeState(result->Nodes[1]);
-            return;
-        }
 
-        if (result->ConditionType == ConditionType::AtLeastOne) {
-            bool anySuccess = false;
-            for (const auto &conditionGuid: result->ConditionGuids) {
-                auto condIt = _conditions.find(conditionGuid);
-                if (condIt != _conditions.end() && condIt->second->IsSuccess()) {
-                    anySuccess = true;
-                    break; //success
-                }
-            }
-            if (anySuccess) {
-                ChangeState(result->Nodes[1]);
+            if (conditionsPassed) {
+                ChangeState(conn.Nodes[1]);
                 return;
             }
         }

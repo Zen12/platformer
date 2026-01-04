@@ -2,7 +2,7 @@
 
 void NavigationManager::Initialize(int width, int height, float cellSize, const glm::vec3& origin,
                                   const std::vector<std::vector<int>>& walkabilityGrid, int maxAgents) {
-    _navmesh = std::make_shared<DetourNavmesh>();
+    _navmesh = std::make_shared<GridNavmesh>();
 
     // Initialize navmesh with walkability grid
     if (!_navmesh->Initialize(width, height, cellSize, origin, walkabilityGrid)) {
@@ -10,9 +10,9 @@ void NavigationManager::Initialize(int width, int height, float cellSize, const 
         return;
     }
 
-    // Initialize crowd
-    _crowd = std::make_shared<DetourCrowd>();
-    if (!_crowd->Initialize(_navmesh, maxAgents)) {
+    // Initialize RVO2 crowd for collision avoidance
+    _crowd = std::make_shared<RVO2Crowd>();
+    if (!_crowd->Initialize(maxAgents)) {
         _crowd.reset();
     }
 }
