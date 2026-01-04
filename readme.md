@@ -43,9 +43,9 @@
   - [ ] IK (0.2+)
   - [ ] Instance rendering (0.2+)
 - 🧠 Nav mesh
-  - [ ] 2d builder
-  - [ ] AStar
-  - [ ] RVO
+  - [x] 2d builder
+  - [x] AStar
+  - [x] RVO
 - 🔄 FSM 
   - [x] Node support for multiple actions
   - [x] Scene management Action
@@ -98,11 +98,6 @@
  ```
 
 # 🏃 Roadmap
-
-## 0.1.6 NavMesh
-- [x] Video recorder 
-- [x] NavMesh builder, grid bitased
-- [x] Astar navigation (path query with smooth path) + RVO
 
 ## 0.1.7 3d platformer game
 - [ ] Behaviour Tree as ESC

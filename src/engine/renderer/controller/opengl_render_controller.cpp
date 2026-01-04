@@ -3,23 +3,14 @@
 #include "../material/shader.hpp"
 #include <glm/gtc/type_ptr.hpp>
 
-void OpenGLRenderController::LoadInstancedShader() {
-    if (_instancedShaderLoaded) return;
-
-    const std::string vertGuid = "48d7d1db-ad04-40e4-9148-ea00618e618a";
-    const std::string fragGuid = "0e167558-99ae-4ca1-8f60-bc068107ff65";
-
-    _instancedSkinnedShader = _sceneManager->GetShader(vertGuid, fragGuid);
-    if (_instancedSkinnedShader) {
-        _instancedShaderLoaded = true;
-    }
-}
-
 void OpenGLRenderController::RenderSkinnedInstanced(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept {
     if (instances.empty()) return;
 
-    LoadInstancedShader();
-    if (!_instancedSkinnedShader) return;
+    const auto mat = _sceneManager->GetMaterial(renderId.MaterialGuid);
+    if (!mat) return;
+
+    const auto shader = mat->GetShader();
+    if (!shader) return;
 
     const std::string batchKey = renderId.MaterialGuid + "_" + renderId.MeshGuid;
 
@@ -43,8 +34,6 @@ void OpenGLRenderController::RenderSkinnedInstanced(const RenderId& renderId, co
     const auto meshPtr = _sceneManager->GetMesh(renderId.MeshGuid);
     if (!meshPtr) return;
 
-    const auto mat = _sceneManager->GetMaterial(renderId.MaterialGuid);
-
     meshPtr->Bind();
 
     if (!meshPtr->HasInstanceAttributes()) {
@@ -53,19 +42,17 @@ void OpenGLRenderController::RenderSkinnedInstanced(const RenderId& renderId, co
 
     batch->SetupInstanceAttributes();
 
-    _instancedSkinnedShader->Use();
-    _instancedSkinnedShader->SetMat4(_instancedSkinnedShader->GetLocation("view"), renderId.CameraView);
-    _instancedSkinnedShader->SetMat4(_instancedSkinnedShader->GetLocation("projection"), renderId.CameraProjection);
+    shader->Use();
+    shader->SetMat4(shader->GetLocation("view"), renderId.CameraView);
+    shader->SetMat4(shader->GetLocation("projection"), renderId.CameraProjection);
 
     constexpr GLuint BONE_TEXTURE_UNIT = 1;
     batch->BindForRendering(BONE_TEXTURE_UNIT);
-    _instancedSkinnedShader->SetInt(_instancedSkinnedShader->GetLocation("boneMatrices"), BONE_TEXTURE_UNIT);
+    shader->SetInt(shader->GetLocation("boneMatrices"), BONE_TEXTURE_UNIT);
 
-    if (mat) {
-        mat->ApplyRenderState();
-        mat->BindTextures();
-        _instancedSkinnedShader->SetInt(_instancedSkinnedShader->GetLocation("texture1"), 0);
-    }
+    mat->ApplyRenderState();
+    mat->BindTextures();
+    shader->SetInt(shader->GetLocation("texture1"), 0);
 
     glDrawElementsInstanced(
         GL_TRIANGLES,

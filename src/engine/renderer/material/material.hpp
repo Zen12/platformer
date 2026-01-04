@@ -89,6 +89,10 @@ public:
         return _isDepthTestEnabled;
     }
 
+    [[nodiscard]] std::shared_ptr<Shader> GetShader() const noexcept {
+        return _shader.lock();
+    }
+
     [[nodiscard]] int32_t GetShaderId() const noexcept
     {
         if (const auto shader = _shader.lock())

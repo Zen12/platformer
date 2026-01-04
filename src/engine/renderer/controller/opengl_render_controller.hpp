@@ -15,10 +15,7 @@ class Shader;
 class OpenGLRenderController final {
     std::shared_ptr<SceneManager> _sceneManager{};
     std::unordered_map<std::string, std::unique_ptr<SkinnedInstanceBatch>> _skinnedBatches{};
-    std::shared_ptr<Shader> _instancedSkinnedShader{};
-    bool _instancedShaderLoaded = false;
 
-    void LoadInstancedShader();
     void RenderSkinnedInstanced(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept;
 
 public:

@@ -1,6 +1,20 @@
 #include "scene.hpp"
 #include <iostream>
 
+#define SHADER_LOG_ENABLED 1
+#if SHADER_LOG_ENABLED
+#define SHADER_LOG if(1) std::cout
+#else
+#define SHADER_LOG if(0) std::cout
+#endif
+
+#define MATERIAL_LOG_ENABLED 1
+#if MATERIAL_LOG_ENABLED
+#define MATERIAL_LOG if(1) std::cout
+#else
+#define MATERIAL_LOG if(0) std::cout
+#endif
+
 std::weak_ptr<AssetManager> Scene::GetAssetManager() const noexcept {
     return _assetManager;
 }
@@ -18,6 +32,8 @@ std::shared_ptr<Shader> Scene::GetShader(const std::string &vertexGuid, const st
     if (const auto assetManager = _assetManager.lock()) {
 
         if (_shaders.find(vertexGuid + fragmentGuid) == _shaders.end()) {
+            SHADER_LOG << "Compiling shader: " << assetManager->GetPathFromGuid(vertexGuid)
+                       << " + " << assetManager->GetPathFromGuid(fragmentGuid) << std::endl;
             const auto vertexSource = assetManager->LoadSourceByGuid<std::string>(vertexGuid);
             const auto fragmentSource = assetManager->LoadSourceByGuid<std::string>(fragmentGuid);
             const auto shader = std::make_shared<Shader>(vertexSource, fragmentSource);
@@ -34,6 +50,7 @@ std::shared_ptr<Shader> Scene::GetShader(const std::string &vertexGuid, const st
 std::shared_ptr<Material> Scene::GetMaterial(const std::string &guid) {
     if (const auto assetManager = _assetManager.lock()) {
         if (_materials.find(guid) == _materials.end()) {
+            MATERIAL_LOG << "Loading material: " << assetManager->GetPathFromGuid(guid) << std::endl;
             const auto materialAsset = assetManager->LoadAssetByGuid<MaterialAsset>(guid);
             const auto shader = GetShader(materialAsset.VertexShaderGuid, materialAsset.FragmentShaderGuid);
             const auto material = std::make_shared<Material>(shader);
