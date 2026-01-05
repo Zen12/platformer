@@ -27,6 +27,9 @@ namespace YAML {
             if (node["air_control_multiplier"]) {
                 rhs.AirControlMultiplier = node["air_control_multiplier"].as<float>();
             }
+            if (node["ignore_crowd_velocity"]) {
+                rhs.IgnoreCrowdVelocity = node["ignore_crowd_velocity"].as<bool>();
+            }
             return true;
         }
     };

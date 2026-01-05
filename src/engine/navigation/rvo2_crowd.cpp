@@ -468,3 +468,42 @@ RaycastHit RVO2Crowd::Raycast(const glm::vec3& origin, const glm::vec3& directio
 
     return result;
 }
+
+glm::vec3 RVO2Crowd::ResolveCollision(const glm::vec3& position, float radius, int excludeAgentId) const {
+    glm::vec3 resolvedPos = position;
+
+    // Iterate multiple times to handle multiple overlapping agents
+    constexpr int maxIterations = 3;
+    for (int iter = 0; iter < maxIterations; ++iter) {
+        bool anyCollision = false;
+
+        for (const auto& [agentId, data] : _agentData) {
+            if (!data.Active || agentId == excludeAgentId) continue;
+
+            // Calculate distance between agent and position (2D)
+            const float dx = resolvedPos.x - data.Position.x;
+            const float dz = resolvedPos.z - data.Position.z;
+            const float distSq = dx * dx + dz * dz;
+
+            const float minDist = radius + data.Radius;
+            const float minDistSq = minDist * minDist;
+
+            if (distSq < minDistSq && distSq > 0.0001f) {
+                anyCollision = true;
+                const float dist = std::sqrt(distSq);
+                const float overlap = minDist - dist;
+
+                // Push position away from agent
+                const float nx = dx / dist;
+                const float nz = dz / dist;
+
+                resolvedPos.x += nx * (overlap + 0.01f);
+                resolvedPos.z += nz * (overlap + 0.01f);
+            }
+        }
+
+        if (!anyCollision) break;
+    }
+
+    return resolvedPos;
+}

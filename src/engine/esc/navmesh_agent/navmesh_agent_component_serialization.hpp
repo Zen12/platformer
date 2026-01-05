@@ -9,4 +9,5 @@ struct NavmeshAgentComponentSerialization final : public ComponentSerialization 
     float Gravity = -20.0f;
     float JumpForce = 10.0f;
     float AirControlMultiplier = 0.8f;
+    bool IgnoreCrowdVelocity = false;
 };

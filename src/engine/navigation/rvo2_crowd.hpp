@@ -105,4 +105,8 @@ public:
     // Raycast against agents using spatial grid (O(ray_cells * agents_per_cell))
     // Returns hit info with agent ID, hit point, and distance
     RaycastHit Raycast(const glm::vec3& origin, const glm::vec3& direction, float maxDistance) const;
+
+    // Check if a position (with radius) collides with any agent except excludeAgentId
+    // Returns the closest valid position (pushed out of collision)
+    glm::vec3 ResolveCollision(const glm::vec3& position, float radius, int excludeAgentId) const;
 };

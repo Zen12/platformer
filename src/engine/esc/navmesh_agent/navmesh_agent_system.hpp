@@ -145,8 +145,55 @@ public:
                     glm::vec3 agentPos;
                     glm::vec3 velocity;
 
-                    // Only use crowd position when actively navigating
-                    if (agent.HasDestination) {
+                    // Player-controlled agents: move directly, ignore RVO2 velocity
+                    if (agent.IgnoreCrowdVelocity) {
+                        if (agent.HasDestination) {
+                            // Calculate direction to destination
+                            glm::vec3 toTarget = agent.Destination - currentPos;
+                            toTarget.y = 0.0f;
+                            float distToTarget = glm::length(toTarget);
+
+                            if (distToTarget > 0.1f) {
+                                // Move directly toward destination at max speed
+                                glm::vec3 moveDir = toTarget / distToTarget;
+                                float moveSpeed = agent.MaxSpeed;
+                                float moveAmount = std::min(moveSpeed * deltaTime, distToTarget);
+
+                                agentPos = currentPos + moveDir * moveAmount;
+                                agentPos.y = agent.GroundY;
+
+                                // Resolve collision with other agents (player can't walk through them)
+                                agentPos = crowd->ResolveCollision(agentPos, agent.Radius, agent.CrowdAgentId);
+
+                                // Stay on navmesh
+                                if (!navmesh->IsWalkable(agentPos)) {
+                                    agentPos = navmesh->FindNearestPoint(agentPos);
+                                }
+
+                                transform.SetPosition(agentPos);
+
+                                // Calculate actual velocity based on movement
+                                glm::vec3 actualMove = agentPos - currentPos;
+                                actualMove.y = 0.0f;
+                                velocity = actualMove / deltaTime;
+                            } else {
+                                // Arrived at destination
+                                agentPos = currentPos;
+                                agentPos.y = agent.GroundY;
+                                velocity = glm::vec3(0.0f);
+                            }
+                        } else {
+                            agentPos = currentPos;
+                            agentPos.y = agent.GroundY;
+                            velocity = glm::vec3(0.0f);
+                        }
+
+                        // Sync position to crowd so AI agents can see and avoid player
+                        crowd->SetAgentPosition(agent.CrowdAgentId, agentPos);
+                        crowd->ResetAgentTarget(agent.CrowdAgentId);  // Player doesn't use crowd pathfinding
+                    }
+                    // AI agents: use RVO2 crowd velocity
+                    else if (agent.HasDestination) {
                         // Update transform from crowd
                         agentPos = crowd->GetAgentPosition(agent.CrowdAgentId);
 

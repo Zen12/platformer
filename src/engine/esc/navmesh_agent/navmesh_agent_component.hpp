@@ -32,9 +32,14 @@ public:
     std::vector<glm::vec3> PathWaypoints;
     int CurrentWaypointIndex = 0;
 
+    // Player-specific: ignore RVO2 velocity, move directly based on input
+    // Agent still exists in crowd so AI agents avoid it, but player isn't pushed by AI
+    bool IgnoreCrowdVelocity = false;
+
     explicit NavmeshAgentComponent(const NavmeshAgentComponentSerialization &serialization)
         : Radius(serialization.Radius), MaxSpeed(serialization.MaxSpeed),
           RotationSpeed(serialization.RotationSpeed), Enabled(serialization.Enabled),
           Gravity(serialization.Gravity), JumpForce(serialization.JumpForce),
-          AirControlMultiplier(serialization.AirControlMultiplier) {}
+          AirControlMultiplier(serialization.AirControlMultiplier),
+          IgnoreCrowdVelocity(serialization.IgnoreCrowdVelocity) {}
 };
