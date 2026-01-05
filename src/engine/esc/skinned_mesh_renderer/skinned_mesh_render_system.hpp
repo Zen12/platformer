@@ -7,12 +7,46 @@
 #include "../../scene/scene.hpp"
 #include "../camera/camera_component.hpp"
 #include "../transform/transform_component.hpp"
+#include <algorithm>
 
+#define DEBUG_DRAW_BOUNDS 0
 
 class SkinnedMeshRenderSystem final : public ISystemView<SkinnedMeshRendererComponent, TransformComponentV2>{
 private:
+    // Line material GUID for debug rendering
+    static constexpr const char* LINE_MATERIAL_GUID = "b53dc63c-0c57-46b1-80e5-7570f2445f8a";
 
     using TypeCamera = decltype(std::declval<entt::registry>().view<CameraComponentV2>());
+
+    // Generate line vertices for a bounding box (12 edges = 24 vertices)
+    static std::vector<glm::vec3> GenerateBoxLines(const glm::vec3& center, const glm::vec3& extents) {
+        std::vector<glm::vec3> lines;
+        lines.reserve(24);
+
+        // 8 corners of the box
+        const glm::vec3 min = center - extents;
+        const glm::vec3 max = center + extents;
+
+        // Bottom face edges (4 edges)
+        lines.push_back({min.x, min.y, min.z}); lines.push_back({max.x, min.y, min.z});
+        lines.push_back({max.x, min.y, min.z}); lines.push_back({max.x, min.y, max.z});
+        lines.push_back({max.x, min.y, max.z}); lines.push_back({min.x, min.y, max.z});
+        lines.push_back({min.x, min.y, max.z}); lines.push_back({min.x, min.y, min.z});
+
+        // Top face edges (4 edges)
+        lines.push_back({min.x, max.y, min.z}); lines.push_back({max.x, max.y, min.z});
+        lines.push_back({max.x, max.y, min.z}); lines.push_back({max.x, max.y, max.z});
+        lines.push_back({max.x, max.y, max.z}); lines.push_back({min.x, max.y, max.z});
+        lines.push_back({min.x, max.y, max.z}); lines.push_back({min.x, max.y, min.z});
+
+        // Vertical edges (4 edges)
+        lines.push_back({min.x, min.y, min.z}); lines.push_back({min.x, max.y, min.z});
+        lines.push_back({max.x, min.y, min.z}); lines.push_back({max.x, max.y, min.z});
+        lines.push_back({max.x, min.y, max.z}); lines.push_back({max.x, max.y, max.z});
+        lines.push_back({min.x, min.y, max.z}); lines.push_back({min.x, max.y, max.z});
+
+        return lines;
+    }
 
 
     const TypeCamera _cameraView;
@@ -70,8 +104,18 @@ public:
                 }
 
                 // Transform bounds to world space and perform AABB frustum culling
+                // For skinned meshes, expand bounds to account for animation deformation
+                Bounds worldBounds;
                 if (skinnedMesh.MeshBounds.IsValid()) {
-                    const Bounds worldBounds = skinnedMesh.MeshBounds.Transform(model);
+                    Bounds expandedBounds = skinnedMesh.MeshBounds;
+                    // Expand bounds and ensure minimum extent for animations
+                    // Animations can move vertices significantly (arms, legs, leaning, etc.)
+                    constexpr float minExtent = 0.5f;  // Minimum half-size in each dimension
+                    expandedBounds.Extents.x = std::max(expandedBounds.Extents.x * 1.5f, minExtent);
+                    expandedBounds.Extents.y = std::max(expandedBounds.Extents.y * 1.5f, minExtent);
+                    expandedBounds.Extents.z = std::max(expandedBounds.Extents.z * 1.5f, minExtent);
+
+                    worldBounds = expandedBounds.Transform(model);
                     if (!frustum.IsBoxVisible(worldBounds.Center, worldBounds.Extents)) {
                         continue; // Skip this mesh, it's outside the frustum
                     }
@@ -90,6 +134,25 @@ public:
                     std::nullopt,
                     true  // IsSkinned = true
                 });
+
+#if DEBUG_DRAW_BOUNDS
+                // Render debug bounds as green wireframe box
+                if (worldBounds.IsValid()) {
+                    auto boxLines = GenerateBoxLines(worldBounds.Center, worldBounds.Extents);
+                    _repository->Add(RenderData{
+                        LINE_MATERIAL_GUID,
+                        "",  // No mesh needed for lines
+                        glm::mat4(1.0f),  // Identity - positions are already in world space
+                        camera.View,
+                        camera.Projection,
+                        std::nullopt,
+                        PrimitiveType::Lines,
+                        boxLines,
+                        glm::vec4(0.0f, 1.0f, 0.0f, 1.0f),  // Green color
+                        false
+                    });
+                }
+#endif
             }
         }
     }

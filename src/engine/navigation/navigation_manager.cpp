@@ -14,6 +14,9 @@ void NavigationManager::Initialize(int width, int height, float cellSize, const 
     _crowd = std::make_shared<RVO2Crowd>();
     if (!_crowd->Initialize(maxAgents)) {
         _crowd.reset();
+    } else {
+        // Initialize spatial grid with same dimensions as navmesh for efficient raycasting
+        _crowd->InitializeSpatialGrid(width, height, cellSize, origin);
     }
 }
 

@@ -10,6 +10,7 @@
 #include "../esc/camera/camera_component.hpp"
 #include "../asset/asset_manager.hpp"
 #include "../scene/scene.hpp"
+#include "../navigation/navigation_manager.hpp"
 #include <unordered_map>
 #include <iostream>
 
@@ -47,6 +48,16 @@ public:
         for (auto [entity, cam, camTransform] : _cameraView.each()) {
             cameraPos = camTransform.GetPosition();
             break;
+        }
+
+        // Get navmesh for path validation
+        GridNavmesh* navmesh = nullptr;
+        if (auto scene = _scene.lock()) {
+            if (auto navManager = scene->GetNavigationManager()) {
+                if (auto navmeshPtr = navManager->GetNavmesh()) {
+                    navmesh = navmeshPtr.get();
+                }
+            }
         }
 
         for (auto [entity, bt] : View.each()) {
@@ -96,7 +107,7 @@ public:
                 transform = &_registry.get<TransformComponentV2>(entity);
             }
 
-            BTExecutor::Execute(bt, navAgent, transform, deltaTime, _registry, entity);
+            BTExecutor::Execute(bt, navAgent, transform, deltaTime, _registry, entity, navmesh);
         }
     }
 

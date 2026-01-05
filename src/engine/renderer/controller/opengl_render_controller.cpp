@@ -124,37 +124,44 @@ void OpenGLRenderController::RenderSkinnedInstanced(const RenderId& renderId, co
     batch->Clear();
 
     for (const auto& inst : instances) {
-        if (inst.BoneTransforms.has_value()) {
+        if (inst.BoneTransforms.has_value() && !inst.BoneTransforms.value().empty()) {
             batch->AddInstance(inst.ModelMatrix, inst.BoneTransforms.value());
         }
     }
 
     batch->Finalize();
 
-    if (batch->GetInstanceCount() == 0) return;
+    if (batch->GetInstanceCount() == 0) {
+        return;
+    }
 
     const auto meshPtr = _sceneManager->GetMesh(renderId.MeshGuid);
-    if (!meshPtr) return;
+    if (!meshPtr) {
+        return;
+    }
 
     meshPtr->Bind();
 
-    if (!meshPtr->HasInstanceAttributes()) {
-        meshPtr->ConfigureInstanceAttributes(batch->GetInstanceVBO());
-    }
-
+    // Always setup instance attributes since VBO may change between frames
     batch->SetupInstanceAttributes();
 
     shader->Use();
-    shader->SetMat4(shader->GetLocation("view"), renderId.CameraView);
-    shader->SetMat4(shader->GetLocation("projection"), renderId.CameraProjection);
+
+    auto viewLoc = shader->GetLocation("view");
+    auto projLoc = shader->GetLocation("projection");
+    auto boneLoc = shader->GetLocation("boneMatrices");
+    auto texLoc = shader->GetLocation("texture1");
+
+    shader->SetMat4(viewLoc, renderId.CameraView);
+    shader->SetMat4(projLoc, renderId.CameraProjection);
 
     constexpr GLuint BONE_TEXTURE_UNIT = 1;
     batch->BindForRendering(BONE_TEXTURE_UNIT);
-    shader->SetInt(shader->GetLocation("boneMatrices"), BONE_TEXTURE_UNIT);
+    shader->SetInt(boneLoc, BONE_TEXTURE_UNIT);
 
     mat->ApplyRenderState();
     mat->BindTextures();
-    shader->SetInt(shader->GetLocation("texture1"), 0);
+    shader->SetInt(texLoc, 0);
 
     glDrawElementsInstanced(
         GL_TRIANGLES,
@@ -179,7 +186,9 @@ void OpenGLRenderController::Render(const std::shared_ptr<RenderRepository>& rep
     }
 
     for (const auto &[renderId, instance] : renderData) {
-        if (renderId.IsSkinned && instance.size() > 1) {
+        // Always use instanced path for skinned meshes (even with 1 instance)
+        // The non-instanced path doesn't properly set up bone transforms
+        if (renderId.IsSkinned) {
             RenderSkinnedInstanced(renderId, instance);
             continue;
         }

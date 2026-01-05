@@ -8,6 +8,14 @@ namespace RVO {
     class RVOSimulator;
 }
 
+// Raycast hit result
+struct RaycastHit {
+    int AgentId = -1;
+    glm::vec3 HitPoint{0.0f};
+    float Distance = 0.0f;
+    bool Hit = false;
+};
+
 class RVO2Crowd {
 private:
     std::unique_ptr<RVO::RVOSimulator> _simulator;
@@ -30,8 +38,25 @@ private:
     };
     std::unordered_map<int, AgentData> _agentData;
 
+    // Spatial grid for O(1) agent lookup
+    float _gridCellSize = 1.0f;
+    glm::vec3 _gridOrigin{0.0f};
+    int _gridWidth = 0;
+    int _gridHeight = 0;
+    std::vector<std::vector<std::vector<int>>> _agentGrid;  // [z][x] -> list of agent IDs
+    bool _gridInitialized = false;
+
     // Hard separation enforcement
     void EnforceSeparation();
+
+    // Spatial grid helpers
+    void WorldToGrid(const glm::vec3& pos, int& outX, int& outZ) const;
+    bool IsValidCell(int x, int z) const;
+    void RebuildSpatialGrid();
+
+    // Ray-sphere intersection test (returns distance or -1 if no hit)
+    float RaySphereIntersect(const glm::vec3& rayOrigin, const glm::vec3& rayDir,
+                             const glm::vec3& sphereCenter, float sphereRadius) const;
 
 public:
     RVO2Crowd();
@@ -70,4 +95,14 @@ public:
     // Getters
     int GetMaxAgents() const noexcept { return _maxAgents; }
     size_t GetAgentCount() const noexcept { return _agentData.size(); }
+
+    // Spatial grid - must be initialized before Raycast works
+    void InitializeSpatialGrid(int width, int height, float cellSize, const glm::vec3& origin);
+
+    // Get agents in a specific grid cell (O(1) lookup)
+    const std::vector<int>& GetAgentsInCell(int x, int z) const;
+
+    // Raycast against agents using spatial grid (O(ray_cells * agents_per_cell))
+    // Returns hit info with agent ID, hit point, and distance
+    RaycastHit Raycast(const glm::vec3& origin, const glm::vec3& direction, float maxDistance) const;
 };

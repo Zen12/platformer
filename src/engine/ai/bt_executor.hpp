@@ -4,6 +4,7 @@
 #include "../esc/navmesh_agent/navmesh_agent_component.hpp"
 #include "../esc/transform/transform_component.hpp"
 #include "../esc/tag/tag_component.hpp"
+#include "../navigation/grid_navmesh.hpp"
 #include <glm/glm.hpp>
 #include <random>
 #include <iostream>
@@ -64,7 +65,8 @@ public:
         TransformComponentV2* transform,
         float deltaTime,
         entt::registry& registry,
-        entt::entity selfEntity
+        entt::entity selfEntity,
+        GridNavmesh* navmesh = nullptr
     ) {
         if (!bt.TreeDef || bt.TreeDef->Nodes.empty()) {
             BT_LOG("No tree definition");
@@ -80,7 +82,7 @@ public:
 
             BT_LOG("Processing node[" << current.NodeIndex << "]: " << NodeTypeToString(node.Type));
 
-            BTStatus result = ExecuteNode(bt, node, current, navAgent, transform, deltaTime, registry, selfEntity);
+            BTStatus result = ExecuteNode(bt, node, current, navAgent, transform, deltaTime, registry, selfEntity, navmesh);
 
             BT_LOG_NODE(node.Type, result);
 
@@ -115,7 +117,8 @@ private:
         TransformComponentV2* transform,
         float deltaTime,
         entt::registry& registry,
-        entt::entity selfEntity
+        entt::entity selfEntity,
+        GridNavmesh* navmesh
     ) {
         switch (node.Type) {
             // Composite nodes
@@ -144,9 +147,9 @@ private:
 
             // Action nodes
             case BTNodeType::MoveToTarget:
-                return MoveToTarget(bt, navAgent, registry);
+                return MoveToTarget(bt, navAgent, transform, registry, navmesh);
             case BTNodeType::RandomWander:
-                return RandomWander(bt, navAgent, transform, node.Param1);
+                return RandomWander(bt, navAgent, transform, node.Param1, navmesh);
             case BTNodeType::Wait:
                 return Wait(bt, state, deltaTime, node.Param1);
             case BTNodeType::Idle:
@@ -282,9 +285,11 @@ private:
     static BTStatus MoveToTarget(
         BehaviorTreeComponent& bt,
         NavmeshAgentComponent* navAgent,
-        entt::registry& registry
+        const TransformComponentV2* transform,
+        entt::registry& registry,
+        GridNavmesh* navmesh
     ) {
-        if (!bt.HasTarget || !navAgent) return BTStatus::Failure;
+        if (!bt.HasTarget || !navAgent || !transform) return BTStatus::Failure;
 
         // Update target position from entity if we have one
         if (bt.TargetEntity != entt::null && registry.valid(bt.TargetEntity)) {
@@ -292,6 +297,29 @@ private:
             if (targetTransform) {
                 bt.TargetPosition = targetTransform->GetPosition();
             }
+        }
+
+        // Check if path exists before setting destination
+        if (navmesh) {
+            glm::vec3 currentPos = transform->GetPosition();
+            glm::vec3 targetPos = bt.TargetPosition;
+
+            // Clamp target to walkable area if needed
+            if (!navmesh->IsWalkable(targetPos)) {
+                targetPos = navmesh->FindNearestPoint(targetPos);
+            }
+
+            // Check if a valid path exists
+            auto path = navmesh->FindPath(currentPos, targetPos);
+            if (path.empty()) {
+                // No valid path - stop and fail
+                BT_LOG("MoveToTarget: no valid path to target");
+                navAgent->HasDestination = false;
+                navAgent->DestinationChanged = true;
+                return BTStatus::Failure;
+            }
+
+            bt.TargetPosition = targetPos;
         }
 
         navAgent->Destination = bt.TargetPosition;
@@ -310,7 +338,8 @@ private:
         BehaviorTreeComponent& bt,
         NavmeshAgentComponent* navAgent,
         const TransformComponentV2* transform,
-        float radius
+        float radius,
+        GridNavmesh* navmesh
     ) {
         if (!navAgent || !transform) {
             BT_LOG("RandomWander: missing navAgent or transform");
@@ -323,7 +352,39 @@ private:
             static std::mt19937 gen(rd());
             std::uniform_real_distribution<float> dist(-radius, radius);
 
-            bt.TargetPosition = transform->GetPosition() + glm::vec3(dist(gen), 0, dist(gen));
+            glm::vec3 currentPos = transform->GetPosition();
+            glm::vec3 targetPos;
+            bool foundValidPath = false;
+
+            // Try up to 5 times to find a reachable random point
+            for (int attempt = 0; attempt < 5; ++attempt) {
+                targetPos = currentPos + glm::vec3(dist(gen), 0, dist(gen));
+
+                if (navmesh) {
+                    // Clamp to walkable area
+                    if (!navmesh->IsWalkable(targetPos)) {
+                        targetPos = navmesh->FindNearestPoint(targetPos);
+                    }
+
+                    // Check if path exists
+                    auto path = navmesh->FindPath(currentPos, targetPos);
+                    if (!path.empty()) {
+                        foundValidPath = true;
+                        break;
+                    }
+                } else {
+                    // No navmesh, assume valid
+                    foundValidPath = true;
+                    break;
+                }
+            }
+
+            if (!foundValidPath) {
+                BT_LOG("RandomWander: could not find reachable point after 5 attempts");
+                return BTStatus::Failure;
+            }
+
+            bt.TargetPosition = targetPos;
             bt.HasTarget = true;
 
             navAgent->Destination = bt.TargetPosition;

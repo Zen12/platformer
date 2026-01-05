@@ -53,7 +53,7 @@ entities:
     components:
       - type: spawner
         prefab_guid: ee9e7ec4-779d-4d44-a4f6-99f048412b61  # zombie.prefab
-        spawn_count: 1000
+        spawn_count: 2
         spawn_on_navmesh: true
   - tag: "navmesh_cell_spawner"
     components:

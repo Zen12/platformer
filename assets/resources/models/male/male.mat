@@ -3,9 +3,9 @@ is_culling: True
 is_depth_test: True
 blend_mode: 0
 shader_opengl:
-  vertex: 71755ee0-39f9-4365-a071-b61707333037
-  fragment: 7cffd622-f789-4ab6-99c7-fdc39a921ce4
+  vertex: 48d7d1db-ad04-40e4-9148-ea00618e618a
+  fragment: 0e167558-99ae-4ca1-8f60-bc068107ff65
 shader_gles:
-  vertex: 1cc79072-1e1a-4e91-8d6a-4b0c20d5626a
-  fragment: d049c781-34bd-4d34-b0fa-7d51482588af
+  vertex: 2f9eb382-746c-41fd-b8a8-02fd7ef9c2ba
+  fragment: d888d308-476d-49dc-be02-dda640f2a3c0
 image: db6b68a6-6b5d-442a-9cda-4984db022c0e

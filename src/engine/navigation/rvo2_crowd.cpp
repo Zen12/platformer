@@ -1,6 +1,7 @@
 #include "rvo2_crowd.hpp"
 #include <RVO.h>
 #include <cmath>
+#include <unordered_set>
 
 RVO2Crowd::RVO2Crowd() = default;
 
@@ -209,6 +210,9 @@ void RVO2Crowd::Update(float deltaTime) {
 
     // Hard separation enforcement - prevent any overlapping
     EnforceSeparation();
+
+    // Rebuild spatial grid for efficient raycasting
+    RebuildSpatialGrid();
 }
 
 void RVO2Crowd::EnforceSeparation() {
@@ -285,4 +289,182 @@ void RVO2Crowd::Clear() {
         _simulator->setTimeStep(1.0f / 60.0f);
         _simulator->setAgentDefaults(15.0f, 10, 5.0f, 5.0f, 0.5f, 5.0f);
     }
+
+    // Clear spatial grid
+    for (auto& row : _agentGrid) {
+        for (auto& cell : row) {
+            cell.clear();
+        }
+    }
+}
+
+// ============================================================================
+// Spatial Grid Implementation
+// ============================================================================
+
+void RVO2Crowd::InitializeSpatialGrid(int width, int height, float cellSize, const glm::vec3& origin) {
+    _gridWidth = width;
+    _gridHeight = height;
+    _gridCellSize = cellSize;
+    _gridOrigin = origin;
+
+    // Allocate grid
+    _agentGrid.resize(height);
+    for (int z = 0; z < height; ++z) {
+        _agentGrid[z].resize(width);
+    }
+
+    _gridInitialized = true;
+}
+
+void RVO2Crowd::WorldToGrid(const glm::vec3& pos, int& outX, int& outZ) const {
+    outX = static_cast<int>(std::floor((pos.x - _gridOrigin.x) / _gridCellSize));
+    outZ = static_cast<int>(std::floor((pos.z - _gridOrigin.z) / _gridCellSize));
+}
+
+bool RVO2Crowd::IsValidCell(int x, int z) const {
+    return x >= 0 && x < _gridWidth && z >= 0 && z < _gridHeight;
+}
+
+void RVO2Crowd::RebuildSpatialGrid() {
+    if (!_gridInitialized) return;
+
+    // Clear all cells
+    for (auto& row : _agentGrid) {
+        for (auto& cell : row) {
+            cell.clear();
+        }
+    }
+
+    // Insert all active agents into their cells
+    for (const auto& [agentId, data] : _agentData) {
+        if (!data.Active) continue;
+
+        int x, z;
+        WorldToGrid(data.Position, x, z);
+
+        if (IsValidCell(x, z)) {
+            _agentGrid[z][x].push_back(agentId);
+        }
+    }
+}
+
+static const std::vector<int> _emptyCell;
+
+const std::vector<int>& RVO2Crowd::GetAgentsInCell(int x, int z) const {
+    if (!_gridInitialized || !IsValidCell(x, z)) {
+        return _emptyCell;
+    }
+    return _agentGrid[z][x];
+}
+
+float RVO2Crowd::RaySphereIntersect(const glm::vec3& rayOrigin, const glm::vec3& rayDir,
+                                     const glm::vec3& sphereCenter, float sphereRadius) const {
+    // Vector from ray origin to sphere center
+    glm::vec3 oc = rayOrigin - sphereCenter;
+
+    // Quadratic coefficients: at^2 + bt + c = 0
+    float a = glm::dot(rayDir, rayDir);
+    float b = 2.0f * glm::dot(oc, rayDir);
+    float c = glm::dot(oc, oc) - sphereRadius * sphereRadius;
+
+    float discriminant = b * b - 4.0f * a * c;
+
+    if (discriminant < 0.0f) {
+        return -1.0f;  // No intersection
+    }
+
+    // Find the nearest intersection point
+    float sqrtDisc = std::sqrt(discriminant);
+    float t1 = (-b - sqrtDisc) / (2.0f * a);
+    float t2 = (-b + sqrtDisc) / (2.0f * a);
+
+    // Return the closest positive t
+    if (t1 > 0.0f) return t1;
+    if (t2 > 0.0f) return t2;
+    return -1.0f;  // Both intersections behind ray origin
+}
+
+RaycastHit RVO2Crowd::Raycast(const glm::vec3& origin, const glm::vec3& direction, float maxDistance) const {
+    RaycastHit result;
+
+    if (!_gridInitialized) {
+        return result;
+    }
+
+    // Normalize direction
+    glm::vec3 dir = glm::normalize(direction);
+
+    // Convert ray start/end to grid coordinates
+    int x0, z0, x1, z1;
+    WorldToGrid(origin, x0, z0);
+    glm::vec3 endPoint = origin + dir * maxDistance;
+    WorldToGrid(endPoint, x1, z1);
+
+    // Bresenham line traversal through grid cells
+    const int dx = std::abs(x1 - x0);
+    const int dz = std::abs(z1 - z0);
+    const int sx = x0 < x1 ? 1 : -1;
+    const int sz = z0 < z1 ? 1 : -1;
+    int err = dx - dz;
+
+    float closestDist = maxDistance + 1.0f;
+    int closestAgent = -1;
+    glm::vec3 closestHitPoint;
+
+    int x = x0, z = z0;
+
+    // Track checked agents to avoid double-checking
+    std::unordered_set<int> checkedAgents;
+
+    while (true) {
+        // Check agents in current cell
+        if (IsValidCell(x, z)) {
+            for (int agentId : _agentGrid[z][x]) {
+                // Skip already checked agents
+                if (checkedAgents.count(agentId)) continue;
+                checkedAgents.insert(agentId);
+
+                const auto& data = _agentData.at(agentId);
+                if (!data.Active) continue;
+
+                // Use agent position at ray height for 2D-style hit detection
+                glm::vec3 agentPos = data.Position;
+                agentPos.y = origin.y;  // Project to same Y plane as ray
+
+                // Ray-sphere intersection
+                float t = RaySphereIntersect(origin, dir, agentPos, data.Radius);
+
+                // Skip hits too close (self-hit) - minimum distance is 1.0
+                if (t > 1.0f && t < closestDist && t <= maxDistance) {
+                    closestDist = t;
+                    closestAgent = agentId;
+                    closestHitPoint = origin + dir * t;
+                }
+            }
+        }
+
+        // Check if we've reached the end
+        if (x == x1 && z == z1) break;
+
+        // Move to next cell
+        const int e2 = 2 * err;
+        if (e2 > -dz) {
+            err -= dz;
+            x += sx;
+        }
+        if (e2 < dx) {
+            err += dx;
+            z += sz;
+        }
+    }
+
+    if (closestAgent != -1) {
+        result.Hit = true;
+        result.AgentId = closestAgent;
+        result.HitPoint = closestHitPoint;
+        result.Distance = closestDist;
+    }
+
+    return result;
 }
