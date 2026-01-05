@@ -2,6 +2,7 @@
 
 #include "mesh.hpp"
 #include "../../asset/loaders/asset_loader.hpp"
+#include "../bounds.hpp"
 #include <memory>
 #include <string>
 #include <vector>
@@ -22,6 +23,9 @@ struct MeshData {
     std::vector<std::string> BoneNames; // Bone names (index matches bone index)
     std::vector<glm::mat4> BoneOffsets; // Inverse bind pose matrices (mesh space -> bone space)
     std::vector<int> BoneParents; // Parent bone index for each bone (-1 = no parent/root)
+
+    // Bounding box (axis-aligned in mesh local space)
+    Bounds MeshBounds;
 };
 
 template<>

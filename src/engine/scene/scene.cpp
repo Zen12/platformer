@@ -96,6 +96,8 @@ std::shared_ptr<Mesh> Scene::GetMesh(const std::string &guid) {
             } else {
                 mesh = std::make_shared<Mesh>(meshData.Vertices, meshData.Indices, meshData.HasTexCoords);
             }
+            // Store mesh bounds for frustum culling
+            _meshBounds[guid] = meshData.MeshBounds;
             _meshes[guid] = mesh;
             return mesh;
         }
@@ -185,6 +187,13 @@ std::vector<glm::mat4> Scene::GetMeshBoneOffsets(const std::string &guid) const 
 
 std::vector<int> Scene::GetMeshBoneParents(const std::string &guid) const noexcept {
     if (const auto it = _meshBoneParents.find(guid); it != _meshBoneParents.end()) {
+        return it->second;
+    }
+    return {};
+}
+
+Bounds Scene::GetMeshBounds(const std::string &guid) const noexcept {
+    if (const auto it = _meshBounds.find(guid); it != _meshBounds.end()) {
         return it->second;
     }
     return {};

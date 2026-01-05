@@ -35,18 +35,19 @@ private:
                 continue;
             }
 
-            // Get fresh path from current agent position to destination
-            const glm::vec3 agentPos = crowd->GetAgentPosition(agent.CrowdAgentId);
-            const auto path = navmesh->FindPath(agentPos, agent.Destination);
+            // Use cached path from NavmeshAgentSystem
+            const auto& path = agent.PathWaypoints;
 
             if (path.size() >= 2) {
-                // Draw lines connecting path waypoints
-                for (size_t i = 0; i < path.size() - 1; ++i) {
+                // Draw from current waypoint onwards
+                const int startIdx = std::max(0, agent.CurrentWaypointIndex);
+                for (size_t i = startIdx; i < path.size() - 1; ++i) {
                     positions.emplace_back(path[i].x, path[i].y + 0.5f, path[i].z);
                     positions.emplace_back(path[i + 1].x, path[i + 1].y + 0.5f, path[i + 1].z);
                 }
-            } else {
+            } else if (!path.empty()) {
                 // Direct line to destination
+                const glm::vec3 agentPos = crowd->GetAgentPosition(agent.CrowdAgentId);
                 positions.emplace_back(agentPos.x, agentPos.y + 0.5f, agentPos.z);
                 positions.emplace_back(agent.Destination.x, agent.Destination.y + 0.5f, agent.Destination.z);
             }

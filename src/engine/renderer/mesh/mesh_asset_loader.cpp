@@ -1,4 +1,5 @@
 #include "mesh_asset_loader.hpp"
+#include "../bounds.hpp"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -50,7 +51,7 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
     if (!fileCheck.good()) {
         std::cerr << "[MESH_LOADER] ERROR: Cannot open file at path: " << path << std::endl;
         std::cerr << "[MESH_LOADER] File does not exist or is not accessible" << std::endl;
-        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}, {}};
     }
     fileCheck.seekg(0, std::ios::end);
     std::streamsize fileSize = fileCheck.tellg();
@@ -81,7 +82,7 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
         std::cerr << "[MESH_LOADER] ERROR: GLB importer is NOT compiled into this Assimp build!" << std::endl;
         std::cerr << "[MESH_LOADER] You need to rebuild Assimp with ASSIMP_BUILD_GLTF_IMPORTER=ON" << std::endl;
         std::cerr << "[MESH_LOADER] Available formats: " << extensionList.C_Str() << std::endl;
-        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}, {}};
     }
 #endif
 
@@ -107,7 +108,7 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
     std::ifstream file(path, std::ios::binary | std::ios::ate);
     if (!file.is_open()) {
         std::cerr << "[MESH_LOADER] ERROR: Failed to open file for memory loading" << std::endl;
-        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}, {}};
     }
 
     std::streamsize size = file.tellg();
@@ -116,7 +117,7 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
     std::vector<char> buffer(size);
     if (!file.read(buffer.data(), size)) {
         std::cerr << "[MESH_LOADER] ERROR: Failed to read file into buffer" << std::endl;
-        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}, {}};
     }
     file.close();
 
@@ -146,7 +147,7 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
         std::cerr << "[MESH_LOADER] ERROR: ReadFileFromMemory returned null" << std::endl;
         std::cerr << "[MESH_LOADER] Assimp error: " << importer.GetErrorString() << std::endl;
         std::cerr.flush();
-        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}, {}};
     }
 
     MESH_LOG << "[MESH_LOADER] Scene loaded successfully!" << std::endl;
@@ -158,10 +159,10 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
         scene = importer.ReadFile(path, importFlags);
     } catch (const std::exception& e) {
         std::cerr << "[MESH_LOADER] EXCEPTION during ReadFile: " << e.what() << std::endl;
-        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}, {}};
     } catch (...) {
         std::cerr << "[MESH_LOADER] UNKNOWN EXCEPTION during ReadFile" << std::endl;
-        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}, {}};
     }
 #endif
 
@@ -174,19 +175,19 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
     if (!scene) {
         std::cerr << "[MESH_LOADER] ERROR: Scene is null" << std::endl;
         std::cerr << "[MESH_LOADER] Assimp error: " << importer.GetErrorString() << std::endl;
-        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}, {}};
     }
 
     if (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) {
         std::cerr << "[MESH_LOADER] ERROR: Scene has INCOMPLETE flag" << std::endl;
         std::cerr << "[MESH_LOADER] Assimp error: " << importer.GetErrorString() << std::endl;
-        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}, {}};
     }
 
     if (!scene->mRootNode) {
         std::cerr << "[MESH_LOADER] ERROR: Scene has no root node" << std::endl;
         std::cerr << "[MESH_LOADER] Assimp error: " << importer.GetErrorString() << std::endl;
-        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}, {}};
     }
 
     MESH_LOG << "[MESH_LOADER] Assimp loaded scene successfully" << std::endl;
@@ -379,7 +380,7 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
     if (vertices.empty() || indices.empty()) {
         std::cerr << "[MESH_LOADER] ERROR: No mesh data found in " << path << std::endl;
         std::cerr << "[MESH_LOADER] vertices.size()=" << vertices.size() << ", indices.size()=" << indices.size() << std::endl;
-        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}};
+        return MeshData{{}, {}, false, {}, {}, false, {}, {}, {}, {}};
     }
 
     MESH_LOG << "[MESH_LOADER] Mesh processing complete - final data sizes:" << std::endl;
@@ -408,10 +409,12 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
     }
     MESH_LOG << "  Load time: " << loadDuration << "ms, Process time: " << processDuration << "ms, Total: " << totalDuration << "ms" << std::endl;
 
+    // Calculate mesh bounds
+    Bounds meshBounds;
     if (!vertices.empty()) {
         float minX = vertices[0], maxX = vertices[0];
-        float minY = hasTexCoords ? vertices[1] : vertices[1], maxY = hasTexCoords ? vertices[1] : vertices[1];
-        float minZ = hasTexCoords ? vertices[2] : vertices[2], maxZ = hasTexCoords ? vertices[2] : vertices[2];
+        float minY = vertices[1], maxY = vertices[1];
+        float minZ = vertices[2], maxZ = vertices[2];
 
         int stride = hasTexCoords ? 5 : 3;
         for (size_t i = 0; i < vertices.size(); i += stride) {
@@ -423,10 +426,15 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
             maxZ = std::max(maxZ, vertices[i + 2]);
         }
 
+        meshBounds = Bounds::FromMinMax(
+            glm::vec3(minX, minY, minZ),
+            glm::vec3(maxX, maxY, maxZ)
+        );
+
         MESH_LOG << "  Bounds: X[" << minX << ", " << maxX << "] "
                   << "Y[" << minY << ", " << maxY << "] "
                   << "Z[" << minZ << ", " << maxZ << "]" << std::endl;
     }
 
-    return MeshData{vertices, indices, hasTexCoords, boneWeights, boneIndices, hasSkeleton, boneNames, boneOffsets, boneParents};
+    return MeshData{vertices, indices, hasTexCoords, boneWeights, boneIndices, hasSkeleton, boneNames, boneOffsets, boneParents, meshBounds};
 }

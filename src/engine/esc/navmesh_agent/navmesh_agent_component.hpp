@@ -25,6 +25,7 @@ public:
     float GroundY = 0.0f;  // Y level of navmesh
     bool IsGrounded = true;
     bool IsJumping = false;
+    bool JustLanded = false;  // True for one frame after landing to preserve air rotation
     float AirControlMultiplier = 0.8f;
 
     // Manual waypoint following

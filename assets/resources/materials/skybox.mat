@@ -1,0 +1,11 @@
+name: skybox
+is_culling: false
+is_depth_test: false
+blend_mode: 0
+shader_opengl:
+  vertex: a8f7da31-83e5-4cb0-ad90-1d4ed85d7fd1
+  fragment: 8ebd1bcf-37b9-4dce-bd40-6d07d5515ad1
+shader_gles:
+  vertex: 3b8d69fd-7018-406a-ac20-51c1858eda8d
+  fragment: e34b3aa6-1a27-4dfd-bcee-53b9235e83a5
+image: 279b618d-457a-4be3-907f-b4b16fc2a524

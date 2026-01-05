@@ -29,6 +29,18 @@ namespace YAML {
     };
 
     template <>
+    struct convert<SkyboxConfig>
+    {
+        static bool decode(const Node &node, SkyboxConfig &rhs)
+        {
+            if (node["material"]) {
+                rhs.MaterialGuid = node["material"].as<std::string>();
+            }
+            return true;
+        }
+    };
+
+    template <>
     struct convert<SceneAsset>
     {
         static bool decode(const Node &node, SceneAsset &rhs)
@@ -37,6 +49,9 @@ namespace YAML {
             rhs.Entities = node["entities"].as<std::vector<EntitySerialization>>();
             if (node["navmesh"]) {
                 rhs.Navmesh = node["navmesh"].as<NavmeshConfig>();
+            }
+            if (node["skybox"]) {
+                rhs.Skybox = node["skybox"].as<SkyboxConfig>();
             }
             return true;
         }

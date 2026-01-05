@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 
 #include "skinned_mesh_renderer_component_serialization.hpp"
+#include "../../renderer/bounds.hpp"
 
 class SkinnedMeshRendererComponent final {
 public:
@@ -25,6 +26,9 @@ public:
 
     // Bone hierarchy (parent index for each bone, -1 = root)
     std::vector<int> BoneParents;
+
+    // Bounding box for frustum culling (populated on first render from Scene)
+    Bounds MeshBounds;
 
     explicit SkinnedMeshRendererComponent(const SkinnedMeshRendererComponentSerialization &serialization)
         : Guid(serialization.MeshGuid), MaterialGuid(serialization.MaterialGuid) {

@@ -17,16 +17,20 @@ private:
 
     const TypeCamera _cameraView;
     const std::shared_ptr<RenderRepository> _repository;
+    const std::weak_ptr<Scene> _scene;
 
 public:
     explicit MeshRenderSystem(
         const TypeView &view,
         const TypeCamera &camera,
-        const std::shared_ptr<RenderRepository> &repository)
-        : ISystemView(view) , _cameraView(camera), _repository(repository) {
+        const std::shared_ptr<RenderRepository> &repository,
+        const std::weak_ptr<Scene> &scene)
+        : ISystemView(view) , _cameraView(camera), _repository(repository), _scene(scene) {
     }
 
     void OnTick() override {
+        auto scene = _scene.lock();
+
         for (const auto &[_, camera] : _cameraView.each()) {
             // Extract frustum from view-projection matrix
             Frustum frustum;
@@ -36,16 +40,18 @@ public:
             for (const auto &[_, mesh, transform] : View.each()) {
                 const auto &model = transform.GetModel();
 
-                // Extract position from model matrix (last column)
-                const glm::vec3 position(model[3][0], model[3][1], model[3][2]);
+                // Lazy-load bounds from Scene on first render
+                if (!mesh.MeshBounds.IsValid() && scene) {
+                    scene->GetMesh(mesh.Guid);  // Ensure mesh is loaded
+                    mesh.MeshBounds = scene->GetMeshBounds(mesh.Guid);
+                }
 
-                // Use a conservative bounding sphere radius
-                // TODO: Get actual mesh bounds from mesh data
-                constexpr float boundingRadius = 5.0f;
-
-                // Perform frustum culling
-                if (!frustum.IsSphereVisible(position, boundingRadius)) {
-                    continue; // Skip this mesh, it's outside the frustum
+                // Transform bounds to world space and perform AABB frustum culling
+                if (mesh.MeshBounds.IsValid()) {
+                    const Bounds worldBounds = mesh.MeshBounds.Transform(model);
+                    if (!frustum.IsBoxVisible(worldBounds.Center, worldBounds.Extents)) {
+                        continue; // Skip this mesh, it's outside the frustum
+                    }
                 }
 
                 _repository->Add(RenderData{mesh.MaterialGuid, mesh.Guid, model, camera.View, camera.Projection, std::nullopt});

@@ -9,6 +9,7 @@ private:
     glm::vec3 _offsetRotation{-45.0f, 0.0f, 0.0f};
     float _maxLookAhead{5.0f};
     float _smoothSpeed{5.0f};
+    float _maxMoveSpeed{15.0f};  // Max units per second camera can move
 
 public:
     // Mutable for lerp state tracking
@@ -21,9 +22,11 @@ public:
         const glm::vec3& offsetPosition = glm::vec3(0.0f, 10.0f, 10.0f),
         const glm::vec3& offsetRotation = glm::vec3(-45.0f, 0.0f, 0.0f),
         float maxLookAhead = 5.0f,
-        float smoothSpeed = 5.0f)
+        float smoothSpeed = 5.0f,
+        float maxMoveSpeed = 15.0f)
         : _targetTag(std::move(targetTag)), _offsetPosition(offsetPosition),
-          _offsetRotation(offsetRotation), _maxLookAhead(maxLookAhead), _smoothSpeed(smoothSpeed) {}
+          _offsetRotation(offsetRotation), _maxLookAhead(maxLookAhead), _smoothSpeed(smoothSpeed),
+          _maxMoveSpeed(maxMoveSpeed) {}
 
     [[nodiscard]] const std::string& GetTargetTag() const noexcept { return _targetTag; }
     void SetTargetTag(const std::string& tag) noexcept { _targetTag = tag; }
@@ -39,4 +42,7 @@ public:
 
     [[nodiscard]] float GetSmoothSpeed() const noexcept { return _smoothSpeed; }
     void SetSmoothSpeed(float speed) noexcept { _smoothSpeed = speed; }
+
+    [[nodiscard]] float GetMaxMoveSpeed() const noexcept { return _maxMoveSpeed; }
+    void SetMaxMoveSpeed(float speed) noexcept { _maxMoveSpeed = speed; }
 };

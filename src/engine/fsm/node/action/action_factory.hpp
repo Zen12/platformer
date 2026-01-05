@@ -76,8 +76,8 @@ public:
         return LogAction(message);
     }
 
-    [[nodiscard]] AnimationStateAction CreateAnimationStateAction(const std::string& animationGuid, const std::string& onCompleteTrigger = "") const {
-        return {animationGuid, onCompleteTrigger, _animationComponent};
+    [[nodiscard]] AnimationStateAction CreateAnimationStateAction(const std::string& animationGuid, const std::string& onCompleteTrigger = "", bool loop = true, float animationSpeed = -1.0f, bool disableVelocitySpeed = false, bool disableMovement = false, float disableMovementDuration = -1.0f) const {
+        return {animationGuid, onCompleteTrigger, loop, animationSpeed, disableVelocitySpeed, disableMovement, disableMovementDuration, _animationComponent};
     }
 
     [[nodiscard]] AnimationStateTransitionAction CreateAnimationStateTransitionAction(const std::string& fromAnimationGuid, const std::string& toAnimationGuid, float transitionTime, const std::string& onCompleteTrigger = "") const {

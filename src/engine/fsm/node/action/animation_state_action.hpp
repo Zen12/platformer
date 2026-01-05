@@ -17,12 +17,25 @@ struct AnimationStateAction final : public Action {
 private:
     std::string _animationGuid;
     std::string _onCompleteTrigger;
+    bool _loop;
+    float _animationSpeed;
+    bool _disableVelocitySpeed;
+    bool _disableMovement;
+    float _disableMovementDuration;
     std::weak_ptr<FsmAnimationComponent> _animationComponent;
 
 public:
-    AnimationStateAction(std::string animationGuid, std::string onCompleteTrigger, std::weak_ptr<FsmAnimationComponent> animationComponent)
+    AnimationStateAction(std::string animationGuid, std::string onCompleteTrigger, bool loop,
+                         float animationSpeed, bool disableVelocitySpeed, bool disableMovement,
+                         float disableMovementDuration,
+                         std::weak_ptr<FsmAnimationComponent> animationComponent)
         : _animationGuid(std::move(animationGuid)),
           _onCompleteTrigger(std::move(onCompleteTrigger)),
+          _loop(loop),
+          _animationSpeed(animationSpeed),
+          _disableVelocitySpeed(disableVelocitySpeed),
+          _disableMovement(disableMovement),
+          _disableMovementDuration(disableMovementDuration),
           _animationComponent(std::move(animationComponent)) {}
 
     void OnEnter() const override {
@@ -32,13 +45,20 @@ public:
             if (comp->CurrentAnimationGuid != _animationGuid) {
                 comp->Time = 0.0f;
                 ANIM_STATE_LOG << "[ANIM STATE] Switching animation: " << comp->CurrentAnimationGuid
-                               << " -> " << _animationGuid << std::endl;
+                               << " -> " << _animationGuid << " (loop=" << _loop << ")" << std::endl;
             } else {
                 ANIM_STATE_LOG << "[ANIM STATE] Entering state with same animation: " << _animationGuid << std::endl;
             }
             comp->CurrentAnimationGuid = _animationGuid;
             comp->OnCompleteTrigger = _onCompleteTrigger;
+            comp->Loop = _loop;
             comp->HasCompletedOnce = false;
+            // Set per-state speed overrides
+            comp->StateAnimationSpeed = _animationSpeed;
+            comp->StateDisableVelocitySpeed = _disableVelocitySpeed;
+            comp->MovementDisabled = _disableMovement;
+            comp->MovementDisabledDuration = _disableMovementDuration;
+            comp->MovementDisabledTimer = 0.0f;  // Reset timer when entering state
         }
     }
 

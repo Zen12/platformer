@@ -77,9 +77,21 @@ public:
                 topDown.Initialized = true;
             }
 
-            // Smooth lerp towards desired position
-            float t = std::min(1.0f, topDown.GetSmoothSpeed() * deltaTime);
-            topDown.CurrentCameraPosition = glm::mix(topDown.CurrentCameraPosition, desiredPosition, t);
+            // Calculate movement with smooth lerp
+            glm::vec3 lerpedPosition = glm::mix(topDown.CurrentCameraPosition, desiredPosition,
+                std::min(1.0f, topDown.GetSmoothSpeed() * deltaTime));
+
+            // Clamp movement to max speed for smooth transitions even with large distances
+            glm::vec3 movement = lerpedPosition - topDown.CurrentCameraPosition;
+            float moveDist = glm::length(movement);
+            float maxMove = topDown.GetMaxMoveSpeed() * deltaTime;
+
+            if (moveDist > maxMove && moveDist > 0.0001f) {
+                // Limit movement to max speed while maintaining direction
+                movement = (movement / moveDist) * maxMove;
+            }
+
+            topDown.CurrentCameraPosition += movement;
 
             cameraTransform.SetPosition(topDown.CurrentCameraPosition);
             cameraTransform.SetEulerRotation(topDown.GetOffsetRotation());

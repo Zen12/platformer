@@ -114,7 +114,8 @@ public:
                         const auto &view = registry->view<TopDownCameraComponent>();
                         TopDownCameraComponent topDown(topDownSerialization->TargetTag,
                             topDownSerialization->OffsetPosition, topDownSerialization->OffsetRotation,
-                            topDownSerialization->MaxLookAhead, topDownSerialization->SmoothSpeed);
+                            topDownSerialization->MaxLookAhead, topDownSerialization->SmoothSpeed,
+                            topDownSerialization->MaxMoveSpeed);
                         view->emplace(entity, topDown);
                     } else if (const auto &playerSerialization = dynamic_cast<PlayerControllerComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<PlayerControllerComponent>();
@@ -142,7 +143,16 @@ public:
 
             _systems.emplace_back(std::make_unique<CameraSystem>(registry->view<WindowComponent>(),registry->view<CameraComponentV2, TransformComponentV2>()));
 
-            // Top-down camera follows target entity with look-ahead
+            // Player controller must run BEFORE navmesh agent to set destination
+            _systems.emplace_back(std::make_unique<PlayerControllerSystem>(
+                registry->view<PlayerControllerComponent, NavmeshAgentComponent, TransformComponentV2>(),
+                registry->view<DeltaTimeComponent>(), scenePtr, *registry));
+
+            // Navmesh agent must run BEFORE camera so velocity is updated for look-ahead
+            _systems.emplace_back(std::make_unique<NavmeshAgentSystem>(registry->view<NavmeshAgentComponent, TransformComponentV2>(),
+               registry->view<DeltaTimeComponent>(), scenePtr->GetNavigationManager(), scenePtr));
+
+            // Top-down camera follows target entity with look-ahead (needs fresh velocity from navmesh agent)
             _systems.emplace_back(std::make_unique<TopDownCameraSystem>(
                 registry->view<TopDownCameraComponent, TransformComponentV2>(),
                 registry->view<TagComponent, TransformComponentV2>(),
@@ -150,15 +160,7 @@ public:
                 *registry));
 
             _systems.emplace_back(std::make_unique<MeshRenderSystem>(registry->view<MeshRendererComponent, TransformComponentV2>(),
-               registry->view<CameraComponentV2>(), renderRepository ));
-
-            // Player controller must run BEFORE navmesh agent to set destination
-            _systems.emplace_back(std::make_unique<PlayerControllerSystem>(
-                registry->view<PlayerControllerComponent, NavmeshAgentComponent, TransformComponentV2>(),
-                registry->view<DeltaTimeComponent>(), scenePtr));
-
-            _systems.emplace_back(std::make_unique<NavmeshAgentSystem>(registry->view<NavmeshAgentComponent, TransformComponentV2>(),
-               registry->view<DeltaTimeComponent>(), scenePtr->GetNavigationManager(), scenePtr));
+               registry->view<CameraComponentV2>(), renderRepository, scenePtr));
 
             // Animation systems must run AFTER navmesh (for velocity) and BEFORE skinned mesh renderer
             _systems.emplace_back(std::make_unique<SimpleAnimationSystem>(registry->view<SimpleAnimationComponent, SkinnedMeshRendererComponent, TransformComponentV2>(),
@@ -168,7 +170,7 @@ public:
                registry->view<DeltaTimeComponent>(), scenePtr, *registry));
 
             _systems.emplace_back(std::make_unique<SkinnedMeshRenderSystem>(registry->view<SkinnedMeshRendererComponent, TransformComponentV2>(),
-               registry->view<CameraComponentV2>(), renderRepository ));
+               registry->view<CameraComponentV2>(), renderRepository, scenePtr));
 #ifndef NDEBUG
             _systems.emplace_back(std::make_unique<NavmeshPathRenderSystem>(registry->view<NavmeshAgentComponent>(),
                registry->view<CameraComponentV2>(), renderRepository, scenePtr->GetNavigationManager()));

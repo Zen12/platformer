@@ -17,16 +17,20 @@ private:
 
     const TypeCamera _cameraView;
     const std::shared_ptr<RenderRepository> _repository;
+    const std::weak_ptr<Scene> _scene;
 
 public:
     explicit SkinnedMeshRenderSystem(
         const TypeView &view,
         const TypeCamera &camera,
-        const std::shared_ptr<RenderRepository> &repository)
-        : ISystemView(view) , _cameraView(camera), _repository(repository) {
+        const std::shared_ptr<RenderRepository> &repository,
+        const std::weak_ptr<Scene> &scene)
+        : ISystemView(view) , _cameraView(camera), _repository(repository), _scene(scene) {
     }
 
     void OnTick() override {
+        auto scene = _scene.lock();
+
         for (const auto &[_, camera] : _cameraView.each()) {
             // Extract frustum from view-projection matrix
             Frustum frustum;
@@ -59,17 +63,19 @@ public:
 
                 const auto &model = transform.GetModel();
 
-                // Extract position from model matrix (last column)
-                const glm::vec3 position(model[3][0], model[3][1], model[3][2]);
+                // Lazy-load bounds from Scene on first render
+                if (!skinnedMesh.MeshBounds.IsValid() && scene) {
+                    scene->GetMesh(skinnedMesh.Guid);  // Ensure mesh is loaded
+                    skinnedMesh.MeshBounds = scene->GetMeshBounds(skinnedMesh.Guid);
+                }
 
-                // Use a conservative bounding sphere radius
-                // TODO: Get actual mesh bounds from mesh data
-                //constexpr float boundingRadius = 5.0f;
-
-                // Perform frustum culling
-                //if (!frustum.IsSphereVisible(position, boundingRadius)) {
-                //    continue; // Skip this mesh, it's outside the frustum
-                //}
+                // Transform bounds to world space and perform AABB frustum culling
+                if (skinnedMesh.MeshBounds.IsValid()) {
+                    const Bounds worldBounds = skinnedMesh.MeshBounds.Transform(model);
+                    if (!frustum.IsBoxVisible(worldBounds.Center, worldBounds.Extents)) {
+                        continue; // Skip this mesh, it's outside the frustum
+                    }
+                }
 
                 // Pass bone transforms to renderer with IsSkinned = true for instanced rendering
                 _repository->Add(RenderData{

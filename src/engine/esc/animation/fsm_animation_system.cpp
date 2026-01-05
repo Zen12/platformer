@@ -7,6 +7,13 @@
 
 #define DEBUG_FSM_ANIM_SYSTEM 0
 #define DEBUG_VELOCITY_ANIM 0
+#define DEBUG_JUMP_TRIGGER 0
+
+#if DEBUG_JUMP_TRIGGER
+#define JUMP_LOG if(1) std::cout
+#else
+#define JUMP_LOG if(0) std::cout
+#endif
 
 #if DEBUG_FSM_ANIM_SYSTEM
 #define FSM_ANIM_LOG if(1) std::cout
@@ -35,8 +42,12 @@ void FsmAnimationSystem::OnTick() {
     static int velBasedCounter = 0;
     for (const auto &[entity, anim, skinnedMesh, transform] : View.each()) {
         // Calculate effective animation speed
-        float effectiveSpeed = anim.AnimationSpeed;
-        if (anim.VelocityBasedSpeed) {
+        // Use state override if set, otherwise use component default
+        float effectiveSpeed = (anim.StateAnimationSpeed >= 0.0f) ? anim.StateAnimationSpeed : anim.AnimationSpeed;
+
+        // Apply velocity-based speed unless disabled for this state
+        bool useVelocitySpeed = anim.VelocityBasedSpeed && !anim.StateDisableVelocitySpeed;
+        if (useVelocitySpeed) {
             velBasedCounter++;
             // Check if entity has NavmeshAgentComponent
             if (const auto* navAgent = _registry.try_get<NavmeshAgentComponent>(entity)) {
@@ -80,6 +91,45 @@ void FsmAnimationSystem::OnTick() {
                 } catch (const std::exception& e) {
                     std::cerr << "Failed to load FSM: " << anim.FsmGuid << " - " << e.what() << std::endl;
                 }
+            }
+        }
+
+        // Set animation triggers based on navmesh agent state
+        if (anim.Controller) {
+            if (auto* navAgent = _registry.try_get<NavmeshAgentComponent>(entity)) {
+                // Trigger jump animation when player starts jumping (one-shot)
+                if (navAgent->IsJumping && !anim.WasJumping) {
+                    JUMP_LOG << "[JUMP] Triggering jump! IsJumping=" << navAgent->IsJumping
+                             << " WasJumping=" << anim.WasJumping << std::endl;
+                    anim.Controller->SetTrigger("jump");
+                }
+                // Trigger landing when player lands (using JustLanded for one-frame detection)
+                if (navAgent->JustLanded) {
+                    JUMP_LOG << "[JUMP] Triggering landed!" << std::endl;
+                    anim.Controller->SetTrigger("landed");
+                }
+
+                // Idle/moving triggers based on velocity (only when grounded)
+                if (navAgent->IsGrounded && !navAgent->IsJumping) {
+                    constexpr float idleThreshold = 0.5f;
+                    if (navAgent->CurrentSpeed < idleThreshold) {
+                        anim.Controller->SetTrigger("idle");
+                    } else {
+                        anim.Controller->SetTrigger("moving");
+                    }
+                }
+
+                // Track previous jump state
+                anim.WasJumping = navAgent->IsJumping;
+            }
+        }
+
+        // Update movement disable timer
+        if (anim.MovementDisabled && anim.MovementDisabledDuration > 0.0f) {
+            anim.MovementDisabledTimer += deltaTime;
+            if (anim.MovementDisabledTimer >= anim.MovementDisabledDuration) {
+                anim.MovementDisabled = false;
+                anim.MovementDisabledTimer = 0.0f;
             }
         }
 

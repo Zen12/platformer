@@ -28,9 +28,11 @@ The male.blend file contains 21 animations:
 ## Exported Animations
 
 Currently exported:
+- **male_idle.glb** - Contains ONLY "idle" animation (GUID: 843a8414-e99b-430e-9970-ac97c8e27d4d)
 - **male_walk.glb** - Contains ONLY "walk" animation (GUID: b624e619-5108-4ae7-9ff3-9392feee577e)
 - **male_run.glb** - Contains ONLY "run" animation (GUID: d8c5c713-c87c-4d4a-9c37-11962d07824e)
 - **male_jump.glb** - Contains ONLY "air" animation (GUID: ec13a822-9d95-44c8-8284-8829bc53f4bc)
+- **male_land.glb** - Contains ONLY "landing" animation (GUID: a494c0b1-fac1-4034-bb19-b12f958adb78)
 
 ## Export Settings
 

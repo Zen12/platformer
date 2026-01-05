@@ -87,7 +87,12 @@ public:
                 } else if (actionData.Type == "log") {
                     actions.emplace_back(actionFactory.CreateLogAction(actionData.Param));
                 } else if (actionData.Type == "animation_state") {
-                    actions.emplace_back(actionFactory.CreateAnimationStateAction(actionData.Param, actionData.Param2));
+                    bool loop = actionData.Param3 != "false";  // Default to true if not specified
+                    float animSpeed = actionData.Param4.empty() ? -1.0f : std::stof(actionData.Param4);
+                    bool disableVelSpeed = actionData.Param5 == "true";
+                    bool disableMovement = actionData.Param6 == "true";
+                    float disableMovementDuration = actionData.Param7.empty() ? -1.0f : std::stof(actionData.Param7);
+                    actions.emplace_back(actionFactory.CreateAnimationStateAction(actionData.Param, actionData.Param2, loop, animSpeed, disableVelSpeed, disableMovement, disableMovementDuration));
                 } else if (actionData.Type == "animation_state_transition") {
                     actions.emplace_back(actionFactory.CreateAnimationStateTransitionAction(actionData.Param, actionData.Param2, std::stof(actionData.Param3), actionData.Param4));
                 } else if (actionData.Type == "start_video_recording") {

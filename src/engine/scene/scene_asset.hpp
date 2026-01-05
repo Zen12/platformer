@@ -14,9 +14,14 @@ struct NavmeshConfig {
     int MaxAgents = 2000;
 };
 
+struct SkyboxConfig {
+    std::string MaterialGuid;
+};
+
 struct SceneAsset
 {
     std::string Type;
     std::vector<EntitySerialization> Entities;
     std::optional<NavmeshConfig> Navmesh;
+    std::optional<SkyboxConfig> Skybox;
 };

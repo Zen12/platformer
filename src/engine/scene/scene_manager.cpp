@@ -32,6 +32,10 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
 
         }
 
+        if (sceneAsset.Skybox.has_value()) {
+            _scene->InitializeSkybox(sceneAsset.Skybox->MaterialGuid);
+        }
+
         LoadEntities(sceneAsset.Entities);
     }
 }

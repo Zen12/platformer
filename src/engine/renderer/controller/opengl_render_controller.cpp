@@ -3,6 +3,108 @@
 #include "../material/shader.hpp"
 #include <glm/gtc/type_ptr.hpp>
 
+namespace {
+    constexpr float SkyboxVertices[] = {
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        -1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f
+    };
+}
+
+OpenGLRenderController::~OpenGLRenderController() {
+    if (_skyboxVao != 0) {
+        glDeleteVertexArrays(1, &_skyboxVao);
+        glDeleteBuffers(1, &_skyboxVbo);
+    }
+}
+
+void OpenGLRenderController::InitSkybox() {
+    if (_skyboxInitialized) return;
+
+    glGenVertexArrays(1, &_skyboxVao);
+    glGenBuffers(1, &_skyboxVbo);
+
+    glBindVertexArray(_skyboxVao);
+    glBindBuffer(GL_ARRAY_BUFFER, _skyboxVbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(SkyboxVertices), SkyboxVertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    _skyboxInitialized = true;
+}
+
+void OpenGLRenderController::RenderSkybox(const glm::mat4& view, const glm::mat4& projection, const std::string& materialGuid) noexcept {
+    if (materialGuid.empty()) return;
+
+    if (!_skyboxInitialized) {
+        InitSkybox();
+    }
+
+    const auto mat = _sceneManager->GetMaterial(materialGuid);
+    if (!mat) {
+        return;
+    }
+
+    // Disable depth test - skybox renders as background
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+
+    mat->UseShader();
+    mat->BindTextures();
+    mat->SetMat4("view", view);
+    mat->SetMat4("projection", projection);
+    mat->SetInt("skyboxTexture", 0);
+
+    glBindVertexArray(_skyboxVao);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
+
+    // Re-enable for scene rendering
+    glEnable(GL_DEPTH_TEST);
+}
+
 void OpenGLRenderController::RenderSkinnedInstanced(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept {
     if (instances.empty()) return;
 
@@ -65,6 +167,16 @@ void OpenGLRenderController::RenderSkinnedInstanced(const RenderId& renderId, co
 
 void OpenGLRenderController::Render(const std::shared_ptr<RenderRepository>& repository) noexcept {
     const auto renderData = repository->GetData();
+
+    // Render skybox first (before any scene geometry)
+    if (const auto scene = _sceneManager->GetScene()) {
+        if (const auto skybox = scene->GetSkyboxRenderer()) {
+            if (skybox->IsEnabled() && !renderData.empty()) {
+                const auto& firstRenderId = renderData.begin()->first;
+                RenderSkybox(firstRenderId.CameraView, firstRenderId.CameraProjection, skybox->GetMaterialGuid());
+            }
+        }
+    }
 
     for (const auto &[renderId, instance] : renderData) {
         if (renderId.IsSkinned && instance.size() > 1) {

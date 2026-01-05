@@ -9,4 +9,5 @@ struct TopDownCameraComponentSerialization final : public ComponentSerialization
     glm::vec3 OffsetRotation{-45.0f, 0.0f, 0.0f};
     float MaxLookAhead{5.0f};
     float SmoothSpeed{5.0f};
+    float MaxMoveSpeed{15.0f};
 };

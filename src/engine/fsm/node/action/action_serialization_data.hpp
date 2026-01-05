@@ -7,4 +7,7 @@ struct ActionSerializationData {
     std::string Param2;
     std::string Param3;
     std::string Param4;
+    std::string Param5;
+    std::string Param6;
+    std::string Param7;
 };

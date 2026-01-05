@@ -100,9 +100,10 @@
 # 🏃 Roadmap
 
 ## 0.1.7 3d platformer game
-- [ ] Behaviour Tree as ESC
-- [ ] Proper bounce component or part of renderer, need to filet by bounds and not hardcoded vals
-- [ ] One level of 3d platformer with horde AI
+- [x] Behaviour Tree as ESC
+- [x] Proper bounce component or part of renderer
+- [ ] 3d navmesh
+- [ ] One level of 3d platformer with horde AI(Use blender as level editor)
 
 ## 0.1.8 Basic polish
 - [ ] Simple particles

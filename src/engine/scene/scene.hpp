@@ -5,6 +5,7 @@
 #include "../renderer/material/shader.hpp"
 #include "../renderer/material/material.hpp"
 #include "../renderer/mesh/mesh.hpp"
+#include "../renderer/bounds.hpp"
 #include "../asset/asset_manager.hpp"
 #include "../renderer/texture/texture_asset_loader.hpp"
 #include "../renderer/mesh/mesh_asset_loader.hpp"
@@ -20,6 +21,7 @@
 #include "../renderer/animation/animation_data.hpp"
 #include "../renderer/animation/animation_asset_loader.hpp"
 #include "../navigation/navigation_manager.hpp"
+#include "../renderer/skybox/skybox_renderer.hpp"
 
 class Scene {
 private:
@@ -33,6 +35,7 @@ private:
     std::unordered_map<std::string, std::vector<std::string>> _meshBoneNames{};
     std::unordered_map<std::string, std::vector<glm::mat4>> _meshBoneOffsets{};
     std::unordered_map<std::string, std::vector<int>> _meshBoneParents{};
+    std::unordered_map<std::string, Bounds> _meshBounds{};
 
     std::weak_ptr<Window> _window;
     std::weak_ptr<AssetManager> _assetManager;
@@ -40,7 +43,7 @@ private:
 
     std::shared_ptr<entt::registry> _entityRegistry{};
     std::shared_ptr<NavigationManager> _navigationManager{};
-
+    std::unique_ptr<SkyboxRenderer> _skyboxRenderer{};
 
     std::string _requestToLoadScene{};
 
@@ -73,6 +76,19 @@ public:
         return _navigationManager;
     }
 
+    [[nodiscard]] SkyboxRenderer* GetSkyboxRenderer() const noexcept {
+        return _skyboxRenderer.get();
+    }
+
+    void InitializeSkybox(const std::string& materialGuid) {
+        if (materialGuid.empty()) {
+            _skyboxRenderer.reset();
+            return;
+        }
+        _skyboxRenderer = std::make_unique<SkyboxRenderer>();
+        _skyboxRenderer->Initialize(materialGuid);
+    }
+
     [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid);
 
     [[nodiscard]] std::shared_ptr<Material> GetMaterial(const std::string &guid);
@@ -92,6 +108,8 @@ public:
     [[nodiscard]] std::vector<glm::mat4> GetMeshBoneOffsets(const std::string &guid) const noexcept;
 
     [[nodiscard]] std::vector<int> GetMeshBoneParents(const std::string &guid) const noexcept;
+
+    [[nodiscard]] Bounds GetMeshBounds(const std::string &guid) const noexcept;
 
     void RequestToLoadScene(const std::string &sceneGuid) noexcept {
         _requestToLoadScene = sceneGuid;

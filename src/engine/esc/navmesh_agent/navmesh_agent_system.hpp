@@ -76,25 +76,45 @@ public:
                     agent.IsGrounded = true;
                     agent.IsJumping = false;
                     agent.VerticalVelocity = 0.0f;
+                    agent.JustLanded = true;  // Skip rotation update for one frame
 
                     // Sync crowd agent position
                     crowd->SetAgentPosition(agent.CrowdAgentId, currentPos);
+
+                    // Clear navigation path but preserve velocity for smooth landing
+                    agent.PathWaypoints.clear();
+                    agent.CurrentWaypointIndex = 0;
+                    // Don't clear HasDestination or velocity - let the grounded logic handle it smoothly
                 }
                 // Check for void fall (respawn)
                 else if (currentPos.y < -10.0f) {
-                    // Respawn at nearest walkable point
+                    // Respawn at nearest walkable point, but higher so player falls down
                     const glm::vec3 respawn = navmesh->FindNearestPoint(glm::vec3(currentPos.x, agent.GroundY, currentPos.z));
                     currentPos = respawn;
-                    agent.IsGrounded = true;
+                    currentPos.y = agent.GroundY + 3.0f;  // Spawn 3 units above ground
+                    agent.IsGrounded = false;  // Will fall down
                     agent.IsJumping = false;
                     agent.VerticalVelocity = 0.0f;
-                    crowd->SetAgentPosition(agent.CrowdAgentId, currentPos);
+                    crowd->SetAgentPosition(agent.CrowdAgentId, glm::vec3(currentPos.x, agent.GroundY, currentPos.z));
                 }
 
                 transform.SetPosition(currentPos);
 
                 // Update velocity for animation (use horizontal velocity from air movement)
                 agent.CurrentSpeed = glm::length(glm::vec2(agent.CurrentVelocity.x, agent.CurrentVelocity.z));
+
+                // Rotate towards movement direction while airborne
+                if (agent.CurrentSpeed > 0.1f) {
+                    const float targetYaw = glm::degrees(std::atan2(agent.CurrentVelocity.x, agent.CurrentVelocity.z));
+                    auto rotation = transform.GetEulerRotation();
+
+                    float angleDiff = targetYaw - rotation.y;
+                    while (angleDiff > 180.0f) angleDiff -= 360.0f;
+                    while (angleDiff < -180.0f) angleDiff += 360.0f;
+
+                    rotation.y += angleDiff * std::min(1.0f, agent.RotationSpeed * deltaTime);
+                    transform.SetEulerRotation(rotation);
+                }
             }
             // Handle grounded state
             else {
@@ -108,46 +128,72 @@ public:
                     // Normal navmesh navigation
                     // Set destination when it changes
                     if (agent.HasDestination && agent.DestinationChanged) {
-                        crowd->SetAgentTarget(agent.CrowdAgentId, agent.Destination);
+                        // Clamp destination to walkable area
+                        glm::vec3 clampedDest = agent.Destination;
+                        if (!navmesh->IsWalkable(clampedDest)) {
+                            clampedDest = navmesh->FindNearestPoint(clampedDest);
+                        }
+
+                        crowd->SetAgentTarget(agent.CrowdAgentId, clampedDest);
                         agent.DestinationChanged = false;
 
                         // Cache path for visualization
-                        agent.PathWaypoints = navmesh->FindPath(currentPos, agent.Destination);
+                        agent.PathWaypoints = navmesh->FindPath(currentPos, clampedDest);
                         agent.CurrentWaypointIndex = 0;
                     }
 
-                    // Update transform from crowd
-                    glm::vec3 agentPos = crowd->GetAgentPosition(agent.CrowdAgentId);
+                    glm::vec3 agentPos;
+                    glm::vec3 velocity;
 
-                    // Stay on navmesh
-                    if (!navmesh->IsWalkable(agentPos)) {
+                    // Only use crowd position when actively navigating
+                    if (agent.HasDestination) {
+                        // Update transform from crowd
+                        agentPos = crowd->GetAgentPosition(agent.CrowdAgentId);
+
+                        // Stay on navmesh - find nearest walkable if off
+                        if (!navmesh->IsWalkable(agentPos)) {
+                            agentPos = navmesh->FindNearestPoint(agentPos);
+                            crowd->SetAgentPosition(agent.CrowdAgentId, agentPos);
+                        }
+
+                        // Keep Y at ground level
+                        agentPos.y = agent.GroundY;
+                        transform.SetPosition(agentPos);
+
+                        // Get velocity for rotation and animation
+                        velocity = crowd->GetAgentVelocity(agent.CrowdAgentId);
+                    } else {
+                        // No active destination - reset crowd target and sync position
+                        crowd->ResetAgentTarget(agent.CrowdAgentId);
+                        agent.PathWaypoints.clear();
+                        agent.CurrentWaypointIndex = 0;
+
                         agentPos = currentPos;
+                        agentPos.y = agent.GroundY;
                         crowd->SetAgentPosition(agent.CrowdAgentId, agentPos);
+                        velocity = glm::vec3(0.0f);
                     }
 
-                    // Keep Y at ground level
-                    agentPos.y = agent.GroundY;
-                    transform.SetPosition(agentPos);
-
-                    // Get velocity for rotation and animation
-                    const glm::vec3 velocity = crowd->GetAgentVelocity(agent.CrowdAgentId);
                     const float speed = glm::length(velocity);
                     agent.CurrentSpeed = speed;
                     agent.CurrentVelocity = velocity;
 
-                    // Rotate towards movement direction
-                    const float distToDest = glm::length(glm::vec2(agent.Destination.x - agentPos.x, agent.Destination.z - agentPos.z));
-                    if (speed > agent.MaxSpeed * 0.5f && distToDest > 0.1f) {
-                        const float targetYaw = glm::degrees(std::atan2(velocity.x, velocity.z));
-                        auto rotation = transform.GetEulerRotation();
+                    // Rotate towards movement direction (skip on first frame after landing to preserve air rotation)
+                    if (!agent.JustLanded) {
+                        const float distToDest = glm::length(glm::vec2(agent.Destination.x - agentPos.x, agent.Destination.z - agentPos.z));
+                        if (speed > agent.MaxSpeed * 0.5f && distToDest > 0.1f) {
+                            const float targetYaw = glm::degrees(std::atan2(velocity.x, velocity.z));
+                            auto rotation = transform.GetEulerRotation();
 
-                        float angleDiff = targetYaw - rotation.y;
-                        while (angleDiff > 180.0f) angleDiff -= 360.0f;
-                        while (angleDiff < -180.0f) angleDiff += 360.0f;
+                            float angleDiff = targetYaw - rotation.y;
+                            while (angleDiff > 180.0f) angleDiff -= 360.0f;
+                            while (angleDiff < -180.0f) angleDiff += 360.0f;
 
-                        rotation.y += angleDiff * std::min(1.0f, agent.RotationSpeed * deltaTime * (speed / agent.MaxSpeed));
-                        transform.SetEulerRotation(rotation);
+                            rotation.y += angleDiff * std::min(1.0f, agent.RotationSpeed * deltaTime * (speed / agent.MaxSpeed));
+                            transform.SetEulerRotation(rotation);
+                        }
                     }
+                    agent.JustLanded = false;
 
                     // Update path visualization
                     if (!agent.PathWaypoints.empty()) {

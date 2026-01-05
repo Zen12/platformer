@@ -12,6 +12,7 @@ namespace YAML {
             rhs.OffsetRotation = node["offset_rotation"] ? node["offset_rotation"].as<glm::vec3>() : glm::vec3(-45.0f, 0.0f, 0.0f);
             rhs.MaxLookAhead = node["max_look_ahead"] ? node["max_look_ahead"].as<float>() : 5.0f;
             rhs.SmoothSpeed = node["smooth"] ? node["smooth"].as<float>() : 5.0f;
+            rhs.MaxMoveSpeed = node["max_move_speed"] ? node["max_move_speed"].as<float>() : 15.0f;
             return true;
         }
     };

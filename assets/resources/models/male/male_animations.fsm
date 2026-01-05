@@ -1,10 +1,74 @@
 name: male_animations_fsm
-start_node: "walkState"
+start_node: "idleState"
 nodes:
+- name: "Male Idle"
+  guid: "idleState"
+  actions:
+    - type: animation_state
+      animation_guid: 843a8414-e99b-430e-9970-ac97c8e27d4d
+      loop: true
+      animation_speed: 1.0
+      disable_velocity_speed: true
 - name: "Male Walk"
   guid: "walkState"
   actions:
     - type: animation_state
       animation_guid: b624e619-5108-4ae7-9ff3-9392feee577e
-conditions: []
-connections: []
+      loop: true
+- name: "Male Jump"
+  guid: "jumpState"
+  actions:
+    - type: animation_state
+      animation_guid: ec13a822-9d95-44c8-8284-8829bc53f4bc
+      loop: true
+      animation_speed: 2.0
+      disable_velocity_speed: true
+- name: "Male Land"
+  guid: "landState"
+  actions:
+    - type: animation_state
+      animation_guid: a494c0b1-fac1-4034-bb19-b12f958adb78
+      loop: false
+      on_complete_trigger: land_complete
+      animation_speed: 2.0
+      disable_velocity_speed: true
+      disable_movement: true
+      disable_movement_duration: 0.5
+conditions:
+  - type: trigger_check
+    guid: "cond_jump"
+    trigger_name: jump
+  - type: trigger_check
+    guid: "cond_landed"
+    trigger_name: landed
+  - type: trigger_check
+    guid: "cond_land_complete"
+    trigger_name: land_complete
+  - type: trigger_check
+    guid: "cond_moving"
+    trigger_name: moving
+  - type: trigger_check
+    guid: "cond_idle"
+    trigger_name: idle
+connections:
+  # Idle <-> Walk transitions
+  - nodes: ["idleState", "walkState"]
+    conditions: ["cond_moving"]
+    condition_type: 0
+  - nodes: ["walkState", "idleState"]
+    conditions: ["cond_idle"]
+    condition_type: 0
+  # Jump from idle or walk
+  - nodes: ["idleState", "jumpState"]
+    conditions: ["cond_jump"]
+    condition_type: 0
+  - nodes: ["walkState", "jumpState"]
+    conditions: ["cond_jump"]
+    condition_type: 0
+  # Land -> Jump -> Land cycle
+  - nodes: ["jumpState", "landState"]
+    conditions: ["cond_landed"]
+    condition_type: 0
+  - nodes: ["landState", "idleState"]
+    conditions: ["cond_land_complete"]
+    condition_type: 0

@@ -68,6 +68,11 @@ namespace YAML {
                 const auto serialization = node.as<AnimationStateActionSerialization>();
                 data.Param = serialization.AnimationGuid;
                 data.Param2 = serialization.OnCompleteTrigger;
+                data.Param3 = serialization.Loop ? "true" : "false";
+                data.Param4 = std::to_string(serialization.AnimationSpeed);
+                data.Param5 = serialization.DisableVelocitySpeed ? "true" : "false";
+                data.Param6 = serialization.DisableMovement ? "true" : "false";
+                data.Param7 = std::to_string(serialization.DisableMovementDuration);
             } else if (type == "animation_state_transition") {
                 const auto serialization = node.as<AnimationStateTransitionActionSerialization>();
                 data.Param = serialization.FromAnimationGuid;
