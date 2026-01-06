@@ -133,15 +133,18 @@ public:
                             const float cellSize = navmesh->GetCellSize();
                             const int width = navmesh->GetWidth();
                             const int height = navmesh->GetHeight();
+                            const float elevationHeight = spawner.GetElevationHeight();
 
                             // Iterate through all walkable cells
                             for (int z = 0; z < height && z < static_cast<int>(grid.size()); ++z) {
                                 for (int x = 0; x < width && x < static_cast<int>(grid[z].size()); ++x) {
-                                    if (grid[z][x] != 0) {  // Walkable cell
-                                        // Calculate cell center
+                                    const int elevation = grid[z][x];
+                                    if (elevation != 0) {  // Walkable cell
+                                        // Calculate cell center with Y based on elevation
+                                        const float elevY = origin.y + (elevation - 1) * elevationHeight;
                                         const glm::vec3 center(
                                             origin.x + (static_cast<float>(x) + 0.5f) * cellSize,
-                                            origin.y,
+                                            elevY,
                                             origin.z + (static_cast<float>(z) + 0.5f) * cellSize
                                         );
                                         SpawnEntity(registry, prefabData, center);

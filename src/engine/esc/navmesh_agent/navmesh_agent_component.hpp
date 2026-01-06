@@ -22,11 +22,13 @@ public:
     float VerticalVelocity = 0.0f;
     float Gravity = -20.0f;
     float JumpForce = 10.0f;
-    float GroundY = 0.0f;  // Y level of navmesh
+    float GroundY = 0.0f;  // Base Y level of navmesh (elevation 1)
+    float ElevationHeight = 1.0f;  // Y increase per elevation level
     bool IsGrounded = true;
     bool IsJumping = false;
     bool JustLanded = false;  // True for one frame after landing to preserve air rotation
     float AirControlMultiplier = 0.8f;
+    int CurrentElevation = 1;  // Current elevation level (1-3)
 
     // Manual waypoint following
     std::vector<glm::vec3> PathWaypoints;

@@ -44,6 +44,28 @@ private:
         return _grid[z][x] != 0;
     }
 
+    // Get elevation level of a cell (0 = not walkable, 1-3 = elevation levels)
+    [[nodiscard]] int GetElevation(int x, int z) const {
+        if (!IsValidCell(x, z)) return 0;
+        if (z >= static_cast<int>(_grid.size())) return 0;
+        if (x >= static_cast<int>(_grid[z].size())) return 0;
+        return _grid[z][x];
+    }
+
+    // Check if movement between two elevation levels is allowed
+    // Rules: from level N can go to N-1, N, or N+1
+    [[nodiscard]] bool CanTraverse(int fromElevation, int toElevation) const {
+        if (fromElevation == 0 || toElevation == 0) return false;
+        const int diff = std::abs(fromElevation - toElevation);
+        return diff <= 1;  // Can only move one level up or down
+    }
+
+    // Check if can move from one cell to another (walkable + elevation compatible)
+    [[nodiscard]] bool CanMoveTo(int fromX, int fromZ, int toX, int toZ) const {
+        if (!IsWalkableCell(fromX, fromZ) || !IsWalkableCell(toX, toZ)) return false;
+        return CanTraverse(GetElevation(fromX, fromZ), GetElevation(toX, toZ));
+    }
+
     [[nodiscard]] glm::vec3 GridToWorld(int x, int z) const {
         return glm::vec3(
             _origin.x + (static_cast<float>(x) + 0.5f) * _cellSize,
@@ -82,7 +104,7 @@ private:
         return smoothed;
     }
 
-    // Check if there's a clear line between two points (Bresenham)
+    // Check if there's a clear line between two points (Bresenham) with elevation check
     [[nodiscard]] bool HasLineOfSight(const glm::vec3& from, const glm::vec3& to) const {
         int x0, z0, x1, z1;
         WorldToGrid(from, x0, z0);
@@ -94,10 +116,20 @@ private:
         const int sz = z0 < z1 ? 1 : -1;
         int err = dx - dz;
 
+        int prevX = x0, prevZ = z0;
+
         while (true) {
             if (!IsWalkableCell(x0, z0)) return false;
 
+            // Check elevation compatibility with previous cell
+            if ((x0 != prevX || z0 != prevZ) && !CanMoveTo(prevX, prevZ, x0, z0)) {
+                return false;
+            }
+
             if (x0 == x1 && z0 == z1) break;
+
+            prevX = x0;
+            prevZ = z0;
 
             const int e2 = 2 * err;
             if (e2 > -dz) {
@@ -192,12 +224,13 @@ public:
                 const int nx = current.x + dx[i];
                 const int nz = current.z + dz[i];
 
-                if (!IsWalkableCell(nx, nz) || closed[nz][nx]) continue;
+                // Check walkable AND elevation compatibility
+                if (!CanMoveTo(current.x, current.z, nx, nz) || closed[nz][nx]) continue;
 
-                // For diagonal movement, check that both adjacent cells are walkable
+                // For diagonal movement, check that both adjacent cells are traversable
                 if (i % 2 == 1) {  // Diagonal
-                    if (!IsWalkableCell(current.x + dx[i], current.z) ||
-                        !IsWalkableCell(current.x, current.z + dz[i])) {
+                    if (!CanMoveTo(current.x, current.z, current.x + dx[i], current.z) ||
+                        !CanMoveTo(current.x, current.z, current.x, current.z + dz[i])) {
                         continue;
                     }
                 }
@@ -271,6 +304,21 @@ public:
         return IsWalkableCell(x, z);
     }
 
+    // Get elevation at world position (0 = not walkable, 1-3 = elevation levels)
+    [[nodiscard]] int GetElevationAt(const glm::vec3& position) const {
+        int x, z;
+        WorldToGrid(position, x, z);
+        return GetElevation(x, z);
+    }
+
+    // Check if can move from one world position to another (considering elevation)
+    [[nodiscard]] bool CanMoveBetween(const glm::vec3& from, const glm::vec3& to) const {
+        int fromX, fromZ, toX, toZ;
+        WorldToGrid(from, fromX, fromZ);
+        WorldToGrid(to, toX, toZ);
+        return CanMoveTo(fromX, fromZ, toX, toZ);
+    }
+
     // Getters
     [[nodiscard]] int GetWidth() const noexcept { return _width; }
     [[nodiscard]] int GetHeight() const noexcept { return _height; }
@@ -279,6 +327,7 @@ public:
     [[nodiscard]] const std::vector<std::vector<int>>& GetGrid() const noexcept { return _grid; }
 
     // Get boundary edges for RVO2 obstacles (each edge is a line segment)
+    // Includes edges at non-walkable boundaries AND steep elevation changes
     [[nodiscard]] std::vector<std::pair<glm::vec3, glm::vec3>> GetBoundaryEdges() const {
         std::vector<std::pair<glm::vec3, glm::vec3>> edges;
 
@@ -293,21 +342,21 @@ public:
                 const float z1 = _origin.z + static_cast<float>(z + 1) * _cellSize;
                 const float y = _origin.y;
 
-                // Add edge if neighbor is non-walkable (CCW winding for RVO2)
+                // Add edge if neighbor is non-walkable OR has incompatible elevation (CCW winding for RVO2)
                 // North edge (z-1)
-                if (!IsWalkableCell(x, z - 1)) {
+                if (!CanMoveTo(x, z, x, z - 1)) {
                     edges.emplace_back(glm::vec3(x1, y, z0), glm::vec3(x0, y, z0));
                 }
                 // South edge (z+1)
-                if (!IsWalkableCell(x, z + 1)) {
+                if (!CanMoveTo(x, z, x, z + 1)) {
                     edges.emplace_back(glm::vec3(x0, y, z1), glm::vec3(x1, y, z1));
                 }
                 // West edge (x-1)
-                if (!IsWalkableCell(x - 1, z)) {
+                if (!CanMoveTo(x, z, x - 1, z)) {
                     edges.emplace_back(glm::vec3(x0, y, z0), glm::vec3(x0, y, z1));
                 }
                 // East edge (x+1)
-                if (!IsWalkableCell(x + 1, z)) {
+                if (!CanMoveTo(x, z, x + 1, z)) {
                     edges.emplace_back(glm::vec3(x1, y, z1), glm::vec3(x1, y, z0));
                 }
             }

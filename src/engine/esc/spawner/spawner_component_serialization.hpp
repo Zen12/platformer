@@ -10,6 +10,7 @@ struct SpawnerComponentSerialization final : public ComponentSerialization {
     std::vector<glm::vec3> SpawnPositions;
     bool SpawnOnNavmesh = true;
     bool SpawnOnAllCells = false;
+    float ElevationHeight = 1.0f;
 
     ~SpawnerComponentSerialization() override = default;
 };

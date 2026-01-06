@@ -103,7 +103,7 @@
 - [x] Behaviour Tree as ESC
 - [x] Proper bounce component or part of renderer
 - [ ] Health system, shoot and lose
-- [ ] 3d navmesh
+- [x] 3d navmesh
 - [ ] One level of 3d platformer with horde AI(Use blender as level editor)
 
 ## 0.1.8 Basic polish

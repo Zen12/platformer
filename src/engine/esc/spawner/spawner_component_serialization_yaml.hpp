@@ -21,6 +21,9 @@ namespace YAML {
             if (node["spawn_on_all_cells"]) {
                 rhs.SpawnOnAllCells = node["spawn_on_all_cells"].as<bool>();
             }
+            if (node["elevation_height"]) {
+                rhs.ElevationHeight = node["elevation_height"].as<float>();
+            }
             return true;
         }
     };
