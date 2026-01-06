@@ -28,6 +28,10 @@ public:
     float WaitTimer = 0.0f;
     std::string TargetTag;  // Tag to search for
 
+    // Attack state
+    bool IsAttacking = false;
+    float AttackTimer = 0.0f;
+
     explicit BehaviorTreeComponent(const BehaviorTreeComponentSerialization& serialization)
         : TreeGuid(serialization.TreeGuid), TickPriority(serialization.TickPriority) {
         State.Reset();
@@ -37,5 +41,7 @@ public:
         State.Reset();
         HasTarget = false;
         WaitTimer = 0.0f;
+        IsAttacking = false;
+        AttackTimer = 0.0f;
     }
 };

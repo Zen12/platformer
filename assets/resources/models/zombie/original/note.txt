@@ -108,7 +108,7 @@ Why this is needed:
 Available Animations:
 --------------------
 - Zombie1.FBX (base mesh) ✓ (exported with scale 0.01, no animation, export_yup=False, -90° X rotation)
-- Zombie@Z_Attack.FBX
+- Zombie@Z_Attack.FBX ✓ (exported as zombie_attack_inplace.glb with root motion removed)
 - Zombie@Z_FallingBack.FBX
 - Zombie@Z_FallingForward.FBX
 - Zombie@Z_Idle.FBX

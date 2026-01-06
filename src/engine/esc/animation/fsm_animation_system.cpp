@@ -109,10 +109,18 @@ void FsmAnimationSystem::OnTick() {
                     anim.Controller->SetTrigger("landed");
                 }
 
-                // Idle/moving triggers based on velocity (only when grounded)
+                // Idle/moving/attacking triggers based on velocity (only when grounded)
                 if (navAgent->IsGrounded && !navAgent->IsJumping) {
+                    // Check if entity has BehaviorTreeComponent with IsAttacking flag
+                    bool isAttacking = false;
+                    if (const auto* btComp = _registry.try_get<BehaviorTreeComponent>(entity)) {
+                        isAttacking = btComp->IsAttacking;
+                    }
+
                     constexpr float idleThreshold = 0.5f;
-                    if (navAgent->CurrentSpeed < idleThreshold) {
+                    if (isAttacking) {
+                        anim.Controller->SetTrigger("attacking");
+                    } else if (navAgent->CurrentSpeed < idleThreshold) {
                         anim.Controller->SetTrigger("idle");
                     } else {
                         anim.Controller->SetTrigger("moving");

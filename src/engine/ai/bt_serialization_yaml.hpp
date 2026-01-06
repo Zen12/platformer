@@ -43,6 +43,7 @@ inline float ReadParam1(const Node& node, BTNodeType type) {
     // Type-specific field names
     switch (type) {
         case BTNodeType::Wait:
+        case BTNodeType::Attack:
             if (node["duration"]) return node["duration"].as<float>();
             if (node["time"]) return node["time"].as<float>();
             break;
@@ -80,6 +81,11 @@ inline void ParseNode(const Node& node, BehaviorTreeDef& tree, std::vector<uint1
 
     uint16_t thisIndex = static_cast<uint16_t>(tree.Nodes.size());
     tree.Nodes.push_back(nodeDef);
+
+    // Add this node as a child of parent (if we have a parent)
+    if (!parentStack.empty()) {
+        tree.Nodes[parentStack.back()].ChildIndices.push_back(thisIndex);
+    }
 
     // Process children if any
     if (node["children"] && node["children"].IsSequence()) {

@@ -7,6 +7,7 @@
 #include "../navmesh_agent/navmesh_agent_component.hpp"
 #include "../../renderer/animation/animation_data.hpp"
 #include "../../scene/scene.hpp"
+#include "../../ai/bt_component.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>

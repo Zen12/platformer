@@ -1,10 +1,54 @@
-name: zombie_walk_fsm
-start_node: "walkState"
+name: zombie_animation_fsm
+start_node: "idleState"
 nodes:
+- name: "Zombie Idle"
+  guid: "idleState"
+  actions:
+    - type: animation_state
+      animation_guid: e722c147-d558-4dcc-bc9c-2eac9e0c82d6
+      disable_velocity_speed: true
+      animation_speed: 1.0
 - name: "Zombie Walk"
   guid: "walkState"
   actions:
     - type: animation_state
       animation_guid: 511ca21d-91a9-4650-8296-18f72d2f5431
-conditions: []
-connections: []
+- name: "Zombie Attack"
+  guid: "attackState"
+  actions:
+    - type: animation_state
+      animation_guid: b7558c82-a2d4-4d58-82e1-41e811c722c9
+      disable_velocity_speed: true
+      animation_speed: 1.0
+conditions:
+  - type: trigger_check
+    guid: "cond_idle"
+    trigger_name: idle
+  - type: trigger_check
+    guid: "cond_moving"
+    trigger_name: moving
+  - type: trigger_check
+    guid: "cond_attacking"
+    trigger_name: attacking
+connections:
+  # From idle
+  - nodes: ["idleState", "walkState"]
+    conditions: ["cond_moving"]
+    condition_type: 0
+  - nodes: ["idleState", "attackState"]
+    conditions: ["cond_attacking"]
+    condition_type: 0
+  # From walk
+  - nodes: ["walkState", "idleState"]
+    conditions: ["cond_idle"]
+    condition_type: 0
+  - nodes: ["walkState", "attackState"]
+    conditions: ["cond_attacking"]
+    condition_type: 0
+  # From attack
+  - nodes: ["attackState", "walkState"]
+    conditions: ["cond_moving"]
+    condition_type: 0
+  - nodes: ["attackState", "idleState"]
+    conditions: ["cond_idle"]
+    condition_type: 0

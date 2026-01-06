@@ -7,7 +7,8 @@
 struct BTNodeDef {
     BTNodeType Type;
     uint8_t ChildCount;
-    uint16_t FirstChildIndex;
+    uint16_t FirstChildIndex;       // Kept for backwards compatibility
+    std::vector<uint16_t> ChildIndices;  // Explicit child indices (for DFS-ordered trees)
     float Param1;           // Distance threshold, wait time, etc.
     float Param2;           // Secondary parameter if needed
     std::string StringParam; // Tag name, etc.

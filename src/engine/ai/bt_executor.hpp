@@ -90,15 +90,29 @@ public:
                 return BTStatus::Running;
             }
 
-            // Node completed, handle parent
+            // Node completed, pop and propagate result up the tree
             bt.State.Pop();
-            if (!bt.State.IsEmpty()) {
+
+            // Propagate result to parent(s)
+            while (!bt.State.IsEmpty()) {
                 auto& parent = bt.State.Current();
                 const auto& parentNode = bt.TreeDef->GetNode(parent.NodeIndex);
 
                 if (!HandleChildResult(bt, parentNode, parent, result)) {
-                    continue;  // Parent needs to continue processing
+                    break;  // Parent needs to continue processing children
                 }
+
+                // Parent is done, determine its result and pop it
+                if (parentNode.Type == BTNodeType::Sequence) {
+                    // Sequence: failed because child failed
+                    result = BTStatus::Failure;
+                } else if (parentNode.Type == BTNodeType::Selector) {
+                    // Selector: succeeded because child succeeded, or failed because all failed
+                    result = (result == BTStatus::Success) ? BTStatus::Success : BTStatus::Failure;
+                }
+
+                BT_LOG("Propagating " << StatusToString(result) << " from " << NodeTypeToString(parentNode.Type));
+                bt.State.Pop();
             }
         }
 
@@ -155,7 +169,7 @@ private:
             case BTNodeType::Idle:
                 return BTStatus::Success;
             case BTNodeType::Attack:
-                return BTStatus::Success;  // TODO: Implement attack
+                return Attack(bt, navAgent, state, deltaTime, node.Param1);
 
             default:
                 return BTStatus::Failure;
@@ -167,8 +181,9 @@ private:
         const BTNodeDef& node,
         BTNodeState& state
     ) {
-        if (state.ChildProgress < node.ChildCount) {
-            uint16_t childIndex = node.FirstChildIndex + state.ChildProgress;
+        if (state.ChildProgress < node.ChildIndices.size()) {
+            uint16_t childIndex = node.ChildIndices[state.ChildProgress];
+            BT_LOG("Composite pushing child[" << (int)state.ChildProgress << "] = node " << childIndex);
             bt.State.Push(childIndex);
             return BTStatus::Running;
         }
@@ -326,11 +341,14 @@ private:
         navAgent->HasDestination = true;
         navAgent->DestinationChanged = true;
 
-        // Check if arrived (close enough to target)
-        if (navAgent->CurrentSpeed < 0.1f) {
-            BT_LOG("MoveToTarget: arrived or stuck");
+        // Check if arrived (close enough to target) - use distance, not speed
+        float distToTarget = glm::distance(transform->GetPosition(), bt.TargetPosition);
+        constexpr float arrivalThreshold = 0.5f;
+        if (distToTarget <= arrivalThreshold) {
+            BT_LOG("MoveToTarget: arrived at target (dist=" << distToTarget << ")");
             return BTStatus::Success;
         }
+
         return BTStatus::Running;
     }
 
@@ -412,6 +430,36 @@ private:
             BT_LOG("Wait: completed");
             return BTStatus::Success;
         }
+        return BTStatus::Running;
+    }
+
+    static BTStatus Attack(
+        BehaviorTreeComponent& bt,
+        NavmeshAgentComponent* navAgent,
+        BTNodeState& state,
+        float deltaTime,
+        float duration
+    ) {
+        // Stop movement when attacking
+        if (navAgent) {
+            navAgent->HasDestination = false;
+            navAgent->DestinationChanged = true;
+        }
+
+        // Set attacking state
+        bt.IsAttacking = true;
+
+        // Use state timer for attack duration
+        state.Timer += deltaTime;
+        BT_LOG("Attack: " << state.Timer << "/" << duration);
+
+        if (state.Timer >= duration) {
+            state.Timer = 0.0f;
+            bt.IsAttacking = false;
+            BT_LOG("Attack: completed");
+            return BTStatus::Success;
+        }
+
         return BTStatus::Running;
     }
 };
