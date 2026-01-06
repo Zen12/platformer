@@ -115,4 +115,4 @@ entities:
         scale: [0.7, 0.7, 0.7]
       - type: mesh_renderer
         material: 40ea94a0-ec3c-4e84-99c1-55a1d935e847
-        mesh: adba84f7-92cd-418c-8af4-751ab4ba1fff
+        mesh: 15ad553c-e36c-4873-87c2-d4f719026afc
