@@ -319,6 +319,87 @@ public:
         return CanMoveTo(fromX, fromZ, toX, toZ);
     }
 
+    // Calculate visual Y position with blending for transition elevations
+    // Odd elevations (1, 3, 5...) are floor levels, even (2, 4, 6...) are transitions
+    // elevationHeight: height per floor level (distance between odd elevations)
+    [[nodiscard]] float GetVisualY(const glm::vec3& position, float groundY, float elevationHeight) const {
+        int cellX, cellZ;
+        WorldToGrid(position, cellX, cellZ);
+
+        const int elevation = GetElevation(cellX, cellZ);
+        if (elevation <= 0) {
+            return groundY;  // Not walkable, return base
+        }
+
+        // Odd elevations are actual floor levels
+        if (elevation % 2 == 1) {
+            // Floor level: elevation 1 = groundY, elevation 3 = groundY + elevationHeight, etc.
+            const int floorLevel = (elevation - 1) / 2;
+            return groundY + static_cast<float>(floorLevel) * elevationHeight;
+        }
+
+        // Even elevations are transitions - blend based on position within cell
+        const int lowerFloor = elevation - 1;  // Odd number below (e.g., 2 -> 1)
+        const int upperFloor = elevation + 1;  // Odd number above (e.g., 2 -> 3)
+
+        const float lowerY = groundY + static_cast<float>((lowerFloor - 1) / 2) * elevationHeight;
+        const float upperY = groundY + static_cast<float>((upperFloor - 1) / 2) * elevationHeight;
+
+        // Find ramp direction by checking neighbors
+        // Look for neighbors with lower and upper elevations
+        int lowerDirX = 0, lowerDirZ = 0;
+        int upperDirX = 0, upperDirZ = 0;
+
+        const int dx[] = {0, 1, 0, -1};  // N, E, S, W
+        const int dz[] = {-1, 0, 1, 0};
+
+        for (int i = 0; i < 4; ++i) {
+            const int nx = cellX + dx[i];
+            const int nz = cellZ + dz[i];
+            const int neighborElev = GetElevation(nx, nz);
+
+            if (neighborElev == lowerFloor) {
+                lowerDirX = dx[i];
+                lowerDirZ = dz[i];
+            } else if (neighborElev == upperFloor) {
+                upperDirX = dx[i];
+                upperDirZ = dz[i];
+            }
+        }
+
+        // Calculate position within cell (0 to 1)
+        const float cellMinX = _origin.x + static_cast<float>(cellX) * _cellSize;
+        const float cellMinZ = _origin.z + static_cast<float>(cellZ) * _cellSize;
+        const float localX = (position.x - cellMinX) / _cellSize;  // 0 to 1
+        const float localZ = (position.z - cellMinZ) / _cellSize;  // 0 to 1
+
+        // Calculate blend factor based on ramp direction
+        float t = 0.5f;  // Default to middle if direction unclear
+
+        if (lowerDirX != 0 || upperDirX != 0) {
+            // Ramp along X axis
+            if (lowerDirX < 0 || upperDirX > 0) {
+                // Lower on -X (west), upper on +X (east)
+                t = localX;
+            } else {
+                // Lower on +X (east), upper on -X (west)
+                t = 1.0f - localX;
+            }
+        } else if (lowerDirZ != 0 || upperDirZ != 0) {
+            // Ramp along Z axis
+            if (lowerDirZ < 0 || upperDirZ > 0) {
+                // Lower on -Z (north), upper on +Z (south)
+                t = localZ;
+            } else {
+                // Lower on +Z (south), upper on -Z (north)
+                t = 1.0f - localZ;
+            }
+        }
+
+        // Lerp between lower and upper Y
+        return lowerY + t * (upperY - lowerY);
+    }
+
     // Getters
     [[nodiscard]] int GetWidth() const noexcept { return _width; }
     [[nodiscard]] int GetHeight() const noexcept { return _height; }

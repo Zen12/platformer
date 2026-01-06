@@ -141,7 +141,9 @@ public:
                                     const int elevation = grid[z][x];
                                     if (elevation != 0) {  // Walkable cell
                                         // Calculate cell center with Y based on elevation
-                                        const float elevY = origin.y + (elevation - 1) * elevationHeight;
+                                        // Odd elevations = floors, even = transitions
+                                        // Formula: (elevation - 1) / 2.0 gives correct Y multiplier
+                                        const float elevY = origin.y + static_cast<float>(elevation - 1) / 2.0f * elevationHeight;
                                         const glm::vec3 center(
                                             origin.x + (static_cast<float>(x) + 0.5f) * cellSize,
                                             elevY,

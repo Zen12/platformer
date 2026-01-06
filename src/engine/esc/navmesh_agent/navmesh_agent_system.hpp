@@ -72,9 +72,9 @@ public:
                 agent.VerticalVelocity += agent.Gravity * deltaTime;
                 currentPos.y += agent.VerticalVelocity * deltaTime;
 
-                // Calculate landing Y based on elevation at current position
+                // Calculate landing Y using visual Y (handles odd/even elevation system)
                 const int landingElevation = navmesh->GetElevationAt(currentPos);
-                const float landingY = agent.GroundY + (landingElevation - 1) * agent.ElevationHeight;
+                const float landingY = navmesh->GetVisualY(currentPos, agent.GroundY, agent.ElevationHeight);
 
                 // Check for landing on navmesh (use elevation-aware Y)
                 if (currentPos.y <= landingY && isOverNavmesh && landingElevation > 0) {
@@ -99,9 +99,8 @@ public:
                     // Respawn at nearest walkable point, but higher so player falls down
                     const glm::vec3 respawn = navmesh->FindNearestPoint(glm::vec3(currentPos.x, agent.GroundY, currentPos.z));
                     currentPos = respawn;
-                    // Calculate respawn Y based on elevation at respawn point
-                    const int respawnElevation = navmesh->GetElevationAt(respawn);
-                    const float respawnY = agent.GroundY + (respawnElevation - 1) * agent.ElevationHeight;
+                    // Calculate respawn Y using visual Y (handles odd/even elevation system)
+                    const float respawnY = navmesh->GetVisualY(respawn, agent.GroundY, agent.ElevationHeight);
                     currentPos.y = respawnY + 3.0f;  // Spawn 3 units above correct elevation
                     agent.IsGrounded = false;  // Will fall down
                     agent.IsJumping = false;
@@ -165,13 +164,6 @@ public:
                     glm::vec3 agentPos;
                     glm::vec3 velocity;
 
-                    // Helper to calculate Y from elevation
-                    const float groundY = agent.GroundY;
-                    const float elevHeight = agent.ElevationHeight;
-                    auto getYForElevation = [groundY, elevHeight](int elevation) -> float {
-                        return groundY + (elevation - 1) * elevHeight;
-                    };
-
                     // Player-controlled agents: move directly, ignore RVO2 velocity
                     if (agent.IgnoreCrowdVelocity) {
                         if (agent.HasDestination) {
@@ -203,8 +195,8 @@ public:
                                     }
                                 }
 
-                                // Set Y based on current elevation
-                                agentPos.y = getYForElevation(agent.CurrentElevation);
+                                // Set Y based on position (with blending for transitions)
+                                agentPos.y = navmesh->GetVisualY(agentPos, agent.GroundY, agent.ElevationHeight);
                                 transform.SetPosition(agentPos);
 
                                 // Calculate actual velocity based on movement
@@ -214,12 +206,12 @@ public:
                             } else {
                                 // Arrived at destination
                                 agentPos = currentPos;
-                                agentPos.y = getYForElevation(agent.CurrentElevation);
+                                agentPos.y = navmesh->GetVisualY(agentPos, agent.GroundY, agent.ElevationHeight);
                                 velocity = glm::vec3(0.0f);
                             }
                         } else {
                             agentPos = currentPos;
-                            agentPos.y = getYForElevation(agent.CurrentElevation);
+                            agentPos.y = navmesh->GetVisualY(agentPos, agent.GroundY, agent.ElevationHeight);
                             velocity = glm::vec3(0.0f);
                         }
 
@@ -245,8 +237,8 @@ public:
                             }
                         }
 
-                        // Set Y based on current elevation
-                        agentPos.y = getYForElevation(agent.CurrentElevation);
+                        // Set Y based on position (with blending for transitions)
+                        agentPos.y = navmesh->GetVisualY(agentPos, agent.GroundY, agent.ElevationHeight);
                         transform.SetPosition(agentPos);
 
                         // Get velocity for rotation and animation
@@ -258,7 +250,7 @@ public:
                         agent.CurrentWaypointIndex = 0;
 
                         agentPos = currentPos;
-                        agentPos.y = getYForElevation(agent.CurrentElevation);
+                        agentPos.y = navmesh->GetVisualY(agentPos, agent.GroundY, agent.ElevationHeight);
                         crowd->SetAgentPosition(agent.CrowdAgentId, agentPos);
                         velocity = glm::vec3(0.0f);
                     }
