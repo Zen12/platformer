@@ -60,4 +60,8 @@ public:
     [[nodiscard]] int GetHeight() const noexcept { return _height; }
     [[nodiscard]] float GetCellSize() const noexcept { return _cellSize; }
     [[nodiscard]] glm::vec3 GetOrigin() const noexcept { return _origin; }
+
+    // Get boundary edges as line segments for RVO2 obstacles
+    // Each pair of vec3 is a line segment (start, end)
+    [[nodiscard]] std::vector<std::pair<glm::vec3, glm::vec3>> GetBoundaryEdges() const;
 };

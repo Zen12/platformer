@@ -17,10 +17,10 @@ bool RVO2Crowd::Initialize(int maxAgents) {
     // Set default agent parameters
     // neighborDist, maxNeighbors, timeHorizon, timeHorizonObst, radius, maxSpeed
     _simulator->setAgentDefaults(
-        15.0f,   // neighborDist - how far to look for neighbors
+        5.0f,    // neighborDist - how far to look for neighbors (reduced from 15)
         10,      // maxNeighbors - max neighbors to consider
-        5.0f,    // timeHorizon - planning horizon for other agents
-        5.0f,    // timeHorizonObst - planning horizon for obstacles
+        1.0f,    // timeHorizon - planning horizon for other agents (reduced from 5 - less early slowdown)
+        1.0f,    // timeHorizonObst - planning horizon for obstacles (reduced from 5)
         0.5f,    // radius - default agent radius
         5.0f     // maxSpeed - default max speed
     );
@@ -467,6 +467,27 @@ RaycastHit RVO2Crowd::Raycast(const glm::vec3& origin, const glm::vec3& directio
     }
 
     return result;
+}
+
+void RVO2Crowd::AddObstacle(const std::vector<glm::vec3>& vertices) {
+    if (!_simulator || vertices.size() < 3) {
+        return;
+    }
+
+    // Convert to RVO2 2D vertices (use x,z plane)
+    std::vector<RVO::Vector2> rvoVertices;
+    rvoVertices.reserve(vertices.size());
+    for (const auto& v : vertices) {
+        rvoVertices.emplace_back(v.x, v.z);
+    }
+
+    _simulator->addObstacle(rvoVertices);
+}
+
+void RVO2Crowd::ProcessObstacles() {
+    if (_simulator) {
+        _simulator->processObstacles();
+    }
 }
 
 glm::vec3 RVO2Crowd::ResolveCollision(const glm::vec3& position, float radius, int excludeAgentId) const {

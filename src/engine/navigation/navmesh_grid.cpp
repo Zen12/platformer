@@ -321,6 +321,45 @@ glm::vec3 NavmeshGrid::FindClosestWalkablePoint(const glm::vec3& worldPos) const
     return GridToWorld(_width / 2, _height / 2);
 }
 
+std::vector<std::pair<glm::vec3, glm::vec3>> NavmeshGrid::GetBoundaryEdges() const {
+    std::vector<std::pair<glm::vec3, glm::vec3>> edges;
+
+    // Find edges between walkable and non-walkable cells
+    for (int z = 0; z < _height; ++z) {
+        for (int x = 0; x < _width; ++x) {
+            if (!IsWalkable(x, z)) continue;
+
+            // Get cell corners (inset slightly for agent radius buffer)
+            constexpr float inset = 0.1f;
+            const float x0 = _origin.x + static_cast<float>(x) * _cellSize + inset;
+            const float x1 = _origin.x + static_cast<float>(x + 1) * _cellSize - inset;
+            const float z0 = _origin.z + static_cast<float>(z) * _cellSize + inset;
+            const float z1 = _origin.z + static_cast<float>(z + 1) * _cellSize - inset;
+            const float y = _origin.y;
+
+            // Check each edge - add if neighbor is non-walkable or out of bounds
+            // North edge (z-1)
+            if (!IsWalkable(x, z - 1)) {
+                edges.emplace_back(glm::vec3(x0, y, z0), glm::vec3(x1, y, z0));
+            }
+            // South edge (z+1)
+            if (!IsWalkable(x, z + 1)) {
+                edges.emplace_back(glm::vec3(x1, y, z1), glm::vec3(x0, y, z1));
+            }
+            // West edge (x-1)
+            if (!IsWalkable(x - 1, z)) {
+                edges.emplace_back(glm::vec3(x0, y, z1), glm::vec3(x0, y, z0));
+            }
+            // East edge (x+1)
+            if (!IsWalkable(x + 1, z)) {
+                edges.emplace_back(glm::vec3(x1, y, z0), glm::vec3(x1, y, z1));
+            }
+        }
+    }
+
+    return edges;
+}
+
 void NavmeshGrid::BakeFromGeometry(const std::vector<glm::vec3>& vertices, const std::vector<uint32_t>& indices) {
     for (auto& cell : _cells) {
         cell.Walkable = false;

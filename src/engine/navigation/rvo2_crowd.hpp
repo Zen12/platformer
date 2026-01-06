@@ -99,6 +99,10 @@ public:
     // Spatial grid - must be initialized before Raycast works
     void InitializeSpatialGrid(int width, int height, float cellSize, const glm::vec3& origin);
 
+    // Add obstacles (navmesh boundaries) - vertices form a closed polygon in CCW order
+    void AddObstacle(const std::vector<glm::vec3>& vertices);
+    void ProcessObstacles();  // Must be called after all obstacles are added
+
     // Get agents in a specific grid cell (O(1) lookup)
     const std::vector<int>& GetAgentsInCell(int x, int z) const;
 

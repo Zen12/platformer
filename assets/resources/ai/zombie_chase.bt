@@ -5,14 +5,14 @@ root:
     # Always find target first
     - type: find_target_by_tag
       tag: male
-      radius: 50.0
+      radius: 10.0
     # Then decide: attack or chase
     - type: selector
       children:
         - type: sequence
           children:
             - type: has_target_in_range
-              range: 0.4
+              range: 0.5
             - type: attack
               duration: 1.0
         - type: move_to_target

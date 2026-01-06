@@ -277,4 +277,42 @@ public:
     [[nodiscard]] float GetCellSize() const noexcept { return _cellSize; }
     [[nodiscard]] const glm::vec3& GetOrigin() const noexcept { return _origin; }
     [[nodiscard]] const std::vector<std::vector<int>>& GetGrid() const noexcept { return _grid; }
+
+    // Get boundary edges for RVO2 obstacles (each edge is a line segment)
+    [[nodiscard]] std::vector<std::pair<glm::vec3, glm::vec3>> GetBoundaryEdges() const {
+        std::vector<std::pair<glm::vec3, glm::vec3>> edges;
+
+        for (int z = 0; z < _height; ++z) {
+            for (int x = 0; x < _width; ++x) {
+                if (!IsWalkableCell(x, z)) continue;
+
+                // Get cell corners
+                const float x0 = _origin.x + static_cast<float>(x) * _cellSize;
+                const float x1 = _origin.x + static_cast<float>(x + 1) * _cellSize;
+                const float z0 = _origin.z + static_cast<float>(z) * _cellSize;
+                const float z1 = _origin.z + static_cast<float>(z + 1) * _cellSize;
+                const float y = _origin.y;
+
+                // Add edge if neighbor is non-walkable (CCW winding for RVO2)
+                // North edge (z-1)
+                if (!IsWalkableCell(x, z - 1)) {
+                    edges.emplace_back(glm::vec3(x1, y, z0), glm::vec3(x0, y, z0));
+                }
+                // South edge (z+1)
+                if (!IsWalkableCell(x, z + 1)) {
+                    edges.emplace_back(glm::vec3(x0, y, z1), glm::vec3(x1, y, z1));
+                }
+                // West edge (x-1)
+                if (!IsWalkableCell(x - 1, z)) {
+                    edges.emplace_back(glm::vec3(x0, y, z0), glm::vec3(x0, y, z1));
+                }
+                // East edge (x+1)
+                if (!IsWalkableCell(x + 1, z)) {
+                    edges.emplace_back(glm::vec3(x1, y, z1), glm::vec3(x1, y, z0));
+                }
+            }
+        }
+
+        return edges;
+    }
 };

@@ -134,12 +134,21 @@ public:
                             clampedDest = navmesh->FindNearestPoint(clampedDest);
                         }
 
-                        crowd->SetAgentTarget(agent.CrowdAgentId, clampedDest);
                         agent.DestinationChanged = false;
 
-                        // Cache path for visualization
+                        // Calculate A* path around obstacles
                         agent.PathWaypoints = navmesh->FindPath(currentPos, clampedDest);
                         agent.CurrentWaypointIndex = 0;
+
+                        // Set crowd target to first waypoint (not final destination)
+                        if (!agent.PathWaypoints.empty()) {
+                            // Skip waypoint 0 if it's too close (it's usually the start position)
+                            int targetWaypoint = agent.PathWaypoints.size() > 1 ? 1 : 0;
+                            agent.CurrentWaypointIndex = targetWaypoint;
+                            crowd->SetAgentTarget(agent.CrowdAgentId, agent.PathWaypoints[targetWaypoint]);
+                        } else {
+                            crowd->SetAgentTarget(agent.CrowdAgentId, clampedDest);
+                        }
                     }
 
                     glm::vec3 agentPos;
@@ -165,9 +174,11 @@ public:
                                 // Resolve collision with other agents (player can't walk through them)
                                 agentPos = crowd->ResolveCollision(agentPos, agent.Radius, agent.CrowdAgentId);
 
-                                // Stay on navmesh
+                                // Stay on navmesh - don't move if destination is off navmesh
                                 if (!navmesh->IsWalkable(agentPos)) {
-                                    agentPos = navmesh->FindNearestPoint(agentPos);
+                                    // Stay at current position instead of teleporting
+                                    agentPos = currentPos;
+                                    agentPos.y = agent.GroundY;
                                 }
 
                                 transform.SetPosition(agentPos);
@@ -197,9 +208,12 @@ public:
                         // Update transform from crowd
                         agentPos = crowd->GetAgentPosition(agent.CrowdAgentId);
 
-                        // Stay on navmesh - find nearest walkable if off
+                        // Stay on navmesh - if RVO pushed us off, stay at current position
+                        // instead of teleporting to nearest point (prevents corner teleportation)
                         if (!navmesh->IsWalkable(agentPos)) {
-                            agentPos = navmesh->FindNearestPoint(agentPos);
+                            // Revert to current position - don't teleport
+                            agentPos = currentPos;
+                            agentPos.y = agent.GroundY;
                             crowd->SetAgentPosition(agent.CrowdAgentId, agentPos);
                         }
 
@@ -228,30 +242,64 @@ public:
                     // Rotate towards movement direction (skip on first frame after landing to preserve air rotation)
                     if (!agent.JustLanded) {
                         const float distToDest = glm::length(glm::vec2(agent.Destination.x - agentPos.x, agent.Destination.z - agentPos.z));
-                        if (speed > agent.MaxSpeed * 0.5f && distToDest > 0.1f) {
-                            const float targetYaw = glm::degrees(std::atan2(velocity.x, velocity.z));
-                            auto rotation = transform.GetEulerRotation();
 
-                            float angleDiff = targetYaw - rotation.y;
-                            while (angleDiff > 180.0f) angleDiff -= 360.0f;
-                            while (angleDiff < -180.0f) angleDiff += 360.0f;
+                        // For AI agents: rotate towards destination even when slow
+                        // For player: rotate towards velocity when moving fast enough
+                        if (agent.IgnoreCrowdVelocity) {
+                            // Player-controlled: use velocity direction, only when moving
+                            if (speed > agent.MaxSpeed * 0.5f && distToDest > 0.1f) {
+                                const float targetYaw = glm::degrees(std::atan2(velocity.x, velocity.z));
+                                auto rotation = transform.GetEulerRotation();
 
-                            rotation.y += angleDiff * std::min(1.0f, agent.RotationSpeed * deltaTime * (speed / agent.MaxSpeed));
-                            transform.SetEulerRotation(rotation);
+                                float angleDiff = targetYaw - rotation.y;
+                                while (angleDiff > 180.0f) angleDiff -= 360.0f;
+                                while (angleDiff < -180.0f) angleDiff += 360.0f;
+
+                                rotation.y += angleDiff * std::min(1.0f, agent.RotationSpeed * deltaTime * (speed / agent.MaxSpeed));
+                                transform.SetEulerRotation(rotation);
+                            }
+                        } else {
+                            // AI agents: always rotate towards destination/waypoint
+                            if (distToDest > 0.1f && agent.HasDestination) {
+                                // Use direction to current waypoint or destination
+                                glm::vec3 targetPos = agent.Destination;
+                                if (!agent.PathWaypoints.empty() && agent.CurrentWaypointIndex < static_cast<int>(agent.PathWaypoints.size())) {
+                                    targetPos = agent.PathWaypoints[agent.CurrentWaypointIndex];
+                                }
+
+                                const glm::vec3 toTarget = targetPos - agentPos;
+                                const float targetYaw = glm::degrees(std::atan2(toTarget.x, toTarget.z));
+                                auto rotation = transform.GetEulerRotation();
+
+                                float angleDiff = targetYaw - rotation.y;
+                                while (angleDiff > 180.0f) angleDiff -= 360.0f;
+                                while (angleDiff < -180.0f) angleDiff += 360.0f;
+
+                                // Constant rotation speed for AI (not scaled by movement speed)
+                                rotation.y += angleDiff * std::min(1.0f, agent.RotationSpeed * deltaTime);
+                                transform.SetEulerRotation(rotation);
+                            }
                         }
                     }
                     agent.JustLanded = false;
 
-                    // Update path visualization
-                    if (!agent.PathWaypoints.empty()) {
+                    // Update waypoint navigation - advance to next waypoint when reached
+                    if (!agent.PathWaypoints.empty() && !agent.IgnoreCrowdVelocity) {
+                        bool waypointAdvanced = false;
                         while (agent.CurrentWaypointIndex < static_cast<int>(agent.PathWaypoints.size())) {
                             const auto& wp = agent.PathWaypoints[agent.CurrentWaypointIndex];
                             const float dist = glm::length(glm::vec2(wp.x - agentPos.x, wp.z - agentPos.z));
                             if (dist < 0.5f) {
                                 agent.CurrentWaypointIndex++;
+                                waypointAdvanced = true;
                             } else {
                                 break;
                             }
+                        }
+
+                        // Update crowd target to next waypoint
+                        if (waypointAdvanced && agent.CurrentWaypointIndex < static_cast<int>(agent.PathWaypoints.size())) {
+                            crowd->SetAgentTarget(agent.CrowdAgentId, agent.PathWaypoints[agent.CurrentWaypointIndex]);
                         }
                     }
                 }
