@@ -1,0 +1,10 @@
+name: skinned_depth
+is_culling: true
+is_depth_test: true
+blend_mode: 0
+shader_opengl:
+  vertex: 385bc8dd-1e96-4227-8d5e-a5d154a37b25
+  fragment: 85c599b8-1994-4620-a60d-5ee76564faff
+shader_gles:
+  vertex: f90fcb2a-fcdb-436d-9cc0-e66229eaad8a
+  fragment: 88668c9c-f236-4a6f-bf53-d7b6e8ff6b12

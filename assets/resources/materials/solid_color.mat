@@ -1,5 +1,6 @@
 name: solid_color
-is_culling: False
+is_culling: true
+is_depth_test: true
 blend_mode: 0
 shader_opengl:
   vertex: f4667e0f-731b-4ea5-bbb8-e44213a7a85a

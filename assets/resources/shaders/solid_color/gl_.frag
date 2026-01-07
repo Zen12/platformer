@@ -1,7 +1,36 @@
 #version 330 core
+in vec4 FragPosLightSpace;
 out vec4 FragColor;
+
+uniform sampler2D shadowMap;
+
+float calcShadow(vec4 fragPosLightSpace)
+{
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords * 0.5 + 0.5;
+
+    if (projCoords.z > 1.0 || projCoords.x < 0.0 || projCoords.x > 1.0 || projCoords.y < 0.0 || projCoords.y > 1.0)
+        return 0.0;
+
+    float currentDepth = projCoords.z;
+    float bias = 0.001;
+    float shadow = 0.0;
+    vec2 texelSize = 1.0 / vec2(textureSize(shadowMap, 0));
+
+    for (int x = -2; x <= 2; ++x) {
+        for (int y = -2; y <= 2; ++y) {
+            float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+            shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+        }
+    }
+    shadow /= 25.0;
+
+    return shadow * 0.5;
+}
 
 void main()
 {
-    FragColor = vec4(1.0, 1.0, 0.0, 1.0); // Yellow color (R=1, G=1, B=0, A=1)
+    vec3 baseColor = vec3(1.0, 1.0, 0.0);
+    float shadow = calcShadow(FragPosLightSpace);
+    FragColor = vec4(baseColor * (1.0 - shadow), 1.0);
 }

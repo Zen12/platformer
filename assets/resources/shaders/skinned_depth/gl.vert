@@ -1,6 +1,5 @@
 #version 330 core
 layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec2 aTexCoord;
 layout (location = 2) in vec4 aBoneWeights;
 layout (location = 3) in ivec4 aBoneIndices;
 
@@ -10,16 +9,10 @@ layout (location = 6) in vec4 aModelCol2;
 layout (location = 7) in vec4 aModelCol3;
 layout (location = 8) in int aBoneOffset;
 
-out vec2 TexCoord;
-out vec4 FragPosLightSpace;
-
-uniform mat4 projection;
-uniform mat4 view;
-uniform mat4 lightView;
 uniform mat4 lightProjection;
+uniform mat4 lightView;
 uniform sampler2D boneMatrices;
 
-// Texture layout: 4096 pixels wide, 1024 bones per row (each bone = 4 pixels)
 const int BONES_PER_ROW = 1024;
 
 mat4 fetchBoneMatrix(int boneIndex) {
@@ -44,9 +37,5 @@ void main()
     boneTransform += fetchBoneMatrix(aBoneIndices[3]) * aBoneWeights[3];
 
     vec4 skinnedPos = boneTransform * vec4(aPos, 1.0);
-    vec4 worldPos = model * skinnedPos;
-    gl_Position = projection * view * worldPos;
-
-    TexCoord = aTexCoord;
-    FragPosLightSpace = lightProjection * lightView * worldPos;
+    gl_Position = lightProjection * lightView * model * skinnedPos;
 }

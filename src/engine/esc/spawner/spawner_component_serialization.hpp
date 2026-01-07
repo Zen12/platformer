@@ -11,6 +11,7 @@ struct SpawnerComponentSerialization final : public ComponentSerialization {
     bool SpawnOnNavmesh = true;
     bool SpawnOnAllCells = false;
     float ElevationHeight = 1.0f;
+    float YOffset = 0.0f;
 
     ~SpawnerComponentSerialization() override = default;
 };

@@ -118,10 +118,13 @@ public:
                 const int spawnCount = spawner.GetSpawnCount();
                 const bool spawnOnNavmesh = spawner.GetSpawnOnNavmesh();
                 const bool spawnOnAllCells = spawner.GetSpawnOnAllCells();
+                const float yOffset = spawner.GetYOffset();
 
                 if (!spawnPositions.empty()) {
                     for (int i = 0; i < spawnCount && i < static_cast<int>(spawnPositions.size()); ++i) {
-                        SpawnEntity(registry, prefabData, spawnPositions[i]);
+                        glm::vec3 pos = spawnPositions[i];
+                        pos.y += yOffset;
+                        SpawnEntity(registry, prefabData, pos);
                     }
                 } else if (spawnOnAllCells) {
                     const auto navManager = scenePtr->GetNavigationManager();
@@ -143,7 +146,7 @@ public:
                                         // Calculate cell center with Y based on elevation
                                         // Odd elevations = floors, even = transitions
                                         // Formula: (elevation - 1) / 2.0 gives correct Y multiplier
-                                        const float elevY = origin.y + static_cast<float>(elevation - 1) / 2.0f * elevationHeight;
+                                        const float elevY = origin.y + static_cast<float>(elevation - 1) / 2.0f * elevationHeight + yOffset;
                                         const glm::vec3 center(
                                             origin.x + (static_cast<float>(x) + 0.5f) * cellSize,
                                             elevY,
@@ -175,7 +178,8 @@ public:
                                 const float randZ = minZ + (maxZ - minZ) * _dist(_rng);
                                 const glm::vec3 randomPos(randX, origin.y, randZ);
 
-                                const glm::vec3 walkablePos = navmesh->FindNearestPoint(randomPos);
+                                glm::vec3 walkablePos = navmesh->FindNearestPoint(randomPos);
+                                walkablePos.y += yOffset;
                                 SpawnEntity(registry, prefabData, walkablePos);
                             }
                         }

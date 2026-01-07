@@ -24,6 +24,9 @@ namespace YAML {
             if (node["elevation_height"]) {
                 rhs.ElevationHeight = node["elevation_height"].as<float>();
             }
+            if (node["y_offset"]) {
+                rhs.YOffset = node["y_offset"].as<float>();
+            }
             return true;
         }
     };

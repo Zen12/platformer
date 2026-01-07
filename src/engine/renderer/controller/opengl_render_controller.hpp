@@ -2,6 +2,7 @@
 #include "../render_repository.hpp"
 #include "../instancing/instance_batch.hpp"
 #include "../framebuffer/framebuffer.hpp"
+#include "../framebuffer/depth_framebuffer.hpp"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <iostream>
@@ -29,6 +30,13 @@ class OpenGLRenderController final {
     GLuint _screenQuadVbo{0};
     bool _screenQuadInitialized{false};
 
+    // Shadow mapping
+    std::unique_ptr<DepthFramebuffer> _shadowMap{};
+    static constexpr uint16_t SHADOW_MAP_SIZE = 2048;
+    bool _hasDirectionalLight{false};
+    glm::mat4 _lightView{1.0f};
+    glm::mat4 _lightProjection{1.0f};
+
     static std::pair<uint16_t, uint16_t> GetViewportSize() noexcept;
     void RenderInstanced(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept;
     void RenderLines(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept;
@@ -36,12 +44,16 @@ class OpenGLRenderController final {
     void RenderSkybox(const glm::mat4& view, const glm::mat4& projection, const std::string& materialGuid) noexcept;
     void InitScreenQuad();
     void RenderPostProcess() noexcept;
+    void RenderShadowPass(const std::shared_ptr<RenderRepository>& repository) noexcept;
 
 public:
     explicit OpenGLRenderController(const std::shared_ptr<SceneManager> &sceneManager)
-        : _sceneManager(sceneManager), _framebuffer(std::make_unique<Framebuffer>()) {
+        : _sceneManager(sceneManager),
+          _framebuffer(std::make_unique<Framebuffer>()),
+          _shadowMap(std::make_unique<DepthFramebuffer>()) {
         const auto [width, height] = GetViewportSize();
         _framebuffer->Init(width, height);
+        _shadowMap->Init(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
     }
 
     ~OpenGLRenderController();

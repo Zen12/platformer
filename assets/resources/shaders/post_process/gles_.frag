@@ -5,8 +5,15 @@ in vec2 TexCoord;
 out vec4 FragColor;
 
 uniform sampler2D screenTexture;
+uniform sampler2D depthTexture;
+uniform int showDepth;
 
 void main()
 {
-    FragColor = texture(screenTexture, TexCoord);
+    if (showDepth == 1) {
+        float depth = texture(depthTexture, TexCoord).r;
+        FragColor = vec4(vec3(depth), 1.0);
+    } else {
+        FragColor = texture(screenTexture, TexCoord);
+    }
 }

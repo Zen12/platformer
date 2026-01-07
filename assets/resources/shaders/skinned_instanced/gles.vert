@@ -13,9 +13,12 @@ layout (location = 7) in vec4 aModelCol3;
 layout (location = 8) in int aBoneOffset;
 
 out vec2 TexCoord;
+out vec4 FragPosLightSpace;
 
 uniform mat4 projection;
 uniform mat4 view;
+uniform mat4 lightView;
+uniform mat4 lightProjection;
 uniform sampler2D boneMatrices;
 
 // Texture layout: 4096 pixels wide, 1024 bones per row (each bone = 4 pixels)
@@ -43,7 +46,9 @@ void main()
     boneTransform += fetchBoneMatrix(aBoneIndices[3]) * aBoneWeights[3];
 
     vec4 skinnedPos = boneTransform * vec4(aPos, 1.0);
-    gl_Position = projection * view * model * skinnedPos;
+    vec4 worldPos = model * skinnedPos;
+    gl_Position = projection * view * worldPos;
 
     TexCoord = aTexCoord;
+    FragPosLightSpace = lightProjection * lightView * worldPos;
 }

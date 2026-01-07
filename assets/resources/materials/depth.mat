@@ -1,0 +1,10 @@
+name: depth
+is_culling: true
+is_depth_test: true
+blend_mode: 0
+shader_opengl:
+  vertex: 50bda518-1f47-491e-b1f9-ca933f2dd344
+  fragment: b4e576c1-ad8d-413d-a84d-0841efa7a9d3
+shader_gles:
+  vertex: 41e50f27-1d53-407a-81c8-4ecca9b43af9
+  fragment: 5b9df583-c8ce-40d1-baa9-a943f306f754

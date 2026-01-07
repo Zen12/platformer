@@ -60,6 +60,8 @@ namespace {
     };
 
     constexpr const char* POST_PROCESS_MATERIAL_GUID = "0b67e64e-d1f7-4e7b-89f8-b9fdf724fc2b";
+    constexpr const char* DEPTH_MATERIAL_GUID = "04a6ec12-6609-4aad-8cc2-cd892c74b4fc";
+    constexpr const char* SKINNED_DEPTH_MATERIAL_GUID = "e6ea918b-1491-4c4f-b42a-90f9c322388a";
 }
 
 OpenGLRenderController::~OpenGLRenderController() {
@@ -134,6 +136,11 @@ void OpenGLRenderController::RenderPostProcess() noexcept {
 
     _framebuffer->BindColorTexture(0);
     mat->SetInt("screenTexture", 0);
+
+    _shadowMap->BindDepthTexture(1);
+    mat->SetInt("depthTexture", 1);
+
+    mat->SetInt("showDepth", 0);
 
     glBindVertexArray(_screenQuadVao);
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -217,6 +224,14 @@ void OpenGLRenderController::RenderInstanced(const RenderId& renderId, const std
         mat->SetInt("boneMatrices", BONE_TEXTURE_UNIT);
     }
 
+    if (_hasDirectionalLight) {
+        constexpr GLuint SHADOW_TEXTURE_UNIT = 2;
+        _shadowMap->BindDepthTexture(SHADOW_TEXTURE_UNIT);
+        mat->SetInt("shadowMap", SHADOW_TEXTURE_UNIT);
+        mat->SetMat4("lightView", _lightView);
+        mat->SetMat4("lightProjection", _lightProjection);
+    }
+
     glDrawElementsInstanced(
         GL_TRIANGLES,
         static_cast<GLsizei>(meshPtr->GetIndicesCount()),
@@ -271,10 +286,97 @@ void OpenGLRenderController::RenderLines(const RenderId& renderId, const std::ve
     }
 }
 
+void OpenGLRenderController::RenderShadowPass(const std::shared_ptr<RenderRepository>& repository) noexcept {
+    const auto& lightData = repository->GetDirectionalLight();
+    _hasDirectionalLight = lightData.HasLight;
+    if (!lightData.HasLight) {
+        return;
+    }
+
+    _lightView = lightData.View;
+    _lightProjection = lightData.Projection;
+
+    const auto depthMat = _sceneManager->GetMaterial(DEPTH_MATERIAL_GUID);
+    const auto skinnedDepthMat = _sceneManager->GetMaterial(SKINNED_DEPTH_MATERIAL_GUID);
+    if (!depthMat) {
+        return;
+    }
+
+    _shadowMap->Bind();
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    const auto renderData = repository->GetData();
+
+    for (const auto &[renderId, instances] : renderData) {
+        if (renderId.Primitive != PrimitiveType::Triangles) {
+            continue;
+        }
+
+        const std::string batchKey = std::string("shadow_") + renderId.MeshGuid + (renderId.IsSkinned ? "_skinned" : "");
+
+        if (_batches.find(batchKey) == _batches.end()) {
+            _batches[batchKey] = std::make_unique<InstanceBatch>();
+        }
+
+        auto& batch = _batches[batchKey];
+        batch->Clear();
+
+        for (const auto& inst : instances) {
+            if (renderId.IsSkinned && inst.BoneTransforms.has_value() && !inst.BoneTransforms.value().empty()) {
+                batch->AddInstance(inst.ModelMatrix, inst.BoneTransforms.value());
+            } else {
+                batch->AddInstance(inst.ModelMatrix);
+            }
+        }
+
+        batch->Finalize();
+
+        if (batch->GetInstanceCount() == 0) {
+            continue;
+        }
+
+        const auto meshPtr = _sceneManager->GetMesh(renderId.MeshGuid);
+        if (!meshPtr) {
+            continue;
+        }
+
+        meshPtr->Bind();
+        batch->SetupInstanceAttributes();
+
+        if (renderId.IsSkinned && skinnedDepthMat && batch->HasBones()) {
+            skinnedDepthMat->UseShader();
+            skinnedDepthMat->ApplyRenderState();
+            skinnedDepthMat->SetMat4("lightView", lightData.View);
+            skinnedDepthMat->SetMat4("lightProjection", lightData.Projection);
+
+            constexpr GLuint BONE_TEXTURE_UNIT = 0;
+            batch->BindBoneTexture(BONE_TEXTURE_UNIT);
+            skinnedDepthMat->SetInt("boneMatrices", BONE_TEXTURE_UNIT);
+        } else {
+            depthMat->UseShader();
+            depthMat->ApplyRenderState();
+            depthMat->SetMat4("lightView", lightData.View);
+            depthMat->SetMat4("lightProjection", lightData.Projection);
+        }
+
+        glDrawElementsInstanced(
+            GL_TRIANGLES,
+            static_cast<GLsizei>(meshPtr->GetIndicesCount()),
+            GL_UNSIGNED_INT,
+            nullptr,
+            static_cast<GLsizei>(batch->GetInstanceCount())
+        );
+    }
+
+    _shadowMap->Unbind();
+}
+
 void OpenGLRenderController::Render(const std::shared_ptr<RenderRepository>& repository) noexcept {
     const auto [width, height] = GetViewportSize();
-    _framebuffer->Resize(width, height);
 
+    RenderShadowPass(repository);
+
+    _framebuffer->Resize(width, height);
     _framebuffer->Bind();
     glClearColor(0.53f, 0.81f, 0.98f, 1.0f);
     glDepthMask(GL_TRUE);

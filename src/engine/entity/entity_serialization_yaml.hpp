@@ -26,6 +26,8 @@
 #include "../esc/spawner/spawner_component_serialization_yaml.hpp"
 #include "../ai/bt_component_serialization.hpp"
 #include "../ai/bt_component_serialization_yaml.hpp"
+#include "../esc/directional_light/directional_light_component_serialization.hpp"
+#include "../esc/directional_light/directional_light_component_serialization_yaml.hpp"
 
 namespace YAML {
     template <>
@@ -82,6 +84,7 @@ namespace YAML {
                 { "navmesh_agent",         [](const YAML::Node& n){ return Parse<NavmeshAgentComponentSerialization>(n); } },
                 { "spawner",               [](const YAML::Node& n){ return Parse<SpawnerComponentSerialization>(n); } },
                 { "behavior_tree",         [](const YAML::Node& n){ return Parse<BehaviorTreeComponentSerialization>(n); } },
+                { "directional_light",     [](const YAML::Node& n){ return Parse<DirectionalLightComponentSerialization>(n); } },
             };
 
             if (const auto it = pairs.find(type); it != pairs.end()) {

@@ -103,11 +103,28 @@ struct InstanceData final {
     std::optional<glm::vec4> LineColor;
 };
 
+struct DirectionalLightData final {
+    glm::mat4 View{1.0f};
+    glm::mat4 Projection{1.0f};
+    bool HasLight{false};
+};
+
 class RenderRepository final {
 private:
     std::unordered_map<RenderId, std::vector<InstanceData>> _renderData{};
+    DirectionalLightData _directionalLight{};
 
 public:
+    void SetDirectionalLight(const glm::mat4& view, const glm::mat4& projection) noexcept {
+        _directionalLight.View = view;
+        _directionalLight.Projection = projection;
+        _directionalLight.HasLight = true;
+    }
+
+    [[nodiscard]] const DirectionalLightData& GetDirectionalLight() const noexcept {
+        return _directionalLight;
+    }
+
     void Add(const RenderData &renderData) noexcept {
         const auto &id = RenderId(renderData.MaterialGuid, renderData.MeshGuid, renderData.ViewMatrix, renderData.ProjectionMatrix, renderData.Primitive, renderData.IsSkinned);
         if (_renderData.find(id) == _renderData.end()) {
@@ -124,6 +141,7 @@ public:
 
     void Clear() {
         _renderData.clear();
+        _directionalLight = DirectionalLightData{};
     }
 
 };

@@ -38,6 +38,9 @@
 #include "../ai/bt_component.hpp"
 #include "../ai/bt_component_serialization.hpp"
 #include "../ai/bt_system.hpp"
+#include "directional_light/directional_light_component.hpp"
+#include "directional_light/directional_light_component_serialization.hpp"
+#include "directional_light/directional_light_system.hpp"
 
 
 class EscSystem {
@@ -105,7 +108,7 @@ public:
                         view->emplace(entity, *navmeshAgentSerialization);
                     } else if (const auto &spawnerSerialization = dynamic_cast<SpawnerComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<SpawnerComponent>();
-                        SpawnerComponent spawner(spawnerSerialization->PrefabGuid, spawnerSerialization->SpawnCount, spawnerSerialization->SpawnPositions, spawnerSerialization->SpawnOnNavmesh, spawnerSerialization->SpawnOnAllCells);
+                        SpawnerComponent spawner(spawnerSerialization->PrefabGuid, spawnerSerialization->SpawnCount, spawnerSerialization->SpawnPositions, spawnerSerialization->SpawnOnNavmesh, spawnerSerialization->SpawnOnAllCells, spawnerSerialization->ElevationHeight, spawnerSerialization->YOffset);
                         view->emplace(entity, spawner);
                     } else if (const auto &btSerialization = dynamic_cast<BehaviorTreeComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<BehaviorTreeComponent>();
@@ -121,6 +124,9 @@ public:
                         const auto &view = registry->view<PlayerControllerComponent>();
                         PlayerControllerComponent player(playerSerialization->MoveSpeed, playerSerialization->DestinationDistance);
                         view->emplace(entity, player);
+                    } else if (const auto &lightSerialization = dynamic_cast<DirectionalLightComponentSerialization*>(component.get())) {
+                        const auto &view = registry->view<DirectionalLightComponent>();
+                        view->emplace(entity, *lightSerialization);
                     }
                 }
             }
@@ -142,6 +148,11 @@ public:
                 registry->view<DeltaTimeComponent>(), scenePtr));
 
             _systems.emplace_back(std::make_unique<CameraSystem>(registry->view<WindowComponent>(),registry->view<CameraComponentV2, TransformComponentV2>()));
+
+            _systems.emplace_back(std::make_unique<DirectionalLightSystem>(
+                registry->view<DirectionalLightComponent, TransformComponentV2>(),
+                registry->view<TagComponent, TransformComponentV2>(),
+                renderRepository));
 
             // Player controller must run BEFORE navmesh agent to set destination
             _systems.emplace_back(std::make_unique<PlayerControllerSystem>(
