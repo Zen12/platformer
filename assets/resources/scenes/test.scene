@@ -53,7 +53,7 @@ entities:
     components:
       - type: spawner
         prefab_guid: ee9e7ec4-779d-4d44-a4f6-99f048412b61  # zombie.prefab
-        spawn_count: 500
+        spawn_count: 2
         spawn_on_navmesh: true
   - tag: "navmesh_cell_spawner"
     components:
@@ -104,7 +104,7 @@ entities:
       - type: top_down_camera
         target_tag: male
         offset_position: [0.0, 10.0, 10.0]
-        offset_rotation: [-45.0, 0.0, 0.0]
+        offset_rotation: [-50.0, 0.0, 0.0]
         max_look_ahead: 7.0
         smooth: 1.4
         max_move_speed: 10.0
@@ -127,6 +127,6 @@ entities:
         aspect_ratio: 1.0
         near_plane: 0.1
         far_plane: 100.0
-        ortho_size: 50.0
+        ortho_size: 44.0
         follow_tag: "male"
-        follow_offset: [0.0, 10.0, 0.0]
+        follow_offset: [0.0, 20.0, 0.0]

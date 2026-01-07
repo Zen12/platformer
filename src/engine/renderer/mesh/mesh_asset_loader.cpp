@@ -426,9 +426,10 @@ MeshData AssetLoader<MeshData>::LoadImpl(const std::string& path) {
             maxZ = std::max(maxZ, vertices[i + 2]);
         }
 
+        constexpr float BOUNDS_PADDING = 2.0f;
         meshBounds = Bounds::FromMinMax(
-            glm::vec3(minX, minY, minZ),
-            glm::vec3(maxX, maxY, maxZ)
+            glm::vec3(minX - BOUNDS_PADDING, minY - BOUNDS_PADDING, minZ - BOUNDS_PADDING),
+            glm::vec3(maxX + BOUNDS_PADDING, maxY + BOUNDS_PADDING, maxZ + BOUNDS_PADDING)
         );
 
         MESH_LOG << "  Bounds: X[" << minX << ", " << maxX << "] "
