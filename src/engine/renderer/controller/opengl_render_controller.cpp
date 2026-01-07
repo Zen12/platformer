@@ -47,6 +47,19 @@ namespace {
         -1.0f, -1.0f,  1.0f,
          1.0f, -1.0f,  1.0f
     };
+
+    constexpr float ScreenQuadVertices[] = {
+        // positions   // texCoords
+        -1.0f,  1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f,  0.0f, 0.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+
+        -1.0f,  1.0f,  0.0f, 1.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f, 1.0f
+    };
+
+    constexpr const char* POST_PROCESS_MATERIAL_GUID = "0b67e64e-d1f7-4e7b-89f8-b9fdf724fc2b";
 }
 
 OpenGLRenderController::~OpenGLRenderController() {
@@ -54,6 +67,16 @@ OpenGLRenderController::~OpenGLRenderController() {
         glDeleteVertexArrays(1, &_skyboxVao);
         glDeleteBuffers(1, &_skyboxVbo);
     }
+    if (_screenQuadVao != 0) {
+        glDeleteVertexArrays(1, &_screenQuadVao);
+        glDeleteBuffers(1, &_screenQuadVbo);
+    }
+}
+
+std::pair<uint16_t, uint16_t> OpenGLRenderController::GetViewportSize() noexcept {
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    return {static_cast<uint16_t>(viewport[2]), static_cast<uint16_t>(viewport[3])};
 }
 
 void OpenGLRenderController::InitSkybox() {
@@ -73,6 +96,48 @@ void OpenGLRenderController::InitSkybox() {
     glBindVertexArray(0);
 
     _skyboxInitialized = true;
+}
+
+void OpenGLRenderController::InitScreenQuad() {
+    if (_screenQuadInitialized) return;
+
+    glGenVertexArrays(1, &_screenQuadVao);
+    glGenBuffers(1, &_screenQuadVbo);
+
+    glBindVertexArray(_screenQuadVao);
+    glBindBuffer(GL_ARRAY_BUFFER, _screenQuadVbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(ScreenQuadVertices), ScreenQuadVertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), nullptr);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), reinterpret_cast<void*>(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    _screenQuadInitialized = true;
+}
+
+void OpenGLRenderController::RenderPostProcess() noexcept {
+    if (!_screenQuadInitialized) {
+        InitScreenQuad();
+    }
+
+    const auto mat = _sceneManager->GetMaterial(POST_PROCESS_MATERIAL_GUID);
+    if (!mat) {
+        return;
+    }
+
+    mat->UseShader();
+    mat->ApplyRenderState();
+
+    _framebuffer->BindColorTexture(0);
+    mat->SetInt("screenTexture", 0);
+
+    glBindVertexArray(_screenQuadVao);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
 }
 
 void OpenGLRenderController::RenderSkybox(const glm::mat4& view, const glm::mat4& projection, const std::string& materialGuid) noexcept {
@@ -207,9 +272,16 @@ void OpenGLRenderController::RenderLines(const RenderId& renderId, const std::ve
 }
 
 void OpenGLRenderController::Render(const std::shared_ptr<RenderRepository>& repository) noexcept {
+    const auto [width, height] = GetViewportSize();
+    _framebuffer->Resize(width, height);
+
+    _framebuffer->Bind();
+    glClearColor(0.53f, 0.81f, 0.98f, 1.0f);
+    glDepthMask(GL_TRUE);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     const auto renderData = repository->GetData();
 
-    // Render skybox first (before any scene geometry)
     if (const auto scene = _sceneManager->GetScene()) {
         if (const auto skybox = scene->GetSkyboxRenderer()) {
             if (skybox->IsEnabled() && !renderData.empty()) {
@@ -226,4 +298,10 @@ void OpenGLRenderController::Render(const std::shared_ptr<RenderRepository>& rep
             RenderLines(renderId, instance);
         }
     }
+
+    _framebuffer->Unbind();
+    glViewport(0, 0, width, height);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    RenderPostProcess();
 }

@@ -1,0 +1,10 @@
+name: post_process
+is_culling: false
+is_depth_test: false
+blend_mode: 0
+shader_opengl:
+  vertex: 6cd238bc-6430-49ee-84c0-ca993aab5d0e
+  fragment: 7bb33006-2084-4664-a00f-ecff71f4cc3e
+shader_gles:
+  vertex: a839bc3a-233e-4c1c-a812-ee6117834ece
+  fragment: 4a036a1c-6906-4b30-889d-96e663634dc5
