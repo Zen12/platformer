@@ -89,6 +89,10 @@ public:
         return _isDepthTestEnabled;
     }
 
+    [[nodiscard]] bool HasTextures() const noexcept {
+        return !_textures.empty();
+    }
+
     [[nodiscard]] std::shared_ptr<Shader> GetShader() const noexcept {
         return _shader.lock();
     }
