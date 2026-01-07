@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-class SkinnedInstanceBatch {
+class InstanceBatch {
 private:
     std::unique_ptr<BoneMatrixBuffer> _boneBuffer;
     std::unique_ptr<InstanceBuffer> _instanceBuffer;
@@ -14,28 +14,25 @@ private:
 
     size_t _instanceCount = 0;
     size_t _maxBonesPerInstance = 100;
+    bool _hasBones = false;
 
 public:
-    SkinnedInstanceBatch();
-    ~SkinnedInstanceBatch() = default;
+    InstanceBatch();
+    ~InstanceBatch() = default;
 
-    SkinnedInstanceBatch(const SkinnedInstanceBatch&) = delete;
-    SkinnedInstanceBatch& operator=(const SkinnedInstanceBatch&) = delete;
+    InstanceBatch(const InstanceBatch&) = delete;
+    InstanceBatch& operator=(const InstanceBatch&) = delete;
 
     void Clear();
 
-    void AddInstance(const glm::mat4& modelMatrix,
-                     const std::vector<glm::mat4>& boneTransforms);
+    void AddInstance(const glm::mat4& modelMatrix);
+    void AddInstance(const glm::mat4& modelMatrix, const std::vector<glm::mat4>& boneTransforms);
 
     void Finalize();
 
     [[nodiscard]] size_t GetInstanceCount() const noexcept { return _instanceCount; }
+    [[nodiscard]] bool HasBones() const noexcept { return _hasBones; }
 
-    void BindForRendering(GLuint boneTextureUnit) const;
-
-    [[nodiscard]] GLuint GetInstanceVBO() const noexcept {
-        return _instanceBuffer ? _instanceBuffer->GetVBO() : 0;
-    }
-
+    void BindBoneTexture(GLuint boneTextureUnit) const;
     void SetupInstanceAttributes() const;
 };

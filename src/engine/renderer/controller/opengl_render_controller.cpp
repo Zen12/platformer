@@ -99,7 +99,7 @@ void OpenGLRenderController::RenderSkybox(const glm::mat4& view, const glm::mat4
     glBindVertexArray(0);
 }
 
-void OpenGLRenderController::RenderStaticInstanced(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept {
+void OpenGLRenderController::RenderInstanced(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept {
     if (instances.empty()) return;
 
     const auto mat = _sceneManager->GetMaterial(renderId.MaterialGuid);
@@ -107,15 +107,19 @@ void OpenGLRenderController::RenderStaticInstanced(const RenderId& renderId, con
 
     const std::string batchKey = renderId.MaterialGuid + "_" + renderId.MeshGuid;
 
-    if (_staticBatches.find(batchKey) == _staticBatches.end()) {
-        _staticBatches[batchKey] = std::make_unique<StaticInstanceBatch>();
+    if (_batches.find(batchKey) == _batches.end()) {
+        _batches[batchKey] = std::make_unique<InstanceBatch>();
     }
 
-    auto& batch = _staticBatches[batchKey];
+    auto& batch = _batches[batchKey];
     batch->Clear();
 
     for (const auto& inst : instances) {
-        batch->AddInstance(inst.ModelMatrix);
+        if (renderId.IsSkinned && inst.BoneTransforms.has_value() && !inst.BoneTransforms.value().empty()) {
+            batch->AddInstance(inst.ModelMatrix, inst.BoneTransforms.value());
+        } else {
+            batch->AddInstance(inst.ModelMatrix);
+        }
     }
 
     batch->Finalize();
@@ -142,6 +146,12 @@ void OpenGLRenderController::RenderStaticInstanced(const RenderId& renderId, con
         mat->SetInt("texture1", 0);
     }
 
+    if (batch->HasBones()) {
+        constexpr GLuint BONE_TEXTURE_UNIT = 1;
+        batch->BindBoneTexture(BONE_TEXTURE_UNIT);
+        mat->SetInt("boneMatrices", BONE_TEXTURE_UNIT);
+    }
+
     glDrawElementsInstanced(
         GL_TRIANGLES,
         static_cast<GLsizei>(meshPtr->GetIndicesCount()),
@@ -151,59 +161,49 @@ void OpenGLRenderController::RenderStaticInstanced(const RenderId& renderId, con
     );
 }
 
-void OpenGLRenderController::RenderSkinnedInstanced(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept {
-    if (instances.empty()) return;
-
+void OpenGLRenderController::RenderLines(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept {
     const auto mat = _sceneManager->GetMaterial(renderId.MaterialGuid);
-    if (!mat) return;
-
-    const std::string batchKey = renderId.MaterialGuid + "_" + renderId.MeshGuid;
-
-    if (_skinnedBatches.find(batchKey) == _skinnedBatches.end()) {
-        _skinnedBatches[batchKey] = std::make_unique<SkinnedInstanceBatch>();
-    }
-
-    auto& batch = _skinnedBatches[batchKey];
-    batch->Clear();
-
-    for (const auto& inst : instances) {
-        if (inst.BoneTransforms.has_value() && !inst.BoneTransforms.value().empty()) {
-            batch->AddInstance(inst.ModelMatrix, inst.BoneTransforms.value());
-        }
-    }
-
-    batch->Finalize();
-
-    if (batch->GetInstanceCount() == 0) {
+    if (!mat) {
         return;
     }
 
-    const auto meshPtr = _sceneManager->GetMesh(renderId.MeshGuid);
-    if (!meshPtr) {
-        return;
-    }
-
-    meshPtr->Bind();
-    batch->SetupInstanceAttributes();
-
-    mat->UseShader();
+    mat->Bind();
     mat->SetMat4("view", renderId.CameraView);
     mat->SetMat4("projection", renderId.CameraProjection);
-    mat->ApplyRenderState();
-    mat->BindTextures();
-    mat->SetInt("texture1", 0);
 
-    constexpr GLuint BONE_TEXTURE_UNIT = 1;
-    batch->BindForRendering(BONE_TEXTURE_UNIT);
-    mat->SetInt("boneMatrices", BONE_TEXTURE_UNIT);
+    for (const auto& instanceData : instances) {
+        mat->SetMat4("model", instanceData.ModelMatrix);
 
-    glDrawElementsInstanced(
-        GL_TRIANGLES,
-        static_cast<GLsizei>(meshPtr->GetIndicesCount()),
-        GL_UNSIGNED_INT,
-        nullptr,
-        static_cast<GLsizei>(batch->GetInstanceCount())
-    );
+        const auto& positions = instanceData.Positions.value();
+        const int vertexCount = static_cast<int>(positions.size());
+
+        std::vector<float> vertices;
+        vertices.reserve(vertexCount * 3);
+        for (const auto& pos : positions) {
+            vertices.push_back(pos.x);
+            vertices.push_back(pos.y);
+            vertices.push_back(pos.z);
+        }
+
+        const auto lineColor = instanceData.LineColor.value_or(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+        mat->SetVec4("lineColor", lineColor);
+
+        GLuint vao, vbo;
+        glGenVertexArrays(1, &vao);
+        glGenBuffers(1, &vbo);
+
+        glBindVertexArray(vao);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_DYNAMIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+        glEnableVertexAttribArray(0);
+
+        glDrawArrays(GL_LINES, 0, vertexCount);
+
+        glDeleteVertexArrays(1, &vao);
+        glDeleteBuffers(1, &vbo);
+    }
 }
 
 void OpenGLRenderController::Render(const std::shared_ptr<RenderRepository>& repository) noexcept {
@@ -220,58 +220,10 @@ void OpenGLRenderController::Render(const std::shared_ptr<RenderRepository>& rep
     }
 
     for (const auto &[renderId, instance] : renderData) {
-        if (renderId.IsSkinned) {
-            RenderSkinnedInstanced(renderId, instance);
-            continue;
-        }
-
         if (renderId.Primitive == PrimitiveType::Triangles) {
-            RenderStaticInstanced(renderId, instance);
-            continue;
-        }
-
-        // Non-instanced rendering for lines only
-        const auto mat = _sceneManager->GetMaterial(renderId.MaterialGuid);
-        if (!mat) {
-            continue;
-        }
-
-        mat->Bind();
-        mat->SetMat4("view", renderId.CameraView);
-        mat->SetMat4("projection", renderId.CameraProjection);
-
-        for (const auto& instanceData : instance) {
-            mat->SetMat4("model", instanceData.ModelMatrix);
-
-            const auto& positions = instanceData.Positions.value();
-            const int vertexCount = static_cast<int>(positions.size());
-
-            std::vector<float> vertices;
-            vertices.reserve(vertexCount * 3);
-            for (const auto& pos : positions) {
-                vertices.push_back(pos.x);
-                vertices.push_back(pos.y);
-                vertices.push_back(pos.z);
-            }
-
-            const auto lineColor = instanceData.LineColor.value_or(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-            mat->SetVec4("lineColor", lineColor);
-
-            GLuint vao, vbo;
-            glGenVertexArrays(1, &vao);
-            glGenBuffers(1, &vbo);
-
-            glBindVertexArray(vao);
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_DYNAMIC_DRAW);
-
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-            glEnableVertexAttribArray(0);
-
-            glDrawArrays(GL_LINES, 0, vertexCount);
-
-            glDeleteVertexArrays(1, &vao);
-            glDeleteBuffers(1, &vbo);
+            RenderInstanced(renderId, instance);
+        } else {
+            RenderLines(renderId, instance);
         }
     }
 }

@@ -2,10 +2,10 @@
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec2 aTexCoord;
 
-layout (location = 3) in vec4 aModelCol0;
-layout (location = 4) in vec4 aModelCol1;
-layout (location = 5) in vec4 aModelCol2;
-layout (location = 6) in vec4 aModelCol3;
+layout (location = 4) in vec4 aModelCol0;
+layout (location = 5) in vec4 aModelCol1;
+layout (location = 6) in vec4 aModelCol2;
+layout (location = 7) in vec4 aModelCol3;
 
 out vec2 TexCoord;
 

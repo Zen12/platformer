@@ -1,7 +1,6 @@
 #pragma once
 #include "../render_repository.hpp"
-#include "../instancing/skinned_instance_batch.hpp"
-#include "../instancing/static_instance_batch.hpp"
+#include "../instancing/instance_batch.hpp"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <iostream>
@@ -15,17 +14,15 @@ class Shader;
 
 class OpenGLRenderController final {
     std::shared_ptr<SceneManager> _sceneManager{};
-    std::unordered_map<std::string, std::unique_ptr<SkinnedInstanceBatch>> _skinnedBatches{};
-    std::unordered_map<std::string, std::unique_ptr<StaticInstanceBatch>> _staticBatches{};
-
+    std::unordered_map<std::string, std::unique_ptr<InstanceBatch>> _batches{};
 
     // Skybox
     GLuint _skyboxVao{0};
     GLuint _skyboxVbo{0};
     bool _skyboxInitialized{false};
 
-    void RenderSkinnedInstanced(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept;
-    void RenderStaticInstanced(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept;
+    void RenderInstanced(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept;
+    void RenderLines(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept;
     void InitSkybox();
     void RenderSkybox(const glm::mat4& view, const glm::mat4& projection, const std::string& materialGuid) noexcept;
 
