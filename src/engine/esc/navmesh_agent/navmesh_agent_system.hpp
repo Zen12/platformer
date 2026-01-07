@@ -76,8 +76,8 @@ public:
                 const int landingElevation = navmesh->GetElevationAt(currentPos);
                 const float landingY = navmesh->GetVisualY(currentPos, agent.GroundY, agent.ElevationHeight);
 
-                // Check for landing on navmesh (use elevation-aware Y)
-                if (currentPos.y <= landingY && isOverNavmesh && landingElevation > 0) {
+                // Check for landing on navmesh (use elevation-aware Y, only when falling)
+                if (currentPos.y <= landingY && isOverNavmesh && landingElevation > 0 && agent.VerticalVelocity < 0.0f) {
                     // Land on navmesh at correct elevation
                     currentPos.y = landingY;
                     agent.CurrentElevation = landingElevation;

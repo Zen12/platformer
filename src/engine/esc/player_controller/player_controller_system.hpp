@@ -123,43 +123,6 @@ public:
                 }
             }
 
-            // Handle shooting (left mouse click)
-            if (inputSystem->IsMousePress(MouseButton::Left)) {
-                auto navManager = scene->GetNavigationManager();
-                if (!navManager) continue;
-                auto crowd = navManager->GetCrowd();
-                if (!crowd) continue;
-
-                // Get player's forward direction from rotation (yaw)
-                glm::vec3 rotation = transform.GetEulerRotation();
-                float yawRad = glm::radians(rotation.y);
-                glm::vec3 forward(std::sin(yawRad), 0.0f, std::cos(yawRad));
-
-                // Ray origin at player position + eye height
-                glm::vec3 rayOrigin = transform.GetPosition();
-                rayOrigin.y += 1.5f;  // Eye level
-
-                // Raycast
-                constexpr float maxDistance = 100.0f;
-                RaycastHit hit = crowd->Raycast(rayOrigin, forward, maxDistance);
-
-                if (hit.Hit) {
-                    // Find entity with this agent ID and destroy it
-                    auto agentView = _registry.view<NavmeshAgentComponent>();
-                    for (auto [targetEntity, targetAgent] : agentView.each()) {
-                        if (targetAgent.CrowdAgentId == hit.AgentId) {
-                            // Don't shoot yourself
-                            if (targetEntity != entity) {
-                                // Remove from crowd
-                                crowd->RemoveAgent(targetAgent.CrowdAgentId);
-                                // Destroy entity
-                                _registry.destroy(targetEntity);
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
         }
     }
 };

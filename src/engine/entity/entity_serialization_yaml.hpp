@@ -28,6 +28,8 @@
 #include "../ai/bt_component_serialization_yaml.hpp"
 #include "../esc/directional_light/directional_light_component_serialization.hpp"
 #include "../esc/directional_light/directional_light_component_serialization_yaml.hpp"
+#include "../esc/health/health_component_serialization.hpp"
+#include "../esc/health/health_component_serialization_yaml.hpp"
 
 namespace YAML {
     template <>
@@ -85,6 +87,7 @@ namespace YAML {
                 { "spawner",               [](const YAML::Node& n){ return Parse<SpawnerComponentSerialization>(n); } },
                 { "behavior_tree",         [](const YAML::Node& n){ return Parse<BehaviorTreeComponentSerialization>(n); } },
                 { "directional_light",     [](const YAML::Node& n){ return Parse<DirectionalLightComponentSerialization>(n); } },
+                { "health",                [](const YAML::Node& n){ return Parse<HealthComponentSerialization>(n); } },
             };
 
             if (const auto it = pairs.find(type); it != pairs.end()) {

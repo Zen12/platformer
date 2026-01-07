@@ -69,6 +69,15 @@ button:active {
     color: #f6470a;
 }
 
+#health-display {
+    position: absolute;
+    top: 50px;
+    left: 20px;
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #e74c3c;
+}
+
 #restart-button {
     position: absolute;
     top: 100px;

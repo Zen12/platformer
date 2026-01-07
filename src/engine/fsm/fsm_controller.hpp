@@ -22,6 +22,7 @@
 #include "node/action/set_system_trigger_action.hpp"
 #include "node/action/log_action.hpp"
 #include "node/action/fps_display_action.hpp"
+#include "node/action/health_display_action.hpp"
 #include "fsm_asset.hpp"
 #include "system_triggers.hpp"
 
@@ -103,6 +104,10 @@ public:
                     actions.emplace_back(actionFactory.CreateStopVideoRecordingAction());
                 } else if (actionData.Type == "fps_display") {
                     actions.emplace_back(actionFactory.CreateFpsDisplayAction(actionData.Param));
+                } else if (actionData.Type == "health_display") {
+                    actions.emplace_back(actionFactory.CreateHealthDisplayAction(actionData.Param));
+                } else if (actionData.Type == "health_check") {
+                    actions.emplace_back(actionFactory.CreateHealthCheckAction(actionData.Param));
                 }
             }
 
@@ -145,6 +150,14 @@ public:
             return false;
 
         return _systemTrigger.at(triggerName);
+    }
+
+    void SetSystemTrigger(SystemTriggers trigger) {
+        _systemTrigger[trigger] = true;
+    }
+
+    [[nodiscard]] std::unordered_map<SystemTriggers, bool>& GetSystemTriggers() {
+        return _systemTrigger;
     }
 
     void SetTrigger(const std::string& triggerName) {

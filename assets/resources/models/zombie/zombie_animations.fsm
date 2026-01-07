@@ -19,7 +19,7 @@ nodes:
     - type: animation_state
       animation_guid: b7558c82-a2d4-4d58-82e1-41e811c722c9
       disable_velocity_speed: true
-      animation_speed: 1.0
+      animation_speed: 2.0
 conditions:
   - type: trigger_check
     guid: "cond_idle"

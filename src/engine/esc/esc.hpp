@@ -41,6 +41,9 @@
 #include "directional_light/directional_light_component.hpp"
 #include "directional_light/directional_light_component_serialization.hpp"
 #include "directional_light/directional_light_system.hpp"
+#include "health/health_component.hpp"
+#include "health/health_component_serialization.hpp"
+#include "health/health_system.hpp"
 
 
 class EscSystem {
@@ -127,6 +130,10 @@ public:
                     } else if (const auto &lightSerialization = dynamic_cast<DirectionalLightComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<DirectionalLightComponent>();
                         view->emplace(entity, *lightSerialization);
+                    } else if (const auto &healthSerialization = dynamic_cast<HealthComponentSerialization*>(component.get())) {
+                        const auto &view = registry->view<HealthComponent>();
+                        HealthComponent healthComp(healthSerialization->MaxHealth);
+                        view->emplace(entity, healthComp);
                     }
                 }
             }
@@ -198,6 +205,12 @@ public:
                 scenePtr,
                 registry->view<DeltaTimeComponent>(),
                 registry->view<CameraComponentV2, TransformComponentV2>()));
+
+            // Health system - monitors player health and handles death
+            _systems.emplace_back(std::make_unique<HealthSystem>(
+                registry->view<HealthComponent, TransformComponentV2>(),
+                registry->view<DeltaTimeComponent>(),
+                registry->view<BehaviorTreeComponent, TransformComponentV2>()));
         }
     }
 

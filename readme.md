@@ -109,7 +109,7 @@
 ## 0.1.8 Basic polish
 - [ ] Simple particles
 - [ ] Simple audio
-- [ ] PBR + shadows
+- [ ] Shadows
 - [ ] Basic UI (+ data-bindings)
 
 ## Backlog

@@ -14,6 +14,10 @@ nodes:
       page_guid: df04e927-64d5-406b-8170-ddd96f1864a5
     - type: fps_display
       element_id: fps-display
+    - type: health_display
+      element_id: health-display
+    - type: health_check
+      trigger_name: is_restart
     - type: action_trigger_setter_button_listener
       button_id: hello-button
       trigger_name: is_close

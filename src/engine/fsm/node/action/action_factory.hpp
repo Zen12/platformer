@@ -17,6 +17,8 @@
 #include "start_video_recording_action.hpp"
 #include "stop_video_recording_action.hpp"
 #include "fps_display_action.hpp"
+#include "health_display_action.hpp"
+#include "health_check_action.hpp"
 
 // Forward declaration
 class VideoRecorder;
@@ -94,5 +96,13 @@ public:
 
     [[nodiscard]] FpsDisplayAction CreateFpsDisplayAction(const std::string& elementId) const {
         return {elementId, _uiManager, _sceneManager};
+    }
+
+    [[nodiscard]] HealthDisplayAction CreateHealthDisplayAction(const std::string& elementId) const {
+        return {elementId, _uiManager, _sceneManager};
+    }
+
+    [[nodiscard]] HealthCheckAction CreateHealthCheckAction(const std::string& triggerName) const {
+        return {triggerName, _sceneManager, _triggers};
     }
 };

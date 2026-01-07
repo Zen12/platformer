@@ -1,6 +1,7 @@
 <rml>
 <body>
     <div id="fps-display">FPS: --</div>
+    <div id="health-display">HP: 100/100</div>
     <button id="hello-button">Exit</button>
     <button id="restart-button">Restart</button>
 </body>
