@@ -40,6 +40,12 @@
 #include "action/health_check_action.hpp"
 #include "action/health_check_action_serialization.hpp"
 #include "action/health_check_action_serialization_yaml.hpp"
+#include "../../audio/play_sound_action.hpp"
+#include "../../audio/play_sound_action_serialization.hpp"
+#include "../../audio/play_sound_action_serialization_yaml.hpp"
+#include "../../audio/play_sound_repeated_action.hpp"
+#include "../../audio/play_sound_repeated_action_serialization.hpp"
+#include "../../audio/play_sound_repeated_action_serialization_yaml.hpp"
 #include "action/action_serialization_data.hpp"
 
 namespace YAML {
@@ -100,6 +106,19 @@ namespace YAML {
             } else if (type == "health_check") {
                 const auto serialization = node.as<HealthCheckActionSerialization>();
                 data.Param = serialization.TriggerName;
+            } else if (type == "play_sound") {
+                const auto serialization = node.as<PlaySoundActionSerialization>();
+                data.Param = serialization.AudioGuid;
+                data.Param2 = std::to_string(serialization.Volume);
+                data.Param3 = serialization.Loop ? "true" : "false";
+            } else if (type == "play_sound_repeated") {
+                const auto serialization = node.as<PlaySoundRepeatedActionSerialization>();
+                data.Param = serialization.AudioGuid;
+                data.Param2 = std::to_string(serialization.Volume);
+                data.Param3 = std::to_string(serialization.DelaySeconds);
+                data.Param4 = serialization.Spatial ? "true" : "false";
+                data.Param5 = std::to_string(serialization.MinDistance);
+                data.Param6 = std::to_string(serialization.MaxDistance);
             }
 
             return data;

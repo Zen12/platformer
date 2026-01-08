@@ -36,7 +36,7 @@
   - [x] Material abstraction
   - [x] Instance rendering (per mesh+material)
   - [x] Frustum culling
-  - [ ] PBR
+  - [ ] PBR (0.2+)
 - 💃 Skinned mesh rendering 
   - [x] Bones support
   - [x] Animation via state (FSM)
@@ -102,19 +102,18 @@
 ## 0.1.7 3d platformer game
 - [x] Behaviour Tree as ESC
 - [x] Proper bounce component or part of renderer
-- [ ] Health system, shoot and lose
+- [x] Health system and lose
 - [x] 3d navmesh
 - [ ] One level of 3d platformer with horde AI(Use blender as level editor)
 
 ## 0.1.8 Basic polish
 - [ ] Simple particles
-- [ ] Simple audio
-- [ ] Shadows
+- [x] Simple audio
+- [x] Shadows
 - [ ] Basic UI (+ data-bindings)
 
 ## Backlog
 - [ ] Proper fix retina issue on webgl and macOS
-- [ ] Instance rendering for skinned mesh (per mesh+material)
 - [ ] Proper AssetManager (not link to scene), some refcount solution
 - [ ] Proper Audio system
 - [ ] Proper Particle system 

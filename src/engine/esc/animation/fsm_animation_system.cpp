@@ -79,12 +79,19 @@ void FsmAnimationSystem::OnTick() {
                     // (component is owned by ECS registry, not by this shared_ptr)
                     anim.SelfPtr = std::shared_ptr<FsmAnimationComponent>(&anim, [](FsmAnimationComponent*){});
 
-                    // Create FsmController (managers are nullptr since animation FSMs don't need UI/scene management)
+                    // Get AudioManager from scene for footstep sounds etc.
+                    std::shared_ptr<AudioManager> audioManager = nullptr;
+                    if (auto am = scene->GetAudioManager().lock()) {
+                        audioManager = am;
+                    }
+
+                    // Create FsmController (managers are nullptr except audioManager for sounds)
                     anim.Controller = std::make_shared<FsmController>(
                         fsmAsset,
                         nullptr,
                         nullptr,
                         nullptr,  // videoRecorder (animation FSMs don't need it)
+                        audioManager,  // audioManager for footstep sounds
                         anim.SelfPtr
                     );
 
@@ -140,6 +147,9 @@ void FsmAnimationSystem::OnTick() {
                 anim.MovementDisabledTimer = 0.0f;
             }
         }
+
+        // Update entity position for spatial audio
+        anim.EntityPosition = transform.GetPosition();
 
         // Update FsmController
         if (anim.Controller) {

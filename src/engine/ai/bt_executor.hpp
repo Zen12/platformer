@@ -167,7 +167,7 @@ private:
             case BTNodeType::Wait:
                 return Wait(bt, state, deltaTime, node.Param1);
             case BTNodeType::Idle:
-                return BTStatus::Success;
+                return Idle(navAgent, transform, state, deltaTime, node.Param1, navmesh);
             case BTNodeType::Attack:
                 return Attack(bt, navAgent, state, deltaTime, node.Param1);
 
@@ -458,6 +458,102 @@ private:
             bt.IsAttacking = false;
             BT_LOG("Attack: completed");
             return BTStatus::Success;
+        }
+
+        return BTStatus::Running;
+    }
+
+    static BTStatus Idle(
+        NavmeshAgentComponent* navAgent,
+        const TransformComponentV2* transform,
+        BTNodeState& state,
+        float deltaTime,
+        float radius,
+        GridNavmesh* navmesh
+    ) {
+        if (!navAgent || !transform) {
+            BT_LOG("Idle: missing navAgent or transform");
+            return BTStatus::Failure;
+        }
+
+        // Use default radius if not specified
+        if (radius <= 0) {
+            radius = 3.0f;
+        }
+
+        glm::vec3 currentPos = transform->GetPosition();
+
+        // Check if we need to pick a new destination (first call or arrived)
+        bool needNewDestination = !state.HasCustomTarget;
+
+        if (state.HasCustomTarget) {
+            // Check if arrived at destination
+            float distToTarget = glm::distance(currentPos, state.CustomTarget);
+            constexpr float arrivalThreshold = 0.5f;
+            BT_LOG("Idle: dist=" << distToTarget << " speed=" << navAgent->CurrentSpeed);
+            if (distToTarget <= arrivalThreshold) {
+                BT_LOG("Idle: arrived at target");
+                state.HasCustomTarget = false;
+                navAgent->HasDestination = false;
+                return BTStatus::Success;
+            }
+
+            // Check if stuck (not moving but should be)
+            if (navAgent->CurrentSpeed < 0.05f) {
+                state.Timer += deltaTime;
+                if (state.Timer > 2.0f) {
+                    BT_LOG("Idle: stuck for 2s, picking new destination");
+                    needNewDestination = true;
+                    state.Timer = 0.0f;
+                }
+            } else {
+                state.Timer = 0.0f;
+            }
+        }
+
+        if (needNewDestination) {
+            static std::random_device rd;
+            static std::mt19937 gen(rd());
+            std::uniform_real_distribution<float> dist(-radius, radius);
+
+            glm::vec3 targetPos;
+            bool foundValidPath = false;
+
+            // Try up to 5 times to find a reachable random point
+            for (int attempt = 0; attempt < 5; ++attempt) {
+                targetPos = currentPos + glm::vec3(dist(gen), 0, dist(gen));
+
+                if (navmesh) {
+                    // Clamp to walkable area
+                    if (!navmesh->IsWalkable(targetPos)) {
+                        targetPos = navmesh->FindNearestPoint(targetPos);
+                    }
+
+                    // Check if path exists
+                    auto path = navmesh->FindPath(currentPos, targetPos);
+                    if (!path.empty()) {
+                        foundValidPath = true;
+                        break;
+                    }
+                } else {
+                    foundValidPath = true;
+                    break;
+                }
+            }
+
+            if (!foundValidPath) {
+                BT_LOG("Idle: could not find reachable point");
+                return BTStatus::Success; // Complete idle anyway
+            }
+
+            state.CustomTarget = targetPos;
+            state.HasCustomTarget = true;
+
+            navAgent->Destination = targetPos;
+            navAgent->HasDestination = true;
+            navAgent->DestinationChanged = true;
+
+            BT_LOG("Idle: new target (" << targetPos.x << ", " << targetPos.z << ")");
         }
 
         return BTStatus::Running;

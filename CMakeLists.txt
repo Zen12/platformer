@@ -52,6 +52,7 @@ find_package(RmlUi REQUIRED)
 find_package(FREETYPE REQUIRED)
 find_package(ASSIMP REQUIRED)
 find_package(RVO2 REQUIRED)
+find_package(OpenAL REQUIRED)
 
 if (PLATFORM_DESKTOP)
     find_package(OpenGL REQUIRED)
@@ -75,7 +76,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE GLM::GLM freetype yaml-cpp E
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR} ${RVO2_INCLUDE_DIRS})
 
 if (PLATFORM_DESKTOP)
-    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw)
+    target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw OpenAL::OpenAL)
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE PLATFORM_DESKTOP)
 endif()
 
@@ -119,7 +120,7 @@ if (PLATFORM_WEB)
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output"
     )
 
-    set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS "-s USE_GLFW=3 -s USE_WEBGL2=1 -s FULL_ES3=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s STACK_SIZE=5MB -s INITIAL_MEMORY=256MB -s ASSERTIONS=1 -s EXCEPTION_DEBUG=1 -s NO_DISABLE_EXCEPTION_CATCHING --shell-file ${CMAKE_SOURCE_DIR}/template/html/simple.html --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets")
+    set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS "-lopenal -s USE_GLFW=3 -s USE_WEBGL2=1 -s FULL_ES3=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s STACK_SIZE=5MB -s INITIAL_MEMORY=256MB -s ASSERTIONS=1 -s EXCEPTION_DEBUG=1 -s NO_DISABLE_EXCEPTION_CATCHING --shell-file ${CMAKE_SOURCE_DIR}/template/html/simple.html --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets")
 
 endif()
 

@@ -48,6 +48,9 @@ public:
     // Must be kept alive for weak_ptr references in actions to work
     std::shared_ptr<FsmAnimationComponent> SelfPtr;
 
+    // Entity position for spatial audio (updated by animation system)
+    glm::vec3 EntityPosition = glm::vec3(0.0f);
+
     FsmAnimationComponent() = default;
     explicit FsmAnimationComponent(std::string  fsmGuid)
         : FsmGuid(std::move(fsmGuid)) {}

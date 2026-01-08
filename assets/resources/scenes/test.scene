@@ -90,6 +90,7 @@ entities:
         destination_distance: 1.0
       - type: health
         max_health: 100.0
+      - type: audio_listener
   - guid: main-camera
     tag: main_camera
     components:

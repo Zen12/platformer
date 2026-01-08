@@ -19,6 +19,8 @@
 #include "fps_display_action.hpp"
 #include "health_display_action.hpp"
 #include "health_check_action.hpp"
+#include "../../../audio/play_sound_action.hpp"
+#include "../../../audio/play_sound_repeated_action.hpp"
 
 // Forward declaration
 class VideoRecorder;
@@ -30,6 +32,7 @@ private:
     std::unordered_map<std::string, bool>& _triggers;
     std::unordered_map<SystemTriggers, bool>& _systemTriggers;
     std::shared_ptr<VideoRecorder> _videoRecorder;  // Optional, for video recording
+    std::shared_ptr<AudioManager> _audioManager;  // Optional, for audio
     std::weak_ptr<FsmAnimationComponent> _animationComponent;  // Optional, for animation FSMs
 
 public:
@@ -38,12 +41,14 @@ public:
                   std::unordered_map<std::string, bool>& triggers,
                   std::unordered_map<SystemTriggers, bool>& systemTriggers,
                   std::shared_ptr<VideoRecorder> videoRecorder = nullptr,
+                  std::shared_ptr<AudioManager> audioManager = nullptr,
                   std::weak_ptr<FsmAnimationComponent> animationComponent = std::weak_ptr<FsmAnimationComponent>())
         : _uiManager(std::move(uiManager)),
           _sceneManager(std::move(sceneManager)),
           _triggers(triggers),
           _systemTriggers(systemTriggers),
           _videoRecorder(std::move(videoRecorder)),
+          _audioManager(std::move(audioManager)),
           _animationComponent(std::move(animationComponent)) {}
 
     [[nodiscard]] UiPageAction CreateUiPageAction(const std::string& pageGuid) const {
@@ -104,5 +109,13 @@ public:
 
     [[nodiscard]] HealthCheckAction CreateHealthCheckAction(const std::string& triggerName) const {
         return {triggerName, _sceneManager, _triggers};
+    }
+
+    [[nodiscard]] PlaySoundAction CreatePlaySoundAction(const std::string& audioGuid, float volume, bool loop) const {
+        return {audioGuid, volume, loop, _audioManager};
+    }
+
+    [[nodiscard]] PlaySoundRepeatedAction CreatePlaySoundRepeatedAction(const std::string& audioGuid, float volume, float delaySeconds, bool spatial = true, float minDistance = 1.0f, float maxDistance = 50.0f) const {
+        return {audioGuid, volume, delaySeconds, spatial, minDistance, maxDistance, _audioManager, _animationComponent};
     }
 };

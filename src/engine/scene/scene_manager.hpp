@@ -9,6 +9,7 @@
 #include "../system/input_system.hpp"
 
 #include "../esc/esc.hpp"
+#include "../audio/audio_manager.hpp"
 
 #include <RmlUi/Core.h>
 
@@ -19,6 +20,7 @@ class SceneManager {
     std::weak_ptr<AssetManager> _assetManager;
     std::weak_ptr<Window> _window;
     std::weak_ptr<InputSystem> _inputSystem;
+    std::weak_ptr<AudioManager> _audioManager;
 
     std::shared_ptr<RenderRepository> _renderRepository{};
 
@@ -34,6 +36,14 @@ public:
         _window = window;
         _inputSystem = inputSystem;
         _renderRepository = std::make_shared<RenderRepository>();
+    }
+
+    void SetAudioManager(const std::weak_ptr<AudioManager>& audioManager) {
+        _audioManager = audioManager;
+    }
+
+    [[nodiscard]] std::weak_ptr<AudioManager> GetAudioManager() const noexcept {
+        return _audioManager;
     }
 
     void LoadScene(const SceneAsset& serialization);

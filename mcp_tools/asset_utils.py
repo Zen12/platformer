@@ -10,6 +10,7 @@ ASSET_TYPE_MAPPING = {
     ".ttf": "font",
     ".png": "image",
     ".jpg": "image",
+    ".wav": "audio",
     ".vert": "vertex_shader",
     ".frag": "fragment_shader",
     ".scene": "scene",

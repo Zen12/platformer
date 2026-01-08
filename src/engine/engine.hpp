@@ -14,6 +14,7 @@
 #include "renderer/controller/opengl_render_controller.hpp"
 #include "renderer/video/video_recorder.hpp"
 #include "scene/scene_manager.hpp"
+#include "audio/audio_manager.hpp"
 
 class Engine {
 
@@ -25,6 +26,7 @@ private:
     std::shared_ptr<Window> _window;
     std::shared_ptr<OpenGLRenderController> _renderController;
     std::shared_ptr<VideoRecorder> _videoRecorder;
+    std::shared_ptr<AudioManager> _audioManager;
 
     std::filesystem::path _projectPath;
     ProjectAsset _projectAsset;
@@ -48,4 +50,5 @@ public:
     [[nodiscard]] bool IsReloadRequested() const;
 
     [[nodiscard]] std::shared_ptr<VideoRecorder> GetVideoRecorder() const { return _videoRecorder; }
+    [[nodiscard]] std::shared_ptr<AudioManager> GetAudioManager() const { return _audioManager; }
 };

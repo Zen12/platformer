@@ -17,10 +17,12 @@
 #include "action/fps_display_action.hpp"
 #include "action/health_display_action.hpp"
 #include "action/health_check_action.hpp"
+#include "../../audio/play_sound_action.hpp"
+#include "../../audio/play_sound_repeated_action.hpp"
 
 class StateNode final {
 public:
-    using AllActionVariants = std::variant<UiPageAction, LoadSceneAction, ButtonListenerAction, TriggerSetterButtonListenerAction, SetSystemTriggerAction, LogAction, AnimationStateAction, AnimationStateTransitionAction, StartVideoRecordingAction, StopVideoRecordingAction, FpsDisplayAction, HealthDisplayAction, HealthCheckAction>;
+    using AllActionVariants = std::variant<UiPageAction, LoadSceneAction, ButtonListenerAction, TriggerSetterButtonListenerAction, SetSystemTriggerAction, LogAction, AnimationStateAction, AnimationStateTransitionAction, StartVideoRecordingAction, StopVideoRecordingAction, FpsDisplayAction, HealthDisplayAction, HealthCheckAction, PlaySoundAction, PlaySoundRepeatedAction>;
 private:
     std::vector<AllActionVariants> _states{};
 public:
@@ -29,7 +31,7 @@ public:
     StateNode(std::string guid, std::vector<AllActionVariants> states)
         : _states(std::move(states)), Guid(std::move(guid)) {}
 
-    void EnterAll() const {
+    void EnterAll() {
         for (auto& stateVar : _states) {
             std::visit([](auto& state) {
                 state.OnEnter();
@@ -37,15 +39,15 @@ public:
         }
     }
 
-    void UpdateAll() const {
-        for (auto &stateVar: _states) {
+    void UpdateAll() {
+        for (auto& stateVar : _states) {
             std::visit([](auto& state) {
                 state.OnUpdate();
             }, stateVar);
         }
     }
 
-    void ExitAll() const {
+    void ExitAll() {
         for (auto& stateVar : _states) {
             std::visit([](auto& state) {
                 state.OnExit();

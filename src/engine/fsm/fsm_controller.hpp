@@ -29,6 +29,7 @@
 // Forward declarations
 class FsmAnimationComponent;
 class VideoRecorder;
+class AudioManager;
 
 class FsmController final {
 private:
@@ -42,6 +43,7 @@ private:
     std::shared_ptr<SceneManager> _sceneManager;
     std::shared_ptr<UIManager> _uiManager;
     std::shared_ptr<VideoRecorder> _videoRecorder;
+    std::shared_ptr<AudioManager> _audioManager;
 
     bool _wasEntered;
 
@@ -49,7 +51,7 @@ private:
     void ChangeState(const std::string &state) {
         FSM_LOG << "[FSM] State transition: " << _currentState << " -> " << state << std::endl;
 
-        auto currentNode = _stateNodes.at(_currentState);
+        auto& currentNode = _stateNodes.at(_currentState);
         currentNode.ExitAll();
 
         _currentState = state;
@@ -59,15 +61,16 @@ private:
 
 
 public:
-    explicit FsmController(const FsmAsset& fsmAsset, const std::shared_ptr<SceneManager> &sceneManager, const std::shared_ptr<UIManager> &uiManager, const std::shared_ptr<VideoRecorder> &videoRecorder = nullptr, const std::weak_ptr<FsmAnimationComponent> &animationComponent = std::weak_ptr<FsmAnimationComponent>())
+    explicit FsmController(const FsmAsset& fsmAsset, const std::shared_ptr<SceneManager> &sceneManager, const std::shared_ptr<UIManager> &uiManager, const std::shared_ptr<VideoRecorder> &videoRecorder = nullptr, const std::shared_ptr<AudioManager> &audioManager = nullptr, const std::weak_ptr<FsmAnimationComponent> &animationComponent = std::weak_ptr<FsmAnimationComponent>())
         :   _currentState(fsmAsset.StartNode),
             _sceneManager (sceneManager),
             _uiManager(uiManager),
             _videoRecorder(videoRecorder),
+            _audioManager(audioManager),
             _wasEntered(false)
     {
         // Create ActionFactory with dependencies
-        ActionFactory actionFactory(uiManager, sceneManager, _triggers, _systemTrigger, videoRecorder, animationComponent);
+        ActionFactory actionFactory(uiManager, sceneManager, _triggers, _systemTrigger, videoRecorder, audioManager, animationComponent);
 
         // Convert StateNodeSerialization to StateNode
         for (const auto& nodeSer : fsmAsset.StateNodeSerialization) {
@@ -108,6 +111,17 @@ public:
                     actions.emplace_back(actionFactory.CreateHealthDisplayAction(actionData.Param));
                 } else if (actionData.Type == "health_check") {
                     actions.emplace_back(actionFactory.CreateHealthCheckAction(actionData.Param));
+                } else if (actionData.Type == "play_sound") {
+                    float volume = actionData.Param2.empty() ? 1.0f : std::stof(actionData.Param2);
+                    bool loop = actionData.Param3 == "true";
+                    actions.emplace_back(actionFactory.CreatePlaySoundAction(actionData.Param, volume, loop));
+                } else if (actionData.Type == "play_sound_repeated") {
+                    float volume = actionData.Param2.empty() ? 1.0f : std::stof(actionData.Param2);
+                    float delaySeconds = actionData.Param3.empty() ? 0.5f : std::stof(actionData.Param3);
+                    bool spatial = actionData.Param4.empty() || actionData.Param4 == "true";
+                    float minDistance = actionData.Param5.empty() ? 1.0f : std::stof(actionData.Param5);
+                    float maxDistance = actionData.Param6.empty() ? 50.0f : std::stof(actionData.Param6);
+                    actions.emplace_back(actionFactory.CreatePlaySoundRepeatedAction(actionData.Param, volume, delaySeconds, spatial, minDistance, maxDistance));
                 }
             }
 
@@ -166,7 +180,7 @@ public:
     }
 
     void Update() {
-        const auto currentNode = _stateNodes.at(_currentState);
+        auto& currentNode = _stateNodes.at(_currentState);
 
         if (!_wasEntered) {
             FSM_LOG << "[FSM] Entering state: " << _currentState << std::endl;

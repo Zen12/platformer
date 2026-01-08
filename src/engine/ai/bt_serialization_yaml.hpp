@@ -49,6 +49,7 @@ inline float ReadParam1(const Node& node, BTNodeType type) {
             break;
         case BTNodeType::RandomWander:
         case BTNodeType::FindTargetByTag:
+        case BTNodeType::Idle:
             if (node["radius"]) return node["radius"].as<float>();
             break;
         case BTNodeType::CheckDistance:

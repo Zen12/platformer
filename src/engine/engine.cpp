@@ -27,12 +27,15 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
     _uiManager = std::make_shared<UIManager>(_assetManager, _sceneManager, _window);
     _renderController = std::make_shared<OpenGLRenderController>(_sceneManager);
     _videoRecorder = std::make_shared<VideoRecorder>();
+    _audioManager = std::make_shared<AudioManager>(_assetManager);
+    _sceneManager->SetAudioManager(_audioManager);
 
     _window->WinInit();
+    _audioManager->Initialize();
     _assetManager->Init();
 
     const auto mainFsm = _assetManager->LoadAssetByGuid<FsmAsset>(_projectAsset.MainFsm);
-    _fsmController = std::make_unique<FsmController>(mainFsm, _sceneManager, _uiManager, _videoRecorder);
+    _fsmController = std::make_unique<FsmController>(mainFsm, _sceneManager, _uiManager, _videoRecorder, _audioManager);
 
     _uiManager->Initialize();
 
@@ -58,6 +61,9 @@ void Engine::WaitForTargetFrameRate() const {
 
 Engine::~Engine() {
     std::cout << "Destroying gameengine..." << std::endl;
+
+    // Shutdown audio first
+    _audioManager->Shutdown();
 
     // Clean up RmlUi before destroying other resources
     // Reset the scene manager first (this releases the RmlUI context)
@@ -99,6 +105,7 @@ void Engine::Tick() {
 
     _renderController->Render(_sceneManager->GetRenderRepository());
     _uiManager->Update();
+    _audioManager->Update();
 
     // Capture frame for video recording if active
     if (_videoRecorder->IsRecording()) {

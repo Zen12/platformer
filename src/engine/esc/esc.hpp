@@ -44,6 +44,11 @@
 #include "health/health_component.hpp"
 #include "health/health_component_serialization.hpp"
 #include "health/health_system.hpp"
+#include "audio_source/audio_source_component.hpp"
+#include "audio_source/audio_source_component_serialization.hpp"
+#include "audio_source/audio_system.hpp"
+#include "audio_listener/audio_listener_component.hpp"
+#include "audio_listener/audio_listener_component_serialization.hpp"
 
 
 class EscSystem {
@@ -134,6 +139,22 @@ public:
                         const auto &view = registry->view<HealthComponent>();
                         HealthComponent healthComp(healthSerialization->MaxHealth);
                         view->emplace(entity, healthComp);
+                    } else if (const auto &audioSourceSerialization = dynamic_cast<AudioSourceComponentSerialization*>(component.get())) {
+                        const auto &view = registry->view<AudioSourceComponent>();
+                        AudioSourceComponent audioComp(
+                            audioSourceSerialization->AudioClipGuid,
+                            audioSourceSerialization->Volume,
+                            audioSourceSerialization->Pitch,
+                            audioSourceSerialization->Loop,
+                            audioSourceSerialization->AutoPlay,
+                            audioSourceSerialization->Spatial,
+                            audioSourceSerialization->MinDistance,
+                            audioSourceSerialization->MaxDistance
+                        );
+                        view->emplace(entity, audioComp);
+                    } else if (dynamic_cast<AudioListenerComponentSerialization*>(component.get())) {
+                        const auto &view = registry->view<AudioListenerComponent>();
+                        view->emplace(entity, AudioListenerComponent());
                     }
                 }
             }
@@ -141,7 +162,7 @@ public:
         }
     }
 
-    void InitSystems(std::shared_ptr<RenderRepository> &renderRepository) {
+    void InitSystems(std::shared_ptr<RenderRepository> &renderRepository, const std::weak_ptr<AudioManager>& audioManager = std::weak_ptr<AudioManager>()) {
         if (const auto &scenePtr = _scene.lock()) {
 
             const auto registry = scenePtr->GetEntityRegistry();
@@ -211,6 +232,12 @@ public:
                 registry->view<HealthComponent, TransformComponentV2>(),
                 registry->view<DeltaTimeComponent>(),
                 registry->view<BehaviorTreeComponent, TransformComponentV2>()));
+
+            // Audio system - handles spatial audio and auto-play
+            _systems.emplace_back(std::make_unique<AudioSystem>(
+                registry->view<AudioSourceComponent, TransformComponentV2>(),
+                registry->view<AudioListenerComponent, TransformComponentV2>(),
+                audioManager));
         }
     }
 

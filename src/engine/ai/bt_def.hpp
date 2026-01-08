@@ -1,5 +1,6 @@
 #pragma once
 #include "bt_node_type.hpp"
+#include <glm/glm.hpp>
 #include <vector>
 #include <string>
 #include <cstdint>
@@ -30,6 +31,8 @@ struct BTNodeState {
     uint8_t ChildProgress;  // For sequence/selector: which child we're on
     float Timer;            // For Wait node
     BTStatus LastStatus;
+    glm::vec3 CustomTarget{0}; // For Idle: target position
+    bool HasCustomTarget = false;
 };
 
 // Stack-based execution state (avoids recursion, cache-friendly)
@@ -40,12 +43,12 @@ struct BTExecutionState {
 
     void Reset() {
         StackDepth = 1;
-        Stack[0] = {0, 0, 0.0f, BTStatus::Running};
+        Stack[0] = {0, 0, 0.0f, BTStatus::Running, glm::vec3{0}, false};
     }
 
     void Push(uint16_t nodeIndex) {
         if (StackDepth < MaxDepth) {
-            Stack[StackDepth++] = {nodeIndex, 0, 0.0f, BTStatus::Running};
+            Stack[StackDepth++] = {nodeIndex, 0, 0.0f, BTStatus::Running, glm::vec3{0}, false};
         }
     }
 

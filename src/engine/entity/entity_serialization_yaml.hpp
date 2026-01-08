@@ -30,6 +30,10 @@
 #include "../esc/directional_light/directional_light_component_serialization_yaml.hpp"
 #include "../esc/health/health_component_serialization.hpp"
 #include "../esc/health/health_component_serialization_yaml.hpp"
+#include "../esc/audio_source/audio_source_component_serialization.hpp"
+#include "../esc/audio_source/audio_source_component_serialization_yaml.hpp"
+#include "../esc/audio_listener/audio_listener_component_serialization.hpp"
+#include "../esc/audio_listener/audio_listener_component_serialization_yaml.hpp"
 
 namespace YAML {
     template <>
@@ -88,6 +92,8 @@ namespace YAML {
                 { "behavior_tree",         [](const YAML::Node& n){ return Parse<BehaviorTreeComponentSerialization>(n); } },
                 { "directional_light",     [](const YAML::Node& n){ return Parse<DirectionalLightComponentSerialization>(n); } },
                 { "health",                [](const YAML::Node& n){ return Parse<HealthComponentSerialization>(n); } },
+                { "audio_source",          [](const YAML::Node& n){ return Parse<AudioSourceComponentSerialization>(n); } },
+                { "audio_listener",        [](const YAML::Node& n){ return Parse<AudioListenerComponentSerialization>(n); } },
             };
 
             if (const auto it = pairs.find(type); it != pairs.end()) {

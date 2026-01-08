@@ -15,6 +15,13 @@ nodes:
     - type: animation_state
       animation_guid: b624e619-5108-4ae7-9ff3-9392feee577e
       loop: true
+    - type: play_sound_repeated
+      audio_guid: 651c6f8a-a2eb-4cfc-b80a-11b81d04b732
+      volume: 0.9
+      delay_seconds: 0.3
+      spatial: true
+      min_distance: 0.0
+      max_distance: 30.0
 - name: "Male Jump"
   guid: "jumpState"
   actions:
@@ -23,6 +30,10 @@ nodes:
       loop: true
       animation_speed: 2.0
       disable_velocity_speed: true
+    - type: play_sound
+      audio_guid: fbd77d42-cd13-45f1-8129-4c90f1ee10ad
+      volume: 1.0
+      loop: false
 - name: "Male Land"
   guid: "landState"
   actions:
@@ -34,6 +45,10 @@ nodes:
       disable_velocity_speed: true
       disable_movement: true
       disable_movement_duration: 0.5
+    - type: play_sound
+      audio_guid: 152096d0-3a6e-4dca-bc4b-d107ba435861
+      volume: 0.5
+      loop: false
 conditions:
   - type: trigger_check
     guid: "cond_jump"

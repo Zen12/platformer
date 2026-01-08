@@ -19,6 +19,7 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
 
     if (const auto assetManager = _assetManager.lock()) {
         _scene = std::make_shared<Scene> (_window,_assetManager, _inputSystem);
+        _scene->SetAudioManager(_audioManager);
 
         if (const auto navigationManager = _scene->GetNavigationManager()) {
             if (sceneAsset.Navmesh.has_value()) {
@@ -53,7 +54,7 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
 
     _escSystem->LoadEntities(serialization);
 
-    _escSystem->InitSystems(_renderRepository);
+    _escSystem->InitSystems(_renderRepository, _audioManager);
 }
 
 void SceneManager::UnloadScene() {

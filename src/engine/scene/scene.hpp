@@ -23,6 +23,8 @@
 #include "../navigation/navigation_manager.hpp"
 #include "../renderer/skybox/skybox_renderer.hpp"
 
+class AudioManager;
+
 class Scene {
 private:
     std::unordered_map<std::string, std::shared_ptr<Shader>> _shaders{};
@@ -40,6 +42,7 @@ private:
     std::weak_ptr<Window> _window;
     std::weak_ptr<AssetManager> _assetManager;
     std::weak_ptr<InputSystem> _inputSystem;
+    std::weak_ptr<AudioManager> _audioManager;
 
     std::shared_ptr<entt::registry> _entityRegistry{};
     std::shared_ptr<NavigationManager> _navigationManager{};
@@ -67,6 +70,14 @@ public:
     [[nodiscard]] std::weak_ptr<InputSystem> GetInputSystem() const noexcept;
 
     [[nodiscard]] std::weak_ptr<Window> GetWindow() const noexcept;
+
+    void SetAudioManager(const std::weak_ptr<AudioManager>& audioManager) noexcept {
+        _audioManager = audioManager;
+    }
+
+    [[nodiscard]] std::weak_ptr<AudioManager> GetAudioManager() const noexcept {
+        return _audioManager;
+    }
 
     [[nodiscard]] std::shared_ptr<entt::registry> GetEntityRegistry() const noexcept {
         return _entityRegistry;
