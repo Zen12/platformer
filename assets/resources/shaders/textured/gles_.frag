@@ -3,6 +3,7 @@ precision mediump float;
 
 in vec2 TexCoord;
 in vec4 FragPosLightSpace;
+in vec4 InstanceColor;
 out vec4 FragColor;
 
 uniform sampler2D texture1;
@@ -35,6 +36,7 @@ float calcShadow(vec4 fragPosLightSpace)
 void main()
 {
     vec4 texColor = texture(texture1, TexCoord);
+    vec4 tintedColor = texColor * InstanceColor;
     float shadow = calcShadow(FragPosLightSpace);
-    FragColor = vec4(texColor.rgb * (1.0 - shadow), texColor.a);
+    FragColor = vec4(tintedColor.rgb * (1.0 - shadow), tintedColor.a);
 }

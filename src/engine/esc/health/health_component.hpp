@@ -7,6 +7,8 @@ private:
     bool _isDead = false;
 
 public:
+    bool JustTookDamage = false;  // Set for one frame when damage is taken
+
     HealthComponent() = default;
 
     explicit HealthComponent(float maxHealth)

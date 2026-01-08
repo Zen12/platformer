@@ -10,4 +10,5 @@ struct MaterialAsset
     int BlendMode = 0;
     bool IsCulling = false;
     bool IsDepthTest = false;
+    bool IsDepthWrite = true;
 };

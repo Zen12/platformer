@@ -110,7 +110,7 @@
 - [ ] One level of 3d platformer with horde AI(Use blender as level editor)
 
 ## 0.1.8 Basic polish
-- [ ] Simple particles
+- [x] Simple particles
 - [x] Simple audio
 - [x] Shadows
 - [ ] Basic UI (+ data-bindings)

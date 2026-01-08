@@ -7,7 +7,8 @@ layout (location = 4) in vec4 aModelCol0;
 layout (location = 5) in vec4 aModelCol1;
 layout (location = 6) in vec4 aModelCol2;
 layout (location = 7) in vec4 aModelCol3;
-layout (location = 8) in int aBoneOffset;
+layout (location = 8) in vec4 aInstanceColor;  // unused in depth pass
+layout (location = 9) in int aBoneOffset;
 
 uniform mat4 lightProjection;
 uniform mat4 lightView;

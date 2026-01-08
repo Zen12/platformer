@@ -49,6 +49,9 @@ public:
         }
 
         for (auto [entity, health, transform] : View.each()) {
+            // Clear damage flag from previous frame
+            health.JustTookDamage = false;
+
             if (health.IsDead()) continue;
 
             glm::vec3 playerPos = transform.GetPosition();
@@ -63,6 +66,7 @@ public:
 
                 if (distance <= ATTACK_RANGE) {
                     health.TakeDamage(DAMAGE_PER_ATTACK);
+                    health.JustTookDamage = true;
                     _damageCooldowns[btEntity] = DAMAGE_COOLDOWN;
 
                     HEALTH_LOG("Player took " << DAMAGE_PER_ATTACK << " damage! HP: "

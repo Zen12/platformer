@@ -44,6 +44,9 @@ public:
         for (auto [entity, agent, transform] : View.each()) {
             if (!agent.Enabled) continue;
 
+            // Clear JustLanded at start of tick (so it only remains true for one frame after landing)
+            agent.JustLanded = false;
+
             glm::vec3 currentPos = transform.GetPosition();
 
             // Initialize GroundY and CurrentElevation from navmesh on first tick
@@ -301,7 +304,6 @@ public:
                             }
                         }
                     }
-                    agent.JustLanded = false;
 
                     // Update waypoint navigation - advance to next waypoint when reached
                     if (!agent.PathWaypoints.empty() && !agent.IgnoreCrowdVelocity) {

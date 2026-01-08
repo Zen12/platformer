@@ -130,8 +130,9 @@ public:
                     camera.Projection,
                     skinnedMesh.BoneTransforms,
                     PrimitiveType::Triangles,
-                    std::nullopt,
-                    std::nullopt,
+                    std::nullopt,  // Positions
+                    std::nullopt,  // LineColor
+                    std::nullopt,  // InstanceColor
                     true  // IsSkinned = true
                 });
 
@@ -145,11 +146,12 @@ public:
                         glm::mat4(1.0f),  // Identity - positions are already in world space
                         camera.View,
                         camera.Projection,
-                        std::nullopt,
+                        std::nullopt,  // BoneTransforms
                         PrimitiveType::Lines,
                         boxLines,
-                        glm::vec4(0.0f, 1.0f, 0.0f, 1.0f),  // Green color
-                        false
+                        glm::vec4(0.0f, 1.0f, 0.0f, 1.0f),  // LineColor - Green
+                        std::nullopt,  // InstanceColor
+                        false  // IsSkinned
                     });
                 }
 #endif

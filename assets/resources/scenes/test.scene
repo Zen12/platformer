@@ -91,6 +91,22 @@ entities:
       - type: health
         max_health: 100.0
       - type: audio_listener
+      - type: particle_emitter
+        material_guid: 26232f01-48b5-4b43-8bd2-d6fc30c7c127
+        mesh_guid: sprite
+        max_particles: 15
+        emission_rate: 0.0
+        particle_lifetime: 0.8
+        lifetime_variance: 0.1
+        initial_velocity: [0.0, 1.0, 0.0]
+        velocity_variance: [2.5, 0.5, 2.5]
+        gravity: [0.0, 6.0, 0.0]
+        start_color: [0.6, 0.6, 0.6, 0.8]
+        end_color: [0.4, 0.4, 0.4, 0.0]
+        particle_size: 0.8
+        trigger_on_land: true
+        trigger_on_damage: false
+        burst_count: 8
   - guid: main-camera
     tag: main_camera
     components:

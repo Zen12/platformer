@@ -16,6 +16,10 @@ namespace YAML {
                 rhs.IsDepthTest = node["is_depth_test"].as<bool>();
             }
 
+            if (node["is_depth_write"]) {
+                rhs.IsDepthWrite = node["is_depth_write"].as<bool>();
+            }
+
 #ifdef __EMSCRIPTEN__
             if (const auto shaderNode = node["shader_gles"]) {
                 rhs.VertexShaderGuid = shaderNode["vertex"].as<std::string>();

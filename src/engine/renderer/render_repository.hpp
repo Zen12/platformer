@@ -24,6 +24,7 @@ struct RenderData final {
     const PrimitiveType Primitive = PrimitiveType::Triangles;
     const std::optional<std::vector<glm::vec3>> Positions = std::nullopt;  // Direct position data for lines
     const std::optional<glm::vec4> LineColor = std::nullopt;  // Color for line rendering (RGBA)
+    const std::optional<glm::vec4> InstanceColor = std::nullopt;  // Per-instance color tint (RGBA)
     const bool IsSkinned = false;  // Flag for instanced skinned rendering
 };
 
@@ -101,6 +102,7 @@ struct InstanceData final {
     std::optional<std::vector<glm::mat4>> BoneTransforms;
     std::optional<std::vector<glm::vec3>> Positions;
     std::optional<glm::vec4> LineColor;
+    std::optional<glm::vec4> InstanceColor;
 };
 
 struct DirectionalLightData final {
@@ -128,11 +130,11 @@ public:
     void Add(const RenderData &renderData) noexcept {
         const auto &id = RenderId(renderData.MaterialGuid, renderData.MeshGuid, renderData.ViewMatrix, renderData.ProjectionMatrix, renderData.Primitive, renderData.IsSkinned);
         if (_renderData.find(id) == _renderData.end()) {
-            _renderData[id] = std::vector{InstanceData{renderData.ModelMatrix, renderData.BoneTransforms, renderData.Positions, renderData.LineColor}};
+            _renderData[id] = std::vector{InstanceData{renderData.ModelMatrix, renderData.BoneTransforms, renderData.Positions, renderData.LineColor, renderData.InstanceColor}};
             return;
         }
 
-        _renderData[id].push_back(InstanceData{renderData.ModelMatrix, renderData.BoneTransforms, renderData.Positions, renderData.LineColor});
+        _renderData[id].push_back(InstanceData{renderData.ModelMatrix, renderData.BoneTransforms, renderData.Positions, renderData.LineColor, renderData.InstanceColor});
     }
 
     [[nodiscard]] const std::unordered_map<RenderId, std::vector<InstanceData>> &GetData() const noexcept {

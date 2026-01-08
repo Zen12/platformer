@@ -11,15 +11,16 @@ void InstanceBatch::Clear() {
     _hasBones = false;
 }
 
-void InstanceBatch::AddInstance(const glm::mat4& modelMatrix) {
+void InstanceBatch::AddInstance(const glm::mat4& modelMatrix, const glm::vec4& color) {
     InstanceVertexData instanceData{};
     instanceData.ModelMatrix = modelMatrix;
+    instanceData.InstanceColor = color;
     instanceData.BoneOffset = 0;
     _pendingInstanceData.push_back(instanceData);
     _instanceCount++;
 }
 
-void InstanceBatch::AddInstance(const glm::mat4& modelMatrix, const std::vector<glm::mat4>& boneTransforms) {
+void InstanceBatch::AddInstance(const glm::mat4& modelMatrix, const std::vector<glm::mat4>& boneTransforms, const glm::vec4& color) {
     _hasBones = true;
 
     if (!_boneBuffer) {
@@ -30,6 +31,7 @@ void InstanceBatch::AddInstance(const glm::mat4& modelMatrix, const std::vector<
 
     InstanceVertexData instanceData{};
     instanceData.ModelMatrix = modelMatrix;
+    instanceData.InstanceColor = color;
     instanceData.BoneOffset = boneOffset;
     _pendingInstanceData.push_back(instanceData);
 

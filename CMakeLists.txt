@@ -77,6 +77,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR} ${RVO
 
 if (PLATFORM_DESKTOP)
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw OpenAL::OpenAL)
+    target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${openal-soft_SOURCE_DIR}/include)
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE PLATFORM_DESKTOP)
 endif()
 

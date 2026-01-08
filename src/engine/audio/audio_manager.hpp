@@ -6,13 +6,8 @@
 #include <iostream>
 #include <glm/vec3.hpp>
 
-#ifdef __APPLE__
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
-#else
 #include <AL/al.h>
 #include <AL/alc.h>
-#endif
 
 #include "audio_data.hpp"
 #include "audio_loader.hpp"
@@ -30,9 +25,6 @@ private:
 
     std::unordered_map<std::string, ALuint> _bufferCache;
     std::vector<ALuint> _activeSources;
-    ALuint _nextHandle = 1;
-
-    static constexpr int MAX_SOURCES = 32;
 
 public:
     explicit AudioManager(const std::weak_ptr<AssetManager>& assetManager)

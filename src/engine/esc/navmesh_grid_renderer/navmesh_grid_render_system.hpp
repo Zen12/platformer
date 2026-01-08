@@ -66,10 +66,12 @@ public:
                 glm::mat4(1.0f),
                 camera.View,
                 camera.Projection,
-                std::nullopt,
+                std::nullopt,  // BoneTransforms
                 PrimitiveType::Lines,
                 _gridPositions,
-                glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)  // Red color for navmesh grid
+                glm::vec4(1.0f, 0.0f, 0.0f, 1.0f),  // LineColor - Red for navmesh grid
+                std::nullopt,  // InstanceColor
+                false  // IsSkinned
             });
         }
     }

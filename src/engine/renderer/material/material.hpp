@@ -28,6 +28,7 @@ private:
     std::vector<std::weak_ptr<Texture>> _textures{};
     bool _isFaceCulled{};
     bool _isDepthTestEnabled{};
+    bool _isDepthWriteEnabled{true};
     BlendMode _blendMode{};
 
 
@@ -87,6 +88,14 @@ public:
 
     [[nodiscard]] bool GetDepthTest() const noexcept {
         return _isDepthTestEnabled;
+    }
+
+    void SetDepthWrite(const bool &depthWrite) noexcept {
+        _isDepthWriteEnabled = depthWrite;
+    }
+
+    [[nodiscard]] bool GetDepthWrite() const noexcept {
+        return _isDepthWriteEnabled;
     }
 
     [[nodiscard]] bool HasTextures() const noexcept {
@@ -190,11 +199,11 @@ public:
         if (_isDepthTestEnabled) {
             glEnable(GL_DEPTH_TEST);
             glDepthFunc(GL_LESS);
-            glDepthMask(GL_TRUE);
         } else {
             glDisable(GL_DEPTH_TEST);
-            glDepthMask(GL_FALSE);
         }
+
+        glDepthMask(_isDepthWriteEnabled ? GL_TRUE : GL_FALSE);
 
         switch (_blendMode) {
             case BlendMode::None:

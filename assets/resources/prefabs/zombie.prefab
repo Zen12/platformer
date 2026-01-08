@@ -21,3 +21,19 @@ components:
   - type: behavior_tree
     tree: d962d92b-72f1-4f84-b151-125cdbd76e2d  # zombie_chase.bt
     tick_priority: 0
+  - type: particle_emitter
+    material_guid: 26232f01-48b5-4b43-8bd2-d6fc30c7c127
+    mesh_guid: sprite
+    max_particles: 20
+    emission_rate: 0.0
+    particle_lifetime: 1.2
+    lifetime_variance: 0.1
+    initial_velocity: [0.0, 3.0, 0.0]
+    velocity_variance: [2.0, 1.5, 2.0]
+    position_offset: [0.0, 1.3, 0.0]
+    gravity: [0.0, -6.0, 0.0]
+    start_color: [1.0, 0.0, 0.0, 1.0]
+    end_color: [0.8, 0.0, 0.0, 0.0]
+    particle_size: 2.0
+    trigger_on_attack: true
+    burst_count: 10

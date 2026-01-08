@@ -34,6 +34,8 @@
 #include "../esc/audio_source/audio_source_component_serialization_yaml.hpp"
 #include "../esc/audio_listener/audio_listener_component_serialization.hpp"
 #include "../esc/audio_listener/audio_listener_component_serialization_yaml.hpp"
+#include "../esc/particle_emitter/particle_emitter_component_serialization.hpp"
+#include "../esc/particle_emitter/particle_emitter_component_serialization_yaml.hpp"
 
 namespace YAML {
     template <>
@@ -94,6 +96,7 @@ namespace YAML {
                 { "health",                [](const YAML::Node& n){ return Parse<HealthComponentSerialization>(n); } },
                 { "audio_source",          [](const YAML::Node& n){ return Parse<AudioSourceComponentSerialization>(n); } },
                 { "audio_listener",        [](const YAML::Node& n){ return Parse<AudioListenerComponentSerialization>(n); } },
+                { "particle_emitter",      [](const YAML::Node& n){ return Parse<ParticleEmitterComponentSerialization>(n); } },
             };
 
             if (const auto it = pairs.find(type); it != pairs.end()) {

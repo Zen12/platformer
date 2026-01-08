@@ -99,10 +99,12 @@ public:
                 glm::mat4(1.0f),
                 camera.View,
                 camera.Projection,
-                std::nullopt,
+                std::nullopt,  // BoneTransforms
                 PrimitiveType::Lines,
                 positions,
-                glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)  // Blue color for navmesh
+                glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),  // LineColor - Blue for navmesh
+                std::nullopt,  // InstanceColor
+                false  // IsSkinned
             });
         }
     }

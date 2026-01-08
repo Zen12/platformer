@@ -43,6 +43,7 @@ void InstanceBuffer::Upload(const std::vector<InstanceVertexData>& instances) {
 void InstanceBuffer::SetupAttributes() const {
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
 
+    // Attributes 4-7: ModelMatrix (4x vec4)
     for (int i = 0; i < 4; i++) {
         glEnableVertexAttribArray(4 + i);
         glVertexAttribPointer(4 + i, 4, GL_FLOAT, GL_FALSE,
@@ -51,11 +52,19 @@ void InstanceBuffer::SetupAttributes() const {
         glVertexAttribDivisor(4 + i, 1);
     }
 
+    // Attribute 8: InstanceColor (vec4)
     glEnableVertexAttribArray(8);
-    glVertexAttribIPointer(8, 1, GL_INT,
-                           sizeof(InstanceVertexData),
-                           reinterpret_cast<void*>(sizeof(glm::mat4)));
+    glVertexAttribPointer(8, 4, GL_FLOAT, GL_FALSE,
+                          sizeof(InstanceVertexData),
+                          reinterpret_cast<void*>(sizeof(glm::mat4)));
     glVertexAttribDivisor(8, 1);
+
+    // Attribute 9: BoneOffset (int)
+    glEnableVertexAttribArray(9);
+    glVertexAttribIPointer(9, 1, GL_INT,
+                           sizeof(InstanceVertexData),
+                           reinterpret_cast<void*>(sizeof(glm::mat4) + sizeof(glm::vec4)));
+    glVertexAttribDivisor(9, 1);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

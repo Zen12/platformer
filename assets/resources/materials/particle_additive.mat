@@ -1,0 +1,12 @@
+name: particle_additive
+is_culling: false
+is_depth_test: true
+is_depth_write: false
+blend_mode: 2
+shader_opengl:
+  vertex: 27501e67-25ef-4d36-a0d7-e7478679c311
+  fragment: 494667a0-6950-4940-a7a1-72ea7743580f
+shader_gles:
+  vertex: 3e5b9d35-ee6e-4fd1-9fb2-3ee69540a7dd
+  fragment: 7cf6d018-2a37-4344-af60-78bd68e9ea16
+image: b7006ba6-f1bc-44dc-914d-60f1dc38af32

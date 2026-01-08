@@ -27,6 +27,8 @@
 #include "../tag/tag_component.hpp"
 #include "../../ai/bt_component.hpp"
 #include "../../ai/bt_component_serialization.hpp"
+#include "../particle_emitter/particle_emitter_component.hpp"
+#include "../particle_emitter/particle_emitter_component_serialization.hpp"
 #include <memory>
 #include <random>
 
@@ -90,6 +92,9 @@ private:
                 const auto view = registry->view<PlayerControllerComponent>();
                 PlayerControllerComponent player(playerSerialization->MoveSpeed, playerSerialization->DestinationDistance);
                 view->emplace(entity, player);
+            } else if (const auto particleSerialization = dynamic_cast<ParticleEmitterComponentSerialization*>(component.get())) {
+                const auto view = registry->view<ParticleEmitterComponent>();
+                view->emplace(entity, *particleSerialization);
             }
         }
     }

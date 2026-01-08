@@ -175,7 +175,9 @@ void OpenGLRenderController::RenderInstanced(const RenderId& renderId, const std
     if (instances.empty()) return;
 
     const auto mat = _sceneManager->GetMaterial(renderId.MaterialGuid);
-    if (!mat) return;
+    if (!mat) {
+        return;
+    }
 
     const std::string batchKey = renderId.MaterialGuid + "_" + renderId.MeshGuid;
 
@@ -187,10 +189,11 @@ void OpenGLRenderController::RenderInstanced(const RenderId& renderId, const std
     batch->Clear();
 
     for (const auto& inst : instances) {
+        const glm::vec4 color = inst.InstanceColor.value_or(glm::vec4(1.0f));
         if (renderId.IsSkinned && inst.BoneTransforms.has_value() && !inst.BoneTransforms.value().empty()) {
-            batch->AddInstance(inst.ModelMatrix, inst.BoneTransforms.value());
+            batch->AddInstance(inst.ModelMatrix, inst.BoneTransforms.value(), color);
         } else {
-            batch->AddInstance(inst.ModelMatrix);
+            batch->AddInstance(inst.ModelMatrix, color);
         }
     }
 
@@ -312,6 +315,14 @@ void OpenGLRenderController::RenderShadowPass(const std::shared_ptr<RenderReposi
             continue;
         }
 
+        // Skip shadow casting for transparent/additive materials (particles, etc.)
+        if (const auto mat = _sceneManager->GetMaterial(renderId.MaterialGuid)) {
+            const auto blendMode = mat->GetBlendMode();
+            if (blendMode == BlendMode::ColorAdditive || blendMode == BlendMode::AlphaAdditive || blendMode == BlendMode::StandardAlpha) {
+                continue;
+            }
+        }
+
         const std::string batchKey = std::string("shadow_") + renderId.MeshGuid + (renderId.IsSkinned ? "_skinned" : "");
 
         if (_batches.find(batchKey) == _batches.end()) {
@@ -323,9 +334,9 @@ void OpenGLRenderController::RenderShadowPass(const std::shared_ptr<RenderReposi
 
         for (const auto& inst : instances) {
             if (renderId.IsSkinned && inst.BoneTransforms.has_value() && !inst.BoneTransforms.value().empty()) {
-                batch->AddInstance(inst.ModelMatrix, inst.BoneTransforms.value());
+                batch->AddInstance(inst.ModelMatrix, inst.BoneTransforms.value(), glm::vec4(1.0f));
             } else {
-                batch->AddInstance(inst.ModelMatrix);
+                batch->AddInstance(inst.ModelMatrix, glm::vec4(1.0f));
             }
         }
 

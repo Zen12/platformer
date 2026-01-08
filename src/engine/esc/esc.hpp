@@ -49,6 +49,10 @@
 #include "audio_source/audio_system.hpp"
 #include "audio_listener/audio_listener_component.hpp"
 #include "audio_listener/audio_listener_component_serialization.hpp"
+#include "particle_emitter/particle_emitter_component.hpp"
+#include "particle_emitter/particle_emitter_component_serialization.hpp"
+#include "particle_emitter/particle_system.hpp"
+#include "particle_emitter/particle_render_system.hpp"
 
 
 class EscSystem {
@@ -155,6 +159,9 @@ public:
                     } else if (dynamic_cast<AudioListenerComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<AudioListenerComponent>();
                         view->emplace(entity, AudioListenerComponent());
+                    } else if (const auto &particleSerialization = dynamic_cast<ParticleEmitterComponentSerialization*>(component.get())) {
+                        const auto &view = registry->view<ParticleEmitterComponent>();
+                        view->emplace(entity, *particleSerialization);
                     }
                 }
             }
@@ -238,6 +245,21 @@ public:
                 registry->view<AudioSourceComponent, TransformComponentV2>(),
                 registry->view<AudioListenerComponent, TransformComponentV2>(),
                 audioManager));
+
+            // Particle system - updates particle physics and spawning
+            _systems.emplace_back(std::make_unique<ParticleSystem>(
+                registry->view<ParticleEmitterComponent, TransformComponentV2>(),
+                registry->view<DeltaTimeComponent>(),
+                registry->view<ParticleEmitterComponent, NavmeshAgentComponent>(),
+                registry->view<ParticleEmitterComponent, HealthComponent>(),
+                registry->view<ParticleEmitterComponent, BehaviorTreeComponent>()));
+
+            // Particle render system - renders particles
+            _systems.emplace_back(std::make_unique<ParticleRenderSystem>(
+                registry->view<ParticleEmitterComponent, TransformComponentV2>(),
+                registry->view<CameraComponentV2>(),
+                renderRepository,
+                scenePtr));
         }
     }
 

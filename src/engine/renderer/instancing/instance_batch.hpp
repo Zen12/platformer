@@ -25,8 +25,8 @@ public:
 
     void Clear();
 
-    void AddInstance(const glm::mat4& modelMatrix);
-    void AddInstance(const glm::mat4& modelMatrix, const std::vector<glm::mat4>& boneTransforms);
+    void AddInstance(const glm::mat4& modelMatrix, const glm::vec4& color = glm::vec4(1.0f));
+    void AddInstance(const glm::mat4& modelMatrix, const std::vector<glm::mat4>& boneTransforms, const glm::vec4& color = glm::vec4(1.0f));
 
     void Finalize();
 

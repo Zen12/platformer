@@ -54,7 +54,19 @@ public:
                     }
                 }
 
-                _repository->Add(RenderData{mesh.MaterialGuid, mesh.Guid, model, camera.View, camera.Projection, std::nullopt});
+                _repository->Add(RenderData{
+                    mesh.MaterialGuid,
+                    mesh.Guid,
+                    model,
+                    camera.View,
+                    camera.Projection,
+                    std::nullopt,  // BoneTransforms
+                    PrimitiveType::Triangles,
+                    std::nullopt,  // Positions
+                    std::nullopt,  // LineColor
+                    std::nullopt,  // InstanceColor
+                    false  // IsSkinned
+                });
             }
         }
     }

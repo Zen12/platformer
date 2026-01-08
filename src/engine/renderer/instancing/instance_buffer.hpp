@@ -9,6 +9,7 @@
 
 struct InstanceVertexData {
     glm::mat4 ModelMatrix;
+    glm::vec4 InstanceColor;  // Per-instance color tint (RGBA)
     int32_t BoneOffset;
     int32_t Padding[3];
 };

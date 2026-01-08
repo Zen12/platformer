@@ -8,10 +8,12 @@ layout (location = 4) in vec4 aModelCol0;
 layout (location = 5) in vec4 aModelCol1;
 layout (location = 6) in vec4 aModelCol2;
 layout (location = 7) in vec4 aModelCol3;
-layout (location = 8) in int aBoneOffset;
+layout (location = 8) in vec4 aInstanceColor;
+layout (location = 9) in int aBoneOffset;
 
 out vec2 TexCoord;
 out vec4 FragPosLightSpace;
+out vec4 InstanceColor;
 
 uniform mat4 projection;
 uniform mat4 view;
@@ -49,4 +51,5 @@ void main()
 
     TexCoord = aTexCoord;
     FragPosLightSpace = lightProjection * lightView * worldPos;
+    InstanceColor = aInstanceColor;
 }

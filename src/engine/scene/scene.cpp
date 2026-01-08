@@ -60,6 +60,7 @@ std::shared_ptr<Material> Scene::GetMaterial(const std::string &guid) {
             material->SetBlendMode(static_cast<BlendMode>(materialAsset.BlendMode));
             material->SetCulling(materialAsset.IsCulling);
             material->SetDepthTest(materialAsset.IsDepthTest);
+            material->SetDepthWrite(materialAsset.IsDepthWrite);
 
             if (!materialAsset.Image.empty()) {
                 const auto sprite = GetTexture(materialAsset.Image);

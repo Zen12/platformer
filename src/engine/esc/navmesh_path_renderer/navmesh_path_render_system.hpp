@@ -79,10 +79,12 @@ public:
                 glm::mat4(1.0f),
                 camera.View,
                 camera.Projection,
-                std::nullopt,
+                std::nullopt,  // BoneTransforms
                 PrimitiveType::Lines,
                 positions,
-                glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)  // Green color for AI agent paths
+                glm::vec4(0.0f, 1.0f, 0.0f, 1.0f),  // LineColor - Green for AI agent paths
+                std::nullopt,  // InstanceColor
+                false  // IsSkinned
             });
         }
     }
