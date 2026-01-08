@@ -11,9 +11,16 @@
 
 #define DEBUG_ENGINE_PROFILE 0
 
+#if DEBUG_ENGINE_PROFILE
+#include <iostream>
+#define ENGINE_LOG if(1) std::cout
+#else
+#define ENGINE_LOG if(0) std::cout
+#endif
+
 Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectPath) {
 
-    std::cout << "Load project from: " << _projectPath << "\n";
+    ENGINE_LOG << "Load project from: " << _projectPath << "\n";
     AssetLoader<Texture>::Init();
     AssetLoader<MeshData>::Init();
     AssetLoader<AnimationData>::Init();
@@ -60,7 +67,7 @@ void Engine::WaitForTargetFrameRate() const {
 }
 
 Engine::~Engine() {
-    std::cout << "Destroying gameengine..." << std::endl;
+    ENGINE_LOG << "Destroying gameengine..." << std::endl;
 
     // Shutdown audio first
     _audioManager->Shutdown();

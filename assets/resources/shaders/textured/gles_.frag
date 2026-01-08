@@ -36,7 +36,9 @@ float calcShadow(vec4 fragPosLightSpace)
 void main()
 {
     vec4 texColor = texture(texture1, TexCoord);
-    vec4 tintedColor = texColor * InstanceColor;
+    // Use texture alpha with instance color for tinting
+    vec3 tintedRgb = texColor.rgb * InstanceColor.rgb;
+    float tintedAlpha = texColor.a * InstanceColor.a;
     float shadow = calcShadow(FragPosLightSpace);
-    FragColor = vec4(tintedColor.rgb * (1.0 - shadow), tintedColor.a);
+    FragColor = vec4(tintedRgb * (1.0 - shadow), tintedAlpha);
 }

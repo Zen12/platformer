@@ -2,7 +2,15 @@
 
 #include "../../fsm/node/action/action.hpp"
 #include "../ui_manager.hpp"
+
+#define DEBUG_BUTTON_LISTENER 0
+
+#if DEBUG_BUTTON_LISTENER
 #include <iostream>
+#define BUTTON_LOG if(1) std::cout
+#else
+#define BUTTON_LOG if(0) std::cout
+#endif
 
 struct ButtonListenerAction final : public Action {
 
@@ -18,7 +26,7 @@ public:
     void OnEnter() const override {
         if (_manager && !_buttonId.empty()) {
             _handlerId = _manager->SetButtonClickHandler(_buttonId, [buttonId = _buttonId]() {
-                std::cout << "Button clicked: " << buttonId << std::endl;
+                BUTTON_LOG << "Button clicked: " << buttonId << std::endl;
             });
         }
     }

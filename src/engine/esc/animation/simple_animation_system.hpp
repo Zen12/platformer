@@ -11,8 +11,16 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <cmath>
-#include <iostream>
 #include <unordered_map>
+
+#define DEBUG_SIMPLE_ANIMATION 0
+
+#if DEBUG_SIMPLE_ANIMATION
+#include <iostream>
+#define ANIM_SYS_LOG if(1) std::cout
+#else
+#define ANIM_SYS_LOG if(0) std::cout
+#endif
 
 class SimpleAnimationSystem final : public ISystemView<SimpleAnimationComponent, SkinnedMeshRendererComponent, TransformComponentV2> {
 private:
@@ -102,7 +110,7 @@ public:
                 skinnedMesh.BoneOffsets = scene->GetMeshBoneOffsets(skinnedMesh.Guid);
                 skinnedMesh.BoneParents = scene->GetMeshBoneParents(skinnedMesh.Guid);
                 if (!skinnedMesh.BoneNames.empty()) {
-                    std::cout << "Loaded " << skinnedMesh.BoneNames.size() << " bones with hierarchy for mesh" << std::endl;
+                    ANIM_SYS_LOG << "Loaded " << skinnedMesh.BoneNames.size() << " bones with hierarchy for mesh" << std::endl;
                 }
             }
 
@@ -111,9 +119,9 @@ public:
                 auto animData = scene->GetAnimation(anim.AnimationGuid);
                 if (animData) {
                     _loadedAnimations[anim.AnimationGuid] = animData;
-                    std::cout << "Loaded animation: " << animData->Name << " (" << animData->Duration << "s)" << std::endl;
+                    ANIM_SYS_LOG << "Loaded animation: " << animData->Name << " (" << animData->Duration << "s)" << std::endl;
                 } else {
-                    std::cerr << "Failed to load animation: " << anim.AnimationGuid << std::endl;
+                    ANIM_SYS_LOG << "Failed to load animation: " << anim.AnimationGuid << std::endl;
                     anim.Enabled = false;
                     continue;
                 }

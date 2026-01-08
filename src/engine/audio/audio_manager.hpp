@@ -3,7 +3,6 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <iostream>
 #include <glm/vec3.hpp>
 
 #include <AL/al.h>
@@ -12,6 +11,15 @@
 #include "audio_data.hpp"
 #include "audio_loader.hpp"
 #include "../asset/asset_manager.hpp"
+
+#define DEBUG_AUDIO_MANAGER 0
+
+#if DEBUG_AUDIO_MANAGER
+#include <iostream>
+#define AUDIO_LOG if(1) std::cout
+#else
+#define AUDIO_LOG if(0) std::cout
+#endif
 
 using AudioHandle = uint32_t;
 constexpr AudioHandle INVALID_AUDIO_HANDLE = 0;
@@ -63,7 +71,7 @@ public:
         ALfloat orientation[] = {0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f};
         alListenerfv(AL_ORIENTATION, orientation);
 
-        std::cout << "AudioManager: OpenAL initialized successfully" << std::endl;
+        AUDIO_LOG << "AudioManager: OpenAL initialized successfully" << std::endl;
         return true;
     }
 

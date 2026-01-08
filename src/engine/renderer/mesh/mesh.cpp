@@ -5,7 +5,7 @@
 
 #if DEBUG_ENGINE_MESH
 #include <iostream>
-#define MESH_LOG if(1) std::cout
+#define MESH_LOG if(0) std::cout
 #else
 #define MESH_LOG if(0) std::cout
 #endif
