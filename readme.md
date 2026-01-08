@@ -41,7 +41,7 @@
   - [x] Bones support
   - [x] Animation via state (FSM)
   - [ ] IK (0.2+)
-  - [ ] Instance rendering (0.2+)
+  - [x] Instance rendering
 - 🧠 Nav mesh
   - [x] 2d builder
   - [x] AStar
@@ -60,17 +60,20 @@
   - [x] Scene awareness (fast scene builder)
   - [ ] File lock system for multiple agents (0.2+)
 - 🔊Sound
-  - [ ] One shot clip
-  - [ ] Loop clip
+  - [x] One shot clip
+  - [x] Loop clip
   - [ ] Mixer (0.2+)
-- 💠Prefab (0.2+)
-  - [ ] Entity prefab
-  - [ ] Nested prefab
+- 💠Prefab 
+  - [x] Entity prefab
+  - [ ] Nested prefab (0.2+)
 - ▶️Editor (0.2+)
   - [x] Gameplayer recorder
   - [ ] Scene visualize 
   - [ ] MCP as Editor
-- 💥Particle System (0.2+)
+- 💥Particle System
+  - [ ] Lifetime 
+  - [ ] Color
+  - [ ] Shape (0.2+)
 
  
 ## 🔨 Project structure
