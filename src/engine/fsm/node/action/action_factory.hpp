@@ -21,6 +21,7 @@
 #include "health_check_action.hpp"
 #include "../../../audio/play_sound_action.hpp"
 #include "../../../audio/play_sound_repeated_action.hpp"
+#include "../../../audio/mute_audio_action.hpp"
 
 // Forward declaration
 class VideoRecorder;
@@ -117,5 +118,9 @@ public:
 
     [[nodiscard]] PlaySoundRepeatedAction CreatePlaySoundRepeatedAction(const std::string& audioGuid, float volume, float delaySeconds, bool spatial = true, float minDistance = 1.0f, float maxDistance = 50.0f) const {
         return {audioGuid, volume, delaySeconds, spatial, minDistance, maxDistance, _audioManager, _animationComponent};
+    }
+
+    [[nodiscard]] MuteAudioAction CreateMuteAudioAction(bool mute, bool onlyDebug) const {
+        return {mute, onlyDebug, _audioManager};
     }
 };

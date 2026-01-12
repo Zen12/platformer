@@ -48,6 +48,9 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
 
     _targetFrameTime = 1.0f / _projectAsset.TargetFps;
 
+#ifndef NDEBUG
+        _audioManager->ToggleMute();
+#endif
     _frameTimer.Start();
 }
 
@@ -141,6 +144,9 @@ void Engine::Tick() {
     if (_inputSystem->IsKeyUp(InputKey::R)) {
         _isReloadRequested = true;
         _window->Destroy();
+    }
+    if (_inputSystem->IsKeyUp(InputKey::M)) {
+        _audioManager->ToggleMute();
     }
 }
 

@@ -1,0 +1,56 @@
+Ground Model Export Settings
+=============================
+
+IMPORTANT: This model has non-uniform scale that must be baked into mesh vertices before export.
+
+Using MCP Tool (Recommended):
+-----------------------------
+Use the export_to_glb_baked MCP tool:
+
+    export_to_glb_baked(
+        input_blend="assets/resources/models/ground/original/ground2.blend",
+        output_glb="assets/resources/models/ground/ground2.glb"
+    )
+
+This tool automatically:
+- Bakes object transforms (scale, rotation, location) into mesh vertices
+- Exports with Y-up orientation
+- No bones/skins
+- Reports mesh bounds in output
+
+Manual Blender Python Script:
+-----------------------------
+import bpy
+from mathutils import Vector
+
+bpy.ops.wm.read_homefile(use_empty=True)
+bpy.ops.wm.open_mainfile(filepath="ground2.blend")
+
+for obj in list(bpy.data.objects):
+    if obj.type == 'MESH':
+        mat = obj.matrix_world.copy()
+        mesh = obj.data
+        new_mesh = mesh.copy()
+        new_mesh.name = "Ground"
+
+        # Bake transforms into vertices
+        for v in new_mesh.vertices:
+            v.co = mat @ v.co
+
+        new_obj = bpy.data.objects.new("Ground", new_mesh)
+        bpy.context.collection.objects.link(new_obj)
+        bpy.data.objects.remove(obj)
+
+bpy.ops.export_scene.gltf(
+    filepath="ground2.glb",
+    export_format='GLB',
+    export_yup=True,
+    export_skins=False,
+    export_animations=False
+)
+
+Why Baked Export?
+-----------------
+Standard GLB export stores object scale in node transform, not in vertex data.
+Game engine may not apply node transforms correctly for static meshes.
+Baking transforms ensures the mesh vertices contain the actual world-space positions.

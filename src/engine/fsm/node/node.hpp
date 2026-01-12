@@ -19,10 +19,11 @@
 #include "action/health_check_action.hpp"
 #include "../../audio/play_sound_action.hpp"
 #include "../../audio/play_sound_repeated_action.hpp"
+#include "../../audio/mute_audio_action.hpp"
 
 class StateNode final {
 public:
-    using AllActionVariants = std::variant<UiPageAction, LoadSceneAction, ButtonListenerAction, TriggerSetterButtonListenerAction, SetSystemTriggerAction, LogAction, AnimationStateAction, AnimationStateTransitionAction, StartVideoRecordingAction, StopVideoRecordingAction, FpsDisplayAction, HealthDisplayAction, HealthCheckAction, PlaySoundAction, PlaySoundRepeatedAction>;
+    using AllActionVariants = std::variant<UiPageAction, LoadSceneAction, ButtonListenerAction, TriggerSetterButtonListenerAction, SetSystemTriggerAction, LogAction, AnimationStateAction, AnimationStateTransitionAction, StartVideoRecordingAction, StopVideoRecordingAction, FpsDisplayAction, HealthDisplayAction, HealthCheckAction, PlaySoundAction, PlaySoundRepeatedAction, MuteAudioAction>;
 private:
     std::vector<AllActionVariants> _states{};
 public:

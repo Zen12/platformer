@@ -1,0 +1,10 @@
+name: solid_color_red
+is_culling: true
+is_depth_test: true
+blend_mode: 0
+shader_opengl:
+  vertex: cf4fcdf9-3e56-4d27-9ceb-d597056cab86
+  fragment: a8c484fe-0e75-4e3a-bc30-f0e285b76cef
+shader_gles:
+  vertex: 70639336-6457-4d37-a986-176f837ed66d
+  fragment: adfb2ee5-e9e8-44b1-a3c4-2be46a453641

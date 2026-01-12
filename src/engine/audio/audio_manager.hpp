@@ -34,6 +34,9 @@ private:
     std::unordered_map<std::string, ALuint> _bufferCache;
     std::vector<ALuint> _activeSources;
 
+    bool _muted = false;
+    float _masterVolume = 1.0f;
+
 public:
     explicit AudioManager(const std::weak_ptr<AssetManager>& assetManager)
         : _assetManager(assetManager) {}
@@ -218,6 +221,30 @@ public:
 
     [[nodiscard]] bool IsInitialized() const noexcept {
         return _device != nullptr && _context != nullptr;
+    }
+
+    void SetMuted(bool muted) noexcept {
+        _muted = muted;
+        alListenerf(AL_GAIN, _muted ? 0.0f : _masterVolume);
+    }
+
+    [[nodiscard]] bool IsMuted() const noexcept {
+        return _muted;
+    }
+
+    void ToggleMute() noexcept {
+        SetMuted(!_muted);
+    }
+
+    void SetMasterVolume(float volume) noexcept {
+        _masterVolume = volume;
+        if (!_muted) {
+            alListenerf(AL_GAIN, _masterVolume);
+        }
+    }
+
+    [[nodiscard]] float GetMasterVolume() const noexcept {
+        return _masterVolume;
     }
 
 private:

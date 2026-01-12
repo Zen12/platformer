@@ -8,7 +8,6 @@ nodes:
       output_file: "test_recording.mp4"
       fps: 60
     - type: load_scene
-      #scene_guid: f8f4adf1-5da8-4b78-8be8-f3dc3bb2b3a2
       scene_guid: 963d3fa8-8f5c-45aa-beab-1aa887e30816
     - type: load_ui_page
       page_guid: df04e927-64d5-406b-8170-ddd96f1864a5

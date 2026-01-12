@@ -122,6 +122,10 @@ public:
                     float minDistance = actionData.Param5.empty() ? 1.0f : std::stof(actionData.Param5);
                     float maxDistance = actionData.Param6.empty() ? 50.0f : std::stof(actionData.Param6);
                     actions.emplace_back(actionFactory.CreatePlaySoundRepeatedAction(actionData.Param, volume, delaySeconds, spatial, minDistance, maxDistance));
+                } else if (actionData.Type == "mute_audio") {
+                    bool mute = actionData.Param.empty() || actionData.Param == "true";
+                    bool onlyDebug = actionData.Param2 == "true";
+                    actions.emplace_back(actionFactory.CreateMuteAudioAction(mute, onlyDebug));
                 }
             }
 

@@ -46,6 +46,9 @@
 #include "../../audio/play_sound_repeated_action.hpp"
 #include "../../audio/play_sound_repeated_action_serialization.hpp"
 #include "../../audio/play_sound_repeated_action_serialization_yaml.hpp"
+#include "../../audio/mute_audio_action.hpp"
+#include "../../audio/mute_audio_action_serialization.hpp"
+#include "../../audio/mute_audio_action_serialization_yaml.hpp"
 #include "action/action_serialization_data.hpp"
 
 namespace YAML {
@@ -119,6 +122,10 @@ namespace YAML {
                 data.Param4 = serialization.Spatial ? "true" : "false";
                 data.Param5 = std::to_string(serialization.MinDistance);
                 data.Param6 = std::to_string(serialization.MaxDistance);
+            } else if (type == "mute_audio") {
+                const auto serialization = node.as<MuteAudioActionSerialization>();
+                data.Param = serialization.Mute ? "true" : "false";
+                data.Param2 = serialization.OnlyDebug ? "true" : "false";
             }
 
             return data;

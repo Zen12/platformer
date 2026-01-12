@@ -553,6 +553,174 @@ else:
         return error_msg
 
 
+@mcp.tool()
+def export_to_glb_baked(
+    input_blend: str,
+    output_glb: str,
+    export_yup: bool = True
+) -> str:
+    """
+    Export Blender file to GLB with transforms baked into mesh vertices.
+
+    This tool bakes object transforms (scale, rotation, location) directly into
+    mesh vertex data before export. Use this for static meshes that have non-uniform
+    scale or transforms that need to be preserved in the exported mesh data.
+
+    Unlike export_to_glb which stores transforms in the node, this tool:
+    - Multiplies all vertex positions by the object's world matrix
+    - Resets object transform to identity (scale=1, rotation=0, location=0)
+    - Exports the mesh with transforms already applied to vertices
+
+    Args:
+        input_blend: Path to Blender file (.blend)
+        output_glb: Path to save GLB file
+        export_yup: Convert to Y-up orientation (default: True)
+
+    Returns:
+        str: Result of export operation with mesh bounds
+
+    Example:
+        export_to_glb_baked(
+            "assets/resources/models/ground/original/ground2.blend",
+            "assets/resources/models/ground/ground2.glb"
+        )
+
+    Use cases:
+        - Ground/terrain meshes with large scale values
+        - Static props with non-uniform scale
+        - Any mesh where you want transforms baked into vertex data
+    """
+    logger.info(f"Exporting to GLB (baked): {input_blend} -> {output_glb}")
+
+    # Make paths absolute
+    input_blend = os.path.abspath(input_blend)
+    output_glb = os.path.abspath(output_glb)
+
+    # Verify input exists
+    if not os.path.exists(input_blend):
+        return f"Error: Input .blend file not found: {input_blend}"
+
+    # Ensure output directory exists
+    os.makedirs(os.path.dirname(output_glb), exist_ok=True)
+
+    script = f"""import bpy
+from mathutils import Vector
+
+# Clear and load file
+bpy.ops.wm.read_homefile(use_empty=True)
+bpy.ops.wm.open_mainfile(filepath="{input_blend}")
+
+print(f"Loaded {{len(bpy.data.objects)}} objects")
+
+# Process each mesh object
+processed = []
+for obj in list(bpy.data.objects):
+    if obj.type == 'MESH':
+        print(f"Processing: {{obj.name}}, Scale: {{obj.scale[:]}}")
+
+        # Get world matrix (includes scale, rotation, location)
+        mat = obj.matrix_world.copy()
+        mesh = obj.data
+        new_mesh = mesh.copy()
+        new_mesh.name = obj.name + "_baked"
+
+        # Bake transforms into vertices
+        for v in new_mesh.vertices:
+            v.co = mat @ v.co
+
+        # Create new object with transformed mesh
+        new_obj = bpy.data.objects.new(obj.name + "_export", new_mesh)
+        bpy.context.collection.objects.link(new_obj)
+
+        # Remove old object
+        bpy.data.objects.remove(obj)
+
+        # Report bounds
+        xs = [v.co.x for v in new_mesh.vertices]
+        ys = [v.co.y for v in new_mesh.vertices]
+        zs = [v.co.z for v in new_mesh.vertices]
+        print(f"  Baked bounds: X({{min(xs):.1f}} to {{max(xs):.1f}}), Y({{min(ys):.1f}} to {{max(ys):.1f}}), Z({{min(zs):.1f}} to {{max(zs):.1f}})")
+        processed.append(new_obj.name)
+
+print(f"Processed {{len(processed)}} mesh(es)")
+
+# Export to GLB
+bpy.ops.export_scene.gltf(
+    filepath="{output_glb}",
+    export_format='GLB',
+    export_yup={str(export_yup)},
+    export_skins=False,
+    export_animations=False
+)
+
+# Report file size
+import os
+if os.path.exists("{output_glb}"):
+    size_kb = os.path.getsize("{output_glb}") / 1024
+    print(f"Exported to: {output_glb}")
+    print(f"File size: {{size_kb:.1f}} KB")
+
+    # Verify GLB bounds
+    import struct
+    import json
+    with open("{output_glb}", 'rb') as f:
+        f.read(12)
+        chunk_length = struct.unpack('<I', f.read(4))[0]
+        f.read(4)
+        gltf = json.loads(f.read(chunk_length).decode('utf-8'))
+        for acc in gltf.get('accessors', []):
+            if acc.get('type') == 'VEC3' and 'min' in acc:
+                print(f"GLB bounds: {{acc['min']}} to {{acc['max']}}")
+                break
+else:
+    print("ERROR: Export failed")
+"""
+
+    try:
+        stdout, stderr, returncode = execute_blender_script(script, background=True)
+
+        # Build result
+        result = ""
+        if returncode == 0:
+            result += "✓ GLB export (baked) successful\n\n"
+        else:
+            result += f"⚠️  Export failed with code {returncode}\n\n"
+
+        # Filter output
+        filtered_lines = []
+        for line in stdout.split('\n'):
+            if any(skip in line for skip in [
+                'Blender',
+                'Read prefs:',
+                'found bundled python:',
+                'Read blend:',
+                'Saved session',
+                'Blender quit',
+                'color management',
+                'libpng warning'
+            ]):
+                continue
+            if line.strip():
+                filtered_lines.append(line)
+
+        if filtered_lines:
+            result += '\n'.join(filtered_lines)
+
+        if stderr and returncode != 0:
+            filtered_stderr = [l for l in stderr.split('\n')
+                            if l.strip() and not any(s in l for s in ['color management', 'ALSA', 'OSL', 'libpng'])]
+            if filtered_stderr:
+                result += "\n\nErrors:\n" + '\n'.join(filtered_stderr)
+
+        logger.info(f"Baked export completed with code {returncode}")
+        return result
+
+    except Exception as e:
+        error_msg = f"Error exporting to GLB: {str(e)}"
+        logger.error(error_msg, exc_info=True)
+        return error_msg
+
+
 def main():
     """Start the MCP server on stdio transport."""
     logger.info("Blender MCP Server starting")
