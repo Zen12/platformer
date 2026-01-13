@@ -23,6 +23,7 @@
 #include "node/action/log_action.hpp"
 #include "node/action/fps_display_action.hpp"
 #include "node/action/health_display_action.hpp"
+#include "node/action/health_bar_action.hpp"
 #include "fsm_asset.hpp"
 #include "system_triggers.hpp"
 
@@ -109,6 +110,8 @@ public:
                     actions.emplace_back(actionFactory.CreateFpsDisplayAction(actionData.Param));
                 } else if (actionData.Type == "health_display") {
                     actions.emplace_back(actionFactory.CreateHealthDisplayAction(actionData.Param));
+                } else if (actionData.Type == "health_bar") {
+                    actions.emplace_back(actionFactory.CreateHealthBarAction(actionData.Param));
                 } else if (actionData.Type == "health_check") {
                     actions.emplace_back(actionFactory.CreateHealthCheckAction(actionData.Param));
                 } else if (actionData.Type == "play_sound") {

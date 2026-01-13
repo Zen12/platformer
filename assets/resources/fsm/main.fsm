@@ -1,12 +1,22 @@
 name: main_fsm
-start_node: "firstNode"
+start_node: "mainMenuNode"
 nodes:
-- name: "Load UI Node"
-  guid: "firstNode"
+- name: "Main Menu"
+  guid: "mainMenuNode"
   actions:
-    - type: start_video_recording
-      output_file: "test_recording.mp4"
-      fps: 60
+    - type: load_scene
+      scene_guid: 6f3c06bc-1eea-4266-af5f-a19d6e8fd06f
+    - type: load_ui_page
+      page_guid: 9ee7bdd1-bdbc-49b3-b78a-a45d76a23113
+    - type: action_trigger_setter_button_listener
+      button_id: start-button
+      trigger_name: start_game
+    - type: action_trigger_setter_button_listener
+      button_id: exit-button
+      trigger_name: exit_game
+- name: "Game Node"
+  guid: "gameNode"
+  actions:
     - type: load_scene
       scene_guid: 963d3fa8-8f5c-45aa-beab-1aa887e30816
     - type: load_ui_page
@@ -17,16 +27,13 @@ nodes:
       loop: true
     - type: fps_display
       element_id: fps-display
-    - type: health_display
-      element_id: health-display
+    - type: health_bar
+      element_id: health-bar
     - type: health_check
       trigger_name: is_restart
     - type: action_trigger_setter_button_listener
-      button_id: hello-button
-      trigger_name: is_close
-    - type: action_trigger_setter_button_listener
-      button_id: restart-button
-      trigger_name: is_restart
+      button_id: mainmenu-button
+      trigger_name: go_to_mainmenu
 - name: "Restart Node"
   guid: "restartNode"
   actions:
@@ -35,25 +42,36 @@ nodes:
 - name: "Close the game"
   guid: "closeGame"
   actions:
-    - type: stop_video_recording
     - type: log
       message: "Exit"
 conditions:
   - type: trigger_check
-    guid: "is_close_condition"
-    trigger_name: is_close
+    guid: "start_game_condition"
+    trigger_name: start_game
+  - type: trigger_check
+    guid: "exit_game_condition"
+    trigger_name: exit_game
+  - type: trigger_check
+    guid: "go_to_mainmenu_condition"
+    trigger_name: go_to_mainmenu
   - type: trigger_check
     guid: "is_restart_condition"
     trigger_name: is_restart
   - type: always_true
     guid: "always_true_condition"
 connections:
-    - nodes: ["firstNode", "closeGame"]
-      conditions: ["is_close_condition"]
+    - nodes: ["mainMenuNode", "gameNode"]
+      conditions: ["start_game_condition"]
       condition_type: 0
-    - nodes: ["firstNode", "restartNode"]
+    - nodes: ["mainMenuNode", "closeGame"]
+      conditions: ["exit_game_condition"]
+      condition_type: 0
+    - nodes: ["gameNode", "mainMenuNode"]
+      conditions: ["go_to_mainmenu_condition"]
+      condition_type: 0
+    - nodes: ["gameNode", "restartNode"]
       conditions: ["is_restart_condition"]
       condition_type: 0
-    - nodes: ["restartNode", "firstNode"]
+    - nodes: ["restartNode", "gameNode"]
       conditions: ["always_true_condition"]
       condition_type: 0

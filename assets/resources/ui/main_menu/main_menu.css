@@ -1,0 +1,96 @@
+body {
+    width: 100%;
+    height: 100%;
+    font-family: Arial;
+    text-align: center;
+}
+
+@keyframes border-glow {
+    from { border-color: #f6470a; }
+    50% { border-color: #ff8844; }
+    to { border-color: #f6470a; }
+}
+
+h1 {
+    position: absolute;
+    left: 50%;
+    top: 120dp;
+    margin-left: -300dp;
+    width: 600dp;
+    padding: 30dp;
+    color: #f6470a;
+    font-size: 120dp;
+    font-weight: bold;
+    border-width: 8dp;
+    border-color: #f6470a;
+    border-radius: 20dp;
+    animation: 2s infinite border-glow;
+}
+
+#buttons {
+    position: absolute;
+    width: 350dp;
+    left: 50%;
+    top: 60%;
+    margin-left: -175dp;
+    margin-top: -70dp;
+}
+
+@keyframes pulse {
+    from { padding: 18dp; }
+    50% { padding: 20dp; }
+    to { padding: 18dp; }
+}
+
+button {
+    display: block;
+    width: 100%;
+    background-color: #f6470a;
+    color: white;
+    padding: 18dp;
+    font-size: 28dp;
+    font-weight: bold;
+    margin-bottom: 20dp;
+    border-radius: 25dp;
+}
+
+#start-button {
+    animation: 1s infinite pulse;
+}
+
+button:hover {
+    background-color: #ff5a1f;
+}
+
+button:active {
+    background-color: #d63e08;
+}
+
+#exit-button {
+    background-color: #555555;
+    margin-bottom: 0;
+}
+
+#exit-button:hover {
+    background-color: #666666;
+}
+
+#exit-button:active {
+    background-color: #444444;
+}
+
+@keyframes fade {
+    from { opacity: 1; }
+    50% { opacity: 0.4; }
+    to { opacity: 1; }
+}
+
+#instructions {
+    position: absolute;
+    width: 100%;
+    bottom: 40dp;
+    left: 0;
+    color: #888888;
+    font-size: 28dp;
+    animation: 2s infinite fade;
+}

@@ -1,0 +1,9 @@
+<rml>
+<body>
+    <div id="fps-display">FPS: --</div>
+    <div id="health-container">
+        <progress id="health-bar" direction="right" value="1" max="1"/>
+    </div>
+    <button id="mainmenu-button">Main Menu</button>
+</body>
+</rml>

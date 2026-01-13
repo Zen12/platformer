@@ -37,6 +37,9 @@
 #include "action/health_display_action.hpp"
 #include "action/health_display_action_serialization.hpp"
 #include "action/health_display_action_serialization_yaml.hpp"
+#include "action/health_bar_action.hpp"
+#include "action/health_bar_action_serialization.hpp"
+#include "action/health_bar_action_serialization_yaml.hpp"
 #include "action/health_check_action.hpp"
 #include "action/health_check_action_serialization.hpp"
 #include "action/health_check_action_serialization_yaml.hpp"
@@ -105,6 +108,9 @@ namespace YAML {
                 data.Param = serialization.ElementId;
             } else if (type == "health_display") {
                 const auto serialization = node.as<HealthDisplayActionSerialization>();
+                data.Param = serialization.ElementId;
+            } else if (type == "health_bar") {
+                const auto serialization = node.as<HealthBarActionSerialization>();
                 data.Param = serialization.ElementId;
             } else if (type == "health_check") {
                 const auto serialization = node.as<HealthCheckActionSerialization>();

@@ -10,6 +10,7 @@
 #include "RmlUi/Core/Core.h"
 #include "RmlUi/Core/ElementDocument.h"
 #include "RmlUi/Core/EventListener.h"
+#include "RmlUi/Core/Elements/ElementProgress.h"
 
 // Custom event listener for button clicks
 class ButtonClickListener : public Rml::EventListener {
@@ -170,6 +171,19 @@ public:
             if (Rml::ElementDocument* document = _rmlContext->GetDocument(0)) {
                 if (Rml::Element* element = document->GetElementById(elementId)) {
                     element->SetInnerRML(text);
+                }
+            }
+        }
+    }
+
+    void UpdateProgressValue(const std::string& elementId, float value, float max = 1.0f) {
+        if (_rmlContext) {
+            if (Rml::ElementDocument* document = _rmlContext->GetDocument(0)) {
+                if (Rml::Element* element = document->GetElementById(elementId)) {
+                    if (auto* progress = dynamic_cast<Rml::ElementProgress*>(element)) {
+                        progress->SetMax(max);
+                        progress->SetValue(value);
+                    }
                 }
             }
         }

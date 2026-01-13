@@ -1,0 +1,10 @@
+<rml>
+<body>
+    <h1>Platformer</h1>
+    <div id="buttons">
+        <button id="start-button">Start Game</button>
+        <button id="exit-button">Exit</button>
+    </div>
+    <p id="instructions">WASD to move and SPACE to jump</p>
+</body>
+</rml>

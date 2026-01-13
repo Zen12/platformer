@@ -113,7 +113,7 @@
 - [x] Simple particles
 - [x] Simple audio
 - [x] Shadows
-- [ ] Basic UI (+ data-bindings)
+- [x] Basic UI (+ data-bindings)
 
 ## Backlog
 - [ ] Proper fix retina issue on webgl and macOS

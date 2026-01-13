@@ -18,6 +18,7 @@
 #include "stop_video_recording_action.hpp"
 #include "fps_display_action.hpp"
 #include "health_display_action.hpp"
+#include "health_bar_action.hpp"
 #include "health_check_action.hpp"
 #include "../../../audio/play_sound_action.hpp"
 #include "../../../audio/play_sound_repeated_action.hpp"
@@ -105,6 +106,10 @@ public:
     }
 
     [[nodiscard]] HealthDisplayAction CreateHealthDisplayAction(const std::string& elementId) const {
+        return {elementId, _uiManager, _sceneManager};
+    }
+
+    [[nodiscard]] HealthBarAction CreateHealthBarAction(const std::string& elementId) const {
         return {elementId, _uiManager, _sceneManager};
     }
 

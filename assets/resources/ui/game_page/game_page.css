@@ -53,11 +53,12 @@ button:active {
     background-color: #b83507;
 }
 
-#hello-button {
+#mainmenu-button {
     position: absolute;
-    top: 40px;
-    right: 80px;
+    top: 20px;
+    right: 60px;
     margin-top: 0;
+    border-radius: 10px;
 }
 
 #fps-display {
@@ -69,18 +70,25 @@ button:active {
     color: #f6470a;
 }
 
-#health-display {
+#health-container {
     position: absolute;
-    top: 50px;
-    left: 20px;
-    font-size: 1.4em;
-    font-weight: bold;
-    color: #e74c3c;
+    top: 20px;
+    left: 50%;
+    margin-left: -220px;
+    width: 440px;
+    padding: 10px;
+    background-color: #555555;
+    border-radius: 10px;
 }
 
-#restart-button {
-    position: absolute;
-    top: 100px;
-    right: 80px;
-    margin-top: 0;
+#health-bar {
+    width: 100%;
+    height: 30px;
+    background-color: #333333;
+    border-radius: 5px;
+}
+
+#health-bar fill {
+    background-color: #e74c3c;
+    border-radius: 5px;
 }
