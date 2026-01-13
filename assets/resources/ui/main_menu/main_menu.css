@@ -31,7 +31,7 @@ h1 {
     position: absolute;
     width: 350dp;
     left: 50%;
-    top: 60%;
+    top: 80%;
     margin-left: -175dp;
     margin-top: -70dp;
 }
@@ -87,10 +87,14 @@ button:active {
 
 #instructions {
     position: absolute;
-    width: 100%;
-    bottom: 40dp;
-    left: 0;
+    left: 60%;
+    top: 490dp;
+    margin-left: -175dp;
+    width: 350dp;
+    padding: 12dp;
     color: #888888;
-    font-size: 28dp;
-    animation: 2s infinite fade;
+    font-size: 20dp;
+    border-width: 3dp;
+    border-color: #555555;
+    border-radius: 10dp;
 }

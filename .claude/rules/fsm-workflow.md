@@ -371,7 +371,7 @@ connections:
   guid: "exitState"
   actions:
     - type: set_system_trigger
-      system_trigger: Exit
+      trigger_type: Exit
 ```
 
 **Note:** This is a terminal state - no connections should lead away from it.
