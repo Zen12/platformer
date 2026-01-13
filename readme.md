@@ -19,28 +19,28 @@
 - 🏢 Platform
   - [x] macOS
   - [x] web
-  - [ ] windows (0.2+)
-  - [ ] linux (0.2+)
+  - [ ] windows (0.3+)
+  - [ ] linux (0.3+)
 - 🔳 UI system 
   - [x] Page system
   - [x] Hooks
-  - [ ] Data-binding
+  - [x] Data-binding
 - 📀 Asset management
   - [x] Lazy load 
   - [x] .Meta file support
   - [ ] Ref count (0.2+)
 - 🚀 ESC
   - [x] Single-thread support
-  - [ ] Multi-thread support (0.2+)
+  - [ ] Multi-thread support (0.3+)
 - 🔦 Basic mesh 3d rendering
   - [x] Material abstraction
   - [x] Instance rendering (per mesh+material)
   - [x] Frustum culling
-  - [ ] PBR (0.2+)
+  - [ ] Decals system
 - 💃 Skinned mesh rendering 
   - [x] Bones support
   - [x] Animation via state (FSM)
-  - [ ] IK (0.2+)
+  - [ ] IK 
   - [x] Instance rendering
 - 🧠 Nav mesh
   - [x] 2d builder
@@ -51,14 +51,14 @@
   - [x] Scene management Action
   - [x] UI management Action
   - [x] Conditions
-  - [ ] SubFSM (0.2+)
+  - [ ] SubFSM (0.3+)
 - 💫 MCP
   - [x] Claude support
   - [x] Asset management with .meta
   - [x] Import/export systems for .blend and .glb
   - [x] Hooks to blender and gimp mcp
   - [x] Scene awareness (fast scene builder)
-  - [ ] File lock system for multiple agents (0.2+)
+  - [ ] File lock system for multiple agents (0.3+)
 - 🔊Sound
   - [x] One shot clip
   - [x] Loop clip
@@ -69,10 +69,9 @@
 - ▶️Editor (0.2+)
   - [x] Gameplayer recorder
   - [ ] Scene visualize 
-  - [ ] MCP as Editor
 - 💥Particle System
-  - [ ] Lifetime 
-  - [ ] Color
+  - [x] Lifetime 
+  - [x] Color
   - [ ] Shape (0.2+)
 
  
@@ -102,23 +101,29 @@
 
 # 🏃 Roadmap
 
-## 0.1.7 3d platformer game
-- [x] Behaviour Tree as ESC
-- [x] Proper bounce component or part of renderer
-- [x] Health system and lose
-- [x] 3d navmesh
-- [ ] One level of 3d platformer with horde AI(Use blender as level editor)
+## 0.1.9 Good level
+- [ ] Mesh builder from navmesh grid
+- [ ] Walls generator 
+- [ ] Texture applier (floor, walls)
 
-## 0.1.8 Basic polish
-- [x] Simple particles
-- [x] Simple audio
-- [x] Shadows
-- [x] Basic UI (+ data-bindings)
+## 0.1.10 Lighting of level
+- [ ] Fog 
+- [ ] 3d light generator as mesh (with shadow)
+- [ ] Decal system
+
+## 0.1.11 Animation and Gameplay
+- [ ] IK for shooting
+- [ ] Shooting behaviour
+- [ ] Kill all zombies condition
+- [ ] Particle system for shooting
+
+## 0.1.12 Small polish
+- [ ] Background for main menu
+- [ ] Win/Lose screen 
 
 ## Backlog
 - [ ] Proper fix retina issue on webgl and macOS
 - [ ] Proper AssetManager (not link to scene), some refcount solution
-- [ ] Proper Audio system
 - [ ] Proper Particle system 
 
 🇲🇩
