@@ -44,6 +44,8 @@ nodes:
   actions:
     - type: log
       message: "Exit"
+    - type: set_system_trigger
+      trigger_type: Exit
 conditions:
   - type: trigger_check
     guid: "start_game_condition"
