@@ -1,6 +1,6 @@
 <rml>
 <body>
-    <h1>Platformer 0.2</h1>
+    <h1>Platformer 0.1</h1>
     <div id="buttons">
         <button id="start-button">Start Game</button>
         <button id="exit-button">Exit</button>
