@@ -10,6 +10,8 @@
 
 ## 👀 Demo
 
+🎮 https://andreigusan.itch.io/platformer-demo
+
 ![Demo](docs/readme/demo.gif)
 
 ## 🦾 Features
