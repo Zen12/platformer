@@ -94,6 +94,19 @@ endif()
 file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/output)
 file(COPY "${CMAKE_SOURCE_DIR}/assets" DESTINATION "${CMAKE_BINARY_DIR}/output")
 
+# Remove all _original folders from output (source files not needed at runtime)
+execute_process(
+    COMMAND find "${CMAKE_BINARY_DIR}/output/assets" -type d -name "_original"
+    OUTPUT_VARIABLE ORIGINAL_DIRS
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+if(ORIGINAL_DIRS)
+    string(REPLACE "\n" ";" ORIGINAL_DIRS_LIST "${ORIGINAL_DIRS}")
+    foreach(DIR ${ORIGINAL_DIRS_LIST})
+        file(REMOVE_RECURSE "${DIR}")
+    endforeach()
+endif()
+
 # --- Compiler flags (desktop only) ---
 if (PLATFORM_DESKTOP)
     if(PLATFORM_DESKTOP_WINDOWS) # MSVC
@@ -121,7 +134,7 @@ if (PLATFORM_WEB)
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output"
     )
 
-    set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS "-lopenal -s USE_GLFW=3 -s USE_WEBGL2=1 -s FULL_ES3=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s STACK_SIZE=5MB -s INITIAL_MEMORY=256MB -s ASSERTIONS=1 -s EXCEPTION_DEBUG=1 -s NO_DISABLE_EXCEPTION_CATCHING --shell-file ${CMAKE_SOURCE_DIR}/template/html/simple.html --preload-file ${CMAKE_SOURCE_DIR}/assets@/assets")
+    set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES LINK_FLAGS "-lopenal -s USE_GLFW=3 -s USE_WEBGL2=1 -s FULL_ES3=1 -s WASM=1 -s ALLOW_MEMORY_GROWTH=1 -s STACK_SIZE=5MB -s INITIAL_MEMORY=256MB -s ASSERTIONS=1 -s EXCEPTION_DEBUG=1 -s NO_DISABLE_EXCEPTION_CATCHING --shell-file ${CMAKE_SOURCE_DIR}/template/html/simple.html --preload-file ${CMAKE_BINARY_DIR}/output/assets@/assets")
 
 endif()
 

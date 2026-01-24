@@ -8,12 +8,9 @@
 - 🏃```run.sh```
 - 💫```run_claude.sh``` [docs/mcp.md](docs/mcp.md)
 
-## 📚 Documentation
-- [MCP Setup](docs/mcp.md) - Model Context Protocol and asset tools
-- [Blender Integration](docs/blender.md) - 3D modeling with Blender MCP
-- [Material System](docs/material.md) - Material creation and shader workflow
-- [UI System](docs/ui-system.md) - RmlUi UI system and FSM integration
-- [FSM System](docs/fsm-system.md) - Finite State Machine architecture and workflow
+## 👀 Demo
+
+![Demo](docs/readme/demo.gif)
 
 ## 🦾 Features
 - 🏢 Platform
@@ -40,7 +37,7 @@
 - 💃 Skinned mesh rendering 
   - [x] Bones support
   - [x] Animation via state (FSM)
-  - [ ] IK 
+  - [ ] IK (0.2+)
   - [x] Instance rendering
 - 🧠 Nav mesh
   - [x] 2d builder
@@ -73,6 +70,13 @@
   - [x] Lifetime 
   - [x] Color
   - [ ] Shape (0.2+)
+
+## 📚 Documentation
+- [MCP Setup](docs/mcp.md) - Model Context Protocol and asset tools
+- [Blender Integration](docs/blender.md) - 3D modeling with Blender MCP
+- [Material System](docs/material.md) - Material creation and shader workflow
+- [UI System](docs/ui-system.md) - RmlUi UI system and FSM integration
+- [FSM System](docs/fsm-system.md) - Finite State Machine architecture and workflow
 
  
 ## 🔨 Project structure
