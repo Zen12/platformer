@@ -8,4 +8,11 @@ struct FsmAnimationComponentSerialization final : public ComponentSerialization 
     float AnimationSpeed = 1.0f;
     bool VelocityBasedSpeed = false;
     float VelocitySpeedScale = 1.0f;
+
+    // Directional animation blending
+    std::string DirectionalWalkForwardGuid;
+    std::string DirectionalWalkBackGuid;
+    std::string DirectionalWalkLeftGuid;
+    std::string DirectionalWalkRightGuid;
+    bool UseDirectionalBlending = false;
 };

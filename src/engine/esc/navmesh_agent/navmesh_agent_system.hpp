@@ -116,8 +116,8 @@ public:
                 // Update velocity for animation (use horizontal velocity from air movement)
                 agent.CurrentSpeed = glm::length(glm::vec2(agent.CurrentVelocity.x, agent.CurrentVelocity.z));
 
-                // Rotate towards movement direction while airborne
-                if (agent.CurrentSpeed > 0.1f) {
+                // Rotate towards movement direction while airborne (skip if external control)
+                if (agent.CurrentSpeed > 0.1f && !agent.ExternalRotationControl) {
                     const float targetYaw = glm::degrees(std::atan2(agent.CurrentVelocity.x, agent.CurrentVelocity.z));
                     auto rotation = transform.GetEulerRotation();
 
@@ -262,8 +262,8 @@ public:
                     agent.CurrentSpeed = speed;
                     agent.CurrentVelocity = velocity;
 
-                    // Rotate towards movement direction (skip on first frame after landing to preserve air rotation)
-                    if (!agent.JustLanded) {
+                    // Rotate towards movement direction (skip if external control or just landed)
+                    if (!agent.JustLanded && !agent.ExternalRotationControl) {
                         const float distToDest = glm::length(glm::vec2(agent.Destination.x - agentPos.x, agent.Destination.z - agentPos.z));
 
                         // For AI agents: rotate towards destination even when slow

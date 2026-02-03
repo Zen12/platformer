@@ -53,7 +53,7 @@ entities:
     components:
       - type: spawner
         prefab_guid: ee9e7ec4-779d-4d44-a4f6-99f048412b61  # zombie.prefab
-        spawn_count: 20
+        spawn_count: 0
         spawn_on_navmesh: true
   - tag: "male"
     components:
@@ -70,17 +70,34 @@ entities:
         animation_speed: 2.0
         velocity_based_speed: true
         velocity_speed_scale: 1.0
+        use_directional_blending: true
+        directional_walk_forward_guid: b624e619-5108-4ae7-9ff3-9392feee577e
+        directional_walk_back_guid: 1495a806-1ac6-4105-9646-58fdf6c8bb89
+        directional_walk_left_guid: 2d8ce381-ff85-4ad8-88c1-02f6af16717f
+        directional_walk_right_guid: 07f0153c-b344-4a3c-8160-b137c2a096f4
+      - type: ik_aim
+        enabled: true
+        blend_weight: 1.0
+        blend_speed: 5.0
+        torso_max_yaw: 60.0
+        torso_max_pitch: 30.0
+        spine_weight: 0.3
+        spine1_weight: 0.4
+        chest_weight: 0.3
+        left_hand_grip_point: [0.3, 0.0, 0.2]
+        right_elbow_hint: [0.0, 0.0, -1.0]
+        left_elbow_hint: [0.0, 0.0, -1.0]
       - type: navmesh_agent
         gravity: -20.0
         jump_force: 10.0
         air_control_multiplier: 0.8
         radius: 0.1
         rotation_speed: 15.0
-        max_speed: 5.0
+        max_speed: 1.0
         enabled: true
         ignore_crowd_velocity: true
       - type: player_controller
-        move_speed: 5.0
+        move_speed: 2.0
         destination_distance: 1.0
       - type: health
         max_health: 100.0

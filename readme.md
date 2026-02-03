@@ -111,6 +111,7 @@
 - [ ] Mesh builder from navmesh grid
 - [ ] Walls generator 
 - [ ] Texture applier (floor, walls)
+- [ ] Bake lighting into texture
 
 ## 0.1.10 Lighting of level
 - [ ] Fog 

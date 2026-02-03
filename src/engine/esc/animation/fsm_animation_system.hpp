@@ -5,6 +5,7 @@
 #include "../transform/transform_component.hpp"
 #include "../time/time_component.hpp"
 #include "../navmesh_agent/navmesh_agent_component.hpp"
+#include "../ik_aim/ik_aim_component.hpp"
 #include "../../renderer/animation/animation_data.hpp"
 #include "../../scene/scene.hpp"
 #include "../../ai/bt_component.hpp"

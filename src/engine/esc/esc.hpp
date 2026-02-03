@@ -53,6 +53,9 @@
 #include "particle_emitter/particle_emitter_component_serialization.hpp"
 #include "particle_emitter/particle_system.hpp"
 #include "particle_emitter/particle_render_system.hpp"
+#include "ik_aim/ik_aim_component.hpp"
+#include "ik_aim/ik_aim_component_serialization.hpp"
+#include "ik_aim/ik_aim_system.hpp"
 
 
 class EscSystem {
@@ -108,6 +111,12 @@ public:
                         fsmAnimComp.AnimationSpeed = fsmAnimationSerialization->AnimationSpeed;
                         fsmAnimComp.VelocityBasedSpeed = fsmAnimationSerialization->VelocityBasedSpeed;
                         fsmAnimComp.VelocitySpeedScale = fsmAnimationSerialization->VelocitySpeedScale;
+                        // Directional animation blending
+                        fsmAnimComp.DirectionalWalkForwardGuid = fsmAnimationSerialization->DirectionalWalkForwardGuid;
+                        fsmAnimComp.DirectionalWalkBackGuid = fsmAnimationSerialization->DirectionalWalkBackGuid;
+                        fsmAnimComp.DirectionalWalkLeftGuid = fsmAnimationSerialization->DirectionalWalkLeftGuid;
+                        fsmAnimComp.DirectionalWalkRightGuid = fsmAnimationSerialization->DirectionalWalkRightGuid;
+                        fsmAnimComp.UseDirectionalBlending = fsmAnimationSerialization->UseDirectionalBlending;
                         view->emplace(entity, fsmAnimComp);
                     } else if (const auto &cameraControllerSerialization = dynamic_cast<CameraControllerComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<CameraControllerComponent>();
@@ -162,6 +171,25 @@ public:
                     } else if (const auto &particleSerialization = dynamic_cast<ParticleEmitterComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<ParticleEmitterComponent>();
                         view->emplace(entity, *particleSerialization);
+                    } else if (const auto &ikAimSerialization = dynamic_cast<IKAimComponentSerialization*>(component.get())) {
+                        const auto &view = registry->view<IKAimComponent>();
+                        IKAimComponent ikComp;
+                        ikComp.Enabled = ikAimSerialization->Enabled;
+                        ikComp.BlendWeight = ikAimSerialization->BlendWeight;
+                        ikComp.BlendSpeed = ikAimSerialization->BlendSpeed;
+                        ikComp.TorsoMaxYaw = ikAimSerialization->TorsoMaxYaw;
+                        ikComp.TorsoMaxPitch = ikAimSerialization->TorsoMaxPitch;
+                        ikComp.SpineWeight = ikAimSerialization->SpineWeight;
+                        ikComp.Spine1Weight = ikAimSerialization->Spine1Weight;
+                        ikComp.ChestWeight = ikAimSerialization->ChestWeight;
+                        ikComp.RightHandOffset = ikAimSerialization->RightHandOffset;
+                        ikComp.LeftHandOffset = ikAimSerialization->LeftHandOffset;
+                        ikComp.LeftHandGripPoint = ikAimSerialization->LeftHandGripPoint;
+                        ikComp.RightElbowHint = ikAimSerialization->RightElbowHint;
+                        ikComp.LeftElbowHint = ikAimSerialization->LeftElbowHint;
+                        ikComp.RotateCharacterToAim = ikAimSerialization->RotateCharacterToAim;
+                        ikComp.CharacterRotationSpeed = ikAimSerialization->CharacterRotationSpeed;
+                        view->emplace(entity, ikComp);
                     }
                 }
             }
@@ -214,6 +242,15 @@ public:
 
             _systems.emplace_back(std::make_unique<FsmAnimationSystem>(registry->view<FsmAnimationComponent, SkinnedMeshRendererComponent, TransformComponentV2>(),
                registry->view<DeltaTimeComponent>(), scenePtr, *registry));
+
+            // IK Aim system - runs AFTER animation, BEFORE skinned mesh render
+            _systems.emplace_back(std::make_unique<IKAimSystem>(
+                registry->view<IKAimComponent, SkinnedMeshRendererComponent, TransformComponentV2>(),
+                registry->view<DeltaTimeComponent>(),
+                registry->view<CameraComponentV2, TransformComponentV2>(),
+                registry->view<WindowComponent>(),
+                scenePtr,
+                *registry));
 
             _systems.emplace_back(std::make_unique<SkinnedMeshRenderSystem>(registry->view<SkinnedMeshRendererComponent, TransformComponentV2>(),
                registry->view<CameraComponentV2>(), renderRepository, scenePtr));

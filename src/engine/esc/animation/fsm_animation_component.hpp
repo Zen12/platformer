@@ -34,6 +34,14 @@ public:
     // State tracking for trigger detection
     bool WasJumping = false;  // Track previous jump state for edge detection
 
+    // Directional animation blending (used when moving while facing different direction)
+    // These override CurrentAnimationGuid when player is strafing/backing
+    std::string DirectionalWalkForwardGuid;   // Animation for forward walk (0°)
+    std::string DirectionalWalkBackGuid;      // Animation for backward walk (±180°)
+    std::string DirectionalWalkLeftGuid;      // Animation for left strafe (-90°)
+    std::string DirectionalWalkRightGuid;     // Animation for right strafe (+90°)
+    bool UseDirectionalBlending = false;      // Enable 4-way directional blending
+
     // Transition state
     bool IsTransitioning = false;
     std::string FromAnimationGuid;

@@ -21,6 +21,22 @@ namespace YAML {
             if (node["velocity_speed_scale"]) {
                 rhs.VelocitySpeedScale = node["velocity_speed_scale"].as<float>();
             }
+            // Directional animation blending
+            if (node["directional_walk_forward_guid"]) {
+                rhs.DirectionalWalkForwardGuid = node["directional_walk_forward_guid"].as<std::string>();
+            }
+            if (node["directional_walk_back_guid"]) {
+                rhs.DirectionalWalkBackGuid = node["directional_walk_back_guid"].as<std::string>();
+            }
+            if (node["directional_walk_left_guid"]) {
+                rhs.DirectionalWalkLeftGuid = node["directional_walk_left_guid"].as<std::string>();
+            }
+            if (node["directional_walk_right_guid"]) {
+                rhs.DirectionalWalkRightGuid = node["directional_walk_right_guid"].as<std::string>();
+            }
+            if (node["use_directional_blending"]) {
+                rhs.UseDirectionalBlending = node["use_directional_blending"].as<bool>();
+            }
             return true;
         }
     };

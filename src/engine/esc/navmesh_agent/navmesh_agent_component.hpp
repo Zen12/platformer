@@ -38,6 +38,9 @@ public:
     // Agent still exists in crowd so AI agents avoid it, but player isn't pushed by AI
     bool IgnoreCrowdVelocity = false;
 
+    // When true, skip rotation update (IK system controls rotation instead)
+    bool ExternalRotationControl = false;
+
     explicit NavmeshAgentComponent(const NavmeshAgentComponentSerialization &serialization)
         : Radius(serialization.Radius), MaxSpeed(serialization.MaxSpeed),
           RotationSpeed(serialization.RotationSpeed), Enabled(serialization.Enabled),
