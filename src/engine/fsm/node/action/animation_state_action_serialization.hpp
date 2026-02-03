@@ -12,5 +12,12 @@ public:
     bool DisableMovement = false;  // Disable player movement during this state
     float DisableMovementDuration = -1.0f;  // How long to disable movement (-1 = until state exits)
 
+    // Directional blending (4-way walk animations)
+    bool UseDirectionalBlending = false;
+    std::string DirectionalWalkForwardGuid;
+    std::string DirectionalWalkBackGuid;
+    std::string DirectionalWalkLeftGuid;
+    std::string DirectionalWalkRightGuid;
+
     ~AnimationStateActionSerialization() override = default;
 };

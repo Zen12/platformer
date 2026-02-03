@@ -15,6 +15,11 @@ nodes:
     - type: animation_state
       animation_guid: b624e619-5108-4ae7-9ff3-9392feee577e
       loop: true
+      use_directional_blending: true
+      directional_walk_forward_guid: b624e619-5108-4ae7-9ff3-9392feee577e
+      directional_walk_back_guid: 1495a806-1ac6-4105-9646-58fdf6c8bb89
+      directional_walk_left_guid: 2d8ce381-ff85-4ad8-88c1-02f6af16717f
+      directional_walk_right_guid: 07f0153c-b344-4a3c-8160-b137c2a096f4
     - type: play_sound_repeated
       audio_guid: 651c6f8a-a2eb-4cfc-b80a-11b81d04b732
       volume: 0.9

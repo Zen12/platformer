@@ -22,12 +22,22 @@ private:
     bool _disableVelocitySpeed;
     bool _disableMovement;
     float _disableMovementDuration;
+    bool _useDirectionalBlending;
+    std::string _directionalWalkForwardGuid;
+    std::string _directionalWalkBackGuid;
+    std::string _directionalWalkLeftGuid;
+    std::string _directionalWalkRightGuid;
     std::weak_ptr<FsmAnimationComponent> _animationComponent;
 
 public:
     AnimationStateAction(std::string animationGuid, std::string onCompleteTrigger, bool loop,
                          float animationSpeed, bool disableVelocitySpeed, bool disableMovement,
                          float disableMovementDuration,
+                         bool useDirectionalBlending,
+                         std::string directionalWalkForwardGuid,
+                         std::string directionalWalkBackGuid,
+                         std::string directionalWalkLeftGuid,
+                         std::string directionalWalkRightGuid,
                          std::weak_ptr<FsmAnimationComponent> animationComponent)
         : _animationGuid(std::move(animationGuid)),
           _onCompleteTrigger(std::move(onCompleteTrigger)),
@@ -36,6 +46,11 @@ public:
           _disableVelocitySpeed(disableVelocitySpeed),
           _disableMovement(disableMovement),
           _disableMovementDuration(disableMovementDuration),
+          _useDirectionalBlending(useDirectionalBlending),
+          _directionalWalkForwardGuid(std::move(directionalWalkForwardGuid)),
+          _directionalWalkBackGuid(std::move(directionalWalkBackGuid)),
+          _directionalWalkLeftGuid(std::move(directionalWalkLeftGuid)),
+          _directionalWalkRightGuid(std::move(directionalWalkRightGuid)),
           _animationComponent(std::move(animationComponent)) {}
 
     void OnEnter() const override {
@@ -59,6 +74,15 @@ public:
             comp->MovementDisabled = _disableMovement;
             comp->MovementDisabledDuration = _disableMovementDuration;
             comp->MovementDisabledTimer = 0.0f;  // Reset timer when entering state
+
+            // Set directional blending if configured in this state
+            if (_useDirectionalBlending) {
+                comp->UseDirectionalBlending = true;
+                comp->DirectionalWalkForwardGuid = _directionalWalkForwardGuid;
+                comp->DirectionalWalkBackGuid = _directionalWalkBackGuid;
+                comp->DirectionalWalkLeftGuid = _directionalWalkLeftGuid;
+                comp->DirectionalWalkRightGuid = _directionalWalkRightGuid;
+            }
         }
     }
 
@@ -67,6 +91,11 @@ public:
     }
 
     void OnExit() const override {
-        // Keep animation playing on exit
+        // Disable directional blending when exiting state (if this state had it enabled)
+        if (_useDirectionalBlending) {
+            if (const auto comp = _animationComponent.lock()) {
+                comp->UseDirectionalBlending = false;
+            }
+        }
     }
 };

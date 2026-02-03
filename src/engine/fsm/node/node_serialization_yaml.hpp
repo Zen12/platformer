@@ -91,6 +91,11 @@ namespace YAML {
                 data.Param5 = serialization.DisableVelocitySpeed ? "true" : "false";
                 data.Param6 = serialization.DisableMovement ? "true" : "false";
                 data.Param7 = std::to_string(serialization.DisableMovementDuration);
+                data.Param8 = serialization.UseDirectionalBlending ? "true" : "false";
+                data.Param9 = serialization.DirectionalWalkForwardGuid;
+                data.Param10 = serialization.DirectionalWalkBackGuid;
+                data.Param11 = serialization.DirectionalWalkLeftGuid;
+                data.Param12 = serialization.DirectionalWalkRightGuid;
             } else if (type == "animation_state_transition") {
                 const auto serialization = node.as<AnimationStateTransitionActionSerialization>();
                 data.Param = serialization.FromAnimationGuid;

@@ -25,6 +25,21 @@ namespace YAML {
             if (node["disable_movement_duration"]) {
                 rhs.DisableMovementDuration = node["disable_movement_duration"].as<float>();
             }
+            if (node["use_directional_blending"]) {
+                rhs.UseDirectionalBlending = node["use_directional_blending"].as<bool>();
+            }
+            if (node["directional_walk_forward_guid"]) {
+                rhs.DirectionalWalkForwardGuid = node["directional_walk_forward_guid"].as<std::string>();
+            }
+            if (node["directional_walk_back_guid"]) {
+                rhs.DirectionalWalkBackGuid = node["directional_walk_back_guid"].as<std::string>();
+            }
+            if (node["directional_walk_left_guid"]) {
+                rhs.DirectionalWalkLeftGuid = node["directional_walk_left_guid"].as<std::string>();
+            }
+            if (node["directional_walk_right_guid"]) {
+                rhs.DirectionalWalkRightGuid = node["directional_walk_right_guid"].as<std::string>();
+            }
             return true;
         }
     };

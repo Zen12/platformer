@@ -97,7 +97,10 @@ public:
                     bool disableVelSpeed = actionData.Param5 == "true";
                     bool disableMovement = actionData.Param6 == "true";
                     float disableMovementDuration = actionData.Param7.empty() ? -1.0f : std::stof(actionData.Param7);
-                    actions.emplace_back(actionFactory.CreateAnimationStateAction(actionData.Param, actionData.Param2, loop, animSpeed, disableVelSpeed, disableMovement, disableMovementDuration));
+                    bool useDirectionalBlending = actionData.Param8 == "true";
+                    actions.emplace_back(actionFactory.CreateAnimationStateAction(
+                        actionData.Param, actionData.Param2, loop, animSpeed, disableVelSpeed, disableMovement, disableMovementDuration,
+                        useDirectionalBlending, actionData.Param9, actionData.Param10, actionData.Param11, actionData.Param12));
                 } else if (actionData.Type == "animation_state_transition") {
                     actions.emplace_back(actionFactory.CreateAnimationStateTransitionAction(actionData.Param, actionData.Param2, std::stof(actionData.Param3), actionData.Param4));
                 } else if (actionData.Type == "start_video_recording") {

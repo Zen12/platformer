@@ -71,10 +71,6 @@ entities:
         velocity_based_speed: true
         velocity_speed_scale: 1.0
         use_directional_blending: true
-        directional_walk_forward_guid: b624e619-5108-4ae7-9ff3-9392feee577e
-        directional_walk_back_guid: 1495a806-1ac6-4105-9646-58fdf6c8bb89
-        directional_walk_left_guid: 2d8ce381-ff85-4ad8-88c1-02f6af16717f
-        directional_walk_right_guid: 07f0153c-b344-4a3c-8160-b137c2a096f4
       - type: ik_aim
         enabled: true
         blend_weight: 1.0
