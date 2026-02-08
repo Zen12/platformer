@@ -89,17 +89,7 @@ public:
                 }
             }
 
-            NavmeshAgentComponent* navAgent = nullptr;
-            TransformComponentV2* transform = nullptr;
-
-            if (_registry.all_of<NavmeshAgentComponent>(entity)) {
-                navAgent = &_registry.get<NavmeshAgentComponent>(entity);
-            }
-            if (_registry.all_of<TransformComponentV2>(entity)) {
-                transform = &_registry.get<TransformComponentV2>(entity);
-            }
-
-            BTExecutor::Execute(bt, navAgent, transform, deltaTime, _registry, entity, navmesh);
+            BTExecutor::Execute(bt, deltaTime, _registry, entity, navmesh);
         }
     }
 

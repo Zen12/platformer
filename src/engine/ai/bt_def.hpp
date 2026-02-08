@@ -1,18 +1,18 @@
 #pragma once
-#include "bt_node_type.hpp"
+#include "bt_status.hpp"
 #include <glm/glm.hpp>
 #include <vector>
 #include <string>
 #include <cstdint>
 
 struct BTNodeDef {
-    BTNodeType Type;
+    std::string Type;
     uint8_t ChildCount;
-    uint16_t FirstChildIndex;       // Kept for backwards compatibility
-    std::vector<uint16_t> ChildIndices;  // Explicit child indices (for DFS-ordered trees)
-    float Param1;           // Distance threshold, wait time, etc.
-    float Param2;           // Secondary parameter if needed
-    std::string StringParam; // Tag name, etc.
+    uint16_t FirstChildIndex;
+    std::vector<uint16_t> ChildIndices;
+    float Param1;
+    float Param2;
+    std::string StringParam;
 };
 
 struct BehaviorTreeDef {
@@ -28,14 +28,13 @@ struct BehaviorTreeDef {
 
 struct BTNodeState {
     uint16_t NodeIndex;
-    uint8_t ChildProgress;  // For sequence/selector: which child we're on
-    float Timer;            // For Wait node
+    uint8_t ChildProgress;
+    float Timer;
     BTStatus LastStatus;
-    glm::vec3 CustomTarget{0}; // For Idle: target position
+    glm::vec3 CustomTarget{0};
     bool HasCustomTarget = false;
 };
 
-// Stack-based execution state (avoids recursion, cache-friendly)
 struct BTExecutionState {
     static constexpr size_t MaxDepth = 16;
     BTNodeState Stack[MaxDepth];

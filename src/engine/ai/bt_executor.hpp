@@ -1,52 +1,19 @@
 #pragma once
 #include "bt_def.hpp"
 #include "bt_component.hpp"
-#include "../esc/navmesh_agent/navmesh_agent_component.hpp"
-#include "../esc/transform/transform_component.hpp"
-#include "../esc/tag/tag_component.hpp"
-#include "../navigation/grid_navmesh.hpp"
-#include <glm/glm.hpp>
-#include <random>
+#include "bt_node.hpp"
+#include "bt_node_registry.hpp"
 #include <iostream>
-#include <limits>
-#include <entt/entt.hpp>
 
-// Enable/disable behavior tree debug logging
 #define BT_DEBUG 0
 
 #if BT_DEBUG
 #define BT_LOG(msg) std::cout << "[BT] " << msg << std::endl
-#define BT_LOG_NODE(nodeType, status) std::cout << "[BT] Node: " << NodeTypeToString(nodeType) << " -> " << StatusToString(status) << std::endl
+#define BT_LOG_NODE(nodeType, status) std::cout << "[BT] Node: " << nodeType << " -> " << StatusToString(status) << std::endl
 #else
 #define BT_LOG(msg)
 #define BT_LOG_NODE(nodeType, status)
 #endif
-
-inline const char* NodeTypeToString(BTNodeType type) {
-    switch (type) {
-        case BTNodeType::Sequence: return "Sequence";
-        case BTNodeType::Selector: return "Selector";
-        case BTNodeType::Parallel: return "Parallel";
-        case BTNodeType::Inverter: return "Inverter";
-        case BTNodeType::Repeater: return "Repeater";
-        case BTNodeType::UntilFail: return "UntilFail";
-        case BTNodeType::CheckDistance: return "CheckDistance";
-        case BTNodeType::HasTarget: return "HasTarget";
-        case BTNodeType::CheckHealth: return "CheckHealth";
-        case BTNodeType::IsMoving: return "IsMoving";
-        case BTNodeType::MoveTo: return "MoveTo";
-        case BTNodeType::MoveToTarget: return "MoveToTarget";
-        case BTNodeType::Attack: return "Attack";
-        case BTNodeType::Idle: return "Idle";
-        case BTNodeType::Wait: return "Wait";
-        case BTNodeType::RandomWander: return "RandomWander";
-        case BTNodeType::SetTarget: return "SetTarget";
-        case BTNodeType::FindTargetByTag: return "FindTargetByTag";
-        case BTNodeType::HasTargetInRange: return "HasTargetInRange";
-        case BTNodeType::ClearTarget: return "ClearTarget";
-        default: return "Unknown";
-    }
-}
 
 inline const char* StatusToString(BTStatus status) {
     switch (status) {
@@ -61,8 +28,6 @@ class BTExecutor {
 public:
     static BTStatus Execute(
         BehaviorTreeComponent& bt,
-        NavmeshAgentComponent* navAgent,
-        TransformComponentV2* transform,
         float deltaTime,
         entt::registry& registry,
         entt::entity selfEntity,
@@ -75,14 +40,14 @@ public:
 
         BT_LOG("--- Execute tree: " << bt.TreeDef->Name << " ---");
 
-        // Process the execution stack
         while (!bt.State.IsEmpty()) {
             auto& current = bt.State.Current();
             const auto& node = bt.TreeDef->GetNode(current.NodeIndex);
 
-            BT_LOG("Processing node[" << current.NodeIndex << "]: " << NodeTypeToString(node.Type));
+            BT_LOG("Processing node[" << current.NodeIndex << "]: " << node.Type);
 
-            BTStatus result = ExecuteNode(bt, node, current, navAgent, transform, deltaTime, registry, selfEntity, navmesh);
+            BTContext ctx{bt, registry, selfEntity, deltaTime, current, node, navmesh};
+            BTStatus result = ExecuteNode(ctx);
 
             BT_LOG_NODE(node.Type, result);
 
@@ -90,108 +55,39 @@ public:
                 return BTStatus::Running;
             }
 
-            // Node completed, pop and propagate result up the tree
             bt.State.Pop();
 
-            // Propagate result to parent(s)
             while (!bt.State.IsEmpty()) {
                 auto& parent = bt.State.Current();
                 const auto& parentNode = bt.TreeDef->GetNode(parent.NodeIndex);
 
                 if (!HandleChildResult(bt, parentNode, parent, result)) {
-                    break;  // Parent needs to continue processing children
+                    break;
                 }
 
-                // Parent is done, determine its result and pop it
-                if (parentNode.Type == BTNodeType::Sequence) {
-                    // Sequence: failed because child failed
+                if (parentNode.Type == "sequence") {
                     result = BTStatus::Failure;
-                } else if (parentNode.Type == BTNodeType::Selector) {
-                    // Selector: succeeded because child succeeded, or failed because all failed
+                } else if (parentNode.Type == "selector") {
                     result = (result == BTStatus::Success) ? BTStatus::Success : BTStatus::Failure;
                 }
 
-                BT_LOG("Propagating " << StatusToString(result) << " from " << NodeTypeToString(parentNode.Type));
+                BT_LOG("Propagating " << StatusToString(result) << " from " << parentNode.Type);
                 bt.State.Pop();
             }
         }
 
-        // Tree completed, reset for next tick
         BT_LOG("Tree completed, resetting");
         bt.State.Reset();
         return BTStatus::Success;
     }
 
 private:
-    static BTStatus ExecuteNode(
-        BehaviorTreeComponent& bt,
-        const BTNodeDef& node,
-        BTNodeState& state,
-        NavmeshAgentComponent* navAgent,
-        TransformComponentV2* transform,
-        float deltaTime,
-        entt::registry& registry,
-        entt::entity selfEntity,
-        GridNavmesh* navmesh
-    ) {
-        switch (node.Type) {
-            // Composite nodes
-            case BTNodeType::Sequence:
-            case BTNodeType::Selector:
-                return ExecuteComposite(bt, node, state);
-
-            // Condition nodes
-            case BTNodeType::CheckDistance:
-                return CheckDistance(bt, transform, node.Param1);
-            case BTNodeType::HasTarget:
-                return bt.HasTarget ? BTStatus::Success : BTStatus::Failure;
-            case BTNodeType::IsMoving:
-                return (navAgent && navAgent->CurrentSpeed > 0.1f)
-                    ? BTStatus::Success : BTStatus::Failure;
-            case BTNodeType::HasTargetInRange:
-                return HasTargetInRange(bt, transform, registry, node.Param1);
-
-            // Target finding nodes
-            case BTNodeType::FindTargetByTag:
-                return FindTargetByTag(bt, transform, registry, selfEntity, node.StringParam, node.Param1);
-            case BTNodeType::ClearTarget:
-                bt.HasTarget = false;
-                bt.TargetEntity = entt::null;
-                return BTStatus::Success;
-
-            // Action nodes
-            case BTNodeType::MoveToTarget:
-                return MoveToTarget(bt, navAgent, transform, registry, navmesh);
-            case BTNodeType::RandomWander:
-                return RandomWander(bt, navAgent, transform, node.Param1, navmesh);
-            case BTNodeType::Wait:
-                return Wait(bt, state, deltaTime, node.Param1);
-            case BTNodeType::Idle:
-                return Idle(navAgent, transform, state, deltaTime, node.Param1, navmesh);
-            case BTNodeType::Attack:
-                return Attack(bt, navAgent, state, deltaTime, node.Param1);
-
-            default:
-                return BTStatus::Failure;
+    static BTStatus ExecuteNode(BTContext& ctx) {
+        auto* node = BTNodeRegistry::Instance().GetNode(ctx.Def.Type);
+        if (node) {
+            return node->Execute(ctx);
         }
-    }
-
-    static BTStatus ExecuteComposite(
-        BehaviorTreeComponent& bt,
-        const BTNodeDef& node,
-        BTNodeState& state
-    ) {
-        if (state.ChildProgress < node.ChildIndices.size()) {
-            uint16_t childIndex = node.ChildIndices[state.ChildProgress];
-            BT_LOG("Composite pushing child[" << (int)state.ChildProgress << "] = node " << childIndex);
-            bt.State.Push(childIndex);
-            return BTStatus::Running;
-        }
-
-        // All children processed
-        return (node.Type == BTNodeType::Sequence)
-            ? BTStatus::Success
-            : BTStatus::Failure;
+        return BTStatus::Failure;
     }
 
     static bool HandleChildResult(
@@ -200,362 +96,20 @@ private:
         BTNodeState& parentState,
         BTStatus childResult
     ) {
-        if (parentNode.Type == BTNodeType::Sequence) {
+        if (parentNode.Type == "sequence") {
             if (childResult == BTStatus::Failure) {
-                return true;  // Sequence fails on first failure
+                return true;
             }
             parentState.ChildProgress++;
-            return false;  // Continue to next child
+            return false;
         }
-        else if (parentNode.Type == BTNodeType::Selector) {
+        else if (parentNode.Type == "selector") {
             if (childResult == BTStatus::Success) {
-                return true;  // Selector succeeds on first success
+                return true;
             }
             parentState.ChildProgress++;
-            return false;  // Try next child
+            return false;
         }
         return true;
-    }
-
-    // Condition implementations
-    static BTStatus CheckDistance(
-        const BehaviorTreeComponent& bt,
-        const TransformComponentV2* transform,
-        float threshold
-    ) {
-        if (!bt.HasTarget || !transform) return BTStatus::Failure;
-        float dist = glm::distance(transform->GetPosition(), bt.TargetPosition);
-        return (dist <= threshold) ? BTStatus::Success : BTStatus::Failure;
-    }
-
-    // Target finding implementations
-    static BTStatus FindTargetByTag(
-        BehaviorTreeComponent& bt,
-        const TransformComponentV2* transform,
-        entt::registry& registry,
-        entt::entity selfEntity,
-        const std::string& tag,
-        float searchRadius
-    ) {
-        if (!transform) return BTStatus::Failure;
-
-        const auto myPos = transform->GetPosition();
-        float bestDist = searchRadius > 0 ? searchRadius : std::numeric_limits<float>::max();
-        entt::entity bestTarget = entt::null;
-        glm::vec3 bestPos{0};
-
-        // Search for entities with matching tag
-        auto view = registry.view<TagComponent, TransformComponentV2>();
-        for (auto entity : view) {
-            if (entity == selfEntity) continue;
-
-            const auto& tagComp = view.get<TagComponent>(entity);
-            if (tagComp.GetTag() != tag) continue;
-
-            const auto& targetTransform = view.get<TransformComponentV2>(entity);
-            const auto targetPos = targetTransform.GetPosition();
-            float dist = glm::distance(myPos, targetPos);
-
-            if (dist < bestDist) {
-                bestDist = dist;
-                bestTarget = entity;
-                bestPos = targetPos;
-            }
-        }
-
-        if (bestTarget != entt::null) {
-            bt.TargetEntity = bestTarget;
-            bt.TargetPosition = bestPos;
-            bt.HasTarget = true;
-            bt.TargetTag = tag;
-            BT_LOG("FindTargetByTag: found '" << tag << "' at distance " << bestDist);
-            return BTStatus::Success;
-        }
-
-        BT_LOG("FindTargetByTag: no '" << tag << "' found within radius " << searchRadius);
-        return BTStatus::Failure;
-    }
-
-    static BTStatus HasTargetInRange(
-        const BehaviorTreeComponent& bt,
-        const TransformComponentV2* transform,
-        entt::registry& registry,
-        float range
-    ) {
-        if (!bt.HasTarget || !transform) return BTStatus::Failure;
-        if (bt.TargetEntity == entt::null) return BTStatus::Failure;
-
-        // Check if target entity still exists and get its current position
-        if (!registry.valid(bt.TargetEntity)) return BTStatus::Failure;
-
-        auto* targetTransform = registry.try_get<TransformComponentV2>(bt.TargetEntity);
-        if (!targetTransform) return BTStatus::Failure;
-
-        float dist = glm::distance(transform->GetPosition(), targetTransform->GetPosition());
-        BT_LOG("HasTargetInRange: dist=" << dist << " range=" << range);
-        return (dist <= range) ? BTStatus::Success : BTStatus::Failure;
-    }
-
-    // Action implementations
-    static BTStatus MoveToTarget(
-        BehaviorTreeComponent& bt,
-        NavmeshAgentComponent* navAgent,
-        const TransformComponentV2* transform,
-        entt::registry& registry,
-        GridNavmesh* navmesh
-    ) {
-        if (!bt.HasTarget || !navAgent || !transform) return BTStatus::Failure;
-
-        // Update target position from entity if we have one
-        if (bt.TargetEntity != entt::null && registry.valid(bt.TargetEntity)) {
-            auto* targetTransform = registry.try_get<TransformComponentV2>(bt.TargetEntity);
-            if (targetTransform) {
-                bt.TargetPosition = targetTransform->GetPosition();
-            }
-        }
-
-        // Check if path exists before setting destination
-        if (navmesh) {
-            glm::vec3 currentPos = transform->GetPosition();
-            glm::vec3 targetPos = bt.TargetPosition;
-
-            // Clamp target to walkable area if needed
-            if (!navmesh->IsWalkable(targetPos)) {
-                targetPos = navmesh->FindNearestPoint(targetPos);
-            }
-
-            // Check if a valid path exists
-            auto path = navmesh->FindPath(currentPos, targetPos);
-            if (path.empty()) {
-                // No valid path - stop and fail
-                BT_LOG("MoveToTarget: no valid path to target");
-                navAgent->HasDestination = false;
-                navAgent->DestinationChanged = true;
-                return BTStatus::Failure;
-            }
-
-            bt.TargetPosition = targetPos;
-        }
-
-        navAgent->Destination = bt.TargetPosition;
-        navAgent->HasDestination = true;
-        navAgent->DestinationChanged = true;
-
-        // Check if arrived (close enough to target) - use distance, not speed
-        float distToTarget = glm::distance(transform->GetPosition(), bt.TargetPosition);
-        constexpr float arrivalThreshold = 0.5f;
-        if (distToTarget <= arrivalThreshold) {
-            BT_LOG("MoveToTarget: arrived at target (dist=" << distToTarget << ")");
-            return BTStatus::Success;
-        }
-
-        return BTStatus::Running;
-    }
-
-    static BTStatus RandomWander(
-        BehaviorTreeComponent& bt,
-        NavmeshAgentComponent* navAgent,
-        const TransformComponentV2* transform,
-        float radius,
-        GridNavmesh* navmesh
-    ) {
-        if (!navAgent || !transform) {
-            BT_LOG("RandomWander: missing navAgent or transform");
-            return BTStatus::Failure;
-        }
-
-        // Generate random point if not currently moving
-        if (!navAgent->HasDestination || navAgent->CurrentSpeed < 0.1f) {
-            static std::random_device rd;
-            static std::mt19937 gen(rd());
-            std::uniform_real_distribution<float> dist(-radius, radius);
-
-            glm::vec3 currentPos = transform->GetPosition();
-            glm::vec3 targetPos;
-            bool foundValidPath = false;
-
-            // Try up to 5 times to find a reachable random point
-            for (int attempt = 0; attempt < 5; ++attempt) {
-                targetPos = currentPos + glm::vec3(dist(gen), 0, dist(gen));
-
-                if (navmesh) {
-                    // Clamp to walkable area
-                    if (!navmesh->IsWalkable(targetPos)) {
-                        targetPos = navmesh->FindNearestPoint(targetPos);
-                    }
-
-                    // Check if path exists
-                    auto path = navmesh->FindPath(currentPos, targetPos);
-                    if (!path.empty()) {
-                        foundValidPath = true;
-                        break;
-                    }
-                } else {
-                    // No navmesh, assume valid
-                    foundValidPath = true;
-                    break;
-                }
-            }
-
-            if (!foundValidPath) {
-                BT_LOG("RandomWander: could not find reachable point after 5 attempts");
-                return BTStatus::Failure;
-            }
-
-            bt.TargetPosition = targetPos;
-            bt.HasTarget = true;
-
-            navAgent->Destination = bt.TargetPosition;
-            navAgent->HasDestination = true;
-            navAgent->DestinationChanged = true;
-
-            BT_LOG("RandomWander: new target (" << bt.TargetPosition.x << ", " << bt.TargetPosition.z << ")");
-        } else {
-            BT_LOG("RandomWander: moving, speed=" << navAgent->CurrentSpeed);
-        }
-
-        return BTStatus::Running;
-    }
-
-    static BTStatus Wait(
-        [[maybe_unused]] BehaviorTreeComponent& bt,
-        BTNodeState& state,
-        float deltaTime,
-        float duration
-    ) {
-        state.Timer += deltaTime;
-        BT_LOG("Wait: " << state.Timer << "/" << duration);
-        if (state.Timer >= duration) {
-            state.Timer = 0.0f;
-            BT_LOG("Wait: completed");
-            return BTStatus::Success;
-        }
-        return BTStatus::Running;
-    }
-
-    static BTStatus Attack(
-        BehaviorTreeComponent& bt,
-        NavmeshAgentComponent* navAgent,
-        BTNodeState& state,
-        float deltaTime,
-        float duration
-    ) {
-        // Stop movement when attacking
-        if (navAgent) {
-            navAgent->HasDestination = false;
-            navAgent->DestinationChanged = true;
-        }
-
-        // Set attacking state
-        bt.IsAttacking = true;
-
-        // Use state timer for attack duration
-        state.Timer += deltaTime;
-        BT_LOG("Attack: " << state.Timer << "/" << duration);
-
-        if (state.Timer >= duration) {
-            state.Timer = 0.0f;
-            bt.IsAttacking = false;
-            BT_LOG("Attack: completed");
-            return BTStatus::Success;
-        }
-
-        return BTStatus::Running;
-    }
-
-    static BTStatus Idle(
-        NavmeshAgentComponent* navAgent,
-        const TransformComponentV2* transform,
-        BTNodeState& state,
-        float deltaTime,
-        float radius,
-        GridNavmesh* navmesh
-    ) {
-        if (!navAgent || !transform) {
-            BT_LOG("Idle: missing navAgent or transform");
-            return BTStatus::Failure;
-        }
-
-        // Use default radius if not specified
-        if (radius <= 0) {
-            radius = 3.0f;
-        }
-
-        glm::vec3 currentPos = transform->GetPosition();
-
-        // Check if we need to pick a new destination (first call or arrived)
-        bool needNewDestination = !state.HasCustomTarget;
-
-        if (state.HasCustomTarget) {
-            // Check if arrived at destination
-            float distToTarget = glm::distance(currentPos, state.CustomTarget);
-            constexpr float arrivalThreshold = 0.5f;
-            BT_LOG("Idle: dist=" << distToTarget << " speed=" << navAgent->CurrentSpeed);
-            if (distToTarget <= arrivalThreshold) {
-                BT_LOG("Idle: arrived at target");
-                state.HasCustomTarget = false;
-                navAgent->HasDestination = false;
-                return BTStatus::Success;
-            }
-
-            // Check if stuck (not moving but should be)
-            if (navAgent->CurrentSpeed < 0.05f) {
-                state.Timer += deltaTime;
-                if (state.Timer > 2.0f) {
-                    BT_LOG("Idle: stuck for 2s, picking new destination");
-                    needNewDestination = true;
-                    state.Timer = 0.0f;
-                }
-            } else {
-                state.Timer = 0.0f;
-            }
-        }
-
-        if (needNewDestination) {
-            static std::random_device rd;
-            static std::mt19937 gen(rd());
-            std::uniform_real_distribution<float> dist(-radius, radius);
-
-            glm::vec3 targetPos;
-            bool foundValidPath = false;
-
-            // Try up to 5 times to find a reachable random point
-            for (int attempt = 0; attempt < 5; ++attempt) {
-                targetPos = currentPos + glm::vec3(dist(gen), 0, dist(gen));
-
-                if (navmesh) {
-                    // Clamp to walkable area
-                    if (!navmesh->IsWalkable(targetPos)) {
-                        targetPos = navmesh->FindNearestPoint(targetPos);
-                    }
-
-                    // Check if path exists
-                    auto path = navmesh->FindPath(currentPos, targetPos);
-                    if (!path.empty()) {
-                        foundValidPath = true;
-                        break;
-                    }
-                } else {
-                    foundValidPath = true;
-                    break;
-                }
-            }
-
-            if (!foundValidPath) {
-                BT_LOG("Idle: could not find reachable point");
-                return BTStatus::Success; // Complete idle anyway
-            }
-
-            state.CustomTarget = targetPos;
-            state.HasCustomTarget = true;
-
-            navAgent->Destination = targetPos;
-            navAgent->HasDestination = true;
-            navAgent->DestinationChanged = true;
-
-            BT_LOG("Idle: new target (" << targetPos.x << ", " << targetPos.z << ")");
-        }
-
-        return BTStatus::Running;
     }
 };
