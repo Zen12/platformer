@@ -1,17 +1,18 @@
 #pragma once
 
 #include "../fsm/node/action/action.hpp"
+#include "../system/guid.hpp"
 #include "scene_manager.hpp"
 #include "scene_asset.hpp"
 
 struct LoadSceneAction final : public Action {
 
 private:
-    std::string _sceneGuid;
+    Guid _sceneGuid;
     std::shared_ptr<SceneManager> _sceneManager;
 
 public:
-    LoadSceneAction(std::string sceneGuid, std::shared_ptr<SceneManager> sceneManager)
+    LoadSceneAction(Guid sceneGuid, std::shared_ptr<SceneManager> sceneManager)
         : _sceneGuid(std::move(sceneGuid)), _sceneManager(std::move(sceneManager)) {}
 
     void OnEnter() const override {

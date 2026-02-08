@@ -1,0 +1,4 @@
+name: gl
+guid: d86cc557-3dab-4858-ac6c-37709fdd47b4
+extension: .vert
+type: vertex_shader

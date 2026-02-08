@@ -1,17 +1,23 @@
 #pragma once
 #include <cstdint>
-#include <string>
+#include <optional>
+#include <glm/vec4.hpp>
 
 #include "mesh_renderer_component_serialization.hpp"
 #include "../../renderer/bounds.hpp"
+#include "../../system/guid.hpp"
 
 
 class MeshRendererComponent final {
 public:
-    std::string Guid;
-    std::string MaterialGuid;
-    Bounds MeshBounds;  // Populated on first render from Scene
+    Guid MeshGuid;
+    Guid MaterialGuid;
+    Bounds MeshBounds;
+    std::optional<glm::vec4> Color;
 
     explicit MeshRendererComponent(const MeshRendererComponentSerialization &serialization)
-        : Guid(serialization.MeshGuid), MaterialGuid(serialization.MaterialGuid) {}
+        : MeshGuid(serialization.MeshGuid), MaterialGuid(serialization.MaterialGuid), Color(serialization.Color) {}
+
+    MeshRendererComponent(const Guid& meshGuid, const Guid& materialGuid, const std::optional<glm::vec4>& color = std::nullopt)
+        : MeshGuid(meshGuid), MaterialGuid(materialGuid), Color(color) {}
 };

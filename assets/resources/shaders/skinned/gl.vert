@@ -11,6 +11,9 @@ uniform mat4 view;
 uniform mat4 model;
 uniform mat4 boneMatrices[100];  // Support up to 100 bones
 
+// Y-based depth offset for 2.5D sorting (set via uniform, 0 = disabled)
+uniform float yDepthFactor;
+
 void main()
 {
     // Calculate skinned position
@@ -20,7 +23,9 @@ void main()
     boneTransform += boneMatrices[aBoneIndices[3]] * aBoneWeights[3];
 
     vec4 skinnedPos = boneTransform * vec4(aPos, 1.0);
-    gl_Position = projection * view * model * skinnedPos;
+    vec4 worldPos = model * skinnedPos;
+    gl_Position = projection * view * worldPos;
+    gl_Position.z += worldPos.y * yDepthFactor * gl_Position.w;
 
     TexCoord = aTexCoord;
 }

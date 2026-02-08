@@ -1,12 +1,11 @@
 #pragma once
-#include <string>
-#include <utility>
 #include <vector>
 #include <glm/glm.hpp>
+#include "../../system/guid.hpp"
 
 struct SpawnerComponent {
 private:
-    std::string _prefabGuid;
+    Guid _prefabGuid;
     int _spawnCount;
     std::vector<glm::vec3> _spawnPositions;
     bool _spawnOnNavmesh;
@@ -16,10 +15,10 @@ private:
     bool _hasSpawned;
 
 public:
-    SpawnerComponent(std::string  prefabGuid, const int &spawnCount, const std::vector<glm::vec3>& spawnPositions, bool spawnOnNavmesh, bool spawnOnAllCells, float elevationHeight = 1.0f, float yOffset = 0.0f)
-        : _prefabGuid(std::move(prefabGuid)), _spawnCount(spawnCount), _spawnPositions(spawnPositions), _spawnOnNavmesh(spawnOnNavmesh), _spawnOnAllCells(spawnOnAllCells), _elevationHeight(elevationHeight), _yOffset(yOffset), _hasSpawned(false) {}
+    SpawnerComponent(const Guid& prefabGuid, const int &spawnCount, const std::vector<glm::vec3>& spawnPositions, bool spawnOnNavmesh, bool spawnOnAllCells, float elevationHeight = 1.0f, float yOffset = 0.0f)
+        : _prefabGuid(prefabGuid), _spawnCount(spawnCount), _spawnPositions(spawnPositions), _spawnOnNavmesh(spawnOnNavmesh), _spawnOnAllCells(spawnOnAllCells), _elevationHeight(elevationHeight), _yOffset(yOffset), _hasSpawned(false) {}
 
-    [[nodiscard]] std::string GetPrefabGuid() const noexcept { return _prefabGuid; }
+    [[nodiscard]] Guid GetPrefabGuid() const noexcept { return _prefabGuid; }
     [[nodiscard]] int GetSpawnCount() const noexcept { return _spawnCount; }
     [[nodiscard]] std::vector<glm::vec3> GetSpawnPositions() const noexcept { return _spawnPositions; }
     [[nodiscard]] bool GetSpawnOnNavmesh() const noexcept { return _spawnOnNavmesh; }

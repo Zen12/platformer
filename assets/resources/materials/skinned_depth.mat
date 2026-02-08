@@ -1,5 +1,5 @@
 name: skinned_depth
-is_culling: true
+is_culling: false
 is_depth_test: true
 blend_mode: 0
 shader_opengl:

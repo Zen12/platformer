@@ -1,17 +1,17 @@
 #pragma once
 #include <vector>
-#include <string>
 #include <random>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include "particle.hpp"
 #include "particle_emitter_component_serialization.hpp"
+#include "../../system/guid.hpp"
 
 class ParticleEmitterComponent final {
 private:
     std::vector<Particle> _particles;
-    std::string _materialGuid;
-    std::string _meshGuid;
+    Guid _materialGuid;
+    Guid _meshGuid;
     int _maxParticles = 100;
     float _emissionRate = 10.0f;
     float _particleLifetime = 2.0f;
@@ -30,7 +30,7 @@ private:
 
     float _emissionAccumulator = 0.0f;
     std::mt19937 _rng;
-    int _pendingBurst = 0;  // Number of particles to spawn immediately
+    int _pendingBurst = 0;
 
 public:
     ParticleEmitterComponent() : _rng(std::random_device{}()) {
@@ -64,8 +64,8 @@ public:
     [[nodiscard]] std::vector<Particle>& GetParticles() noexcept { return _particles; }
     [[nodiscard]] const std::vector<Particle>& GetParticles() const noexcept { return _particles; }
 
-    [[nodiscard]] const std::string& GetMaterialGuid() const noexcept { return _materialGuid; }
-    [[nodiscard]] const std::string& GetMeshGuid() const noexcept { return _meshGuid; }
+    [[nodiscard]] const Guid& GetMaterialGuid() const noexcept { return _materialGuid; }
+    [[nodiscard]] const Guid& GetMeshGuid() const noexcept { return _meshGuid; }
     [[nodiscard]] int GetMaxParticles() const noexcept { return _maxParticles; }
     [[nodiscard]] float GetEmissionRate() const noexcept { return _emissionRate; }
     [[nodiscard]] float GetParticleLifetime() const noexcept { return _particleLifetime; }

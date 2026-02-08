@@ -1,12 +1,13 @@
 #pragma once
 #include "play_sound_repeated_action_serialization.hpp"
 #include "yaml-cpp/node/node.h"
+#include "../system/guid_yaml.hpp"
 
 namespace YAML {
     template <>
     struct convert<PlaySoundRepeatedActionSerialization> {
         static bool decode(const Node &node, PlaySoundRepeatedActionSerialization &rhs) {
-            rhs.AudioGuid = node["audio_guid"].as<std::string>();
+            rhs.AudioGuid = node["audio_guid"].as<Guid>();
             if (node["volume"]) {
                 rhs.Volume = node["volume"].as<float>();
             }

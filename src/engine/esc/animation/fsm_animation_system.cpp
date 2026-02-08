@@ -97,8 +97,8 @@ void FsmAnimationSystem::OnTick() {
                     directionAngle = ikAim->MovementDirectionAngle;
                     // Use directional blending if configured, otherwise fall back to simple reversal
                     if (anim.UseDirectionalBlending &&
-                        !anim.DirectionalWalkForwardGuid.empty() &&
-                        !anim.DirectionalWalkBackGuid.empty()) {
+                        !anim.DirectionalWalkForwardGuid.IsEmpty() &&
+                        !anim.DirectionalWalkBackGuid.IsEmpty()) {
                         useDirectionalBlend = true;
                     } else {
                         // Fallback: Reverse animation when moving backward (angle > 90 degrees)
@@ -112,7 +112,7 @@ void FsmAnimationSystem::OnTick() {
         }
 
         // Create FsmController if not exists
-        if (!anim.FsmGuid.empty() && !anim.Controller) {
+        if (!anim.FsmGuid.IsEmpty() && !anim.Controller) {
             if (auto assetManager = scene->GetAssetManager().lock()) {
                 try {
                     auto fsmAsset = assetManager->LoadAssetByGuid<FsmAsset>(anim.FsmGuid);
@@ -138,7 +138,7 @@ void FsmAnimationSystem::OnTick() {
                     );
 
                 } catch (const std::exception& e) {
-                    std::cerr << "Failed to load FSM: " << anim.FsmGuid << " - " << e.what() << std::endl;
+                    std::cerr << "Failed to load FSM: " << anim.FsmGuid.ToString() << " - " << e.what() << std::endl;
                 }
             }
         }
@@ -219,8 +219,8 @@ void FsmAnimationSystem::OnTick() {
                     anim.Controller->SetTrigger(anim.OnCompleteTrigger);
                 }
 
-                FSM_ANIM_LOG << "[ANIM] Transition complete: " << anim.FromAnimationGuid
-                             << " -> " << anim.ToAnimationGuid << std::endl;
+                FSM_ANIM_LOG << "[ANIM] Transition complete: " << anim.FromAnimationGuid.ToString()
+                             << " -> " << anim.ToAnimationGuid.ToString() << std::endl;
                 anim.IsTransitioning = false;
                 anim.CurrentAnimationGuid = anim.ToAnimationGuid;
                 // Don't reset Time - let animation continue from accumulated time during transition
@@ -230,14 +230,14 @@ void FsmAnimationSystem::OnTick() {
         }
 
         // Skip bone calculation if no animation is set
-        if (anim.CurrentAnimationGuid.empty()) continue;
+        if (anim.CurrentAnimationGuid.IsEmpty()) continue;
 
         // Populate bone data
         if (skinnedMesh.BoneNames.empty()) {
-            scene->GetMesh(skinnedMesh.Guid);
-            skinnedMesh.BoneNames = scene->GetMeshBoneNames(skinnedMesh.Guid);
-            skinnedMesh.BoneOffsets = scene->GetMeshBoneOffsets(skinnedMesh.Guid);
-            skinnedMesh.BoneParents = scene->GetMeshBoneParents(skinnedMesh.Guid);
+            scene->GetMesh(skinnedMesh.MeshGuid);
+            skinnedMesh.BoneNames = scene->GetMeshBoneNames(skinnedMesh.MeshGuid);
+            skinnedMesh.BoneOffsets = scene->GetMeshBoneOffsets(skinnedMesh.MeshGuid);
+            skinnedMesh.BoneParents = scene->GetMeshBoneParents(skinnedMesh.MeshGuid);
         }
 
         // Bone calculations
@@ -321,8 +321,8 @@ void FsmAnimationSystem::OnTick() {
         } else if (useDirectionalBlend) {
             // Directional animation blending (4-way blend based on movement direction)
             // Load all 4 directional animations
-            auto loadAnim = [&](const std::string& guid) -> std::shared_ptr<AnimationData> {
-                if (guid.empty()) return nullptr;
+            auto loadAnim = [&](const Guid& guid) -> std::shared_ptr<AnimationData> {
+                if (guid.IsEmpty()) return nullptr;
                 if (_loadedAnimations.find(guid) == _loadedAnimations.end()) {
                     auto data = scene->GetAnimation(guid);
                     if (data) _loadedAnimations[guid] = data;
@@ -514,10 +514,10 @@ void FsmAnimationSystem::OnTick() {
                 auto animData = scene->GetAnimation(anim.CurrentAnimationGuid);
                 if (animData) {
                     _loadedAnimations[anim.CurrentAnimationGuid] = animData;
-                    FSM_ANIM_LOG << "[ANIM] Loaded animation: " << anim.CurrentAnimationGuid
+                    FSM_ANIM_LOG << "[ANIM] Loaded animation: " << anim.CurrentAnimationGuid.ToString()
                                  << " Duration: " << animData->Duration << "s" << std::endl;
                 } else {
-                    std::cerr << "Failed to load animation: " << anim.CurrentAnimationGuid << std::endl;
+                    std::cerr << "Failed to load animation: " << anim.CurrentAnimationGuid.ToString() << std::endl;
                     continue;
                 }
             }
@@ -531,7 +531,7 @@ void FsmAnimationSystem::OnTick() {
             // Check for animation completion (forward direction)
             if (effectiveSpeed > 0.0f && anim.Time >= animData->Duration && !anim.HasCompletedOnce) {
                 anim.HasCompletedOnce = true;
-                FSM_ANIM_LOG << "[ANIM] Animation completed: " << anim.CurrentAnimationGuid
+                FSM_ANIM_LOG << "[ANIM] Animation completed: " << anim.CurrentAnimationGuid.ToString()
                              << " Trigger: " << anim.OnCompleteTrigger << std::endl;
                 // Set trigger if specified
                 if (!anim.OnCompleteTrigger.empty() && anim.Controller) {

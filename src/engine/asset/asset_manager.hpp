@@ -11,11 +11,12 @@
 #include <yaml-cpp/yaml.h>
 
 #include "loaders/asset_loader.hpp"
+#include "../system/guid.hpp"
 
 class AssetManager {
 private:
     const std::string _assetPath;
-    std::unordered_map<std::string, MetaAsset> _assetMap;
+    std::unordered_map<Guid, MetaAsset> _assetMap;
 
 public:
     explicit AssetManager(std::string assetPath)
@@ -26,16 +27,16 @@ public:
     void Init();
 
     template <typename T>
-    [[nodiscard]] T LoadAssetByGuid(const std::string& guid) const noexcept {
+    [[nodiscard]] T LoadAssetByGuid(const Guid& guid) const noexcept {
         const auto path = GetPathFromGuid(guid);
         return YAML::LoadFile(path).as<T>();
     }
 
 
-    [[nodiscard]] std::string GetPathFromGuid(const std::string& guid) const noexcept {
+    [[nodiscard]] std::string GetPathFromGuid(const Guid& guid) const noexcept {
 #ifndef NDEBUG
         if (_assetMap.find(guid) == _assetMap.end()) {
-            std::cerr << "Asset " << guid << " not found" << std::endl;
+            std::cerr << "Asset " << guid.ToString() << " not found" << std::endl;
         }
 #endif
 
@@ -44,7 +45,7 @@ public:
     }
 
     template<typename T>
-    [[nodiscard]] T LoadSourceByGuid(const std::string& guid) const noexcept {
+    [[nodiscard]] T LoadSourceByGuid(const Guid& guid) const noexcept {
         const auto path = GetPathFromGuid(guid);
         return AssetLoader<T>::LoadFromPath(path);
     }

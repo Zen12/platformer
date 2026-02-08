@@ -1,4 +1,5 @@
 #pragma once
+#include <optional>
 #include <unordered_map>
 #include <vector>
 
@@ -22,22 +23,23 @@
 #include "../renderer/animation/animation_asset_loader.hpp"
 #include "../navigation/navigation_manager.hpp"
 #include "../renderer/skybox/skybox_renderer.hpp"
+#include "../system/guid.hpp"
 
 class AudioManager;
 
 class Scene {
 private:
-    std::unordered_map<std::string, std::shared_ptr<Shader>> _shaders{};
-    std::unordered_map<std::string, std::shared_ptr<Material>> _materials{};
-    std::unordered_map<std::string, std::shared_ptr<UiPage>> _uiPages{};
-    std::unordered_map<std::string, std::shared_ptr<Texture>> _textures{};
-    std::unordered_map<std::string, std::shared_ptr<Font>> _fonts{};
-    std::unordered_map<std::string, std::shared_ptr<Mesh>> _meshes{};
-    std::unordered_map<std::string, std::shared_ptr<AnimationData>> _animations{};
-    std::unordered_map<std::string, std::vector<std::string>> _meshBoneNames{};
-    std::unordered_map<std::string, std::vector<glm::mat4>> _meshBoneOffsets{};
-    std::unordered_map<std::string, std::vector<int>> _meshBoneParents{};
-    std::unordered_map<std::string, Bounds> _meshBounds{};
+    std::unordered_map<Guid, std::shared_ptr<Shader>> _shaders{};
+    std::unordered_map<Guid, std::shared_ptr<Material>> _materials{};
+    std::unordered_map<Guid, std::shared_ptr<UiPage>> _uiPages{};
+    std::unordered_map<Guid, std::shared_ptr<Texture>> _textures{};
+    std::unordered_map<Guid, std::shared_ptr<Font>> _fonts{};
+    std::unordered_map<Guid, std::shared_ptr<Mesh>> _meshes{};
+    std::unordered_map<Guid, std::shared_ptr<AnimationData>> _animations{};
+    std::unordered_map<Guid, std::vector<std::string>> _meshBoneNames{};
+    std::unordered_map<Guid, std::vector<glm::mat4>> _meshBoneOffsets{};
+    std::unordered_map<Guid, std::vector<int>> _meshBoneParents{};
+    std::unordered_map<Guid, Bounds> _meshBounds{};
 
     std::weak_ptr<Window> _window;
     std::weak_ptr<AssetManager> _assetManager;
@@ -48,7 +50,7 @@ private:
     std::shared_ptr<NavigationManager> _navigationManager{};
     std::unique_ptr<SkyboxRenderer> _skyboxRenderer{};
 
-    std::string _requestToLoadScene{};
+    Guid _requestToLoadScene{};
 
 public:
 
@@ -91,8 +93,8 @@ public:
         return _skyboxRenderer.get();
     }
 
-    void InitializeSkybox(const std::string& materialGuid) {
-        if (materialGuid.empty()) {
+    void InitializeSkybox(const Guid& materialGuid) {
+        if (materialGuid.IsEmpty()) {
             _skyboxRenderer.reset();
             return;
         }
@@ -100,37 +102,37 @@ public:
         _skyboxRenderer->Initialize(materialGuid);
     }
 
-    [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid);
+    [[nodiscard]] std::shared_ptr<Shader> GetShader(const Guid &vertexGuid, const Guid &fragmentGuid);
 
-    [[nodiscard]] std::shared_ptr<Material> GetMaterial(const std::string &guid);
+    [[nodiscard]] std::shared_ptr<Material> GetMaterial(const Guid &guid);
 
-    std::shared_ptr<Mesh> GetMesh(const std::string &guid);
+    std::shared_ptr<Mesh> GetMesh(const Guid &guid);
 
-    [[nodiscard]] std::shared_ptr<Texture> GetTexture(const std::string &guid);
+    [[nodiscard]] std::shared_ptr<Texture> GetTexture(const Guid &guid);
 
-    [[nodiscard]] std::shared_ptr<Font> GetFont(const std::string &guid);
+    [[nodiscard]] std::shared_ptr<Font> GetFont(const Guid &guid);
 
-    [[nodiscard]] std::shared_ptr<UiPage> GetUiPage(const std::string &guid);
+    [[nodiscard]] std::shared_ptr<UiPage> GetUiPage(const Guid &guid);
 
-    [[nodiscard]] std::shared_ptr<AnimationData> GetAnimation(const std::string &guid);
+    [[nodiscard]] std::shared_ptr<AnimationData> GetAnimation(const Guid &guid);
 
-    [[nodiscard]] std::vector<std::string> GetMeshBoneNames(const std::string &guid) const;
+    [[nodiscard]] std::vector<std::string> GetMeshBoneNames(const Guid &guid) const;
 
-    [[nodiscard]] std::vector<glm::mat4> GetMeshBoneOffsets(const std::string &guid) const noexcept;
+    [[nodiscard]] std::vector<glm::mat4> GetMeshBoneOffsets(const Guid &guid) const noexcept;
 
-    [[nodiscard]] std::vector<int> GetMeshBoneParents(const std::string &guid) const noexcept;
+    [[nodiscard]] std::vector<int> GetMeshBoneParents(const Guid &guid) const noexcept;
 
-    [[nodiscard]] Bounds GetMeshBounds(const std::string &guid) const noexcept;
+    [[nodiscard]] Bounds GetMeshBounds(const Guid &guid) const noexcept;
 
-    void RequestToLoadScene(const std::string &sceneGuid) noexcept {
+    void RequestToLoadScene(const Guid &sceneGuid) noexcept {
         _requestToLoadScene = sceneGuid;
     }
 
-    [[nodiscard]] std::string GetLoadSceneRequestGuid() const noexcept {
+    [[nodiscard]] Guid GetLoadSceneRequestGuid() const noexcept {
         return _requestToLoadScene;
     }
 
-    void RegisterMesh(const std::string &guid, std::shared_ptr<Mesh> mesh) noexcept {
+    void RegisterMesh(const Guid &guid, std::shared_ptr<Mesh> mesh) noexcept {
         _meshes[guid] = std::move(mesh);
     }
 };

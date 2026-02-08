@@ -11,6 +11,26 @@
 #include "condition/core_types/trigger_check_condition_serialization.hpp"
 #include "condition/core_types/always_true_condition.hpp"
 #include "condition/core_types/always_true_condition_serialization.hpp"
+#include "../system/guid.hpp"
+
+// Action serialization includes for dynamic_cast
+#include "../renderer/ui/ui_page_action_serialization.hpp"
+#include "../renderer/ui/button_listener_action_serialization.hpp"
+#include "../renderer/ui/trigger_setter_button_listener_action_serialization.hpp"
+#include "../scene/load_scene_action_serialization.hpp"
+#include "node/action/set_system_trigger_action_serialization.hpp"
+#include "node/action/log_action_serialization.hpp"
+#include "node/action/animation_state_action_serialization.hpp"
+#include "node/action/animation_state_transition_action_serialization.hpp"
+#include "node/action/start_video_recording_action_serialization.hpp"
+#include "node/action/stop_video_recording_action_serialization.hpp"
+#include "node/action/fps_display_action_serialization.hpp"
+#include "node/action/health_display_action_serialization.hpp"
+#include "node/action/health_bar_action_serialization.hpp"
+#include "node/action/health_check_action_serialization.hpp"
+#include "../audio/play_sound_action_serialization.hpp"
+#include "../audio/play_sound_repeated_action_serialization.hpp"
+#include "../audio/mute_audio_action_serialization.hpp"
 
 class FsmAnimationComponent;
 class VideoRecorder;
@@ -40,59 +60,91 @@ public:
         for (const auto& nodeSer : fsmAsset.StateNodeSerialization) {
             std::vector<StateNode::AllActionVariants> actions;
 
-            for (const auto& actionData : nodeSer->ActionData) {
-                if (actionData.Type == "load_ui_page") {
-                    actions.emplace_back(actionFactory.CreateUiPageAction(actionData.Param));
-                } else if (actionData.Type == "load_scene") {
-                    actions.emplace_back(actionFactory.CreateLoadSceneAction(actionData.Param));
-                } else if (actionData.Type == "action_button_listener") {
-                    actions.emplace_back(actionFactory.CreateButtonListenerAction(actionData.Param));
-                } else if (actionData.Type == "action_trigger_setter_button_listener") {
-                    actions.emplace_back(actionFactory.CreateTriggerSetterButtonListenerAction(actionData.Param, actionData.Param2));
-                } else if (actionData.Type == "set_system_trigger") {
-                    actions.emplace_back(actionFactory.CreateSetSystemTriggerAction(actionData.Param));
-                } else if (actionData.Type == "log") {
-                    actions.emplace_back(actionFactory.CreateLogAction(actionData.Param));
-                } else if (actionData.Type == "animation_state") {
-                    bool loop = actionData.Param3 != "false";
-                    float animSpeed = actionData.Param4.empty() ? -1.0f : std::stof(actionData.Param4);
-                    bool disableVelSpeed = actionData.Param5 == "true";
-                    bool disableMovement = actionData.Param6 == "true";
-                    float disableMovementDuration = actionData.Param7.empty() ? -1.0f : std::stof(actionData.Param7);
-                    bool useDirectionalBlending = actionData.Param8 == "true";
-                    actions.emplace_back(actionFactory.CreateAnimationStateAction(
-                        actionData.Param, actionData.Param2, loop, animSpeed, disableVelSpeed, disableMovement, disableMovementDuration,
-                        useDirectionalBlending, actionData.Param9, actionData.Param10, actionData.Param11, actionData.Param12));
-                } else if (actionData.Type == "animation_state_transition") {
-                    actions.emplace_back(actionFactory.CreateAnimationStateTransitionAction(actionData.Param, actionData.Param2, std::stof(actionData.Param3), actionData.Param4));
-                } else if (actionData.Type == "start_video_recording") {
-                    int fps = !actionData.Param2.empty() ? std::stoi(actionData.Param2) : 60;
-                    actions.emplace_back(actionFactory.CreateStartVideoRecordingAction(actionData.Param, fps));
-                } else if (actionData.Type == "stop_video_recording") {
+            for (const auto& actionSer : nodeSer->ActionData) {
+                if (actionSer->Type == "load_ui_page") {
+                    if (const auto* ser = dynamic_cast<UIPageActionSerialization*>(actionSer.get())) {
+                        actions.emplace_back(actionFactory.CreateUiPageAction(ser->UiPageGuid));
+                    }
+                } else if (actionSer->Type == "load_scene") {
+                    if (const auto* ser = dynamic_cast<LoadSceneActionSerialization*>(actionSer.get())) {
+                        actions.emplace_back(actionFactory.CreateLoadSceneAction(ser->SceneGuid));
+                    }
+                } else if (actionSer->Type == "action_button_listener") {
+                    if (const auto* ser = dynamic_cast<ButtonListenerActionSerialization*>(actionSer.get())) {
+                        actions.emplace_back(actionFactory.CreateButtonListenerAction(ser->ButtonId));
+                    }
+                } else if (actionSer->Type == "action_trigger_setter_button_listener") {
+                    if (const auto* ser = dynamic_cast<TriggerSetterButtonListenerActionSerialization*>(actionSer.get())) {
+                        actions.emplace_back(actionFactory.CreateTriggerSetterButtonListenerAction(ser->ButtonId, ser->TriggerName));
+                    }
+                } else if (actionSer->Type == "set_system_trigger") {
+                    if (const auto* ser = dynamic_cast<SetSystemTriggerActionSerialization*>(actionSer.get())) {
+                        actions.emplace_back(actionFactory.CreateSetSystemTriggerAction(ser->TriggerType));
+                    }
+                } else if (actionSer->Type == "log") {
+                    if (const auto* ser = dynamic_cast<LogActionSerialization*>(actionSer.get())) {
+                        actions.emplace_back(actionFactory.CreateLogAction(ser->Message));
+                    }
+                } else if (actionSer->Type == "animation_state") {
+                    if (const auto* ser = dynamic_cast<AnimationStateActionSerialization*>(actionSer.get())) {
+                        actions.emplace_back(actionFactory.CreateAnimationStateAction(
+                            Guid::FromString(ser->AnimationGuid),
+                            ser->OnCompleteTrigger,
+                            ser->Loop,
+                            ser->AnimationSpeed,
+                            ser->DisableVelocitySpeed,
+                            ser->DisableMovement,
+                            ser->DisableMovementDuration,
+                            ser->UseDirectionalBlending,
+                            Guid::FromString(ser->DirectionalWalkForwardGuid),
+                            Guid::FromString(ser->DirectionalWalkBackGuid),
+                            Guid::FromString(ser->DirectionalWalkLeftGuid),
+                            Guid::FromString(ser->DirectionalWalkRightGuid)));
+                    }
+                } else if (actionSer->Type == "animation_state_transition") {
+                    if (const auto* ser = dynamic_cast<AnimationStateTransitionActionSerialization*>(actionSer.get())) {
+                        actions.emplace_back(actionFactory.CreateAnimationStateTransitionAction(
+                            Guid::FromString(ser->FromAnimationGuid),
+                            Guid::FromString(ser->ToAnimationGuid),
+                            ser->TransitionTime,
+                            ser->OnCompleteTrigger));
+                    }
+                } else if (actionSer->Type == "start_video_recording") {
+                    if (const auto* ser = dynamic_cast<StartVideoRecordingActionSerialization*>(actionSer.get())) {
+                        actions.emplace_back(actionFactory.CreateStartVideoRecordingAction(ser->OutputFile, ser->Fps));
+                    }
+                } else if (actionSer->Type == "stop_video_recording") {
                     actions.emplace_back(actionFactory.CreateStopVideoRecordingAction());
-                } else if (actionData.Type == "fps_display") {
-                    actions.emplace_back(actionFactory.CreateFpsDisplayAction(actionData.Param));
-                } else if (actionData.Type == "health_display") {
-                    actions.emplace_back(actionFactory.CreateHealthDisplayAction(actionData.Param));
-                } else if (actionData.Type == "health_bar") {
-                    actions.emplace_back(actionFactory.CreateHealthBarAction(actionData.Param));
-                } else if (actionData.Type == "health_check") {
-                    actions.emplace_back(actionFactory.CreateHealthCheckAction(actionData.Param));
-                } else if (actionData.Type == "play_sound") {
-                    float volume = actionData.Param2.empty() ? 1.0f : std::stof(actionData.Param2);
-                    bool loop = actionData.Param3 == "true";
-                    actions.emplace_back(actionFactory.CreatePlaySoundAction(actionData.Param, volume, loop));
-                } else if (actionData.Type == "play_sound_repeated") {
-                    float volume = actionData.Param2.empty() ? 1.0f : std::stof(actionData.Param2);
-                    float delaySeconds = actionData.Param3.empty() ? 0.5f : std::stof(actionData.Param3);
-                    bool spatial = actionData.Param4.empty() || actionData.Param4 == "true";
-                    float minDistance = actionData.Param5.empty() ? 1.0f : std::stof(actionData.Param5);
-                    float maxDistance = actionData.Param6.empty() ? 50.0f : std::stof(actionData.Param6);
-                    actions.emplace_back(actionFactory.CreatePlaySoundRepeatedAction(actionData.Param, volume, delaySeconds, spatial, minDistance, maxDistance));
-                } else if (actionData.Type == "mute_audio") {
-                    bool mute = actionData.Param.empty() || actionData.Param == "true";
-                    bool onlyDebug = actionData.Param2 == "true";
-                    actions.emplace_back(actionFactory.CreateMuteAudioAction(mute, onlyDebug));
+                } else if (actionSer->Type == "fps_display") {
+                    if (const auto* ser = dynamic_cast<FpsDisplayActionSerialization*>(actionSer.get())) {
+                        actions.emplace_back(actionFactory.CreateFpsDisplayAction(ser->ElementId));
+                    }
+                } else if (actionSer->Type == "health_display") {
+                    if (const auto* ser = dynamic_cast<HealthDisplayActionSerialization*>(actionSer.get())) {
+                        actions.emplace_back(actionFactory.CreateHealthDisplayAction(ser->ElementId));
+                    }
+                } else if (actionSer->Type == "health_bar") {
+                    if (const auto* ser = dynamic_cast<HealthBarActionSerialization*>(actionSer.get())) {
+                        actions.emplace_back(actionFactory.CreateHealthBarAction(ser->ElementId));
+                    }
+                } else if (actionSer->Type == "health_check") {
+                    if (const auto* ser = dynamic_cast<HealthCheckActionSerialization*>(actionSer.get())) {
+                        actions.emplace_back(actionFactory.CreateHealthCheckAction(ser->TriggerName));
+                    }
+                } else if (actionSer->Type == "play_sound") {
+                    if (const auto* ser = dynamic_cast<PlaySoundActionSerialization*>(actionSer.get())) {
+                        actions.emplace_back(actionFactory.CreatePlaySoundAction(ser->AudioGuid, ser->Volume, ser->Loop));
+                    }
+                } else if (actionSer->Type == "play_sound_repeated") {
+                    if (const auto* ser = dynamic_cast<PlaySoundRepeatedActionSerialization*>(actionSer.get())) {
+                        actions.emplace_back(actionFactory.CreatePlaySoundRepeatedAction(
+                            ser->AudioGuid, ser->Volume, ser->DelaySeconds,
+                            ser->Spatial, ser->MinDistance, ser->MaxDistance));
+                    }
+                } else if (actionSer->Type == "mute_audio") {
+                    if (const auto* ser = dynamic_cast<MuteAudioActionSerialization*>(actionSer.get())) {
+                        actions.emplace_back(actionFactory.CreateMuteAudioAction(ser->Mute, ser->OnlyDebug));
+                    }
                 }
             }
 

@@ -3,11 +3,13 @@
 
 #include <GL/glew.h>
 #include <fstream>
+#include <glm/vec4.hpp>
 #include "../renderer/controller/ui_opengl_render_controller.hpp"
 #include "../esc/transform/transform_component.hpp"
 #include "../esc/transform/transform_component_serialization.hpp"
 #include "../esc/mesh_renderer/mesh_renderer_component.hpp"
 #include "../esc/mesh_renderer/mesh_renderer_component_serialization.hpp"
+#include "../navigation/navmesh_mesh_generator.hpp"
 
 #define DEBUG_ENGINE_SCENE_MANAGER_PROFILE 0
 
@@ -27,10 +29,32 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
                 navigationManager->Initialize(navmesh.Width, navmesh.Height,
                                             navmesh.CellSize, navmesh.Origin,
                                             navmesh.WalkabilityGrid, navmesh.MaxAgents);
+
+                if (const auto gridNavmesh = navigationManager->GetNavmesh()) {
+                    auto navmeshMesh = NavmeshMeshGenerator::Generate(
+                        *gridNavmesh,
+                        navmesh.Origin.y,
+                        navmesh.ElevationHeight
+                    );
+
+                    // Create entity for combined navmesh mesh (ground + walls + ramps)
+                    if (navmeshMesh && navmesh.GroundMaterialGuid.has_value()) {
+                        const Guid meshGuid = Guid::Generate();
+                        _scene->RegisterMesh(meshGuid, navmeshMesh);
+
+                        if (const auto registry = _scene->GetEntityRegistry()) {
+                            const auto entity = registry->create();
+                            registry->emplace<TransformComponentV2>(entity);
+                            registry->emplace<MeshRendererComponent>(entity,
+                                meshGuid,
+                                navmesh.GroundMaterialGuid.value(),
+                                glm::vec4(0.3f, 0.6f, 0.3f, 1.0f));
+                        }
+                    }
+                }
             } else {
                 navigationManager->Initialize(50, 50, 1.0f, glm::vec3(0.0f, 0.0f, 0.0f));
             }
-
         }
 
         if (sceneAsset.Skybox.has_value()) {
@@ -41,7 +65,7 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
     }
 }
 
-void SceneManager::LoadSceneByGuid(const std::string& sceneGuid) {
+void SceneManager::LoadSceneByGuid(const Guid& sceneGuid) {
     if (const auto assetManager = _assetManager.lock()) {
         const auto sceneAsset = assetManager->LoadAssetByGuid<SceneAsset>(sceneGuid);
         LoadScene(sceneAsset);
@@ -82,14 +106,14 @@ void SceneManager::Update() {
     // here we should do rendering
 }
 
-std::shared_ptr<Shader> SceneManager::GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) const {
+std::shared_ptr<Shader> SceneManager::GetShader(const Guid &vertexGuid, const Guid &fragmentGuid) const {
     if (_scene) {
         return _scene->GetShader(vertexGuid, fragmentGuid);
     }
     return nullptr;
 }
 
-std::shared_ptr<Material> SceneManager::GetMaterial(const std::string &guid) const {
+std::shared_ptr<Material> SceneManager::GetMaterial(const Guid &guid) const {
     if (_scene) {
         return _scene->GetMaterial(guid);
     }
@@ -98,13 +122,13 @@ std::shared_ptr<Material> SceneManager::GetMaterial(const std::string &guid) con
 
 bool SceneManager::IsRequestToLoadScene() const {
     if (_scene) {
-        return !_scene->GetLoadSceneRequestGuid().empty();
+        return !_scene->GetLoadSceneRequestGuid().IsEmpty();
     }
     return false;
 }
 
 void SceneManager::LoadRequestedScene() {
-    if (_scene && !_scene->GetLoadSceneRequestGuid().empty()) {
+    if (_scene && !_scene->GetLoadSceneRequestGuid().IsEmpty()) {
         if (const auto assetManager = _assetManager.lock()) {
             const auto scene = assetManager->LoadAssetByGuid<SceneAsset>(_scene->GetLoadSceneRequestGuid());
             LoadScene(scene);
@@ -112,21 +136,21 @@ void SceneManager::LoadRequestedScene() {
     }
 }
 
-std::shared_ptr<Texture> SceneManager::GetTexture(const std::string &guid) const {
+std::shared_ptr<Texture> SceneManager::GetTexture(const Guid &guid) const {
     if (_scene) {
         return _scene->GetTexture(guid);
     }
     return nullptr;
 }
 
-std::shared_ptr<Font> SceneManager::GetFont(const std::string &guid) const {
+std::shared_ptr<Font> SceneManager::GetFont(const Guid &guid) const {
     if (_scene) {
         return _scene->GetFont(guid);
     }
     return nullptr;
 }
 
-std::shared_ptr<UiPage> SceneManager::GetUiPage(const std::string &guid) const {
+std::shared_ptr<UiPage> SceneManager::GetUiPage(const Guid &guid) const {
     if (_scene) {
         return _scene->GetUiPage(guid);
     }

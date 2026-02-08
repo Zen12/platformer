@@ -38,6 +38,9 @@ mat4 fetchBoneMatrix(int boneIndex) {
     );
 }
 
+// Y-based depth offset for 2.5D sorting (set via uniform, 0 = disabled)
+uniform float yDepthFactor;
+
 void main()
 {
     mat4 model = mat4(aModelCol0, aModelCol1, aModelCol2, aModelCol3);
@@ -50,6 +53,7 @@ void main()
     vec4 skinnedPos = boneTransform * vec4(aPos, 1.0);
     vec4 worldPos = model * skinnedPos;
     gl_Position = projection * view * worldPos;
+    gl_Position.z += worldPos.y * yDepthFactor * gl_Position.w;
 
     TexCoord = aTexCoord;
     FragPosLightSpace = lightProjection * lightView * worldPos;

@@ -1,5 +1,6 @@
 #pragma once
 #include "../fsm/node/action/action.hpp"
+#include "../system/guid.hpp"
 #include "audio_manager.hpp"
 #include "../esc/animation/fsm_animation_component.hpp"
 #include <memory>
@@ -8,7 +9,7 @@
 
 struct PlaySoundRepeatedAction final : public Action {
 private:
-    std::string _audioGuid;
+    Guid _audioGuid;
     float _volume;
     float _delaySeconds;
     bool _spatial;
@@ -20,7 +21,7 @@ private:
     mutable bool _firstPlay = true;
 
 public:
-    PlaySoundRepeatedAction(std::string audioGuid, float volume, float delaySeconds,
+    PlaySoundRepeatedAction(Guid audioGuid, float volume, float delaySeconds,
                             bool spatial, float minDistance, float maxDistance,
                             std::weak_ptr<AudioManager> audioManager,
                             std::weak_ptr<FsmAnimationComponent> animationComponent = {})
@@ -39,7 +40,7 @@ public:
     }
 
     void OnUpdate() const override {
-        if (_audioGuid.empty()) return;
+        if (_audioGuid.IsEmpty()) return;
 
         const auto now = std::chrono::steady_clock::now();
         const float elapsed = std::chrono::duration<float>(now - _lastPlayTime).count();

@@ -5,6 +5,7 @@
 #include <memory>
 #include <unordered_map>
 #include "../asset/asset_manager.hpp"
+#include "../system/guid.hpp"
 
 class GuidFileInterface final : public Rml::FileInterface {
 private:
@@ -13,21 +14,23 @@ private:
     Rml::FileHandle _nextHandle = 1;
 
     std::string ResolveGuidToPath(const std::string& path) const {
-        constexpr const char* guidPrefix = "guid://";
-        constexpr size_t guidPrefixLen = 7;
-
-        if (path.rfind(guidPrefix, 0) == 0) {
-            const std::string guid = path.substr(guidPrefixLen);
-
-            if (const auto assetManager = _assetManager.lock()) {
-                return assetManager->GetPathFromGuid(guid);
-            }
-
-            std::cerr << "AssetManager not available for GUID resolution: " << guid << std::endl;
-            return "";
+        // Support both guid| and guid: formats (RmlUi converts | to : internally)
+        std::string guidString;
+        if (path.rfind("guid|", 0) == 0) {
+            guidString = path.substr(5);
+        } else if (path.rfind("guid:", 0) == 0) {
+            guidString = path.substr(5);
+        } else {
+            return path;
         }
 
-        return path;
+        const Guid guid = Guid::FromString(guidString);
+        if (const auto assetManager = _assetManager.lock()) {
+            return assetManager->GetPathFromGuid(guid);
+        }
+
+        std::cerr << "AssetManager not available for GUID resolution: " << guidString << std::endl;
+        return "";
     }
 
 public:

@@ -1,12 +1,12 @@
 #pragma once
-#include <string>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include "../../entity/component_serialization.hpp"
+#include "../../system/guid.hpp"
 
 struct ParticleEmitterComponentSerialization final : public ComponentSerialization {
-    std::string MaterialGuid;
-    std::string MeshGuid;
+    Guid MaterialGuid;
+    Guid MeshGuid;
     int MaxParticles = 100;
     float EmissionRate = 10.0f;
     float ParticleLifetime = 2.0f;
@@ -18,8 +18,8 @@ struct ParticleEmitterComponentSerialization final : public ComponentSerializati
     glm::vec4 StartColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     glm::vec4 EndColor = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
     float ParticleSize = 0.1f;
-    bool TriggerOnLand = false;  // Burst particles when entity lands
-    bool TriggerOnDamage = false;  // Burst particles when entity takes damage
-    bool TriggerOnAttack = false;  // Burst particles when entity attacks
-    int BurstCount = 10;  // Number of particles per burst
+    bool TriggerOnLand = false;
+    bool TriggerOnDamage = false;
+    bool TriggerOnAttack = false;
+    int BurstCount = 10;
 };

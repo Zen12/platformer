@@ -3,6 +3,7 @@
 #include "../instancing/instance_batch.hpp"
 #include "../framebuffer/framebuffer.hpp"
 #include "../framebuffer/depth_framebuffer.hpp"
+#include "../../system/guid.hpp"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <iostream>
@@ -41,7 +42,7 @@ class OpenGLRenderController final {
     void RenderInstanced(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept;
     void RenderLines(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept;
     void InitSkybox();
-    void RenderSkybox(const glm::mat4& view, const glm::mat4& projection, const std::string& materialGuid) noexcept;
+    void RenderSkybox(const glm::mat4& view, const glm::mat4& projection, const Guid& materialGuid) noexcept;
     void InitScreenQuad();
     void RenderPostProcess() noexcept;
     void RenderShadowPass(const std::shared_ptr<RenderRepository>& repository) noexcept;

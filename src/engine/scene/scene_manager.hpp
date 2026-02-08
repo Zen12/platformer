@@ -7,6 +7,7 @@
 #include "../renderer/material/material.hpp"
 #include "../asset/asset_manager.hpp"
 #include "../system/input_system.hpp"
+#include "../system/guid.hpp"
 
 #include "../esc/esc.hpp"
 #include "../audio/audio_manager.hpp"
@@ -47,7 +48,7 @@ public:
     }
 
     void LoadScene(const SceneAsset& serialization);
-    void LoadSceneByGuid(const std::string& sceneGuid);
+    void LoadSceneByGuid(const Guid& sceneGuid);
     void LoadEntities(const std::vector<EntitySerialization> &serialization);
     void UnloadScene();
 
@@ -57,9 +58,9 @@ public:
 
     void LoadRequestedScene();
 
-    [[nodiscard]] std::shared_ptr<Material> GetMaterial(const std::string& guid) const;
+    [[nodiscard]] std::shared_ptr<Material> GetMaterial(const Guid& guid) const;
 
-    [[nodiscard]] std::shared_ptr<UiPage> GetUiPage(const std::string& guid) const;
+    [[nodiscard]] std::shared_ptr<UiPage> GetUiPage(const Guid& guid) const;
 
     [[nodiscard]] std::shared_ptr<RenderRepository> GetRenderRepository() const {
         return _renderRepository;
@@ -69,14 +70,14 @@ public:
         _renderRepository->Clear();
     }
 
-    [[nodiscard]] std::shared_ptr<Mesh> GetMesh(const std::string& guid) const {
+    [[nodiscard]] std::shared_ptr<Mesh> GetMesh(const Guid& guid) const {
         if (_scene) {
             return _scene->GetMesh(guid);
         }
         return nullptr;
     }
 
-    [[nodiscard]] std::shared_ptr<Shader> GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) const;
+    [[nodiscard]] std::shared_ptr<Shader> GetShader(const Guid &vertexGuid, const Guid &fragmentGuid) const;
 
     [[nodiscard]] std::shared_ptr<Scene> GetScene() const {
         return _scene;
@@ -85,9 +86,9 @@ public:
 private:
 
 
-    [[nodiscard]] std::shared_ptr<Texture> GetTexture(const std::string& guid) const;
+    [[nodiscard]] std::shared_ptr<Texture> GetTexture(const Guid& guid) const;
 
-    [[nodiscard]] std::shared_ptr<Font> GetFont(const std::string& guid) const;
+    [[nodiscard]] std::shared_ptr<Font> GetFont(const Guid& guid) const;
 
 
 };

@@ -1,9 +1,12 @@
 <rml>
+<head>
+    <link type="text/template" href="guid|604fdc70-a493-4688-b1eb-e32315cba97e"/>
+</head>
 <body>
     <h1>Platformer 0.1</h1>
     <div id="buttons">
-        <button id="start-button">Start Game</button>
-        <button id="exit-button">Exit</button>
+        <menu_button id="start-button">Start Game</menu_button>
+        <menu_button id="exit-button">Exit</menu_button>
     </div>
     <p id="instructions">WASD to move and SPACE to jump</p>
 </body>

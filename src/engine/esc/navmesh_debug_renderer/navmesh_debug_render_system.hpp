@@ -6,6 +6,7 @@
 #include "../camera/camera_component.hpp"
 #include "../../renderer/render_repository.hpp"
 #include "../../navigation/navigation_manager.hpp"
+#include "../../system/guid.hpp"
 
 class NavmeshDebugRenderSystem final : public ISystem {
 private:
@@ -14,7 +15,7 @@ private:
     const TypeCamera _cameraView;
     std::shared_ptr<RenderRepository> _repository;
     std::shared_ptr<NavigationManager> _navigationManager;
-    std::string _materialGuid = "b53dc63c-0c57-46b1-80e5-7570f2445f8a"; // line.mat
+    Guid _materialGuid = Guid::FromString("b53dc63c-0c57-46b1-80e5-7570f2445f8a");
 
     [[nodiscard]] std::vector<glm::vec3> ExtractNavmeshPolygons() const noexcept {
         if (!_navigationManager) {
@@ -39,10 +40,9 @@ private:
 
         std::vector<glm::vec3> positions;
 
-        // Draw grid cell edges for walkable cells
         for (int z = 0; z < height && z < static_cast<int>(grid.size()); ++z) {
             for (int x = 0; x < width && x < static_cast<int>(grid[z].size()); ++x) {
-                if (grid[z][x] == 0) continue;  // Skip non-walkable
+                if (grid[z][x] == 0) continue;
 
                 const float x0 = origin.x + static_cast<float>(x) * cellSize;
                 const float x1 = origin.x + static_cast<float>(x + 1) * cellSize;
@@ -50,23 +50,18 @@ private:
                 const float z1 = origin.z + static_cast<float>(z + 1) * cellSize;
                 const float y = origin.y + yOffset;
 
-                // Draw cell edges (only external edges for cleaner look)
-                // Left edge
                 if (x == 0 || grid[z][x - 1] == 0) {
                     positions.emplace_back(x0, y, z0);
                     positions.emplace_back(x0, y, z1);
                 }
-                // Right edge
                 if (x == width - 1 || x + 1 >= static_cast<int>(grid[z].size()) || grid[z][x + 1] == 0) {
                     positions.emplace_back(x1, y, z0);
                     positions.emplace_back(x1, y, z1);
                 }
-                // Bottom edge
                 if (z == 0 || grid[z - 1][x] == 0) {
                     positions.emplace_back(x0, y, z0);
                     positions.emplace_back(x1, y, z0);
                 }
-                // Top edge
                 if (z == height - 1 || z + 1 >= static_cast<int>(grid.size()) || grid[z + 1][x] == 0) {
                     positions.emplace_back(x0, y, z1);
                     positions.emplace_back(x1, y, z1);
@@ -95,16 +90,16 @@ public:
         for (const auto &[_, camera] : _cameraView.each()) {
             _repository->Add(RenderData{
                 _materialGuid,
-                "",  // No mesh GUID needed for direct position rendering
+                Guid{},
                 glm::mat4(1.0f),
                 camera.View,
                 camera.Projection,
-                std::nullopt,  // BoneTransforms
+                std::nullopt,
                 PrimitiveType::Lines,
                 positions,
-                glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),  // LineColor - Blue for navmesh
-                std::nullopt,  // InstanceColor
-                false  // IsSkinned
+                glm::vec4(0.0f, 0.0f, 1.0f, 1.0f),
+                std::nullopt,
+                false
             });
         }
     }

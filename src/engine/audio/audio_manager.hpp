@@ -11,6 +11,7 @@
 #include "audio_data.hpp"
 #include "audio_loader.hpp"
 #include "../asset/asset_manager.hpp"
+#include "../system/guid.hpp"
 
 #define DEBUG_AUDIO_MANAGER 0
 
@@ -31,7 +32,7 @@ private:
 
     std::weak_ptr<AssetManager> _assetManager;
 
-    std::unordered_map<std::string, ALuint> _bufferCache;
+    std::unordered_map<Guid, ALuint> _bufferCache;
     std::vector<ALuint> _activeSources;
 
     bool _muted = false;
@@ -98,7 +99,7 @@ public:
         }
     }
 
-    AudioHandle PlaySound(const std::string& guid, float volume = 1.0f, bool loop = false) {
+    AudioHandle PlaySound(const Guid& guid, float volume = 1.0f, bool loop = false) {
         const ALuint buffer = GetOrLoadBuffer(guid);
         if (buffer == 0) {
             return INVALID_AUDIO_HANDLE;
@@ -124,7 +125,7 @@ public:
         return source;
     }
 
-    AudioHandle PlaySoundSpatial(const std::string& guid, const glm::vec3& position,
+    AudioHandle PlaySoundSpatial(const Guid& guid, const glm::vec3& position,
                                   float volume = 1.0f, bool loop = false,
                                   float minDistance = 1.0f, float maxDistance = 100.0f) {
         const ALuint buffer = GetOrLoadBuffer(guid);
@@ -248,7 +249,7 @@ public:
     }
 
 private:
-    ALuint GetOrLoadBuffer(const std::string& guid) {
+    ALuint GetOrLoadBuffer(const Guid& guid) {
         auto it = _bufferCache.find(guid);
         if (it != _bufferCache.end()) {
             return it->second;
@@ -264,7 +265,7 @@ private:
         const AudioData audioData = AudioLoader::LoadWAV(path);
 
         if (!audioData.IsValid()) {
-            std::cerr << "AudioManager: Failed to load audio: " << guid << std::endl;
+            std::cerr << "AudioManager: Failed to load audio: " << guid.ToString() << std::endl;
             return 0;
         }
 
@@ -283,7 +284,7 @@ private:
                      static_cast<ALsizei>(audioData.SampleRate));
 
         if (alGetError() != AL_NO_ERROR) {
-            std::cerr << "AudioManager: Failed to buffer audio data: " << guid << std::endl;
+            std::cerr << "AudioManager: Failed to buffer audio data: " << guid.ToString() << std::endl;
             alDeleteBuffers(1, &buffer);
             return 0;
         }

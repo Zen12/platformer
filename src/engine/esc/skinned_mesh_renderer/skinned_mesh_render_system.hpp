@@ -99,8 +99,8 @@ public:
 
                 // Lazy-load bounds from Scene on first render
                 if (!skinnedMesh.MeshBounds.IsValid() && scene) {
-                    scene->GetMesh(skinnedMesh.Guid);  // Ensure mesh is loaded
-                    skinnedMesh.MeshBounds = scene->GetMeshBounds(skinnedMesh.Guid);
+                    scene->GetMesh(skinnedMesh.MeshGuid);  // Ensure mesh is loaded
+                    skinnedMesh.MeshBounds = scene->GetMeshBounds(skinnedMesh.MeshGuid);
                 }
 
                 // Transform bounds to world space and perform AABB frustum culling
@@ -124,7 +124,7 @@ public:
                 // Pass bone transforms to renderer with IsSkinned = true for instanced rendering
                 _repository->Add(RenderData{
                     skinnedMesh.MaterialGuid,
-                    skinnedMesh.Guid,
+                    skinnedMesh.MeshGuid,
                     model,
                     camera.View,
                     camera.Projection,
@@ -133,7 +133,8 @@ public:
                     std::nullopt,  // Positions
                     std::nullopt,  // LineColor
                     std::nullopt,  // InstanceColor
-                    true  // IsSkinned = true
+                    true,  // IsSkinned = true
+                    camera.cameraData.yDepthFactor  // Y-based depth offset
                 });
 
 #if DEBUG_DRAW_BOUNDS

@@ -1,17 +1,15 @@
 #pragma once
 
 #include <random>
-#include <sstream>
-#include <iomanip>
 #include <array>
-#include <string>
+#include "guid.hpp"
 
 
 class GuidGenerator {
 public:
     GuidGenerator() = delete;
 
-    static std::string GenerateGuid()
+    static Guid GenerateGuid()
     {
         static thread_local std::mt19937_64 rng{std::random_device{}()};
         static thread_local std::uniform_int_distribution<uint64_t> dist;
@@ -25,13 +23,16 @@ public:
         bytes[6] = (bytes[6] & 0x0F) | 0x40;
         bytes[8] = (bytes[8] & 0x3F) | 0x80;
 
-        std::ostringstream oss;
-        oss << std::hex << std::setfill('0');
-        for (size_t i = 0; i < bytes.size(); i++) {
-            oss << std::setw(2) << static_cast<int>(bytes[i]);
-            if (i == 3 || i == 5 || i == 7 || i == 9)
-                oss << "-";
+        uint64_t high = 0;
+        uint64_t low = 0;
+
+        for (int i = 0; i < 8; ++i) {
+            high = (high << 8) | bytes[i];
         }
-        return oss.str();
+        for (int i = 8; i < 16; ++i) {
+            low = (low << 8) | bytes[i];
+        }
+
+        return {high, low};
     }
 };

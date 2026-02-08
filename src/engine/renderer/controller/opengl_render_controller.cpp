@@ -1,5 +1,6 @@
 #include "opengl_render_controller.hpp"
 #include "../../scene/scene_manager.hpp"
+#include "../../system/guid.hpp"
 #include "../material/shader.hpp"
 #include <glm/gtc/type_ptr.hpp>
 
@@ -59,9 +60,12 @@ namespace {
          1.0f,  1.0f,  1.0f, 1.0f
     };
 
-    constexpr const char* POST_PROCESS_MATERIAL_GUID = "0b67e64e-d1f7-4e7b-89f8-b9fdf724fc2b";
-    constexpr const char* DEPTH_MATERIAL_GUID = "04a6ec12-6609-4aad-8cc2-cd892c74b4fc";
-    constexpr const char* SKINNED_DEPTH_MATERIAL_GUID = "e6ea918b-1491-4c4f-b42a-90f9c322388a";
+    // 0b67e64e-d1f7-4e7b-89f8-b9fdf724fc2b
+    constexpr Guid POST_PROCESS_MATERIAL_GUID{0x0b67e64ed1f74e7b, 0x89f8b9fdf724fc2b};
+    // 04a6ec12-6609-4aad-8cc2-cd892c74b4fc
+    constexpr Guid DEPTH_MATERIAL_GUID{0x04a6ec1266094aad, 0x8cc2cd892c74b4fc};
+    // e6ea918b-1491-4c4f-b42a-90f9c322388a
+    constexpr Guid SKINNED_DEPTH_MATERIAL_GUID{0xe6ea918b14914c4f, 0xb42a90f9c322388a};
 }
 
 OpenGLRenderController::~OpenGLRenderController() {
@@ -147,8 +151,8 @@ void OpenGLRenderController::RenderPostProcess() noexcept {
     glBindVertexArray(0);
 }
 
-void OpenGLRenderController::RenderSkybox(const glm::mat4& view, const glm::mat4& projection, const std::string& materialGuid) noexcept {
-    if (materialGuid.empty()) return;
+void OpenGLRenderController::RenderSkybox(const glm::mat4& view, const glm::mat4& projection, const Guid& materialGuid) noexcept {
+    if (materialGuid.IsEmpty()) return;
 
     if (!_skyboxInitialized) {
         InitSkybox();
@@ -179,7 +183,7 @@ void OpenGLRenderController::RenderInstanced(const RenderId& renderId, const std
         return;
     }
 
-    const std::string batchKey = renderId.MaterialGuid + "_" + renderId.MeshGuid;
+    const std::string batchKey = renderId.MaterialGuid.ToString() + "_" + renderId.MeshGuid.ToString();
 
     if (_batches.find(batchKey) == _batches.end()) {
         _batches[batchKey] = std::make_unique<InstanceBatch>();
@@ -214,7 +218,12 @@ void OpenGLRenderController::RenderInstanced(const RenderId& renderId, const std
     mat->UseShader();
     mat->SetMat4("view", renderId.CameraView);
     mat->SetMat4("projection", renderId.CameraProjection);
+    mat->SetFloat("yDepthFactor", renderId.YDepthFactor);
     mat->ApplyRenderState();
+
+    if (!instances.empty() && instances[0].LineColor.has_value()) {
+        mat->SetVec4("lineColor", instances[0].LineColor.value());
+    }
 
     if (mat->HasTextures()) {
         mat->BindTextures();
@@ -323,7 +332,7 @@ void OpenGLRenderController::RenderShadowPass(const std::shared_ptr<RenderReposi
             }
         }
 
-        const std::string batchKey = std::string("shadow_") + renderId.MeshGuid + (renderId.IsSkinned ? "_skinned" : "");
+        const std::string batchKey = std::string("shadow_") + renderId.MeshGuid.ToString() + (renderId.IsSkinned ? "_skinned" : "");
 
         if (_batches.find(batchKey) == _batches.end()) {
             _batches[batchKey] = std::make_unique<InstanceBatch>();

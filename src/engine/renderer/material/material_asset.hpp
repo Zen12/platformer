@@ -1,12 +1,12 @@
 #pragma once
-
+#include "../../system/guid.hpp"
 
 struct MaterialAsset
 {
-    std::string VertexShaderGuid{};
-    std::string FragmentShaderGuid{};
-    std::string Font{};
-    std::string Image{};
+    Guid VertexShaderGuid{};
+    Guid FragmentShaderGuid{};
+    Guid Font{};
+    Guid Image{};
     int BlendMode = 0;
     bool IsCulling = false;
     bool IsDepthTest = false;

@@ -1,0 +1,7 @@
+<template name="menu_button" content="label">
+<head>
+</head>
+<body>
+    <span id="label"></span>
+</body>
+</template>

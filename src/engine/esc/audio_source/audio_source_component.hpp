@@ -1,10 +1,10 @@
 #pragma once
-#include <string>
 #include "../../audio/audio_manager.hpp"
+#include "../../system/guid.hpp"
 
 class AudioSourceComponent final {
 private:
-    std::string _audioClipGuid;
+    Guid _audioClipGuid;
     float _volume = 1.0f;
     float _pitch = 1.0f;
     bool _loop = false;
@@ -19,15 +19,15 @@ private:
 public:
     AudioSourceComponent() = default;
 
-    AudioSourceComponent(const std::string& audioClipGuid, float volume, float pitch,
+    AudioSourceComponent(const Guid& audioClipGuid, float volume, float pitch,
                          bool loop, bool autoPlay, bool spatial,
                          float minDistance, float maxDistance)
         : _audioClipGuid(audioClipGuid), _volume(volume), _pitch(pitch),
           _loop(loop), _autoPlay(autoPlay), _spatial(spatial),
           _minDistance(minDistance), _maxDistance(maxDistance) {}
 
-    [[nodiscard]] const std::string& GetAudioClipGuid() const noexcept { return _audioClipGuid; }
-    void SetAudioClipGuid(const std::string& guid) noexcept { _audioClipGuid = guid; }
+    [[nodiscard]] const Guid& GetAudioClipGuid() const noexcept { return _audioClipGuid; }
+    void SetAudioClipGuid(const Guid& guid) noexcept { _audioClipGuid = guid; }
 
     [[nodiscard]] float GetVolume() const noexcept { return _volume; }
     void SetVolume(float volume) noexcept { _volume = volume; }

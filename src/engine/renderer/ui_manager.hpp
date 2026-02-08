@@ -6,6 +6,7 @@
 #include "controller/ui_opengl_render_controller.hpp"
 #include "../asset/asset_manager.hpp"
 #include "../scene/scene_manager.hpp"
+#include "../system/guid.hpp"
 #include "guid_file_interface.hpp"
 #include "RmlUi/Core/Core.h"
 #include "RmlUi/Core/ElementDocument.h"
@@ -67,7 +68,7 @@ public:
         Rml::Initialise();
     }
 
-    void LoadPage(const std::string& guid) {
+    void LoadPage(const Guid& guid) {
         if (_isPageLoaded)
             return;
 
@@ -89,9 +90,8 @@ public:
                 _rmlContext = std::unique_ptr<Rml::Context>(
                     Rml::CreateContext("main", Rml::Vector2i(window->GetWidth(), window->GetHeight())));
 
-                // Create a simple Hello World document
-                if (Rml::ElementDocument* document = _rmlContext->CreateDocument()) {
-                    document->SetInnerRML(uiPage->Rml);
+                // Load document from memory to properly process templates
+                if (Rml::ElementDocument* document = _rmlContext->LoadDocumentFromMemory(uiPage->Rml)) {
                     document->SetStyleSheetContainer(css);
                     document->Show();
                 }
@@ -99,7 +99,7 @@ public:
         }
     }
 
-    void UnLoadPage([[maybe_unused]] const std::string &guid) {
+    void UnLoadPage([[maybe_unused]] const Guid &guid) {
         Rml::RemoveContext("main");
         _rmlContext.release();
         _isPageLoaded = false;

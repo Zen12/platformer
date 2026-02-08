@@ -1,10 +1,10 @@
 #pragma once
-#include <string>
 #include "../fsm/node/action/action_serialiazion.hpp"
+#include "../system/guid.hpp"
 
 class PlaySoundRepeatedActionSerialization final : public ActionSerialization {
 public:
-    std::string AudioGuid;
+    Guid AudioGuid;
     float Volume = 1.0f;
     float DelaySeconds = 0.5f;
     bool Spatial = true;

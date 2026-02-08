@@ -3,6 +3,7 @@
 #include "../esc_core.hpp"
 #include "../../renderer/render_repository.hpp"
 #include "../../scene/scene.hpp"
+#include "../../system/guid.hpp"
 #include "../camera/camera_component.hpp"
 #include "../transform/transform_component.hpp"
 #include <glm/gtc/matrix_transform.hpp>
@@ -34,11 +35,11 @@ public:
 private:
     void RenderEmitter(const ParticleEmitterComponent& emitter, const CameraComponentV2& camera) const {
         const auto& particles = emitter.GetParticles();
-        const std::string& materialGuid = emitter.GetMaterialGuid();
-        const std::string& meshGuid = emitter.GetMeshGuid();
+        const Guid& materialGuid = emitter.GetMaterialGuid();
+        const Guid& meshGuid = emitter.GetMeshGuid();
         const float particleSize = emitter.GetParticleSize();
 
-        if (materialGuid.empty() || meshGuid.empty()) {
+        if (materialGuid.IsEmpty() || meshGuid.IsEmpty()) {
             return;
         }
 

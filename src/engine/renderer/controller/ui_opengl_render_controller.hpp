@@ -17,8 +17,8 @@
 #include "../../system/window.hpp"
 #include "../../asset/loaders/asset_texture_loader.h"
 #include "../../asset/asset_manager.hpp"
+#include "../../system/guid.hpp"
 
-// Simple OpenGL render interface for RmlUi
 class UiOpenGLRenderController : public Rml::RenderInterface {
 private:
     std::unordered_map<Rml::CompiledGeometryHandle, std::unique_ptr<Mesh>> geometries;
@@ -36,13 +36,14 @@ private:
         constexpr size_t guidPrefixLen = 7;
 
         if (path.rfind(guidPrefix, 0) == 0) {
-            const std::string guid = path.substr(guidPrefixLen);
+            const std::string guidStr = path.substr(guidPrefixLen);
+            const Guid guid = Guid::FromString(guidStr);
 
             if (const auto assetManager = _assetManager.lock()) {
                 return assetManager->GetPathFromGuid(guid);
             }
 
-            std::cerr << "AssetManager not available for GUID resolution: " << guid << std::endl;
+            std::cerr << "AssetManager not available for GUID resolution: " << guidStr << std::endl;
             return "";
         }
 
@@ -75,17 +76,14 @@ public:
         const auto material = _material.lock();
         if (!material) return;
 
-        material->Bind();  // This sets up depth testing, blend mode, and culling
+        material->Bind();
 
-        // Set projection matrix
         glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(_window.lock()->GetWidth()),
                                            static_cast<float>(_window.lock()->GetHeight()), 0.0f, -1.0f, 1.0f);
 
-        // Apply translation
         projection = glm::translate(projection, glm::vec3(translation.x, translation.y, 0.0f));
         material->SetMat4("projection",projection);
 
-        // Bind texture if present
         if (texture) {
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(texture));
@@ -117,7 +115,6 @@ public:
             return 0;
         }
 
-        // Load texture without vertical flip (UI textures use top-left origin)
         int width, height;
         GLuint texture_id = _texture_loader.texture_load(resolvedPath.c_str(), false, &width, &height);
 
@@ -128,7 +125,6 @@ public:
 
         texture_dimensions = {width, height};
 
-        // Store texture for cleanup later
         const auto texture = std::make_shared<Texture>(texture_id);
         _textures.push_back(texture);
         if (const auto material = _material.lock()) {

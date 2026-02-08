@@ -1,9 +1,10 @@
 #pragma once
 #include <string>
+#include "../../system/guid.hpp"
 
 struct MetaAsset
 {
-    std::string Guid{};
+    Guid Guid{};
     std::string Extension{};
     std::string Type{};
     std::string Path{};

@@ -42,7 +42,8 @@ h1 {
     to { padding: 18dp; }
 }
 
-button {
+/* Template button base style */
+menu_button {
     display: block;
     width: 100%;
     background-color: #f6470a;
@@ -58,11 +59,11 @@ button {
     animation: 1s infinite pulse;
 }
 
-button:hover {
+menu_button:hover {
     background-color: #ff5a1f;
 }
 
-button:active {
+menu_button:active {
     background-color: #d63e08;
 }
 

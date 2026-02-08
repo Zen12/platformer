@@ -15,6 +15,8 @@
 #define MATERIAL_LOG if(0) std::cout
 #endif
 
+static const Guid SPRITE_GUID = Guid(0, 2);
+
 std::weak_ptr<AssetManager> Scene::GetAssetManager() const noexcept {
     return _assetManager;
 }
@@ -28,26 +30,27 @@ std::weak_ptr<Window> Scene::GetWindow() const noexcept {
 }
 
 
-std::shared_ptr<Shader> Scene::GetShader(const std::string &vertexGuid, const std::string &fragmentGuid) {
+std::shared_ptr<Shader> Scene::GetShader(const Guid &vertexGuid, const Guid &fragmentGuid) {
     if (const auto assetManager = _assetManager.lock()) {
+        Guid combinedGuid(vertexGuid.High() ^ fragmentGuid.High(), vertexGuid.Low() ^ fragmentGuid.Low());
 
-        if (_shaders.find(vertexGuid + fragmentGuid) == _shaders.end()) {
+        if (_shaders.find(combinedGuid) == _shaders.end()) {
             SHADER_LOG << "Compiling shader: " << assetManager->GetPathFromGuid(vertexGuid)
                        << " + " << assetManager->GetPathFromGuid(fragmentGuid) << std::endl;
             const auto vertexSource = assetManager->LoadSourceByGuid<std::string>(vertexGuid);
             const auto fragmentSource = assetManager->LoadSourceByGuid<std::string>(fragmentGuid);
             const auto shader = std::make_shared<Shader>(vertexSource, fragmentSource);
-            _shaders[vertexGuid + fragmentGuid] = shader;
+            _shaders[combinedGuid] = shader;
             return shader;
         }
 
-        return _shaders[vertexGuid + fragmentGuid];
+        return _shaders[combinedGuid];
     }
 
     return {};
 }
 
-std::shared_ptr<Material> Scene::GetMaterial(const std::string &guid) {
+std::shared_ptr<Material> Scene::GetMaterial(const Guid &guid) {
     if (const auto assetManager = _assetManager.lock()) {
         if (_materials.find(guid) == _materials.end()) {
             MATERIAL_LOG << "Loading material: " << assetManager->GetPathFromGuid(guid) << std::endl;
@@ -62,7 +65,7 @@ std::shared_ptr<Material> Scene::GetMaterial(const std::string &guid) {
             material->SetDepthTest(materialAsset.IsDepthTest);
             material->SetDepthWrite(materialAsset.IsDepthWrite);
 
-            if (!materialAsset.Image.empty()) {
+            if (!materialAsset.Image.IsEmpty()) {
                 const auto sprite = GetTexture(materialAsset.Image);
                 material->AddSprite(sprite);
             }
@@ -76,10 +79,10 @@ std::shared_ptr<Material> Scene::GetMaterial(const std::string &guid) {
     return {};
 }
 
-std::shared_ptr<Mesh> Scene::GetMesh(const std::string &guid) {
+std::shared_ptr<Mesh> Scene::GetMesh(const Guid &guid) {
     if (const auto assetManager = _assetManager.lock()) {
         if (_meshes.find(guid) == _meshes.end()) {
-            if (guid == "sprite") {
+            if (guid == SPRITE_GUID) {
                 const auto meshAsset = std::shared_ptr<Mesh>(Mesh::GenerateSpritePtr());
                 _meshes[guid] = meshAsset;
                 return meshAsset;
@@ -90,14 +93,12 @@ std::shared_ptr<Mesh> Scene::GetMesh(const std::string &guid) {
             if (meshData.HasSkeleton) {
                 mesh = std::make_shared<Mesh>(meshData.Vertices, meshData.Indices, meshData.HasTexCoords,
                                               meshData.BoneWeights, meshData.BoneIndices);
-                // Store bone names, offsets, and hierarchy for animation mapping
                 _meshBoneNames[guid] = meshData.BoneNames;
                 _meshBoneOffsets[guid] = meshData.BoneOffsets;
                 _meshBoneParents[guid] = meshData.BoneParents;
             } else {
                 mesh = std::make_shared<Mesh>(meshData.Vertices, meshData.Indices, meshData.HasTexCoords);
             }
-            // Store mesh bounds for frustum culling
             _meshBounds[guid] = meshData.MeshBounds;
             _meshes[guid] = mesh;
             return mesh;
@@ -108,7 +109,7 @@ std::shared_ptr<Mesh> Scene::GetMesh(const std::string &guid) {
     return {};
 }
 
-std::shared_ptr<Texture> Scene::GetTexture(const std::string &guid) {
+std::shared_ptr<Texture> Scene::GetTexture(const Guid &guid) {
     if (const auto assetManager = _assetManager.lock()) {
         if (_textures.find(guid) == _textures.end()) {
             const auto sprite = std::make_shared<Texture>(assetManager->LoadSourceByGuid<Texture>(guid));
@@ -120,8 +121,8 @@ std::shared_ptr<Texture> Scene::GetTexture(const std::string &guid) {
     return {};
 }
 
-std::shared_ptr<Font> Scene::GetFont(const std::string &guid) {
-    if (guid.empty())
+std::shared_ptr<Font> Scene::GetFont(const Guid &guid) {
+    if (guid.IsEmpty())
         return {};
 
     if (const auto assetManager = _assetManager.lock()) {
@@ -136,7 +137,7 @@ std::shared_ptr<Font> Scene::GetFont(const std::string &guid) {
     return {};
 }
 
-std::shared_ptr<UiPage> Scene::GetUiPage(const std::string &guid) {
+std::shared_ptr<UiPage> Scene::GetUiPage(const Guid &guid) {
     if (const auto assetManager = _assetManager.lock()) {
         if (_uiPages.find(guid) == _uiPages.end()) {
             const auto uiPageAsset = assetManager->LoadAssetByGuid<UiPageAsset>(guid);
@@ -156,8 +157,8 @@ std::shared_ptr<UiPage> Scene::GetUiPage(const std::string &guid) {
     return {};
 }
 
-std::shared_ptr<AnimationData> Scene::GetAnimation(const std::string &guid) {
-    if (guid.empty())
+std::shared_ptr<AnimationData> Scene::GetAnimation(const Guid &guid) {
+    if (guid.IsEmpty())
         return {};
 
     if (const auto assetManager = _assetManager.lock()) {
@@ -172,28 +173,28 @@ std::shared_ptr<AnimationData> Scene::GetAnimation(const std::string &guid) {
     return {};
 }
 
-std::vector<std::string> Scene::GetMeshBoneNames(const std::string &guid) const {
+std::vector<std::string> Scene::GetMeshBoneNames(const Guid &guid) const {
     if (const auto it = _meshBoneNames.find(guid); it != _meshBoneNames.end()) {
         return it->second;
     }
     return {};
 }
 
-std::vector<glm::mat4> Scene::GetMeshBoneOffsets(const std::string &guid) const noexcept {
+std::vector<glm::mat4> Scene::GetMeshBoneOffsets(const Guid &guid) const noexcept {
     if (const auto it = _meshBoneOffsets.find(guid); it != _meshBoneOffsets.end()) {
         return it->second;
     }
     return {};
 }
 
-std::vector<int> Scene::GetMeshBoneParents(const std::string &guid) const noexcept {
+std::vector<int> Scene::GetMeshBoneParents(const Guid &guid) const noexcept {
     if (const auto it = _meshBoneParents.find(guid); it != _meshBoneParents.end()) {
         return it->second;
     }
     return {};
 }
 
-Bounds Scene::GetMeshBounds(const std::string &guid) const noexcept {
+Bounds Scene::GetMeshBounds(const Guid &guid) const noexcept {
     if (const auto it = _meshBounds.find(guid); it != _meshBounds.end()) {
         return it->second;
     }

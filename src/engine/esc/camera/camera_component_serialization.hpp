@@ -9,4 +9,5 @@ struct CameraComponentSerialization final : public ComponentSerialization
     float perspectiveFarPlane;
     float orthographicAspect;
     bool isPerspective;
+    float yDepthFactor = 0.0f;  // Y-based depth offset for 2.5D sorting (0 = disabled)
 };

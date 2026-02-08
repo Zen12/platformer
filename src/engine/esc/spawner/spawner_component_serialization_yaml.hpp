@@ -1,13 +1,14 @@
 #pragma once
 #include <yaml-cpp/yaml.h>
 #include "spawner_component_serialization.hpp"
+#include "../../system/guid_yaml.hpp"
 
 namespace YAML {
     template <>
     struct convert<SpawnerComponentSerialization> {
         static bool decode(const Node &node, SpawnerComponentSerialization &rhs) {
             if (node["prefab_guid"]) {
-                rhs.PrefabGuid = node["prefab_guid"].as<std::string>();
+                rhs.PrefabGuid = node["prefab_guid"].as<Guid>();
             }
             if (node["spawn_count"]) {
                 rhs.SpawnCount = node["spawn_count"].as<int>();

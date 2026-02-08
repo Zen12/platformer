@@ -5,6 +5,7 @@
 #include "../node.hpp"
 #include "../../../renderer/ui_manager.hpp"
 #include "../../../scene/scene_manager.hpp"
+#include "../../../system/guid.hpp"
 #include "../../../renderer/ui/ui_page_action.hpp"
 #include "../../../scene/load_scene_action.hpp"
 #include "../../../renderer/ui/button_listener_action.hpp"
@@ -49,11 +50,11 @@ public:
           _audioManager(std::move(audioManager)),
           _animationComponent(std::move(animationComponent)) {}
 
-    [[nodiscard]] UiPageAction CreateUiPageAction(const std::string& pageGuid) const {
+    [[nodiscard]] UiPageAction CreateUiPageAction(const Guid& pageGuid) const {
         return {pageGuid, _uiManager};
     }
 
-    [[nodiscard]] LoadSceneAction CreateLoadSceneAction(const std::string& sceneGuid) const {
+    [[nodiscard]] LoadSceneAction CreateLoadSceneAction(const Guid& sceneGuid) const {
         return {sceneGuid, _sceneManager};
     }
 
@@ -82,7 +83,7 @@ public:
     }
 
     [[nodiscard]] AnimationStateAction CreateAnimationStateAction(
-            const std::string& animationGuid,
+            const Guid& animationGuid,
             const std::string& onCompleteTrigger = "",
             bool loop = true,
             float animationSpeed = -1.0f,
@@ -90,16 +91,16 @@ public:
             bool disableMovement = false,
             float disableMovementDuration = -1.0f,
             bool useDirectionalBlending = false,
-            const std::string& directionalWalkForwardGuid = "",
-            const std::string& directionalWalkBackGuid = "",
-            const std::string& directionalWalkLeftGuid = "",
-            const std::string& directionalWalkRightGuid = "") const {
+            const Guid& directionalWalkForwardGuid = Guid{},
+            const Guid& directionalWalkBackGuid = Guid{},
+            const Guid& directionalWalkLeftGuid = Guid{},
+            const Guid& directionalWalkRightGuid = Guid{}) const {
         return {animationGuid, onCompleteTrigger, loop, animationSpeed, disableVelocitySpeed, disableMovement, disableMovementDuration,
                 useDirectionalBlending, directionalWalkForwardGuid, directionalWalkBackGuid, directionalWalkLeftGuid, directionalWalkRightGuid,
                 _animationComponent};
     }
 
-    [[nodiscard]] AnimationStateTransitionAction CreateAnimationStateTransitionAction(const std::string& fromAnimationGuid, const std::string& toAnimationGuid, float transitionTime, const std::string& onCompleteTrigger = "") const {
+    [[nodiscard]] AnimationStateTransitionAction CreateAnimationStateTransitionAction(const Guid& fromAnimationGuid, const Guid& toAnimationGuid, float transitionTime, const std::string& onCompleteTrigger = "") const {
         return {fromAnimationGuid, toAnimationGuid, transitionTime, onCompleteTrigger, _animationComponent};
     }
 
@@ -127,11 +128,11 @@ public:
         return {triggerName, _sceneManager, _triggerBoard};
     }
 
-    [[nodiscard]] PlaySoundAction CreatePlaySoundAction(const std::string& audioGuid, float volume, bool loop) const {
+    [[nodiscard]] PlaySoundAction CreatePlaySoundAction(const Guid& audioGuid, float volume, bool loop) const {
         return {audioGuid, volume, loop, _audioManager};
     }
 
-    [[nodiscard]] PlaySoundRepeatedAction CreatePlaySoundRepeatedAction(const std::string& audioGuid, float volume, float delaySeconds, bool spatial = true, float minDistance = 1.0f, float maxDistance = 50.0f) const {
+    [[nodiscard]] PlaySoundRepeatedAction CreatePlaySoundRepeatedAction(const Guid& audioGuid, float volume, float delaySeconds, bool spatial = true, float minDistance = 1.0f, float maxDistance = 50.0f) const {
         return {audioGuid, volume, delaySeconds, spatial, minDistance, maxDistance, _audioManager, _animationComponent};
     }
 

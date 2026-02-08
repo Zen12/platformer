@@ -1,5 +1,4 @@
 #pragma once
-#include <string>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -9,41 +8,46 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "../system/guid.hpp"
+
 enum class PrimitiveType {
     Triangles = 0,
     Lines = 1
 };
 
 struct RenderData final {
-    const std::string MaterialGuid;
-    const std::string MeshGuid;
+    const Guid MaterialGuid;
+    const Guid MeshGuid;
     const glm::mat4 ModelMatrix;
     const glm::mat4 ViewMatrix;
     const glm::mat4 ProjectionMatrix;
     const std::optional<std::vector<glm::mat4>> BoneTransforms;
     const PrimitiveType Primitive = PrimitiveType::Triangles;
-    const std::optional<std::vector<glm::vec3>> Positions = std::nullopt;  // Direct position data for lines
-    const std::optional<glm::vec4> LineColor = std::nullopt;  // Color for line rendering (RGBA)
-    const std::optional<glm::vec4> InstanceColor = std::nullopt;  // Per-instance color tint (RGBA)
-    const bool IsSkinned = false;  // Flag for instanced skinned rendering
+    const std::optional<std::vector<glm::vec3>> Positions = std::nullopt;
+    const std::optional<glm::vec4> LineColor = std::nullopt;
+    const std::optional<glm::vec4> InstanceColor = std::nullopt;
+    const bool IsSkinned = false;
+    const float YDepthFactor = 0.0f;  // Y-based depth offset for 2.5D sorting (0 = disabled)
 };
 
 struct RenderId final {
-    const std::string MaterialGuid;
-    const std::string MeshGuid;
+    const Guid MaterialGuid;
+    const Guid MeshGuid;
     const glm::mat4 CameraView;
     const glm::mat4 CameraProjection;
     const PrimitiveType Primitive;
     const bool IsSkinned;
+    const float YDepthFactor;  // Y-based depth offset for 2.5D sorting (0 = disabled)
 
-    RenderId(std::string material, std::string mesh, const glm::mat4 &cameraView, const glm::mat4 &cameraProjection, PrimitiveType primitive = PrimitiveType::Triangles, bool isSkinned = false)
+    RenderId(const Guid& material, const Guid& mesh, const glm::mat4 &cameraView, const glm::mat4 &cameraProjection, PrimitiveType primitive = PrimitiveType::Triangles, bool isSkinned = false, float yDepthFactor = 0.0f)
         :
-    MaterialGuid(std::move(material)),
-    MeshGuid(std::move(mesh)),
+    MaterialGuid(material),
+    MeshGuid(mesh),
     CameraView(cameraView),
     CameraProjection(cameraProjection),
     Primitive(primitive),
-    IsSkinned(isSkinned) {}
+    IsSkinned(isSkinned),
+    YDepthFactor(yDepthFactor) {}
 
     bool operator==(const RenderId &other) const {
         return MaterialGuid == other.MaterialGuid && MeshGuid == other.MeshGuid && Primitive == other.Primitive && IsSkinned == other.IsSkinned;
@@ -60,26 +64,17 @@ namespace std {
         std::size_t operator()(const RenderId& id) const noexcept {
             std::size_t seed = 0;
 
-            // Hash MaterialGuid
-            HashCombine(seed, std::hash<std::string>{}(id.MaterialGuid));
-
-            // Hash MeshGuid
-            HashCombine(seed, std::hash<std::string>{}(id.MeshGuid));
-
-            // Hash Primitive type
+            HashCombine(seed, std::hash<Guid>{}(id.MaterialGuid));
+            HashCombine(seed, std::hash<Guid>{}(id.MeshGuid));
             HashCombine(seed, std::hash<int>{}(static_cast<int>(id.Primitive)));
-
-            // Hash IsSkinned flag
             HashCombine(seed, std::hash<bool>{}(id.IsSkinned));
 
-            // Hash CameraView matrix
             for (int i = 0; i < 4; ++i) {
                 for (int j = 0; j < 4; ++j) {
                     HashCombine(seed, std::hash<float>{}(id.CameraView[i][j]));
                 }
             }
 
-            // Hash CameraProjection matrix
             for (int i = 0; i < 4; ++i) {
                 for (int j = 0; j < 4; ++j) {
                     HashCombine(seed, std::hash<float>{}(id.CameraProjection[i][j]));
@@ -91,7 +86,6 @@ namespace std {
 
     private:
         static void HashCombine(std::size_t& seed, const std::size_t hash) noexcept {
-            // Based on boost::hash_combine
             seed ^= hash + 0x9e3779b9 + (seed << 6) + (seed >> 2);
         }
     };
@@ -128,7 +122,7 @@ public:
     }
 
     void Add(const RenderData &renderData) noexcept {
-        const auto &id = RenderId(renderData.MaterialGuid, renderData.MeshGuid, renderData.ViewMatrix, renderData.ProjectionMatrix, renderData.Primitive, renderData.IsSkinned);
+        const auto &id = RenderId(renderData.MaterialGuid, renderData.MeshGuid, renderData.ViewMatrix, renderData.ProjectionMatrix, renderData.Primitive, renderData.IsSkinned, renderData.YDepthFactor);
         if (_renderData.find(id) == _renderData.end()) {
             _renderData[id] = std::vector{InstanceData{renderData.ModelMatrix, renderData.BoneTransforms, renderData.Positions, renderData.LineColor, renderData.InstanceColor}};
             return;

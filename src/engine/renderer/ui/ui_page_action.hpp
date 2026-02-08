@@ -1,16 +1,17 @@
 #pragma once
 
 #include "../../fsm/node/action/action.hpp"
+#include "../../system/guid.hpp"
 #include "../ui_manager.hpp"
 
 struct UiPageAction final : public Action {
 
 private:
-    std::string _pageGuid;
+    Guid _pageGuid;
     std::shared_ptr<UIManager> _manager;
 
 public:
-    UiPageAction(std::string pageGuid, std::shared_ptr<UIManager> manager)
+    UiPageAction(Guid pageGuid, std::shared_ptr<UIManager> manager)
         : _pageGuid(std::move(pageGuid)), _manager(std::move(manager)) {}
 
     void OnEnter() const override {

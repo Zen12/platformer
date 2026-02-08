@@ -19,6 +19,8 @@ namespace YAML {
                 rhs.orthographicAspect = node["orthographicAspect"].as<float>();
 
             rhs.isPerspective = node["isPerspective"].as<bool>();
+            if (node["yDepthFactor"])
+                rhs.yDepthFactor = node["yDepthFactor"].as<float>();
             return true;
         }
     };

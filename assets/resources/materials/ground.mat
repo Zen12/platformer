@@ -1,0 +1,10 @@
+name: ground
+is_culling: False
+is_depth_test: True
+blend_mode: 0
+shader_opengl:
+  vertex: d86cc557-3dab-4858-ac6c-37709fdd47b4
+  fragment: 4601b35a-6a1c-4719-8f40-edf2d28a4acd
+shader_gles:
+  vertex: 8cc6e20c-1064-467d-a702-dbfee4cb0e8c
+  fragment: 80e9a1a8-72c9-4e8d-895e-393a161b811a

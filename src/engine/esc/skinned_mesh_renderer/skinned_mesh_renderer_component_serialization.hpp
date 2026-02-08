@@ -1,8 +1,9 @@
 #pragma once
 #include "../../entity/component_serialization.hpp"
+#include "../../system/guid.hpp"
 
 struct SkinnedMeshRendererComponentSerialization final : public ComponentSerialization
 {
-    std::string MeshGuid;
-    std::string MaterialGuid;
+    Guid MeshGuid;
+    Guid MaterialGuid;
 };

@@ -1,151 +1,96 @@
-
 #pragma once
 #include "node_serialization.hpp"
 #include "yaml-cpp/node/node.h"
+#include <functional>
+#include <unordered_map>
+
+// Action serialization includes
 #include "../../renderer/ui/ui_page_action_serialization.hpp"
 #include "../../renderer/ui/ui_page_action_serialization_yaml.hpp"
-#include "../../renderer/ui/button_listener_action.hpp"
 #include "../../renderer/ui/button_listener_action_serialization.hpp"
 #include "../../renderer/ui/button_listener_action_serialization_yaml.hpp"
-#include "../../renderer/ui/trigger_setter_button_listener_action.hpp"
 #include "../../renderer/ui/trigger_setter_button_listener_action_serialization.hpp"
 #include "../../renderer/ui/trigger_setter_button_listener_action_serialization_yaml.hpp"
-#include "../../scene/load_scene_action.hpp"
 #include "../../scene/load_scene_action_serialization.hpp"
 #include "../../scene/load_scene_action_serialization_yaml.hpp"
-#include "action/set_system_trigger_action.hpp"
 #include "action/set_system_trigger_action_serialization.hpp"
 #include "action/set_system_trigger_action_serialization_yaml.hpp"
-#include "action/log_action.hpp"
 #include "action/log_action_serialization.hpp"
 #include "action/log_action_serialization_yaml.hpp"
-#include "action/animation_state_action.hpp"
 #include "action/animation_state_action_serialization.hpp"
 #include "action/animation_state_action_serialization_yaml.hpp"
-#include "action/animation_state_transition_action.hpp"
 #include "action/animation_state_transition_action_serialization.hpp"
 #include "action/animation_state_transition_action_serialization_yaml.hpp"
-#include "action/start_video_recording_action.hpp"
 #include "action/start_video_recording_action_serialization.hpp"
 #include "action/start_video_recording_action_serialization_yaml.hpp"
-#include "action/stop_video_recording_action.hpp"
 #include "action/stop_video_recording_action_serialization.hpp"
 #include "action/stop_video_recording_action_serialization_yaml.hpp"
-#include "action/fps_display_action.hpp"
 #include "action/fps_display_action_serialization.hpp"
 #include "action/fps_display_action_serialization_yaml.hpp"
-#include "action/health_display_action.hpp"
 #include "action/health_display_action_serialization.hpp"
 #include "action/health_display_action_serialization_yaml.hpp"
-#include "action/health_bar_action.hpp"
 #include "action/health_bar_action_serialization.hpp"
 #include "action/health_bar_action_serialization_yaml.hpp"
-#include "action/health_check_action.hpp"
 #include "action/health_check_action_serialization.hpp"
 #include "action/health_check_action_serialization_yaml.hpp"
-#include "../../audio/play_sound_action.hpp"
 #include "../../audio/play_sound_action_serialization.hpp"
 #include "../../audio/play_sound_action_serialization_yaml.hpp"
-#include "../../audio/play_sound_repeated_action.hpp"
 #include "../../audio/play_sound_repeated_action_serialization.hpp"
 #include "../../audio/play_sound_repeated_action_serialization_yaml.hpp"
-#include "../../audio/mute_audio_action.hpp"
 #include "../../audio/mute_audio_action_serialization.hpp"
 #include "../../audio/mute_audio_action_serialization_yaml.hpp"
-#include "action/action_serialization_data.hpp"
 
 namespace YAML {
     template <>
     struct convert<StateNodeSerialization> {
+        template<typename T>
+        static std::unique_ptr<T> Parse(const YAML::Node &data) {
+            static_assert(std::is_base_of_v<ActionSerialization, T>,
+                      "T must derive from ActionSerialization");
 
-        static ActionSerializationData DecodeAction(const YAML::Node& node) {
+            auto action = data.as<T>();
+            return std::make_unique<T>(std::move(action));
+        }
+
+        static std::unique_ptr<ActionSerialization> DecodeAction(const YAML::Node& node) {
+            using Factory = std::function<std::unique_ptr<ActionSerialization>(const YAML::Node&)>;
+            static const std::unordered_map<std::string, Factory> factories = {
+                { "load_ui_page", [](const YAML::Node& n){ return Parse<UIPageActionSerialization>(n); } },
+                { "load_scene", [](const YAML::Node& n){ return Parse<LoadSceneActionSerialization>(n); } },
+                { "action_button_listener", [](const YAML::Node& n){ return Parse<ButtonListenerActionSerialization>(n); } },
+                { "action_trigger_setter_button_listener", [](const YAML::Node& n){ return Parse<TriggerSetterButtonListenerActionSerialization>(n); } },
+                { "set_system_trigger", [](const YAML::Node& n){ return Parse<SetSystemTriggerActionSerialization>(n); } },
+                { "log", [](const YAML::Node& n){ return Parse<LogActionSerialization>(n); } },
+                { "animation_state", [](const YAML::Node& n){ return Parse<AnimationStateActionSerialization>(n); } },
+                { "animation_state_transition", [](const YAML::Node& n){ return Parse<AnimationStateTransitionActionSerialization>(n); } },
+                { "start_video_recording", [](const YAML::Node& n){ return Parse<StartVideoRecordingActionSerialization>(n); } },
+                { "stop_video_recording", [](const YAML::Node& n){ return Parse<StopVideoRecordingActionSerialization>(n); } },
+                { "fps_display", [](const YAML::Node& n){ return Parse<FpsDisplayActionSerialization>(n); } },
+                { "health_display", [](const YAML::Node& n){ return Parse<HealthDisplayActionSerialization>(n); } },
+                { "health_bar", [](const YAML::Node& n){ return Parse<HealthBarActionSerialization>(n); } },
+                { "health_check", [](const YAML::Node& n){ return Parse<HealthCheckActionSerialization>(n); } },
+                { "play_sound", [](const YAML::Node& n){ return Parse<PlaySoundActionSerialization>(n); } },
+                { "play_sound_repeated", [](const YAML::Node& n){ return Parse<PlaySoundRepeatedActionSerialization>(n); } },
+                { "mute_audio", [](const YAML::Node& n){ return Parse<MuteAudioActionSerialization>(n); } }
+            };
+
             const auto type = node["type"].as<std::string>();
-            ActionSerializationData data;
-            data.Type = type;
-
-            if (type == "load_ui_page") {
-                const auto serialization = node.as<UIPageActionSerialization>();
-                data.Param = serialization.UiPageGuid;
-            } else if (type == "load_scene") {
-                const auto serialization = node.as<LoadSceneActionSerialization>();
-                data.Param = serialization.SceneGuid;
-            } else if (type == "action_button_listener") {
-                const auto serialization = node.as<ButtonListenerActionSerialization>();
-                data.Param = serialization.ButtonId;
-            } else if (type == "action_trigger_setter_button_listener") {
-                const auto serialization = node.as<TriggerSetterButtonListenerActionSerialization>();
-                data.Param = serialization.ButtonId;
-                data.Param2 = serialization.TriggerName;
-            } else if (type == "set_system_trigger") {
-                const auto serialization = node.as<SetSystemTriggerActionSerialization>();
-                data.Param = serialization.TriggerType;
-            } else if (type == "log") {
-                const auto serialization = node.as<LogActionSerialization>();
-                data.Param = serialization.Message;
-            } else if (type == "animation_state") {
-                const auto serialization = node.as<AnimationStateActionSerialization>();
-                data.Param = serialization.AnimationGuid;
-                data.Param2 = serialization.OnCompleteTrigger;
-                data.Param3 = serialization.Loop ? "true" : "false";
-                data.Param4 = std::to_string(serialization.AnimationSpeed);
-                data.Param5 = serialization.DisableVelocitySpeed ? "true" : "false";
-                data.Param6 = serialization.DisableMovement ? "true" : "false";
-                data.Param7 = std::to_string(serialization.DisableMovementDuration);
-                data.Param8 = serialization.UseDirectionalBlending ? "true" : "false";
-                data.Param9 = serialization.DirectionalWalkForwardGuid;
-                data.Param10 = serialization.DirectionalWalkBackGuid;
-                data.Param11 = serialization.DirectionalWalkLeftGuid;
-                data.Param12 = serialization.DirectionalWalkRightGuid;
-            } else if (type == "animation_state_transition") {
-                const auto serialization = node.as<AnimationStateTransitionActionSerialization>();
-                data.Param = serialization.FromAnimationGuid;
-                data.Param2 = serialization.ToAnimationGuid;
-                data.Param3 = std::to_string(serialization.TransitionTime);
-                data.Param4 = serialization.OnCompleteTrigger;
-            } else if (type == "start_video_recording") {
-                const auto serialization = node.as<StartVideoRecordingActionSerialization>();
-                data.Param = serialization.OutputFile;
-                data.Param2 = std::to_string(serialization.Fps);
-            } else if (type == "stop_video_recording") {
-                // No parameters needed for stop action
-            } else if (type == "fps_display") {
-                const auto serialization = node.as<FpsDisplayActionSerialization>();
-                data.Param = serialization.ElementId;
-            } else if (type == "health_display") {
-                const auto serialization = node.as<HealthDisplayActionSerialization>();
-                data.Param = serialization.ElementId;
-            } else if (type == "health_bar") {
-                const auto serialization = node.as<HealthBarActionSerialization>();
-                data.Param = serialization.ElementId;
-            } else if (type == "health_check") {
-                const auto serialization = node.as<HealthCheckActionSerialization>();
-                data.Param = serialization.TriggerName;
-            } else if (type == "play_sound") {
-                const auto serialization = node.as<PlaySoundActionSerialization>();
-                data.Param = serialization.AudioGuid;
-                data.Param2 = std::to_string(serialization.Volume);
-                data.Param3 = serialization.Loop ? "true" : "false";
-            } else if (type == "play_sound_repeated") {
-                const auto serialization = node.as<PlaySoundRepeatedActionSerialization>();
-                data.Param = serialization.AudioGuid;
-                data.Param2 = std::to_string(serialization.Volume);
-                data.Param3 = std::to_string(serialization.DelaySeconds);
-                data.Param4 = serialization.Spatial ? "true" : "false";
-                data.Param5 = std::to_string(serialization.MinDistance);
-                data.Param6 = std::to_string(serialization.MaxDistance);
-            } else if (type == "mute_audio") {
-                const auto serialization = node.as<MuteAudioActionSerialization>();
-                data.Param = serialization.Mute ? "true" : "false";
-                data.Param2 = serialization.OnlyDebug ? "true" : "false";
+            if (const auto it = factories.find(type); it != factories.end()) {
+                auto result = it->second(node);
+                result->Type = type;
+                return result;
             }
-
-            return data;
+            return {};
         }
 
         static bool decode(const Node &node, StateNodeSerialization &rhs) {
             rhs.Guid = node["guid"].as<std::string>();
-            for (const auto& comp : node["actions"]) {
-                rhs.ActionData.push_back(DecodeAction(comp));
+            if (node["actions"]) {
+                for (const auto& action : node["actions"]) {
+                    if (auto decoded = DecodeAction(action)) {
+                        rhs.ActionData.push_back(std::move(decoded));
+                    }
+                }
             }
             return true;
         }

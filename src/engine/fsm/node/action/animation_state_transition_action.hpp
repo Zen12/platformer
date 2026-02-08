@@ -1,19 +1,20 @@
 #pragma once
 #include "action.hpp"
 #include "../../../esc/animation/fsm_animation_component.hpp"
+#include "../../../system/guid.hpp"
 #include <memory>
 #include <string>
 
 struct AnimationStateTransitionAction final : public Action {
 private:
-    std::string _fromAnimationGuid;
-    std::string _toAnimationGuid;
+    Guid _fromAnimationGuid;
+    Guid _toAnimationGuid;
     float _transitionTime;
     std::string _onCompleteTrigger;
     std::weak_ptr<FsmAnimationComponent> _animationComponent;
 
 public:
-    AnimationStateTransitionAction(std::string fromAnimationGuid, std::string toAnimationGuid, float transitionTime, std::string onCompleteTrigger, std::weak_ptr<FsmAnimationComponent> animationComponent)
+    AnimationStateTransitionAction(Guid fromAnimationGuid, Guid toAnimationGuid, float transitionTime, std::string onCompleteTrigger, std::weak_ptr<FsmAnimationComponent> animationComponent)
         : _fromAnimationGuid(std::move(fromAnimationGuid)),
           _toAnimationGuid(std::move(toAnimationGuid)),
           _transitionTime(transitionTime),

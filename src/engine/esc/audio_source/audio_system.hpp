@@ -58,7 +58,7 @@ public:
 private:
     static void PlaySource(AudioSourceComponent& source, const glm::vec3& position,
                           const std::shared_ptr<AudioManager>& audioManager) {
-        if (source.GetAudioClipGuid().empty()) {
+        if (source.GetAudioClipGuid().IsEmpty()) {
             return;
         }
 

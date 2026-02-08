@@ -9,6 +9,7 @@
 #include "../../renderer/animation/animation_data.hpp"
 #include "../../scene/scene.hpp"
 #include "../../ai/bt_component.hpp"
+#include "../../system/guid.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
@@ -28,7 +29,7 @@ private:
     const TypeDeltaTime _deltaTimeView;
     const std::weak_ptr<Scene> _scene;
     entt::registry& _registry;
-    std::unordered_map<std::string, std::shared_ptr<AnimationData>> _loadedAnimations;
+    std::unordered_map<Guid, std::shared_ptr<AnimationData>> _loadedAnimations;
 
     // Helper: Try to match animation bone name to mesh bone name
     static std::string TryMatchBoneName(const std::string& animBoneName, const std::unordered_map<std::string, int>& boneMap) {

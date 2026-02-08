@@ -1,13 +1,14 @@
 #pragma once
 #include "particle_emitter_component_serialization.hpp"
 #include <yaml-cpp/yaml.h>
+#include "../../system/guid_yaml.hpp"
 
 namespace YAML {
     template <>
     struct convert<ParticleEmitterComponentSerialization> {
         static bool decode(const Node& node, ParticleEmitterComponentSerialization& rhs) {
-            rhs.MaterialGuid = node["material_guid"] ? node["material_guid"].as<std::string>() : "";
-            rhs.MeshGuid = node["mesh_guid"] ? node["mesh_guid"].as<std::string>() : "";
+            rhs.MaterialGuid = node["material_guid"] ? node["material_guid"].as<Guid>() : Guid{};
+            rhs.MeshGuid = node["mesh_guid"] ? node["mesh_guid"].as<Guid>() : Guid{};
             rhs.MaxParticles = node["max_particles"] ? node["max_particles"].as<int>() : 100;
             rhs.EmissionRate = node["emission_rate"] ? node["emission_rate"].as<float>() : 10.0f;
             rhs.ParticleLifetime = node["particle_lifetime"] ? node["particle_lifetime"].as<float>() : 2.0f;

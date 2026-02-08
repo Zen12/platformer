@@ -1,18 +1,17 @@
 #pragma once
 #include "../../entity/component_serialization.hpp"
-#include <string>
+#include "../../system/guid.hpp"
 
 struct FsmAnimationComponentSerialization final : public ComponentSerialization {
-    std::string FsmGuid;
+    Guid FsmGuid;
     bool Loop = true;
     float AnimationSpeed = 1.0f;
     bool VelocityBasedSpeed = false;
     float VelocitySpeedScale = 1.0f;
 
-    // Directional animation blending
-    std::string DirectionalWalkForwardGuid;
-    std::string DirectionalWalkBackGuid;
-    std::string DirectionalWalkLeftGuid;
-    std::string DirectionalWalkRightGuid;
+    Guid DirectionalWalkForwardGuid;
+    Guid DirectionalWalkBackGuid;
+    Guid DirectionalWalkLeftGuid;
+    Guid DirectionalWalkRightGuid;
     bool UseDirectionalBlending = false;
 };

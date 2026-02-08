@@ -1,19 +1,20 @@
 #pragma once
 #include "../fsm/node/action/action.hpp"
+#include "../system/guid.hpp"
 #include "audio_manager.hpp"
 #include <memory>
 #include <string>
 
 struct PlaySoundAction final : public Action {
 private:
-    std::string _audioGuid;
+    Guid _audioGuid;
     float _volume;
     bool _loop;
     std::weak_ptr<AudioManager> _audioManager;
     mutable AudioHandle _handle = INVALID_AUDIO_HANDLE;
 
 public:
-    PlaySoundAction(std::string audioGuid, float volume, bool loop,
+    PlaySoundAction(Guid audioGuid, float volume, bool loop,
                     std::weak_ptr<AudioManager> audioManager)
         : _audioGuid(std::move(audioGuid)),
           _volume(volume),
@@ -21,7 +22,7 @@ public:
           _audioManager(std::move(audioManager)) {}
 
     void OnEnter() const override {
-        if (_audioGuid.empty()) return;
+        if (_audioGuid.IsEmpty()) return;
 
         if (const auto manager = _audioManager.lock()) {
             _handle = manager->PlaySound(_audioGuid, _volume, _loop);

@@ -1,20 +1,20 @@
 #pragma once
 
-#include <string>
+#include "../../system/guid.hpp"
 
 class SkyboxRenderer {
 private:
-    std::string _materialGuid;
+    Guid _materialGuid;
     bool _initialized{false};
 
 public:
     SkyboxRenderer() = default;
 
-    void Initialize(const std::string& materialGuid) {
+    void Initialize(const Guid& materialGuid) {
         _materialGuid = materialGuid;
-        _initialized = !materialGuid.empty();
+        _initialized = !materialGuid.IsEmpty();
     }
 
-    [[nodiscard]] bool IsEnabled() const noexcept { return _initialized && !_materialGuid.empty(); }
-    [[nodiscard]] const std::string& GetMaterialGuid() const noexcept { return _materialGuid; }
+    [[nodiscard]] bool IsEnabled() const noexcept { return _initialized && !_materialGuid.IsEmpty(); }
+    [[nodiscard]] const Guid& GetMaterialGuid() const noexcept { return _materialGuid; }
 };

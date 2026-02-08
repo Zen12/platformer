@@ -1,10 +1,11 @@
 #pragma once
 #include <vector>
 #include <string>
-#include "action/action_serialization_data.hpp"
+#include <memory>
+#include "action/action_serialiazion.hpp"
 
 class StateNodeSerialization final {
 public:
     std::string Guid;
-    std::vector<ActionSerializationData> ActionData{};
+    std::vector<std::unique_ptr<ActionSerialization>> ActionData{};
 };

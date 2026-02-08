@@ -2,6 +2,7 @@
 
 #include "material_asset.hpp"
 #include "yaml-cpp/node/node.h"
+#include "../../system/guid_yaml.hpp"
 
 namespace YAML {
     template <>
@@ -22,23 +23,23 @@ namespace YAML {
 
 #ifdef __EMSCRIPTEN__
             if (const auto shaderNode = node["shader_gles"]) {
-                rhs.VertexShaderGuid = shaderNode["vertex"].as<std::string>();
-                rhs.FragmentShaderGuid = shaderNode["fragment"].as<std::string>();
+                rhs.VertexShaderGuid = shaderNode["vertex"].as<Guid>();
+                rhs.FragmentShaderGuid = shaderNode["fragment"].as<Guid>();
             }
 #else
             if (const auto shaderNode = node["shader_opengl"]) {
-                rhs.VertexShaderGuid = shaderNode["vertex"].as<std::string>();
-                rhs.FragmentShaderGuid = shaderNode["fragment"].as<std::string>();
+                rhs.VertexShaderGuid = shaderNode["vertex"].as<Guid>();
+                rhs.FragmentShaderGuid = shaderNode["fragment"].as<Guid>();
             }
 #endif
 
 
             if (node["font"] && node["font"].IsScalar()) {
-                rhs.Font = node["font"].as<std::string>();
+                rhs.Font = node["font"].as<Guid>();
             }
 
             if (node["image"] && node["image"].IsScalar()) {
-                rhs.Image = node["image"].as<std::string>();
+                rhs.Image = node["image"].as<Guid>();
             }
 
             return true;

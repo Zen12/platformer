@@ -1,11 +1,11 @@
 #pragma once
-#include <string>
+#include "../../system/guid.hpp"
 
 
 struct UiPageAsset final {
 public:
-    std::string RmlGuid;
-    std::string CssGuid;
-    std::string MaterialGuid;
-    std::string FontGuid;
+    Guid RmlGuid;
+    Guid CssGuid;
+    Guid MaterialGuid;
+    Guid FontGuid;
 };

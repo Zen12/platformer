@@ -2,6 +2,7 @@
 #include <yaml-cpp/yaml.h>
 #include "scene_asset.hpp"
 #include "../entity/entity_serialization_yaml.hpp"
+#include "../system/guid_yaml.hpp"
 
 namespace YAML {
     template <>
@@ -24,6 +25,15 @@ namespace YAML {
             if (node["max_agents"]) {
                 rhs.MaxAgents = node["max_agents"].as<int>();
             }
+            if (node["elevation_height"]) {
+                rhs.ElevationHeight = node["elevation_height"].as<float>();
+            }
+            if (node["ground_material"]) {
+                rhs.GroundMaterialGuid = node["ground_material"].as<Guid>();
+            }
+            if (node["wall_material"]) {
+                rhs.WallMaterialGuid = node["wall_material"].as<Guid>();
+            }
             return true;
         }
     };
@@ -34,7 +44,7 @@ namespace YAML {
         static bool decode(const Node &node, SkyboxConfig &rhs)
         {
             if (node["material"]) {
-                rhs.MaterialGuid = node["material"].as<std::string>();
+                rhs.MaterialGuid = node["material"].as<Guid>();
             }
             return true;
         }

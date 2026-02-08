@@ -1,9 +1,9 @@
 #pragma once
-#include <string>
 #include "../../entity/component_serialization.hpp"
+#include "../../system/guid.hpp"
 
 struct AudioSourceComponentSerialization final : public ComponentSerialization {
-    std::string AudioClipGuid;
+    Guid AudioClipGuid;
     float Volume = 1.0f;
     float Pitch = 1.0f;
     bool Loop = false;

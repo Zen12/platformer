@@ -40,32 +40,31 @@ public:
             for (const auto &[_, mesh, transform] : View.each()) {
                 const auto &model = transform.GetModel();
 
-                // Lazy-load bounds from Scene on first render
                 if (!mesh.MeshBounds.IsValid() && scene) {
-                    scene->GetMesh(mesh.Guid);  // Ensure mesh is loaded
-                    mesh.MeshBounds = scene->GetMeshBounds(mesh.Guid);
+                    scene->GetMesh(mesh.MeshGuid);
+                    mesh.MeshBounds = scene->GetMeshBounds(mesh.MeshGuid);
                 }
 
-                // Transform bounds to world space and perform AABB frustum culling
                 if (mesh.MeshBounds.IsValid()) {
                     const Bounds worldBounds = mesh.MeshBounds.Transform(model);
                     if (!frustum.IsBoxVisible(worldBounds.Center, worldBounds.Extents)) {
-                        continue; // Skip this mesh, it's outside the frustum
+                        continue;
                     }
                 }
 
                 _repository->Add(RenderData{
                     mesh.MaterialGuid,
-                    mesh.Guid,
+                    mesh.MeshGuid,
                     model,
                     camera.View,
                     camera.Projection,
                     std::nullopt,  // BoneTransforms
                     PrimitiveType::Triangles,
                     std::nullopt,  // Positions
-                    std::nullopt,  // LineColor
+                    mesh.Color,    // LineColor (used for solid color materials)
                     std::nullopt,  // InstanceColor
-                    false  // IsSkinned
+                    false,  // IsSkinned
+                    camera.cameraData.yDepthFactor  // Y-based depth offset
                 });
             }
         }

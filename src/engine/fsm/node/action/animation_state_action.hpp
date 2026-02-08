@@ -1,6 +1,7 @@
 #pragma once
 #include "action.hpp"
 #include "../../../esc/animation/fsm_animation_component.hpp"
+#include "../../../system/guid.hpp"
 #include <memory>
 #include <string>
 #include <iostream>
@@ -15,7 +16,7 @@
 
 struct AnimationStateAction final : public Action {
 private:
-    std::string _animationGuid;
+    Guid _animationGuid;
     std::string _onCompleteTrigger;
     bool _loop;
     float _animationSpeed;
@@ -23,21 +24,21 @@ private:
     bool _disableMovement;
     float _disableMovementDuration;
     bool _useDirectionalBlending;
-    std::string _directionalWalkForwardGuid;
-    std::string _directionalWalkBackGuid;
-    std::string _directionalWalkLeftGuid;
-    std::string _directionalWalkRightGuid;
+    Guid _directionalWalkForwardGuid;
+    Guid _directionalWalkBackGuid;
+    Guid _directionalWalkLeftGuid;
+    Guid _directionalWalkRightGuid;
     std::weak_ptr<FsmAnimationComponent> _animationComponent;
 
 public:
-    AnimationStateAction(std::string animationGuid, std::string onCompleteTrigger, bool loop,
+    AnimationStateAction(Guid animationGuid, std::string onCompleteTrigger, bool loop,
                          float animationSpeed, bool disableVelocitySpeed, bool disableMovement,
                          float disableMovementDuration,
                          bool useDirectionalBlending,
-                         std::string directionalWalkForwardGuid,
-                         std::string directionalWalkBackGuid,
-                         std::string directionalWalkLeftGuid,
-                         std::string directionalWalkRightGuid,
+                         Guid directionalWalkForwardGuid,
+                         Guid directionalWalkBackGuid,
+                         Guid directionalWalkLeftGuid,
+                         Guid directionalWalkRightGuid,
                          std::weak_ptr<FsmAnimationComponent> animationComponent)
         : _animationGuid(std::move(animationGuid)),
           _onCompleteTrigger(std::move(onCompleteTrigger)),
@@ -59,10 +60,10 @@ public:
             // (preserve time when coming from a transition)
             if (comp->CurrentAnimationGuid != _animationGuid) {
                 comp->Time = 0.0f;
-                ANIM_STATE_LOG << "[ANIM STATE] Switching animation: " << comp->CurrentAnimationGuid
-                               << " -> " << _animationGuid << " (loop=" << _loop << ")" << std::endl;
+                ANIM_STATE_LOG << "[ANIM STATE] Switching animation: " << comp->CurrentAnimationGuid.ToString()
+                               << " -> " << _animationGuid.ToString() << " (loop=" << _loop << ")" << std::endl;
             } else {
-                ANIM_STATE_LOG << "[ANIM STATE] Entering state with same animation: " << _animationGuid << std::endl;
+                ANIM_STATE_LOG << "[ANIM STATE] Entering state with same animation: " << _animationGuid.ToString() << std::endl;
             }
             comp->CurrentAnimationGuid = _animationGuid;
             comp->OnCompleteTrigger = _onCompleteTrigger;

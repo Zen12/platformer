@@ -12,6 +12,8 @@ private:
     glm::vec3 _eulerRotation = glm::vec3(0);
     glm::vec3 _scale = glm::vec3(1);
 public:
+    TransformComponentV2() = default;
+
     explicit TransformComponentV2(const TransformComponentSerialization& serialization) :
         _position(serialization.position), _eulerRotation(serialization.rotation), _scale(serialization.scale)
     {}

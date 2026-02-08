@@ -3,9 +3,13 @@
 # Usage: ./run_claude.sh [OPTIONS] [ASSETS_DIR]
 #
 # Agent Options:
-#   -r, --researcher    Launch with researcher agent (analysis, creates solutions)
-#   -v, --reviewer      Launch with reviewer agent (creates implementation plans)
-#   -d, --developer     Launch with developer agent (implements plans)
+#   (default)           Coordinator - auto-delegates to researcher/reviewer/developer
+#   -r, --researcher    Researcher only (analysis, no delegation)
+#   -v, --reviewer      Reviewer only (planning, no delegation)
+#   -d, --developer     Developer only (implementation, no delegation)
+#   -u, --ui-designer   UI designer only (RML/CSS, no delegation)
+#   -a, --tech-art      Tech Art only (Blender/FBX to GLB, export scripts)
+#   -g, --generic       General purpose Claude (no agent profile, no auto-delegation)
 #
 # Session Options:
 #   -s, --session [NAME]  Use a named session (auto-generates if no name given)
@@ -14,28 +18,19 @@
 # Other Options:
 #   -h, --help          Show this help message
 #
-# This script handles:
-# - Python virtual environment setup
-# - MCP SDK installation
-# - Environment configuration
-# - Agent selection (researcher, reviewer, developer, or generic)
-# - Session management (named sessions, continue previous)
-# - Launching Claude Code
-#
-# Two-project structure:
-# 1. Logic project (C++/CMake/Python) - this repository
-# 2. Assets project (YAML/.png/etc) - separate repository or directory
+# Recommended workflow:
+#   Just run ./run_claude.sh (coordinator mode)
+#   The coordinator auto-delegates: researcher -> reviewer -> developer
+#   No manual agent switching needed!
 #
 # Example usage:
-#   ./run_claude.sh                              # Interactive agent selection
-#   ./run_claude.sh -r                           # Researcher (analysis, solutions)
-#   ./run_claude.sh -v                           # Reviewer (implementation plans)
-#   ./run_claude.sh -d                           # Developer (implements plans)
-#   ./run_claude.sh -s                           # Auto-generate session name
-#   ./run_claude.sh -s my-feature                # Use named session "my-feature"
+#   ./run_claude.sh                              # Coordinator (recommended)
+#   ./run_claude.sh -r                           # Researcher only
+#   ./run_claude.sh -v                           # Reviewer only
+#   ./run_claude.sh -d                           # Developer only
+#   ./run_claude.sh -g                           # Generic (general purpose)
+#   ./run_claude.sh -s my-feature                # Named session
 #   ./run_claude.sh -c                           # Continue last session
-#   ./run_claude.sh -r -s                        # Researcher with auto session
-#   ./run_claude.sh /path/to/game-assets         # Use custom assets directory
 
 # Get the absolute path to the project root (where this script lives)
 export PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -76,6 +71,18 @@ while [[ $# -gt 0 ]]; do
             AGENT_TYPE="developer"
             shift
             ;;
+        -u|--ui-designer)
+            AGENT_TYPE="ui-designer"
+            shift
+            ;;
+        -a|--tech-art)
+            AGENT_TYPE="tech-art"
+            shift
+            ;;
+        -g|--generic)
+            AGENT_TYPE="generic"
+            shift
+            ;;
         -s|--session)
             # Check if next arg exists and doesn't start with -
             if [[ -n "$2" && ! "$2" =~ ^- ]]; then
@@ -94,9 +101,13 @@ while [[ $# -gt 0 ]]; do
             echo "Usage: ./run_claude.sh [OPTIONS] [ASSETS_DIR]"
             echo ""
             echo "Agent Options:"
-            echo "  -r, --researcher    Launch with researcher agent (analysis, solutions)"
-            echo "  -v, --reviewer      Launch with reviewer agent (implementation plans)"
-            echo "  -d, --developer     Launch with developer agent (implements plans)"
+            echo "  (default)           Coordinator - auto-delegates to agents"
+            echo "  -r, --researcher    Researcher only (analysis)"
+            echo "  -v, --reviewer      Reviewer only (planning)"
+            echo "  -d, --developer     Developer only (implementation)"
+            echo "  -u, --ui-designer   UI designer only (RML/CSS)"
+            echo "  -a, --tech-art      Tech Art (Blender/FBX export scripts)"
+            echo "  -g, --generic       General purpose (no agent, no auto-delegation)"
             echo ""
             echo "Session Options:"
             echo "  -s, --session [NAME]  Use a named session (auto-generates if no name)"
@@ -105,16 +116,13 @@ while [[ $# -gt 0 ]]; do
             echo "Other Options:"
             echo "  -h, --help          Show this help message"
             echo ""
-            echo "Workflow: researcher -> reviewer -> developer"
+            echo "Recommended: Just run ./run_claude.sh"
+            echo "Coordinator auto-delegates: researcher -> reviewer -> developer"
             echo ""
             echo "Examples:"
-            echo "  ./run_claude.sh -r                  # Researcher agent"
-            echo "  ./run_claude.sh -s                  # Auto-generate session name"
+            echo "  ./run_claude.sh                     # Coordinator (recommended)"
             echo "  ./run_claude.sh -s my-feature       # Named session"
             echo "  ./run_claude.sh -c                  # Continue last session"
-            echo "  ./run_claude.sh -r -s               # Researcher with auto session"
-            echo ""
-            echo "If no option is specified, you'll be prompted to choose an agent."
             exit 0
             ;;
         *)
@@ -171,41 +179,59 @@ fi
 # Agent selection (interactive if not specified via flag)
 if [ -z "$AGENT_TYPE" ]; then
     echo -e "${BLUE}Select agent type:${NC}"
-    echo "  1) Researcher (default - analysis, creates solutions)"
-    echo "  2) Reviewer (creates implementation plans)"
-    echo "  3) Developer (implements plans exactly)"
-    echo "  4) Generic (full capabilities)"
+    echo "  1) Coordinator (default - auto-delegates to researcher/reviewer/developer)"
+    echo "  2) Researcher (analysis only)"
+    echo "  3) Reviewer (planning only)"
+    echo "  4) Developer (implementation only)"
+    echo "  5) UI Designer (RML/CSS only)"
+    echo "  6) Tech Art (Blender/FBX export scripts)"
+    echo "  7) Generic (general purpose, no agent profile)"
     echo ""
-    echo -e "${YELLOW}Workflow: Researcher -> Reviewer -> Developer${NC}"
+    echo -e "${YELLOW}Recommended: Coordinator auto-manages the full pipeline${NC}"
     echo ""
     read -p "Enter choice [1]: " choice
     case $choice in
         1|"")
-            AGENT_TYPE="researcher"
+            AGENT_TYPE=""  # No agent = coordinator with Task tool
             ;;
         2)
-            AGENT_TYPE="reviewer"
+            AGENT_TYPE="researcher"
             ;;
         3)
+            AGENT_TYPE="reviewer"
+            ;;
+        4)
             AGENT_TYPE="developer"
             ;;
-        *)
-            AGENT_TYPE=""
+        5)
+            AGENT_TYPE="ui-designer"
+            ;;
+        6)
+            AGENT_TYPE="tech-art"
+            ;;
+        7)
+            AGENT_TYPE="generic"
             ;;
     esac
     echo ""
 fi
 
-if [ -n "$AGENT_TYPE" ]; then
+if [ "$AGENT_TYPE" = "generic" ]; then
+    echo -e "${GREEN}Agent: Generic (general purpose)${NC}"
+    set_terminal_title "Claude"
+elif [ -n "$AGENT_TYPE" ]; then
     echo -e "${GREEN}Agent: ${AGENT_TYPE}${NC}"
     # Set terminal title based on agent type
     case $AGENT_TYPE in
         researcher) set_terminal_title "Researcher" ;;
         reviewer) set_terminal_title "Reviewer" ;;
         developer) set_terminal_title "Developer" ;;
+        ui-designer) set_terminal_title "UI Designer" ;;
+        tech-art) set_terminal_title "Tech Art" ;;
     esac
 else
-    set_terminal_title "Claude"
+    echo -e "${GREEN}Agent: Coordinator (auto-delegates)${NC}"
+    set_terminal_title "Coordinator"
 fi
 
 # Add project to Python path (for MCP server imports)
@@ -236,7 +262,8 @@ echo ""
 # Build claude command dynamically
 CLAUDE_CMD="claude"
 
-if [ -n "$AGENT_TYPE" ]; then
+# Add agent flag only for specific agents (not for coordinator or generic)
+if [ -n "$AGENT_TYPE" ] && [ "$AGENT_TYPE" != "generic" ]; then
     CLAUDE_CMD="$CLAUDE_CMD --agent $AGENT_TYPE"
 fi
 
