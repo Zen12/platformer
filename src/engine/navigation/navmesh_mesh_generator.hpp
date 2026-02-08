@@ -66,8 +66,14 @@ public:
                     const int elevW = GetElevationSafe(grid, x - 1, z, width, height);
                     const int elevE = GetElevationSafe(grid, x + 1, z, width, height);
 
-                    // West side wall (x0 edge)
-                    if (NeedsRampSideWall(elevation, elevW)) {
+                    // Check if edges are sloped (height varies along the edge)
+                    const bool westEdgeSloped = std::abs(y00 - y01) > 0.001f;
+                    const bool eastEdgeSloped = std::abs(y10 - y11) > 0.001f;
+                    const bool northEdgeSloped = std::abs(y00 - y10) > 0.001f;
+                    const bool southEdgeSloped = std::abs(y01 - y11) > 0.001f;
+
+                    // West side wall (x0 edge) - also generate if edge is sloped and neighbor exists
+                    if (NeedsRampSideWall(elevation, elevW) || (westEdgeSloped && elevW != 0)) {
                         const float sideBaseY = GetRampSideBaseY(elevW, groundY, elevationHeight);
                         AddRampSideWall(vertices, indices, vertexIndex,
                                        worldX0, worldX0, worldZ0, worldZ1,
@@ -75,7 +81,7 @@ public:
                     }
 
                     // East side wall (x1 edge)
-                    if (NeedsRampSideWall(elevation, elevE)) {
+                    if (NeedsRampSideWall(elevation, elevE) || (eastEdgeSloped && elevE != 0)) {
                         const float sideBaseY = GetRampSideBaseY(elevE, groundY, elevationHeight);
                         AddRampSideWall(vertices, indices, vertexIndex,
                                        worldX1, worldX1, worldZ0, worldZ1,
@@ -83,7 +89,7 @@ public:
                     }
 
                     // North side wall (z0 edge)
-                    if (NeedsRampSideWall(elevation, elevN)) {
+                    if (NeedsRampSideWall(elevation, elevN) || (northEdgeSloped && elevN != 0)) {
                         const float sideBaseY = GetRampSideBaseY(elevN, groundY, elevationHeight);
                         AddRampSideWall(vertices, indices, vertexIndex,
                                        worldX0, worldX1, worldZ0, worldZ0,
@@ -91,7 +97,7 @@ public:
                     }
 
                     // South side wall (z1 edge)
-                    if (NeedsRampSideWall(elevation, elevS)) {
+                    if (NeedsRampSideWall(elevation, elevS) || (southEdgeSloped && elevS != 0)) {
                         const float sideBaseY = GetRampSideBaseY(elevS, groundY, elevationHeight);
                         AddRampSideWall(vertices, indices, vertexIndex,
                                        worldX0, worldX1, worldZ1, worldZ1,
@@ -308,8 +314,8 @@ private:
         // v2: (x0, yTop0, z0)  - top corner 0 (may be higher or lower than v3)
         // v3: (x1, yTop1, z1)  - top corner 1
 
-        // Skip if both top corners are at base level (no wall needed)
-        if (yTop0 <= yBase && yTop1 <= yBase) return;
+        // Skip only if both corners match base level exactly (no gap to fill)
+        if (std::abs(yTop0 - yBase) < 0.001f && std::abs(yTop1 - yBase) < 0.001f) return;
 
         vertices.push_back(x0); vertices.push_back(yBase); vertices.push_back(z0);
         vertices.push_back(x1); vertices.push_back(yBase); vertices.push_back(z1);

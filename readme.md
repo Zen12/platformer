@@ -108,8 +108,8 @@
 # 🏃 Roadmap
 
 ## 0.1.9 Good level
-- [ ] Mesh builder from navmesh grid
-- [ ] Walls generator 
+- [x] Mesh builder from navmesh grid
+- [x] Walls generator 
 - [ ] Texture applier (floor, walls)
 - [ ] Bake lighting into texture
 
