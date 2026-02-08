@@ -1,19 +1,20 @@
 #pragma once
 #include "action.hpp"
 #include "../../system_triggers.hpp"
-#include <unordered_map>
+#include "../../trigger_board.hpp"
+#include <memory>
 
 struct SetSystemTriggerAction final : public Action {
 private:
-    std::unordered_map<SystemTriggers, bool>& _systemTriggers;
+    std::shared_ptr<TriggerBoard> _triggerBoard;
     SystemTriggers _triggerType;
 
 public:
-    SetSystemTriggerAction(SystemTriggers triggerType, std::unordered_map<SystemTriggers, bool>& systemTriggers)
-        : _systemTriggers(systemTriggers), _triggerType(triggerType) {}
+    SetSystemTriggerAction(SystemTriggers triggerType, std::shared_ptr<TriggerBoard> triggerBoard)
+        : _triggerBoard(std::move(triggerBoard)), _triggerType(triggerType) {}
 
     void OnEnter() const override {
-        _systemTriggers[_triggerType] = true;
+        _triggerBoard->SetSystemTrigger(_triggerType);
     }
 
     void OnUpdate() const override {

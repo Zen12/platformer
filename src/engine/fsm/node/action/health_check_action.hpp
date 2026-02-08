@@ -1,22 +1,22 @@
 #pragma once
 
 #include "action.hpp"
+#include "../../trigger_board.hpp"
 #include "../../../scene/scene_manager.hpp"
 #include "../../../esc/health/health_component.hpp"
 #include <memory>
 #include <string>
-#include <unordered_map>
 
 struct HealthCheckAction final : public Action {
 
 private:
     std::string _triggerName;
     std::shared_ptr<SceneManager> _sceneManager;
-    std::unordered_map<std::string, bool>& _triggers;
+    std::shared_ptr<TriggerBoard> _triggerBoard;
 
 public:
-    HealthCheckAction(std::string triggerName, std::shared_ptr<SceneManager> sceneManager, std::unordered_map<std::string, bool>& triggers)
-        : _triggerName(std::move(triggerName)), _sceneManager(std::move(sceneManager)), _triggers(triggers) {}
+    HealthCheckAction(std::string triggerName, std::shared_ptr<SceneManager> sceneManager, std::shared_ptr<TriggerBoard> triggerBoard)
+        : _triggerName(std::move(triggerName)), _sceneManager(std::move(sceneManager)), _triggerBoard(std::move(triggerBoard)) {}
 
     void OnEnter() const override {
     }
@@ -34,7 +34,7 @@ public:
         for (auto entity : view) {
             auto& health = view.get<HealthComponent>(entity);
             if (health.GetCurrentHealth() <= 0.0f) {
-                _triggers[_triggerName] = true;
+                _triggerBoard->SetTrigger(_triggerName);
                 return;
             }
         }

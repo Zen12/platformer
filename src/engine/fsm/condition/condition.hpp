@@ -1,12 +1,8 @@
 #pragma once
 #include <string>
+#include <variant>
 
-class Condition {
-public:
-    virtual ~Condition() = default;
+#include "core_types/trigger_check_condition.hpp"
+#include "core_types/always_true_condition.hpp"
 
-    std::string Type;
-    std::string Guid;
-
-    [[nodiscard]] virtual bool IsSuccess() = 0;
-};
+using AllConditionVariants = std::variant<AlwaysTrueCondition, TriggerCheckCondition>;

@@ -2,7 +2,6 @@
 
 #include <memory>
 #include <string>
-#include <unordered_map>
 #include "../node.hpp"
 #include "../../../renderer/ui_manager.hpp"
 #include "../../../scene/scene_manager.hpp"
@@ -23,32 +22,29 @@
 #include "../../../audio/play_sound_action.hpp"
 #include "../../../audio/play_sound_repeated_action.hpp"
 #include "../../../audio/mute_audio_action.hpp"
+#include "../../trigger_board.hpp"
 
-// Forward declaration
 class VideoRecorder;
 
 class ActionFactory {
 private:
     std::shared_ptr<UIManager> _uiManager;
     std::shared_ptr<SceneManager> _sceneManager;
-    std::unordered_map<std::string, bool>& _triggers;
-    std::unordered_map<SystemTriggers, bool>& _systemTriggers;
-    std::shared_ptr<VideoRecorder> _videoRecorder;  // Optional, for video recording
-    std::shared_ptr<AudioManager> _audioManager;  // Optional, for audio
-    std::weak_ptr<FsmAnimationComponent> _animationComponent;  // Optional, for animation FSMs
+    std::shared_ptr<TriggerBoard> _triggerBoard;
+    std::shared_ptr<VideoRecorder> _videoRecorder;
+    std::shared_ptr<AudioManager> _audioManager;
+    std::weak_ptr<FsmAnimationComponent> _animationComponent;
 
 public:
     ActionFactory(std::shared_ptr<UIManager> uiManager,
                   std::shared_ptr<SceneManager> sceneManager,
-                  std::unordered_map<std::string, bool>& triggers,
-                  std::unordered_map<SystemTriggers, bool>& systemTriggers,
+                  std::shared_ptr<TriggerBoard> triggerBoard,
                   std::shared_ptr<VideoRecorder> videoRecorder = nullptr,
                   std::shared_ptr<AudioManager> audioManager = nullptr,
                   std::weak_ptr<FsmAnimationComponent> animationComponent = std::weak_ptr<FsmAnimationComponent>())
         : _uiManager(std::move(uiManager)),
           _sceneManager(std::move(sceneManager)),
-          _triggers(triggers),
-          _systemTriggers(systemTriggers),
+          _triggerBoard(std::move(triggerBoard)),
           _videoRecorder(std::move(videoRecorder)),
           _audioManager(std::move(audioManager)),
           _animationComponent(std::move(animationComponent)) {}
@@ -66,7 +62,7 @@ public:
     }
 
     [[nodiscard]] TriggerSetterButtonListenerAction CreateTriggerSetterButtonListenerAction(const std::string& buttonId, const std::string& triggerName) const {
-        return {buttonId, triggerName, _uiManager, _triggers};
+        return {buttonId, triggerName, _uiManager, _triggerBoard};
     }
 
     [[nodiscard]] SetSystemTriggerAction CreateSetSystemTriggerAction(const std::string& triggerTypeStr) const {
@@ -78,7 +74,7 @@ public:
         } else {
             triggerType = SystemTriggers::Exit;
         }
-        return {triggerType, _systemTriggers};
+        return {triggerType, _triggerBoard};
     }
 
     [[nodiscard]] LogAction CreateLogAction(const std::string& message) const {
@@ -128,7 +124,7 @@ public:
     }
 
     [[nodiscard]] HealthCheckAction CreateHealthCheckAction(const std::string& triggerName) const {
-        return {triggerName, _sceneManager, _triggers};
+        return {triggerName, _sceneManager, _triggerBoard};
     }
 
     [[nodiscard]] PlaySoundAction CreatePlaySoundAction(const std::string& audioGuid, float volume, bool loop) const {

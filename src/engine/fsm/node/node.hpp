@@ -26,35 +26,34 @@ class StateNode final {
 public:
     using AllActionVariants = std::variant<UiPageAction, LoadSceneAction, ButtonListenerAction, TriggerSetterButtonListenerAction, SetSystemTriggerAction, LogAction, AnimationStateAction, AnimationStateTransitionAction, StartVideoRecordingAction, StopVideoRecordingAction, FpsDisplayAction, HealthDisplayAction, HealthBarAction, HealthCheckAction, PlaySoundAction, PlaySoundRepeatedAction, MuteAudioAction>;
 private:
-    std::vector<AllActionVariants> _states{};
+    mutable std::vector<AllActionVariants> _actions{};
 public:
     const std::string Guid;
 
-    StateNode(std::string guid, std::vector<AllActionVariants> states)
-        : _states(std::move(states)), Guid(std::move(guid)) {}
+    StateNode(std::string guid, std::vector<AllActionVariants> actions)
+        : _actions(std::move(actions)), Guid(std::move(guid)) {}
 
-    void EnterAll() {
-        for (auto& stateVar : _states) {
-            std::visit([](auto& state) {
-                state.OnEnter();
-            }, stateVar);
+    void EnterAll() const {
+        for (auto& action : _actions) {
+            std::visit([](auto& a) {
+                a.OnEnter();
+            }, action);
         }
     }
 
-    void UpdateAll() {
-        for (auto& stateVar : _states) {
-            std::visit([](auto& state) {
-                state.OnUpdate();
-            }, stateVar);
+    void UpdateAll() const {
+        for (auto& action : _actions) {
+            std::visit([](auto& a) {
+                a.OnUpdate();
+            }, action);
         }
     }
 
-    void ExitAll() {
-        for (auto& stateVar : _states) {
-            std::visit([](auto& state) {
-                state.OnExit();
-            }, stateVar);
+    void ExitAll() const {
+        for (auto& action : _actions) {
+            std::visit([](auto& a) {
+                a.OnExit();
+            }, action);
         }
     }
-
 };

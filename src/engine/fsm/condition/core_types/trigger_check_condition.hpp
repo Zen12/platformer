@@ -1,32 +1,24 @@
 #pragma once
-#include <unordered_map>
 #include <string>
+#include <memory>
 #include <utility>
 
-#include "../condition.hpp"
+#include "../../trigger_board.hpp"
 
+struct TriggerCheckCondition final {
+    std::string Type;
+    std::string Guid;
 
-class TriggerCheckCondition final : public Condition {
-
-    const std::string _triggerName;
-    const std::unordered_map<std::string, bool>& _triggers;
-
+private:
+    std::string _triggerName;
+    std::shared_ptr<TriggerBoard> _triggerBoard;
 
 public:
-
-    explicit TriggerCheckCondition(std::string  triggerName, const std::unordered_map<std::string, bool>& triggers)
-        : _triggerName(std::move(triggerName)), _triggers(triggers) {
+    explicit TriggerCheckCondition(std::string triggerName, std::shared_ptr<TriggerBoard> triggerBoard)
+        : _triggerName(std::move(triggerName)), _triggerBoard(std::move(triggerBoard)) {
     }
 
-    [[nodiscard]] bool IsSuccess() override {
-
-        const auto it = _triggers.find(_triggerName);
-        if (it == _triggers.end()) {
-            return false; // Trigger not found, treat as false
-        }
-
-        return it->second; // Check if trigger is true
+    [[nodiscard]] bool IsSuccess() const {
+        return _triggerBoard->IsTriggerSet(_triggerName);
     }
-
-
 };

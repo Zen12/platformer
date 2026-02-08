@@ -6,6 +6,7 @@
 
 #include "fsm/fsm_asset.hpp"
 #include "fsm/fsm_asset_yaml.hpp"
+#include "fsm/fsm_factory.hpp"
 #include "renderer/mesh/mesh_asset_loader.hpp"
 #include "renderer/animation/animation_asset_loader.hpp"
 
@@ -42,7 +43,7 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
     _assetManager->Init();
 
     const auto mainFsm = _assetManager->LoadAssetByGuid<FsmAsset>(_projectAsset.MainFsm);
-    _fsmController = std::make_unique<FsmController>(mainFsm, _sceneManager, _uiManager, _videoRecorder, _audioManager);
+    _fsmController = FsmFactory::Create(mainFsm, _sceneManager, _uiManager, _videoRecorder, _audioManager);
 
     _uiManager->Initialize();
 

@@ -53,7 +53,6 @@ IKAimSystem::TwoBoneIKResult IKAimSystem::SolveTwoBoneIK(
 
     float cosElbow = (a * a + b * b - c * c) / (2.0f * a * b);
     cosElbow = glm::clamp(cosElbow, -1.0f, 1.0f);
-    float elbowAngle = std::acos(cosElbow);
 
     float cosShoulder = (a * a + c * c - b * b) / (2.0f * a * c);
     cosShoulder = glm::clamp(cosShoulder, -1.0f, 1.0f);

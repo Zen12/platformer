@@ -1,7 +1,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "fsm_animation_system.hpp"
 #include "../navmesh_agent/navmesh_agent_component.hpp"
-#include "../../fsm/fsm_controller.hpp"
+#include "../../fsm/fsm_factory.hpp"
 #include "../../fsm/fsm_asset.hpp"
 #include "../../fsm/fsm_asset_yaml.hpp"
 #include <iomanip>
@@ -128,7 +128,7 @@ void FsmAnimationSystem::OnTick() {
                     }
 
                     // Create FsmController (managers are nullptr except audioManager for sounds)
-                    anim.Controller = std::make_shared<FsmController>(
+                    anim.Controller = FsmFactory::Create(
                         fsmAsset,
                         nullptr,
                         nullptr,
@@ -339,7 +339,6 @@ void FsmAnimationSystem::OnTick() {
 
             // Calculate blend weights based on direction angle
             // directionAngle: 0 = forward, ±180 = backward, +90 = right, -90 = left
-            float angleRad = glm::radians(directionAngle);
             float forwardWeight = 0.0f, backWeight = 0.0f, leftWeight = 0.0f, rightWeight = 0.0f;
 
             // Use quadrant-based blending

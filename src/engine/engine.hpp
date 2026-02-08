@@ -30,7 +30,7 @@ private:
 
     std::filesystem::path _projectPath;
     ProjectAsset _projectAsset;
-    std::unique_ptr<FsmController> _fsmController;
+    std::shared_ptr<FsmController> _fsmController;
 
     Time _frameTimer;
 
