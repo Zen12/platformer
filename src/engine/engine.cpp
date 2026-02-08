@@ -9,6 +9,7 @@
 #include "fsm/fsm_factory.hpp"
 #include "renderer/mesh/mesh_asset_loader.hpp"
 #include "renderer/animation/animation_asset_loader.hpp"
+#include "system/profiler.hpp"
 
 #define DEBUG_ENGINE_PROFILE 0
 
@@ -20,6 +21,7 @@
 #endif
 
 Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectPath) {
+    Profiler::Init();
 
     ENGINE_LOG << "Load project from: " << _projectPath << "\n";
     AssetLoader<Texture>::Init();
@@ -73,6 +75,8 @@ void Engine::WaitForTargetFrameRate() const {
 Engine::~Engine() {
     ENGINE_LOG << "Destroying gameengine..." << std::endl;
 
+    Profiler::Shutdown();
+
     // Shutdown audio first
     _audioManager->Shutdown();
 
@@ -90,15 +94,19 @@ Engine::~Engine() {
 }
 
 void Engine::Tick() {
-#if DEBUG_ENGINE_PROFILE
     PROFILE_SCOPE("Engine::Tick");
-#endif
 
     _frameTimer.Reset();
 
+    {
+        PROFILE_SCOPE("Input");
+        _inputSystem->Update();
+    }
 
-    _inputSystem->Update();
-    _fsmController->Update();
+    {
+        PROFILE_SCOPE("FSM");
+        _fsmController->Update();
+    }
 
     _renderController->Reset();
 
@@ -114,9 +122,20 @@ void Engine::Tick() {
         _uiManager->ProcessMouseButtonUp(0);
     }
 
-    _renderController->Render(_sceneManager->GetRenderRepository());
-    _uiManager->Update();
-    _audioManager->Update();
+    {
+        PROFILE_SCOPE("Render");
+        _renderController->Render(_sceneManager->GetRenderRepository());
+    }
+
+    {
+        PROFILE_SCOPE("UI");
+        _uiManager->Update();
+    }
+
+    {
+        PROFILE_SCOPE("Audio");
+        _audioManager->Update();
+    }
 
     // Capture frame for video recording if active
     if (_videoRecorder->IsRecording()) {

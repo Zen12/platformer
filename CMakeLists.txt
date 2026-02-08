@@ -53,6 +53,7 @@ find_package(FREETYPE REQUIRED)
 find_package(ASSIMP REQUIRED)
 find_package(RVO2 REQUIRED)
 find_package(OpenAL REQUIRED)
+find_package(Minitrace REQUIRED)
 
 if (PLATFORM_DESKTOP)
     find_package(OpenGL REQUIRED)
@@ -74,6 +75,10 @@ add_executable(${CMAKE_PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 # --- Link libraries ---
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE GLM::GLM freetype yaml-cpp EnTT::EnTT rmlui_core assimp RVO)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR} ${RVO2_INCLUDE_DIRS})
+
+# Minitrace: header always available, library only linked in debug (MTR_ENABLED defined there)
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${MINITRACE_INCLUDE_DIRS})
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:Minitrace::Minitrace>)
 
 if (PLATFORM_DESKTOP)
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw OpenAL::OpenAL)

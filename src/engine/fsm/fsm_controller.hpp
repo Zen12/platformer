@@ -77,7 +77,7 @@ public:
 
             bool conditionsPassed = false;
 
-            auto checkCondition = [](const AllConditionVariants& cond) {
+            auto checkCondition = [](const fsm::AllConditionVariants& cond) {
                 return std::visit([](const auto& c) { return c.IsSuccess(); }, cond);
             };
 

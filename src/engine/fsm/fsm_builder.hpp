@@ -5,6 +5,7 @@
 
 #include "fsm_data.hpp"
 #include "fsm_asset.hpp"
+#include "all_action_types.hpp"
 #include "trigger_board.hpp"
 #include "node/action/action_factory.hpp"
 #include "condition/core_types/trigger_check_condition.hpp"
@@ -54,11 +55,11 @@ public:
 
         std::unordered_map<std::string, StateNode> stateNodes;
         std::vector<Connection> connections;
-        std::unordered_map<std::string, AllConditionVariants> conditions;
+        std::unordered_map<std::string, fsm::AllConditionVariants> conditions;
 
         // Build StateNodes from serialization
         for (const auto& nodeSer : fsmAsset.StateNodeSerialization) {
-            std::vector<StateNode::AllActionVariants> actions;
+            std::vector<fsm::AllActionVariants> actions;
 
             for (const auto& actionSer : nodeSer->ActionData) {
                 if (actionSer->Type == "load_ui_page") {

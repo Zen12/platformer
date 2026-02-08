@@ -11,7 +11,7 @@
 struct FsmData final {
     const std::unordered_map<std::string, StateNode> StateNodes;
     const std::vector<Connection> Connections;
-    const std::unordered_map<std::string, AllConditionVariants> Conditions;
+    const std::unordered_map<std::string, fsm::AllConditionVariants> Conditions;
     const std::string StartNode;
 
     FsmData(const FsmData&) = delete;
@@ -22,7 +22,7 @@ struct FsmData final {
     FsmData(
         std::unordered_map<std::string, StateNode> stateNodes,
         std::vector<Connection> connections,
-        std::unordered_map<std::string, AllConditionVariants> conditions,
+        std::unordered_map<std::string, fsm::AllConditionVariants> conditions,
         std::string startNode
     ) : StateNodes(std::move(stateNodes)),
         Connections(std::move(connections)),

@@ -1,6 +1,7 @@
 #include "opengl_render_controller.hpp"
 #include "../../scene/scene_manager.hpp"
 #include "../../system/guid.hpp"
+#include "../../system/profiler.hpp"
 #include "../material/shader.hpp"
 #include <glm/gtc/type_ptr.hpp>
 
@@ -299,6 +300,7 @@ void OpenGLRenderController::RenderLines(const RenderId& renderId, const std::ve
 }
 
 void OpenGLRenderController::RenderShadowPass(const std::shared_ptr<RenderRepository>& repository) noexcept {
+    PROFILE_SCOPE("RenderShadowPass");
     const auto& lightData = repository->GetDirectionalLight();
     _hasDirectionalLight = lightData.HasLight;
     if (!lightData.HasLight) {
@@ -392,6 +394,7 @@ void OpenGLRenderController::RenderShadowPass(const std::shared_ptr<RenderReposi
 }
 
 void OpenGLRenderController::Render(const std::shared_ptr<RenderRepository>& repository) noexcept {
+    PROFILE_SCOPE("RenderController::Render");
     const auto [width, height] = GetViewportSize();
 
     RenderShadowPass(repository);

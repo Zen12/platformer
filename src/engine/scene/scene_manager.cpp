@@ -10,14 +10,11 @@
 #include "../esc/mesh_renderer/mesh_renderer_component.hpp"
 #include "../esc/mesh_renderer/mesh_renderer_component_serialization.hpp"
 #include "../navigation/navmesh_mesh_generator.hpp"
-
-#define DEBUG_ENGINE_SCENE_MANAGER_PROFILE 0
+#include "../system/profiler.hpp"
 
 
 void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
-#if DEBUG_ENGINE_SCENE_MANAGER_PROFILE
-    PROFILE_SCOPE("Loading of scene " + sceneAsset.Name);
-#endif
+    PROFILE_SCOPE("LoadScene");
 
     if (const auto assetManager = _assetManager.lock()) {
         _scene = std::make_shared<Scene> (_window,_assetManager, _inputSystem);
@@ -94,9 +91,7 @@ void SceneManager::UnloadScene() {
 }
 
 void SceneManager::Update() {
-#if DEBUG_ENGINE_SCENE_MANAGER_PROFILE
-    PROFILE_SCOPE("  SceneManager::Update");
-#endif
+    PROFILE_SCOPE("SceneManager::Update");
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if (_escSystem) {
