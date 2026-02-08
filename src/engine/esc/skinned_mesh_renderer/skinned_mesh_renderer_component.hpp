@@ -10,8 +10,8 @@
 
 class SkinnedMeshRendererComponent final {
 public:
-    struct Guid MeshGuid;
-    struct Guid MaterialGuid;
+    Guid MeshGuid;
+    Guid MaterialGuid;
 
     std::vector<glm::mat4> BoneTransforms;
     std::vector<glm::mat4> LocalBoneTransforms;

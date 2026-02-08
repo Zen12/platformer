@@ -1,4 +1,11 @@
 <rml>
+<head>
+    <style>
+        body {
+            font-family: Arial;
+        }
+    </style>
+</head>
 <body>
     <div id="fps-display">FPS: --</div>
     <div id="health-container">

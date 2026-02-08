@@ -1,6 +1,11 @@
 <rml>
 <head>
     <link type="text/template" href="guid|604fdc70-a493-4688-b1eb-e32315cba97e"/>
+    <style>
+        body {
+            font-family: Arial;
+        }
+    </style>
 </head>
 <body>
     <h1>Platformer 0.1</h1>
