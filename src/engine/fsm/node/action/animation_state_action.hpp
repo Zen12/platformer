@@ -56,8 +56,6 @@ public:
 
     void OnEnter() const override {
         if (const auto comp = _animationComponent.lock()) {
-            // Only reset time if switching to a different animation
-            // (preserve time when coming from a transition)
             if (comp->CurrentAnimationGuid != _animationGuid) {
                 comp->Time = 0.0f;
                 ANIM_STATE_LOG << "[ANIM STATE] Switching animation: " << comp->CurrentAnimationGuid.ToString()
@@ -69,33 +67,30 @@ public:
             comp->OnCompleteTrigger = _onCompleteTrigger;
             comp->Loop = _loop;
             comp->HasCompletedOnce = false;
-            // Set per-state speed overrides
             comp->StateAnimationSpeed = _animationSpeed;
             comp->StateDisableVelocitySpeed = _disableVelocitySpeed;
             comp->MovementDisabled = _disableMovement;
             comp->MovementDisabledDuration = _disableMovementDuration;
-            comp->MovementDisabledTimer = 0.0f;  // Reset timer when entering state
+            comp->MovementDisabledTimer = 0.0f;
 
-            // Set directional blending if configured in this state
             if (_useDirectionalBlending) {
-                comp->UseDirectionalBlending = true;
-                comp->DirectionalWalkForwardGuid = _directionalWalkForwardGuid;
-                comp->DirectionalWalkBackGuid = _directionalWalkBackGuid;
-                comp->DirectionalWalkLeftGuid = _directionalWalkLeftGuid;
-                comp->DirectionalWalkRightGuid = _directionalWalkRightGuid;
+                auto& config = comp->Blender.GetMutableConfig();
+                config.Mode = AnimationBlendMode::Directional;
+                config.DirectionalForwardGuid = _directionalWalkForwardGuid;
+                config.DirectionalBackGuid = _directionalWalkBackGuid;
+                config.DirectionalLeftGuid = _directionalWalkLeftGuid;
+                config.DirectionalRightGuid = _directionalWalkRightGuid;
             }
         }
     }
 
     void OnUpdate() const override {
-        // Animation playback is handled by FsmAnimationSystem
     }
 
     void OnExit() const override {
-        // Disable directional blending when exiting state (if this state had it enabled)
         if (_useDirectionalBlending) {
             if (const auto comp = _animationComponent.lock()) {
-                comp->UseDirectionalBlending = false;
+                comp->Blender.GetMutableConfig().Mode = AnimationBlendMode::Simple;
             }
         }
     }

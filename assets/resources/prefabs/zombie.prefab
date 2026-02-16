@@ -10,9 +10,11 @@ components:
   - type: fsm_animation
     fsm_guid: b9fcf65a-3a68-4990-aa56-e4a5945b0093
     loop: true
-    animation_speed: 2.0
-    velocity_based_speed: true
-    velocity_speed_scale: 3.0
+    blender:
+      mode: simple
+      animation_speed: 2.0
+      velocity_based_speed: true
+      velocity_speed_scale: 3.0
   - type: navmesh_agent
     radius: 0.2
     max_speed: 4.0

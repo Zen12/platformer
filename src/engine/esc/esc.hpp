@@ -109,15 +109,7 @@ public:
                         const auto &view = registry->view<FsmAnimationComponent>();
                         FsmAnimationComponent fsmAnimComp(fsmAnimationSerialization->FsmGuid);
                         fsmAnimComp.Loop = fsmAnimationSerialization->Loop;
-                        fsmAnimComp.AnimationSpeed = fsmAnimationSerialization->AnimationSpeed;
-                        fsmAnimComp.VelocityBasedSpeed = fsmAnimationSerialization->VelocityBasedSpeed;
-                        fsmAnimComp.VelocitySpeedScale = fsmAnimationSerialization->VelocitySpeedScale;
-                        // Directional animation blending
-                        fsmAnimComp.DirectionalWalkForwardGuid = fsmAnimationSerialization->DirectionalWalkForwardGuid;
-                        fsmAnimComp.DirectionalWalkBackGuid = fsmAnimationSerialization->DirectionalWalkBackGuid;
-                        fsmAnimComp.DirectionalWalkLeftGuid = fsmAnimationSerialization->DirectionalWalkLeftGuid;
-                        fsmAnimComp.DirectionalWalkRightGuid = fsmAnimationSerialization->DirectionalWalkRightGuid;
-                        fsmAnimComp.UseDirectionalBlending = fsmAnimationSerialization->UseDirectionalBlending;
+                        fsmAnimComp.Blender.Configure(fsmAnimationSerialization->BlenderConfig);
                         view->emplace(entity, fsmAnimComp);
                     } else if (const auto &cameraControllerSerialization = dynamic_cast<CameraControllerComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<CameraControllerComponent>();

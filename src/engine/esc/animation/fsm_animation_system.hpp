@@ -86,5 +86,17 @@ public:
         return glm::mix(keys[index].Value, keys[index + 1].Value, t);
     }
 
+    static void SampleAnimationToSoA(
+        const std::shared_ptr<AnimationData>& animData,
+        float time,
+        BoneSoA& outBones,
+        const std::unordered_map<std::string, int>& boneNameToIndex
+    );
+
+    static void ConvertSoAToLocalTransforms(
+        const BoneSoA& bones,
+        std::vector<glm::mat4>& localTransforms
+    );
+
     void OnTick() override;
 };

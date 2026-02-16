@@ -68,10 +68,11 @@ entities:
       - type: fsm_animation
         fsm_guid: 0dd46701-6ea4-47fc-9644-b6ffa0ce0da3
         loop: true
-        animation_speed: 2.0
-        velocity_based_speed: true
-        velocity_speed_scale: 1.0
-        use_directional_blending: true
+        blender:
+          mode: simple
+          animation_speed: 2.0
+          velocity_based_speed: true
+          velocity_speed_scale: 1.0
       - type: ik_aim
         enabled: true
         blend_weight: 1.0
