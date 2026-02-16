@@ -1,7 +1,7 @@
 #pragma once
 #include "play_sound_repeated_action_serialization.hpp"
 #include "yaml-cpp/node/node.h"
-#include "../system/guid_yaml.hpp"
+#include "guid_yaml.hpp"
 
 namespace YAML {
     template <>

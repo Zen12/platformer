@@ -1,7 +1,7 @@
 #include "opengl_render_controller.hpp"
 #include "../../scene/scene_manager.hpp"
-#include "../../system/guid.hpp"
-#include "../../system/profiler.hpp"
+#include "guid.hpp"
+#include "profiler.hpp"
 #include "../material/shader.hpp"
 #include <glm/gtc/type_ptr.hpp>
 

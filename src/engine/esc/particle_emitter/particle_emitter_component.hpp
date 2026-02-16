@@ -5,7 +5,7 @@
 #include <glm/vec4.hpp>
 #include "particle.hpp"
 #include "particle_emitter_component_serialization.hpp"
-#include "../../system/guid.hpp"
+#include "guid.hpp"
 
 class ParticleEmitterComponent final {
 private:

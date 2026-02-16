@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <glm/glm.hpp>
-#include "../../system/guid.hpp"
+#include "guid.hpp"
 
 struct SpawnerComponent {
 private:

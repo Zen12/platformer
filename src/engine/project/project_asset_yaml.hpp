@@ -1,5 +1,5 @@
 #pragma once
-#include "../system/guid_yaml.hpp"
+#include "guid_yaml.hpp"
 
 namespace YAML {
     template <>

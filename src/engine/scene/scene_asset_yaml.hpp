@@ -2,7 +2,7 @@
 #include <yaml-cpp/yaml.h>
 #include "scene_asset.hpp"
 #include "../entity/entity_serialization_yaml.hpp"
-#include "../system/guid_yaml.hpp"
+#include "guid_yaml.hpp"
 
 namespace YAML {
     template <>

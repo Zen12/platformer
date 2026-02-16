@@ -7,7 +7,7 @@
 #include "../renderer/material/material.hpp"
 #include "../asset/asset_manager.hpp"
 #include "../system/input_system.hpp"
-#include "../system/guid.hpp"
+#include "guid.hpp"
 
 #include "../esc/esc.hpp"
 #include "../audio/audio_manager.hpp"

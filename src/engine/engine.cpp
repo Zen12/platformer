@@ -9,7 +9,7 @@
 #include "fsm/fsm_factory.hpp"
 #include "renderer/mesh/mesh_asset_loader.hpp"
 #include "renderer/animation/animation_asset_loader.hpp"
-#include "system/profiler.hpp"
+#include "profiler.hpp"
 
 #define DEBUG_ENGINE_PROFILE 0
 

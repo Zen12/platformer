@@ -2,7 +2,7 @@
 
 #include <yaml-cpp/yaml.h>
 #include "meta_asset.hpp"
-#include "../../system/guid_yaml.hpp"
+#include "guid_yaml.hpp"
 
 namespace YAML
 {

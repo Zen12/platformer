@@ -12,7 +12,7 @@
 #include "condition/core_types/trigger_check_condition_serialization.hpp"
 #include "condition/core_types/always_true_condition.hpp"
 #include "condition/core_types/always_true_condition_serialization.hpp"
-#include "../system/guid.hpp"
+#include "guid.hpp"
 
 // Action serialization includes for dynamic_cast
 #include "../renderer/ui/ui_page_action_serialization.hpp"

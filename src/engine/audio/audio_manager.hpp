@@ -11,7 +11,7 @@
 #include "audio_data.hpp"
 #include "audio_loader.hpp"
 #include "../asset/asset_manager.hpp"
-#include "../system/guid.hpp"
+#include "guid.hpp"
 
 #define DEBUG_AUDIO_MANAGER 0
 

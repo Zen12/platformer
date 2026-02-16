@@ -1,6 +1,6 @@
 #pragma once
 #include "../../entity/component_serialization.hpp"
-#include "../../system/guid.hpp"
+#include "guid.hpp"
 
 struct SkinnedMeshRendererComponentSerialization final : public ComponentSerialization
 {

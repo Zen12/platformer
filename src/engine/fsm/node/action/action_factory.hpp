@@ -5,7 +5,7 @@
 #include "../node.hpp"
 #include "../../../renderer/ui_manager.hpp"
 #include "../../../scene/scene_manager.hpp"
-#include "../../../system/guid.hpp"
+#include "guid.hpp"
 #include "../../../renderer/ui/ui_page_action.hpp"
 #include "../../../scene/load_scene_action.hpp"
 #include "../../../renderer/ui/button_listener_action.hpp"

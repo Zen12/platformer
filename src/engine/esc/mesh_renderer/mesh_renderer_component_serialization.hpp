@@ -2,7 +2,7 @@
 #include <optional>
 #include <glm/vec4.hpp>
 #include "../../entity/component_serialization.hpp"
-#include "../../system/guid.hpp"
+#include "guid.hpp"
 
 struct MeshRendererComponentSerialization final : public ComponentSerialization
 {

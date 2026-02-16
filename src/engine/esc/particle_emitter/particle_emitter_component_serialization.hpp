@@ -2,7 +2,7 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include "../../entity/component_serialization.hpp"
-#include "../../system/guid.hpp"
+#include "guid.hpp"
 
 struct ParticleEmitterComponentSerialization final : public ComponentSerialization {
     Guid MaterialGuid;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../system/profiler.hpp"
+#include "profiler.hpp"
 #include "animation/simple_animation_component.hpp"
 #include "animation/simple_animation_component_serialization.hpp"
 #include "animation/simple_animation_system.hpp"

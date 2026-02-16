@@ -360,15 +360,16 @@ void FsmAnimationSystem::OnTick() {
         std::vector<glm::mat4> worldTransforms(skinnedMesh.BoneNames.size(), glm::mat4(1.0f));
         std::vector<bool> processed(skinnedMesh.BoneNames.size(), false);
         const auto& boneParents = skinnedMesh.BoneParents;
+        const auto& localBoneTransforms = skinnedMesh.LocalBoneTransforms;
 
         std::function<void(int)> computeWorldTransform = [&](int boneIndex) {
             if (processed[boneIndex]) return;
             int parentIndex = boneParents[boneIndex];
             if (parentIndex == -1) {
-                worldTransforms[boneIndex] = skinnedMesh.LocalBoneTransforms[boneIndex];
+                worldTransforms[boneIndex] = localBoneTransforms[boneIndex];
             } else {
                 computeWorldTransform(parentIndex);
-                worldTransforms[boneIndex] = worldTransforms[parentIndex] * skinnedMesh.LocalBoneTransforms[boneIndex];
+                worldTransforms[boneIndex] = worldTransforms[parentIndex] * localBoneTransforms[boneIndex];
             }
             processed[boneIndex] = true;
         };

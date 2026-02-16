@@ -1,7 +1,7 @@
 #pragma once
 #include "bt_component_serialization.hpp"
 #include <yaml-cpp/yaml.h>
-#include "../system/guid_yaml.hpp"
+#include "guid_yaml.hpp"
 
 namespace YAML {
     template <>

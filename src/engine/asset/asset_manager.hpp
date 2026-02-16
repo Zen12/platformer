@@ -11,7 +11,7 @@
 #include <yaml-cpp/yaml.h>
 
 #include "loaders/asset_loader.hpp"
-#include "../system/guid.hpp"
+#include "guid.hpp"
 
 class AssetManager {
 private:

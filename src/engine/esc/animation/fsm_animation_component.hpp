@@ -3,7 +3,7 @@
 #include <memory>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
-#include "../../system/guid.hpp"
+#include "guid.hpp"
 #include "animation_blender.hpp"
 #include "animation_soa_types.hpp"
 

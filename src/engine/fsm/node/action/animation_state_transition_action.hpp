@@ -1,7 +1,7 @@
 #pragma once
 #include "action.hpp"
 #include "../../../esc/animation/fsm_animation_component.hpp"
-#include "../../../system/guid.hpp"
+#include "guid.hpp"
 #include <memory>
 #include <string>
 

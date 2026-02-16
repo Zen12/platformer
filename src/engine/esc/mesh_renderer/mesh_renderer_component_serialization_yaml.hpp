@@ -1,7 +1,7 @@
 #pragma once
 #include <yaml-cpp/yaml.h>
 #include "mesh_renderer_component_serialization.hpp"
-#include "../../system/guid_yaml.hpp"
+#include "guid_yaml.hpp"
 
 namespace YAML
 {

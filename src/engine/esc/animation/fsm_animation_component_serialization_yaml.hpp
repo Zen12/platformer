@@ -2,7 +2,7 @@
 #include "fsm_animation_component_serialization.hpp"
 #include "animation_blender_config_yaml.hpp"
 #include <yaml-cpp/yaml.h>
-#include "../../system/guid_yaml.hpp"
+#include "guid_yaml.hpp"
 
 namespace YAML {
     template <>

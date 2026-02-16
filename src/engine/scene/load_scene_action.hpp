@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../fsm/node/action/action.hpp"
-#include "../system/guid.hpp"
+#include "guid.hpp"
 #include "scene_manager.hpp"
 #include "scene_asset.hpp"
 

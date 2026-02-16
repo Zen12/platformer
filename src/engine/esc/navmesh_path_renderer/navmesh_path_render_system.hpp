@@ -7,7 +7,7 @@
 #include "../navmesh_agent/navmesh_agent_component.hpp"
 #include "../../renderer/render_repository.hpp"
 #include "../../navigation/navigation_manager.hpp"
-#include "../../system/guid.hpp"
+#include "guid.hpp"
 
 class NavmeshPathRenderSystem final : public ISystemView<NavmeshAgentComponent> {
 private:

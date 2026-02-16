@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../fsm/node/action/action.hpp"
-#include "../../system/guid.hpp"
+#include "guid.hpp"
 #include "../ui_manager.hpp"
 
 struct UiPageAction final : public Action {

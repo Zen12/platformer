@@ -6,7 +6,7 @@
 
 #include "skinned_mesh_renderer_component_serialization.hpp"
 #include "../../renderer/bounds.hpp"
-#include "../../system/guid.hpp"
+#include "guid.hpp"
 
 class SkinnedMeshRendererComponent final {
 public:

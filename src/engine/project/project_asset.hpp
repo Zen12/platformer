@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include "../system/guid.hpp"
+#include "guid.hpp"
 
 struct ProjectAsset
 {

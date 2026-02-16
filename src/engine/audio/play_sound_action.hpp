@@ -1,6 +1,6 @@
 #pragma once
 #include "../fsm/node/action/action.hpp"
-#include "../system/guid.hpp"
+#include "guid.hpp"
 #include "audio_manager.hpp"
 #include <memory>
 #include <string>

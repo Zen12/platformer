@@ -6,7 +6,7 @@
 #include "../camera/camera_component.hpp"
 #include "../../renderer/render_repository.hpp"
 #include "../../navigation/navigation_manager.hpp"
-#include "../../system/guid.hpp"
+#include "guid.hpp"
 
 class NavmeshDebugRenderSystem final : public ISystem {
 private:

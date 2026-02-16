@@ -1,6 +1,6 @@
 #pragma once
 #include "animation_blend_mode.hpp"
-#include "../../system/guid.hpp"
+#include "guid.hpp"
 
 struct AnimationBlenderConfig {
     AnimationBlendMode Mode = AnimationBlendMode::Simple;

@@ -23,7 +23,7 @@
 #include "../renderer/animation/animation_asset_loader.hpp"
 #include "../navigation/navigation_manager.hpp"
 #include "../renderer/skybox/skybox_renderer.hpp"
-#include "../system/guid.hpp"
+#include "guid.hpp"
 
 class AudioManager;
 

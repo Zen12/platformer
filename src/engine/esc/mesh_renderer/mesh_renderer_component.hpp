@@ -5,7 +5,7 @@
 
 #include "mesh_renderer_component_serialization.hpp"
 #include "../../renderer/bounds.hpp"
-#include "../../system/guid.hpp"
+#include "guid.hpp"
 
 
 class MeshRendererComponent final {

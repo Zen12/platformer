@@ -3,7 +3,7 @@
 #include "../esc_core.hpp"
 #include "../../renderer/render_repository.hpp"
 #include "../../scene/scene.hpp"
-#include "../../system/guid.hpp"
+#include "guid.hpp"
 #include "../camera/camera_component.hpp"
 #include "../transform/transform_component.hpp"
 #include <glm/gtc/matrix_transform.hpp>

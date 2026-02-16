@@ -1,5 +1,5 @@
 #pragma once
-#include "../../system/guid.hpp"
+#include "guid.hpp"
 
 
 struct UiPageAsset final {

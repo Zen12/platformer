@@ -4,7 +4,7 @@
 #include <optional>
 #include <glm/glm.hpp>
 #include "../entity/entity_serialization.hpp"
-#include "../system/guid.hpp"
+#include "guid.hpp"
 
 struct NavmeshConfig {
     int Width = 50;

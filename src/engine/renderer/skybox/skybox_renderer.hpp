@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../system/guid.hpp"
+#include "guid.hpp"
 
 class SkyboxRenderer {
 private:

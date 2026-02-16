@@ -66,6 +66,10 @@ if (VIDEO_RECORDING)
     find_package(FFMPEG REQUIRED)
 endif()
 
+# --- Engine Modules ---
+add_subdirectory(src/engine/guid)
+add_subdirectory(src/engine/profiler)
+
 # --- Source files ---
 file(GLOB_RECURSE HEADER_FILES "src/*.hpp")
 file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
@@ -77,9 +81,8 @@ add_executable(${CMAKE_PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE GLM::GLM freetype yaml-cpp EnTT::EnTT rmlui_core assimp RVO xsimd)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR} ${RVO2_INCLUDE_DIRS})
 
-# Minitrace: header always available, library only linked in debug (MTR_ENABLED defined there)
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${MINITRACE_INCLUDE_DIRS})
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:Minitrace::Minitrace>)
+# Engine modules
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE engine-guid engine-profiler)
 
 if (PLATFORM_DESKTOP)
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw OpenAL::OpenAL)

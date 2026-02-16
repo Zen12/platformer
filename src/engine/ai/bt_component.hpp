@@ -5,7 +5,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include <entt/entt.hpp>
-#include "../system/guid.hpp"
+#include "guid.hpp"
 
 class BehaviorTreeComponent final {
 public:

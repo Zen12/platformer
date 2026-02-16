@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "../../system/guid.hpp"
+#include "guid.hpp"
 
 struct MetaAsset
 {

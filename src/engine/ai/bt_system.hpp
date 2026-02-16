@@ -11,7 +11,7 @@
 #include "../asset/asset_manager.hpp"
 #include "../scene/scene.hpp"
 #include "../navigation/navigation_manager.hpp"
-#include "../system/guid.hpp"
+#include "guid.hpp"
 #include <unordered_map>
 #include <iostream>
 

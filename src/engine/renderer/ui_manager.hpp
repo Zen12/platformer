@@ -6,7 +6,7 @@
 #include "controller/ui_opengl_render_controller.hpp"
 #include "../asset/asset_manager.hpp"
 #include "../scene/scene_manager.hpp"
-#include "../system/guid.hpp"
+#include "guid.hpp"
 #include "guid_file_interface.hpp"
 #include "RmlUi/Core/Core.h"
 #include "RmlUi/Core/ElementDocument.h"

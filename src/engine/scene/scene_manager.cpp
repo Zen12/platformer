@@ -10,7 +10,7 @@
 #include "../esc/mesh_renderer/mesh_renderer_component.hpp"
 #include "../esc/mesh_renderer/mesh_renderer_component_serialization.hpp"
 #include "../navigation/navmesh_mesh_generator.hpp"
-#include "../system/profiler.hpp"
+#include "profiler.hpp"
 
 
 void SceneManager::LoadScene(const SceneAsset &sceneAsset) {

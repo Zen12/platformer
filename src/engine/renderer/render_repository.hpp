@@ -8,7 +8,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "../system/guid.hpp"
+#include "guid.hpp"
 
 enum class PrimitiveType {
     Triangles = 0,

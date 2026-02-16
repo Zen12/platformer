@@ -17,7 +17,7 @@
 #include "../../system/window.hpp"
 #include "../../asset/loaders/asset_texture_loader.h"
 #include "../../asset/asset_manager.hpp"
-#include "../../system/guid.hpp"
+#include "guid.hpp"
 
 class UiOpenGLRenderController : public Rml::RenderInterface {
 private:

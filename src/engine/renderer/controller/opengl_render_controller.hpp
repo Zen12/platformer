@@ -3,7 +3,7 @@
 #include "../instancing/instance_batch.hpp"
 #include "../framebuffer/framebuffer.hpp"
 #include "../framebuffer/depth_framebuffer.hpp"
-#include "../../system/guid.hpp"
+#include "guid.hpp"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <iostream>

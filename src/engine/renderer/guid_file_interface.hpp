@@ -5,7 +5,7 @@
 #include <memory>
 #include <unordered_map>
 #include "../asset/asset_manager.hpp"
-#include "../system/guid.hpp"
+#include "guid.hpp"
 
 class GuidFileInterface final : public Rml::FileInterface {
 private:
