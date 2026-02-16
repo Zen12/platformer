@@ -118,7 +118,11 @@ elseif(PLATFORM_DESKTOP_WINDOWS)
 endif()
 
 # --- Create target ---
-add_executable(${CMAKE_PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${APP_ICON_SOURCES})
+if(PLATFORM_DESKTOP_OSX)
+    add_executable(${CMAKE_PROJECT_NAME} MACOSX_BUNDLE ${HEADER_FILES} ${SOURCE_FILES} ${APP_ICON_SOURCES})
+else()
+    add_executable(${CMAKE_PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${APP_ICON_SOURCES})
+endif()
 
 # --- Link libraries ---
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE GLM::GLM freetype yaml-cpp EnTT::EnTT rmlui_core assimp RVO xsimd)
@@ -217,17 +221,35 @@ if (PLATFORM_DESKTOP)
             MACOSX_BUNDLE_ICON_FILE icon.icns
             MACOSX_BUNDLE_BUNDLE_NAME "${CMAKE_PROJECT_NAME}"
         )
+
+        # Move assets into the .app bundle after build
+        set(BUNDLE_RESOURCES_DIR "${CMAKE_BINARY_DIR}/output/${CMAKE_PROJECT_NAME}.app/Contents/Resources")
+        add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CMAKE_BINARY_DIR}/output/assets"
+                "${BUNDLE_RESOURCES_DIR}/assets"
+            COMMAND ${CMAKE_COMMAND} -E rm -rf
+                "${CMAKE_BINARY_DIR}/output/assets"
+            COMMENT "Moving assets into macOS app bundle"
+        )
+    endif()
+
+    if(PLATFORM_DESKTOP_OSX)
+        # macOS: executable is inside .app bundle
+        set(APP_EXECUTABLE "${CMAKE_BINARY_DIR}/output/${CMAKE_PROJECT_NAME}.app/Contents/MacOS/${CMAKE_PROJECT_NAME}")
+    else()
+        set(APP_EXECUTABLE "${CMAKE_BINARY_DIR}/output/${CMAKE_PROJECT_NAME}")
     endif()
 
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_custom_target(run
-                COMMAND "${CMAKE_BINARY_DIR}/output/${CMAKE_PROJECT_NAME}" "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+                COMMAND "${APP_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/assets"
                 DEPENDS ${CMAKE_PROJECT_NAME}
                 WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/output"
         )
     else()
         add_custom_target(run
-                COMMAND "${CMAKE_BINARY_DIR}/output/${CMAKE_PROJECT_NAME}"
+                COMMAND "${APP_EXECUTABLE}"
                 DEPENDS ${CMAKE_PROJECT_NAME}
                 WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/output"
         )

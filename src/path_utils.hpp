@@ -76,6 +76,16 @@ inline std::filesystem::path GetProjectRootPath() {
     if (const std::filesystem::path path = GetCommandLinePath(); !path.empty())
         return path;
 
+#ifdef __APPLE__
+    // macOS bundle: executable is at App.app/Contents/MacOS/Executable
+    auto execPath = GetExecutablePath();
+    auto macosDir = execPath.parent_path();           // Contents/MacOS
+    auto contentsDir = macosDir.parent_path();        // Contents
+    auto resourcesPath = contentsDir / "Resources" / "assets";  // Inside bundle
+    if (std::filesystem::exists(resourcesPath))
+        return resourcesPath;
+#endif
+
     return GetExecutablePath().parent_path().append("assets");
 #endif
 }
