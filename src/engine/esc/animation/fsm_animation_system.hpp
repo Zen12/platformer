@@ -8,7 +8,7 @@
 #include "../ik_aim/ik_aim_component.hpp"
 #include "../../renderer/animation/animation_data.hpp"
 #include "../../scene/scene.hpp"
-#include "../../ai/bt_component.hpp"
+#include "bt_component.hpp"
 #include "guid.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

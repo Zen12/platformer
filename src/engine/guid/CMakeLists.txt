@@ -1,19 +1,25 @@
 # Engine GUID Module
 # UUID generation and parsing utilities
 
-add_library(engine-guid STATIC
-    guid.cpp
-    guid.hpp
-    guid_yaml.hpp
-    guid_generator.hpp
+add_library(engine-guid STATIC)
+
+# Collect source files
+file(GLOB_RECURSE SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp
 )
+
+target_sources(engine-guid PRIVATE ${SOURCES})
 
 target_include_directories(engine-guid PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-# YAML-CPP dependency (from parent) for guid_yaml.hpp
+# Dependencies
 target_link_libraries(engine-guid PUBLIC yaml-cpp)
-
-# C++17 required
 target_compile_features(engine-guid PUBLIC cxx_std_17)
+
+# Tests
+if(BUILD_TESTING)
+    add_subdirectory(test)
+endif()

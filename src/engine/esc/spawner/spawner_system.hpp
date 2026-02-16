@@ -25,8 +25,8 @@
 #include "../player_controller/player_controller_component.hpp"
 #include "../player_controller/player_controller_component_serialization.hpp"
 #include "../tag/tag_component.hpp"
-#include "../../ai/bt_component.hpp"
-#include "../../ai/bt_component_serialization.hpp"
+#include "bt_component.hpp"
+#include "bt_component_serialization.hpp"
 #include "../particle_emitter/particle_emitter_component.hpp"
 #include "../particle_emitter/particle_emitter_component_serialization.hpp"
 #include <memory>

@@ -4,7 +4,7 @@
 #include "../time/time_component.hpp"
 #include "../tag/tag_component.hpp"
 #include "../esc_core.hpp"
-#include "../../ai/bt_component.hpp"
+#include "bt_component.hpp"
 #include <glm/glm.hpp>
 #include <iostream>
 #include <unordered_map>

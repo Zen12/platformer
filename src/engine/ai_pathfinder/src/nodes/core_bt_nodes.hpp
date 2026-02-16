@@ -1,7 +1,7 @@
 #pragma once
-#include "../bt_node.hpp"
-#include "../bt_component.hpp"
-#include "../../fsm/type_list.hpp"
+#include "bt_node.hpp"
+#include "bt_component.hpp"
+#include "../../../fsm/type_list.hpp"
 
 struct SequenceNode final : IBTNode {
     BTStatus Execute(BTContext& ctx) override {

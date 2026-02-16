@@ -1,8 +1,8 @@
 #pragma once
-#include "../bt_node.hpp"
-#include "../bt_component.hpp"
-#include "../../esc/navmesh_agent/navmesh_agent_component.hpp"
-#include "../../fsm/type_list.hpp"
+#include "bt_node.hpp"
+#include "bt_component.hpp"
+#include "../../../esc/navmesh_agent/navmesh_agent_component.hpp"
+#include "../../../fsm/type_list.hpp"
 
 struct AttackNode final : IBTNode {
     BTStatus Execute(BTContext& ctx) override {

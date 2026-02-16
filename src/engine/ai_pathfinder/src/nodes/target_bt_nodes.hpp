@@ -1,9 +1,9 @@
 #pragma once
-#include "../bt_node.hpp"
-#include "../bt_component.hpp"
-#include "../../esc/transform/transform_component.hpp"
-#include "../../esc/tag/tag_component.hpp"
-#include "../../fsm/type_list.hpp"
+#include "bt_node.hpp"
+#include "bt_component.hpp"
+#include "../../../esc/transform/transform_component.hpp"
+#include "../../../esc/tag/tag_component.hpp"
+#include "../../../fsm/type_list.hpp"
 #include <glm/glm.hpp>
 #include <limits>
 

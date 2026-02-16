@@ -69,6 +69,7 @@ endif()
 # --- Engine Modules ---
 add_subdirectory(src/engine/guid)
 add_subdirectory(src/engine/profiler)
+add_subdirectory(src/engine/ai_pathfinder)
 
 # --- Source files ---
 file(GLOB_RECURSE HEADER_FILES "src/*.hpp")
@@ -82,7 +83,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE GLM::GLM freetype yaml-cpp E
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR} ${RVO2_INCLUDE_DIRS})
 
 # Engine modules
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE engine-guid engine-profiler)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE engine-guid engine-profiler engine-ai)
 
 if (PLATFORM_DESKTOP)
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw OpenAL::OpenAL)

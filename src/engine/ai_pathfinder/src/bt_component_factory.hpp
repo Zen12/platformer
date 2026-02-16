@@ -1,5 +1,5 @@
 #pragma once
-#include "../entity/component_factory.hpp"
+#include "../../entity/component_factory.hpp"
 #include "bt_component.hpp"
 #include "bt_component_serialization.hpp"
 

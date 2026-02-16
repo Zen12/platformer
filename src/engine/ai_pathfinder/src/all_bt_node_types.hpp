@@ -1,5 +1,5 @@
 #pragma once
-#include "../fsm/type_list.hpp"
+#include "../../fsm/type_list.hpp"
 #include "nodes/core_bt_nodes.hpp"
 #include "nodes/target_bt_nodes.hpp"
 #include "nodes/navmesh_bt_nodes.hpp"

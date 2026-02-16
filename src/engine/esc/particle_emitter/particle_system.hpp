@@ -5,7 +5,7 @@
 #include "../time/time_component.hpp"
 #include "../navmesh_agent/navmesh_agent_component.hpp"
 #include "../health/health_component.hpp"
-#include "../../ai/bt_component.hpp"
+#include "bt_component.hpp"
 #include <glm/glm.hpp>
 #include <unordered_set>
 

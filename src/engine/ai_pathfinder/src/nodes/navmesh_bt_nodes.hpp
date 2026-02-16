@@ -1,10 +1,10 @@
 #pragma once
-#include "../bt_node.hpp"
-#include "../bt_component.hpp"
-#include "../../esc/navmesh_agent/navmesh_agent_component.hpp"
-#include "../../esc/transform/transform_component.hpp"
-#include "../../navigation/grid_navmesh.hpp"
-#include "../../fsm/type_list.hpp"
+#include "bt_node.hpp"
+#include "bt_component.hpp"
+#include "../../../esc/navmesh_agent/navmesh_agent_component.hpp"
+#include "../../../esc/transform/transform_component.hpp"
+#include "../../../navigation/grid_navmesh.hpp"
+#include "../../../fsm/type_list.hpp"
 #include <glm/glm.hpp>
 #include <random>
 
