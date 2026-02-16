@@ -7,8 +7,8 @@
 #include "../camera/camera_component.hpp"
 #include "../window/window_component.hpp"
 #include "../navmesh_agent/navmesh_agent_component.hpp"
-#include "../../scene/scene.hpp"
-#include "../../system/input_system.hpp"
+#include "scene.hpp"
+#include "input_system.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>

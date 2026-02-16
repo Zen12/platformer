@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../esc_core.hpp"
-#include "../../system/time.hpp"
+#include "time.hpp"
 
 
 class DeltaTimeComponent {

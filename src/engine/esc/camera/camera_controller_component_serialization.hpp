@@ -1,5 +1,5 @@
 #pragma once
-#include "../../entity/component_serialization.hpp"
+#include "entity/component_serialization.hpp"
 
 struct CameraControllerComponentSerialization final : public ComponentSerialization {
     float MoveSpeed = 10.0f;

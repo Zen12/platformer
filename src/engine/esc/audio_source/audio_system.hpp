@@ -3,7 +3,7 @@
 #include "../audio_listener/audio_listener_component.hpp"
 #include "../transform/transform_component.hpp"
 #include "../esc_core.hpp"
-#include "../../audio/audio_manager.hpp"
+#include "audio_manager.hpp"
 #include <memory>
 #include <cmath>
 

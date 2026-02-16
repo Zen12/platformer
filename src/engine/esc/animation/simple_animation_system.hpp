@@ -4,8 +4,8 @@
 #include "../skinned_mesh_renderer/skinned_mesh_renderer_component.hpp"
 #include "../transform/transform_component.hpp"
 #include "../time/time_component.hpp"
-#include "../../renderer/animation/animation_data.hpp"
-#include "../../scene/scene.hpp"
+#include "animation/animation_data.hpp"
+#include "scene.hpp"
 #include "guid.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

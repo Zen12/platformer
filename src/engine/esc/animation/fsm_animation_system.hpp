@@ -6,8 +6,8 @@
 #include "../time/time_component.hpp"
 #include "../navmesh_agent/navmesh_agent_component.hpp"
 #include "../ik_aim/ik_aim_component.hpp"
-#include "../../renderer/animation/animation_data.hpp"
-#include "../../scene/scene.hpp"
+#include "animation/animation_data.hpp"
+#include "scene.hpp"
 #include "bt_component.hpp"
 #include "guid.hpp"
 #include <glm/glm.hpp>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../entity/component_serialization.hpp"
+#include "entity/component_serialization.hpp"
 #include <glm/glm.hpp>
 #include <string>
 

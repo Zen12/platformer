@@ -1,6 +1,6 @@
 #pragma once
 #include "top_down_camera_component_serialization.hpp"
-#include "../../math/glm_vec_yaml.hpp"
+#include "glm_vec_yaml.hpp"
 #include <yaml-cpp/yaml.h>
 
 namespace YAML {

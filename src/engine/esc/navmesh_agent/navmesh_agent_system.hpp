@@ -3,8 +3,8 @@
 #include "navmesh_agent_component.hpp"
 #include "../transform/transform_component.hpp"
 #include "../time/time_component.hpp"
-#include "../../navigation/navigation_manager.hpp"
-#include "../../scene/scene.hpp"
+#include "navigation_manager.hpp"
+#include "scene.hpp"
 #include <memory>
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>

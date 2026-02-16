@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 
 #include "skinned_mesh_renderer_component_serialization.hpp"
-#include "../../renderer/bounds.hpp"
+#include "bounds.hpp"
 #include "guid.hpp"
 
 class SkinnedMeshRendererComponent final {

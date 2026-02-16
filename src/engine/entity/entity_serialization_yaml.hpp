@@ -1,7 +1,7 @@
 #pragma once
 
 #include "entity_serialization.hpp"
-#include "../math/glm_vec_yaml.hpp"
+#include "glm_vec_yaml.hpp"
 #include "../esc/transform/transform_component_serialization.hpp"
 #include "../esc/transform/transform_component_serialization_yaml.hpp"
 #include "../esc/mesh_renderer/mesh_renderer_component_serialization.hpp"

@@ -3,8 +3,8 @@
 #include "../transform/transform_component.hpp"
 #include "../time/time_component.hpp"
 #include "../esc_core.hpp"
-#include "../../scene/scene.hpp"
-#include "../../system/input_system.hpp"
+#include "scene.hpp"
+#include "input_system.hpp"
 #include "glm/glm.hpp"
 #include "glm/gtc/quaternion.hpp"
 

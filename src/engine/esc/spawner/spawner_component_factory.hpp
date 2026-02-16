@@ -1,5 +1,5 @@
 #pragma once
-#include "../../entity/component_factory.hpp"
+#include "entity/component_factory.hpp"
 #include "spawner_component.hpp"
 #include "spawner_component_serialization.hpp"
 

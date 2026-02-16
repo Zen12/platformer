@@ -4,7 +4,7 @@
 #include <glm/vec4.hpp>
 
 #include "mesh_renderer_component_serialization.hpp"
-#include "../../renderer/bounds.hpp"
+#include "bounds.hpp"
 #include "guid.hpp"
 
 

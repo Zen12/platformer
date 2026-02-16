@@ -4,9 +4,9 @@
 #include <memory>
 #include "../esc_core.hpp"
 #include "../camera/camera_component.hpp"
-#include "../../renderer/render_repository.hpp"
-#include "../../navigation/navigation_manager.hpp"
-#include "../../scene/scene.hpp"
+#include "render_repository.hpp"
+#include "navigation_manager.hpp"
+#include "scene.hpp"
 
 class NavmeshGridRenderSystem final : public ISystem {
 private:

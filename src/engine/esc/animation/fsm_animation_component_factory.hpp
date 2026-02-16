@@ -1,5 +1,5 @@
 #pragma once
-#include "../../entity/component_factory.hpp"
+#include "entity/component_factory.hpp"
 #include "fsm_animation_component.hpp"
 #include "fsm_animation_component_serialization.hpp"
 

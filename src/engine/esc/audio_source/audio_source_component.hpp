@@ -1,5 +1,5 @@
 #pragma once
-#include "../../audio/audio_manager.hpp"
+#include "audio_manager.hpp"
 #include "guid.hpp"
 
 class AudioSourceComponent final {

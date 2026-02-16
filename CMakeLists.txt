@@ -81,10 +81,22 @@ if(BUILD_TESTING)
     enable_testing()
 endif()
 
-# --- Engine Modules ---
-add_subdirectory(src/engine/guid)
-add_subdirectory(src/engine/profiler)
-add_subdirectory(src/engine/ai_pathfinder)
+# --- Engine Modules (order matters for dependencies) ---
+add_subdirectory(src/engine/plugins/guid)
+add_subdirectory(src/engine/plugins/profiler)
+add_subdirectory(src/engine/plugins/math)
+add_subdirectory(src/engine/plugins/utlis)
+add_subdirectory(src/engine/plugins/system)
+add_subdirectory(src/engine/plugins/asset)
+add_subdirectory(src/engine/plugins/font)
+add_subdirectory(src/engine/plugins/prefab)
+add_subdirectory(src/engine/plugins/project)
+add_subdirectory(src/engine/plugins/navigation)
+add_subdirectory(src/engine/plugins/audio)
+add_subdirectory(src/engine/plugins/renderer)
+add_subdirectory(src/engine/plugins/scene)
+add_subdirectory(src/engine/plugins/fsm)
+add_subdirectory(src/engine/plugins/ai_pathfinder)
 
 # --- Source files ---
 file(GLOB_RECURSE HEADER_FILES "src/*.hpp")
@@ -94,15 +106,42 @@ file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
 list(FILTER HEADER_FILES EXCLUDE REGEX ".*/test/.*")
 list(FILTER SOURCE_FILES EXCLUDE REGEX ".*/test/.*")
 
+# --- Application icon ---
+set(APP_ICON_SOURCES "")
+if(PLATFORM_DESKTOP_OSX)
+    set(MACOSX_BUNDLE_ICON_FILE icon.icns)
+    set(APP_ICON_MACOSX "${CMAKE_SOURCE_DIR}/template/macos/icon.icns")
+    set_source_files_properties(${APP_ICON_MACOSX} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+    set(APP_ICON_SOURCES ${APP_ICON_MACOSX})
+elseif(PLATFORM_DESKTOP_WINDOWS)
+    set(APP_ICON_SOURCES "${CMAKE_SOURCE_DIR}/template/windows/icon.rc")
+endif()
+
 # --- Create target ---
-add_executable(${CMAKE_PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
+add_executable(${CMAKE_PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${APP_ICON_SOURCES})
 
 # --- Link libraries ---
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE GLM::GLM freetype yaml-cpp EnTT::EnTT rmlui_core assimp RVO xsimd)
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR} ${RVO2_INCLUDE_DIRS})
 
 # Engine modules
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE engine-guid engine-profiler engine-ai)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
+    engine-guid
+    engine-profiler
+    engine-math
+    engine-utils
+    engine-system
+    engine-asset
+    engine-font
+    engine-prefab
+    engine-project
+    engine-navigation
+    engine-audio
+    engine-renderer
+    engine-scene
+    engine-fsm
+    engine-ai
+)
 
 if (PLATFORM_DESKTOP)
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw OpenAL::OpenAL)
@@ -171,6 +210,14 @@ if (PLATFORM_DESKTOP)
     set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/output"
     )
+
+    # macOS app bundle with icon (for release/distribution)
+    if(PLATFORM_DESKTOP_OSX)
+        set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
+            MACOSX_BUNDLE_ICON_FILE icon.icns
+            MACOSX_BUNDLE_BUNDLE_NAME "${CMAKE_PROJECT_NAME}"
+        )
+    endif()
 
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_custom_target(run

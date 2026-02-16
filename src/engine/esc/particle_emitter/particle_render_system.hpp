@@ -1,8 +1,8 @@
 #pragma once
 #include "particle_emitter_component.hpp"
 #include "../esc_core.hpp"
-#include "../../renderer/render_repository.hpp"
-#include "../../scene/scene.hpp"
+#include "render_repository.hpp"
+#include "scene.hpp"
 #include "guid.hpp"
 #include "../camera/camera_component.hpp"
 #include "../transform/transform_component.hpp"

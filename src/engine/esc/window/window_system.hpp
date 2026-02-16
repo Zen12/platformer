@@ -1,7 +1,7 @@
 #pragma once
 #include "window_component.hpp"
 #include "../esc_core.hpp"
-#include "../../system/window.hpp"
+#include "window.hpp"
 
 
 class WindowSystem final : public ISystemView<WindowComponent>

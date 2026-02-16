@@ -1,5 +1,5 @@
 #pragma once
-#include "../../entity/component_serialization.hpp"
+#include "entity/component_serialization.hpp"
 #include "guid.hpp"
 
 struct SkinnedMeshRendererComponentSerialization final : public ComponentSerialization

@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <glm/glm.hpp>
-#include "../../entity/component_serialization.hpp"
+#include "entity/component_serialization.hpp"
 
 struct TopDownCameraComponentSerialization final : public ComponentSerialization {
     std::string TargetTag;

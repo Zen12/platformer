@@ -1,20 +1,20 @@
 #pragma once
 
-#include "system/input_system.hpp"
-#include "system/window.hpp"
-#include "asset/loaders/asset_loader.hpp"
-#include "project/project_asset_loader.hpp"
+#include "input_system.hpp"
+#include "window.hpp"
+#include "loaders/asset_loader.hpp"
+#include "project_asset_loader.hpp"
 #include <thread>
 
 
-#include "system/time.hpp"
-#include "asset/asset_manager.hpp"
-#include "fsm/fsm_controller.hpp"
-#include "renderer/ui_manager.hpp"
-#include "renderer/controller/opengl_render_controller.hpp"
-#include "renderer/video/video_recorder.hpp"
-#include "scene/scene_manager.hpp"
-#include "audio/audio_manager.hpp"
+#include "time.hpp"
+#include "asset_manager.hpp"
+#include "fsm_controller.hpp"
+#include "ui_manager.hpp"
+#include "controller/opengl_render_controller.hpp"
+#include "video/video_recorder.hpp"
+#include "scene_manager.hpp"
+#include "audio_manager.hpp"
 
 class Engine {
 

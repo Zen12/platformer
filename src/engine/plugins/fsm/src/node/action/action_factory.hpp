@@ -1,0 +1,142 @@
+#pragma once
+
+#include <memory>
+#include <string>
+#include "../node.hpp"
+#include "ui_manager.hpp"
+#include "scene_manager.hpp"
+#include "guid.hpp"
+#include "ui/ui_page_action.hpp"
+#include "load_scene_action.hpp"
+#include "ui/button_listener_action.hpp"
+#include "ui/trigger_setter_button_listener_action.hpp"
+#include "set_system_trigger_action.hpp"
+#include "log_action.hpp"
+#include "animation_state_action.hpp"
+#include "animation_state_transition_action.hpp"
+#include "start_video_recording_action.hpp"
+#include "stop_video_recording_action.hpp"
+#include "fps_display_action.hpp"
+#include "health_display_action.hpp"
+#include "health_bar_action.hpp"
+#include "health_check_action.hpp"
+#include "play_sound_action.hpp"
+#include "play_sound_repeated_action.hpp"
+#include "mute_audio_action.hpp"
+#include "../../trigger_board.hpp"
+
+class VideoRecorder;
+
+class ActionFactory {
+private:
+    std::shared_ptr<UIManager> _uiManager;
+    std::shared_ptr<SceneManager> _sceneManager;
+    std::shared_ptr<TriggerBoard> _triggerBoard;
+    std::shared_ptr<VideoRecorder> _videoRecorder;
+    std::shared_ptr<AudioManager> _audioManager;
+    std::weak_ptr<FsmAnimationComponent> _animationComponent;
+
+public:
+    ActionFactory(std::shared_ptr<UIManager> uiManager,
+                  std::shared_ptr<SceneManager> sceneManager,
+                  std::shared_ptr<TriggerBoard> triggerBoard,
+                  std::shared_ptr<VideoRecorder> videoRecorder = nullptr,
+                  std::shared_ptr<AudioManager> audioManager = nullptr,
+                  std::weak_ptr<FsmAnimationComponent> animationComponent = std::weak_ptr<FsmAnimationComponent>())
+        : _uiManager(std::move(uiManager)),
+          _sceneManager(std::move(sceneManager)),
+          _triggerBoard(std::move(triggerBoard)),
+          _videoRecorder(std::move(videoRecorder)),
+          _audioManager(std::move(audioManager)),
+          _animationComponent(std::move(animationComponent)) {}
+
+    [[nodiscard]] UiPageAction CreateUiPageAction(const Guid& pageGuid) const {
+        return {pageGuid, _uiManager};
+    }
+
+    [[nodiscard]] LoadSceneAction CreateLoadSceneAction(const Guid& sceneGuid) const {
+        return {sceneGuid, _sceneManager};
+    }
+
+    [[nodiscard]] ButtonListenerAction CreateButtonListenerAction(const std::string& buttonId) const {
+        return {buttonId, _uiManager};
+    }
+
+    [[nodiscard]] TriggerSetterButtonListenerAction CreateTriggerSetterButtonListenerAction(const std::string& buttonId, const std::string& triggerName) const {
+        return {buttonId, triggerName, _uiManager, _triggerBoard};
+    }
+
+    [[nodiscard]] SetSystemTriggerAction CreateSetSystemTriggerAction(const std::string& triggerTypeStr) const {
+        SystemTriggers triggerType;
+        if (triggerTypeStr == "Exit") {
+            triggerType = SystemTriggers::Exit;
+        } else if (triggerTypeStr == "Reload") {
+            triggerType = SystemTriggers::Reload;
+        } else {
+            triggerType = SystemTriggers::Exit;
+        }
+        return {triggerType, _triggerBoard};
+    }
+
+    [[nodiscard]] LogAction CreateLogAction(const std::string& message) const {
+        return LogAction(message);
+    }
+
+    [[nodiscard]] AnimationStateAction CreateAnimationStateAction(
+            const Guid& animationGuid,
+            const std::string& onCompleteTrigger = "",
+            bool loop = true,
+            float animationSpeed = -1.0f,
+            bool disableVelocitySpeed = false,
+            bool disableMovement = false,
+            float disableMovementDuration = -1.0f,
+            bool useDirectionalBlending = false,
+            const Guid& directionalWalkForwardGuid = Guid{},
+            const Guid& directionalWalkBackGuid = Guid{},
+            const Guid& directionalWalkLeftGuid = Guid{},
+            const Guid& directionalWalkRightGuid = Guid{}) const {
+        return {animationGuid, onCompleteTrigger, loop, animationSpeed, disableVelocitySpeed, disableMovement, disableMovementDuration,
+                useDirectionalBlending, directionalWalkForwardGuid, directionalWalkBackGuid, directionalWalkLeftGuid, directionalWalkRightGuid,
+                _animationComponent};
+    }
+
+    [[nodiscard]] AnimationStateTransitionAction CreateAnimationStateTransitionAction(const Guid& fromAnimationGuid, const Guid& toAnimationGuid, float transitionTime, const std::string& onCompleteTrigger = "") const {
+        return {fromAnimationGuid, toAnimationGuid, transitionTime, onCompleteTrigger, _animationComponent};
+    }
+
+    [[nodiscard]] StartVideoRecordingAction CreateStartVideoRecordingAction(const std::string& outputPath, int fps) const {
+        return {outputPath, fps, _videoRecorder};
+    }
+
+    [[nodiscard]] StopVideoRecordingAction CreateStopVideoRecordingAction() const {
+        return StopVideoRecordingAction(_videoRecorder);
+    }
+
+    [[nodiscard]] FpsDisplayAction CreateFpsDisplayAction(const std::string& elementId) const {
+        return {elementId, _uiManager, _sceneManager};
+    }
+
+    [[nodiscard]] HealthDisplayAction CreateHealthDisplayAction(const std::string& elementId) const {
+        return {elementId, _uiManager, _sceneManager};
+    }
+
+    [[nodiscard]] HealthBarAction CreateHealthBarAction(const std::string& elementId) const {
+        return {elementId, _uiManager, _sceneManager};
+    }
+
+    [[nodiscard]] HealthCheckAction CreateHealthCheckAction(const std::string& triggerName) const {
+        return {triggerName, _sceneManager, _triggerBoard};
+    }
+
+    [[nodiscard]] PlaySoundAction CreatePlaySoundAction(const Guid& audioGuid, float volume, bool loop) const {
+        return {audioGuid, volume, loop, _audioManager};
+    }
+
+    [[nodiscard]] PlaySoundRepeatedAction CreatePlaySoundRepeatedAction(const Guid& audioGuid, float volume, float delaySeconds, bool spatial = true, float minDistance = 1.0f, float maxDistance = 50.0f) const {
+        return {audioGuid, volume, delaySeconds, spatial, minDistance, maxDistance, _audioManager, _animationComponent};
+    }
+
+    [[nodiscard]] MuteAudioAction CreateMuteAudioAction(bool mute, bool onlyDebug) const {
+        return {mute, onlyDebug, _audioManager};
+    }
+};

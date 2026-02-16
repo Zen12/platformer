@@ -5,9 +5,9 @@
 #include "../animation/fsm_animation_component.hpp"
 #include "../time/time_component.hpp"
 #include "../esc_core.hpp"
-#include "../../scene/scene.hpp"
-#include "../../system/input_system.hpp"
-#include "../../navigation/navigation_manager.hpp"
+#include "scene.hpp"
+#include "input_system.hpp"
+#include "navigation_manager.hpp"
 #include <glm/glm.hpp>
 #include <cmath>
 

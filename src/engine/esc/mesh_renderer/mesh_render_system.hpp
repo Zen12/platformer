@@ -2,9 +2,9 @@
 #include "GL/glew.h"
 #include "mesh_renderer_component.hpp"
 #include "../esc_core.hpp"
-#include "../../renderer/render_repository.hpp"
-#include "../../renderer/frustum.hpp"
-#include "../../scene/scene.hpp"
+#include "render_repository.hpp"
+#include "frustum.hpp"
+#include "scene.hpp"
 #include "../camera/camera_component.hpp"
 #include "../transform/transform_component.hpp"
 

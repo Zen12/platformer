@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
-#include "../../entity/component_serialization.hpp"
+#include "entity/component_serialization.hpp"
 #include "guid.hpp"
 
 struct ParticleEmitterComponentSerialization final : public ComponentSerialization {

@@ -1,14 +1,14 @@
 #include "engine.hpp"
-#include "scene/scene_asset_yaml.hpp"
+#include "scene_asset_yaml.hpp"
 #include <RmlUi/Core.h>
 
 #include <utility>
 
-#include "fsm/fsm_asset.hpp"
-#include "fsm/fsm_asset_yaml.hpp"
-#include "fsm/fsm_factory.hpp"
-#include "renderer/mesh/mesh_asset_loader.hpp"
-#include "renderer/animation/animation_asset_loader.hpp"
+#include "fsm_asset.hpp"
+#include "fsm_asset_yaml.hpp"
+#include "fsm_factory.hpp"
+#include "mesh/mesh_asset_loader.hpp"
+#include "animation/animation_asset_loader.hpp"
 #include "profiler.hpp"
 
 #define DEBUG_ENGINE_PROFILE 0
