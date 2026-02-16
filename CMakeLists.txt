@@ -3,6 +3,10 @@ project(Engine-Demo)
 
 include(FetchContent)
 
+# Testing option (must be before include(CTest))
+option(BUILD_TESTING "Build unit tests" OFF)
+include(CTest)
+
 # Offline build support
 # OFFLINE_BUILD=ON: Fully offline, fails if packages not cached
 # OFFLINE_BUILD=OFF (default): Downloads missing packages, skips update checks for cached ones
@@ -48,7 +52,12 @@ endif()
 find_package(YAMLCPP REQUIRED)
 find_package(GLM REQUIRED)
 find_package(EnTT REQUIRED)
+
+# Save BUILD_TESTING before RmlUi (which forces it OFF)
+set(_SAVED_BUILD_TESTING ${BUILD_TESTING})
 find_package(RmlUi REQUIRED)
+set(BUILD_TESTING ${_SAVED_BUILD_TESTING} CACHE BOOL "" FORCE)
+
 find_package(FREETYPE REQUIRED)
 find_package(ASSIMP REQUIRED)
 find_package(RVO2 REQUIRED)
@@ -66,6 +75,12 @@ if (VIDEO_RECORDING)
     find_package(FFMPEG REQUIRED)
 endif()
 
+# Testing framework
+if(BUILD_TESTING)
+    find_package(Doctest REQUIRED)
+    enable_testing()
+endif()
+
 # --- Engine Modules ---
 add_subdirectory(src/engine/guid)
 add_subdirectory(src/engine/profiler)
@@ -74,6 +89,10 @@ add_subdirectory(src/engine/ai_pathfinder)
 # --- Source files ---
 file(GLOB_RECURSE HEADER_FILES "src/*.hpp")
 file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
+
+# Exclude test files from main executable
+list(FILTER HEADER_FILES EXCLUDE REGEX ".*/test/.*")
+list(FILTER SOURCE_FILES EXCLUDE REGEX ".*/test/.*")
 
 # --- Create target ---
 add_executable(${CMAKE_PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
