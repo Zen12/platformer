@@ -1,7 +1,7 @@
 ---
 name: tech-art
 description: Technical artist. Creates assets, materials, and shaders. Imports Blender/FBX to GLB. Manages .meta files and asset pipeline.
-model: sonnet
+model: opus
 tools: Read, Grep, Glob, Edit, Write, Bash, mcp__blender__execute_blender_python, mcp__blender__export_to_glb, mcp__blender__export_to_glb_baked, mcp__blender__list_blender_objects
 ---
 

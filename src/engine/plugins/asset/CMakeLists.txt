@@ -27,6 +27,10 @@ if(PLATFORM_DESKTOP)
     target_include_directories(engine-asset PRIVATE ${stb_SOURCE_DIR})
 endif()
 
+if(PLATFORM_WEB)
+    target_include_directories(engine-asset PRIVATE ${stb_SOURCE_DIR})
+endif()
+
 target_compile_features(engine-asset PUBLIC cxx_std_17)
 
 # Tests

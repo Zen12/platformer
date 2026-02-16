@@ -1,7 +1,7 @@
 ---
 name: coordinator
 description: Pipeline orchestrator. Receives user requests and delegates to researcher, reviewer, and developer agents in sequence.
-model: haiku
+model: opus
 tools: Task
 ---
 

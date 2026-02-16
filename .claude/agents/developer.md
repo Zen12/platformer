@@ -1,7 +1,7 @@
 ---
 name: developer
 description: Code implementer. Executes implementation plans from reviewer without deviation.
-model: sonnet
+model: opus
 tools: Read, Grep, Glob, Edit, Write, Bash
 ---
 

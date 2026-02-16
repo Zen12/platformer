@@ -1,7 +1,7 @@
 ---
 name: ui-designer
 description: UI specialist for RmlUi. Creates and edits RML markup, CSS styles, and .upage definitions. Use for buttons, menus, HUDs, and all UI elements.
-model: sonnet
+model: opus
 tools: Read, Grep, Glob, Edit, Write, Bash
 ---
 
