@@ -17,8 +17,7 @@ target_link_libraries(engine-audio INTERFACE
     GLM::GLM
     yaml-cpp
     engine-guid
-    engine-asset
-    engine-fsm
+    engine-core
 )
 
 if(PLATFORM_DESKTOP)

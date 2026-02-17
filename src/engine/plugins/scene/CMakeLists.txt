@@ -20,7 +20,7 @@ target_link_libraries(engine-scene PUBLIC
     yaml-cpp
     EnTT::EnTT
     engine-guid
-    engine-asset
+    engine-core
     engine-system
     engine-navigation
     engine-renderer

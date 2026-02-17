@@ -17,7 +17,7 @@ target_include_directories(engine-font PUBLIC
 target_link_libraries(engine-font PUBLIC
     GLM::GLM
     freetype
-    engine-asset
+    engine-core
 )
 
 if(PLATFORM_DESKTOP)

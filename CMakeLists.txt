@@ -87,7 +87,7 @@ add_subdirectory(src/engine/plugins/profiler)
 add_subdirectory(src/engine/plugins/math)
 add_subdirectory(src/engine/plugins/utlis)
 add_subdirectory(src/engine/plugins/system)
-add_subdirectory(src/engine/core/asset)
+add_subdirectory(src/engine/core)
 add_subdirectory(src/engine/plugins/font)
 add_subdirectory(src/engine/plugins/prefab)
 add_subdirectory(src/engine/plugins/project)
@@ -95,8 +95,6 @@ add_subdirectory(src/engine/plugins/navigation)
 add_subdirectory(src/engine/plugins/audio)
 add_subdirectory(src/engine/plugins/renderer)
 add_subdirectory(src/engine/plugins/scene)
-add_subdirectory(src/engine/core/fsm)
-add_subdirectory(src/engine/core/ai)
 
 # --- Source files ---
 file(GLOB_RECURSE HEADER_FILES "src/*.hpp")
@@ -135,7 +133,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     engine-math
     engine-utils
     engine-system
-    engine-asset
+    engine-core
     engine-font
     engine-prefab
     engine-project
@@ -143,8 +141,6 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     engine-audio
     engine-renderer
     engine-scene
-    engine-fsm
-    engine-ai
 )
 
 if (PLATFORM_DESKTOP)
