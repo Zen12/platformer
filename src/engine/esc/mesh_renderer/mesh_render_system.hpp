@@ -4,7 +4,7 @@
 #include "../esc_core.hpp"
 #include "render_repository.hpp"
 #include "frustum.hpp"
-#include "scene.hpp"
+#include "resource_cache.hpp"
 #include "../camera/camera_component.hpp"
 #include "../transform/transform_component.hpp"
 
@@ -17,20 +17,18 @@ private:
 
     const TypeCamera _cameraView;
     const std::shared_ptr<RenderRepository> _repository;
-    const std::weak_ptr<Scene> _scene;
+    const std::shared_ptr<ResourceCache> _resourceCache;
 
 public:
     explicit MeshRenderSystem(
         const TypeView &view,
         const TypeCamera &camera,
         const std::shared_ptr<RenderRepository> &repository,
-        const std::weak_ptr<Scene> &scene)
-        : ISystemView(view) , _cameraView(camera), _repository(repository), _scene(scene) {
+        const std::shared_ptr<ResourceCache> &resourceCache)
+        : ISystemView(view) , _cameraView(camera), _repository(repository), _resourceCache(resourceCache) {
     }
 
     void OnTick() override {
-        auto scene = _scene.lock();
-
         for (const auto &[_, camera] : _cameraView.each()) {
             // Extract frustum from view-projection matrix
             Frustum frustum;
@@ -40,9 +38,9 @@ public:
             for (const auto &[_, mesh, transform] : View.each()) {
                 const auto &model = transform.GetModel();
 
-                if (!mesh.MeshBounds.IsValid() && scene) {
-                    scene->GetMesh(mesh.MeshGuid);
-                    mesh.MeshBounds = scene->GetMeshBounds(mesh.MeshGuid);
+                if (!mesh.MeshBounds.IsValid()) {
+                    _resourceCache->GetMesh(mesh.MeshGuid);
+                    mesh.MeshBounds = _resourceCache->GetMeshBounds(mesh.MeshGuid);
                 }
 
                 if (mesh.MeshBounds.IsValid()) {

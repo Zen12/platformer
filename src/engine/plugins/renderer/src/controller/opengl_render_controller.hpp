@@ -13,11 +13,13 @@
 #include <utility>
 
 class SceneManager;
+class ResourceCache;
 class Mesh;
 class Shader;
 
 class OpenGLRenderController final {
     std::shared_ptr<SceneManager> _sceneManager{};
+    std::shared_ptr<ResourceCache> _resourceCache{};
     std::unordered_map<std::string, std::unique_ptr<InstanceBatch>> _batches{};
 
     // Skybox
@@ -48,8 +50,8 @@ class OpenGLRenderController final {
     void RenderShadowPass(const std::shared_ptr<RenderRepository>& repository) noexcept;
 
 public:
-    explicit OpenGLRenderController(const std::shared_ptr<SceneManager> &sceneManager)
-        : _sceneManager(sceneManager),
+    explicit OpenGLRenderController(const std::shared_ptr<SceneManager> &sceneManager, const std::shared_ptr<ResourceCache> &resourceCache)
+        : _sceneManager(sceneManager), _resourceCache(resourceCache),
           _framebuffer(std::make_unique<Framebuffer>()),
           _shadowMap(std::make_unique<DepthFramebuffer>()) {
         const auto [width, height] = GetViewportSize();

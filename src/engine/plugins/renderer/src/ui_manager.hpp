@@ -5,9 +5,10 @@
 
 #include "controller/ui_opengl_render_controller.hpp"
 #include "asset_manager.hpp"
-#include "scene_manager.hpp"
+#include "resource_cache.hpp"
 #include "guid.hpp"
 #include "guid_file_interface.hpp"
+#include <RmlUi/Core.h>
 #include "RmlUi/Core/Core.h"
 #include "RmlUi/Core/ElementDocument.h"
 #include "RmlUi/Core/EventListener.h"
@@ -36,7 +37,7 @@ struct ButtonListenerData {
 
 class UIManager final {
 private:
-    const std::weak_ptr<SceneManager> _sceneManager{};
+    const std::shared_ptr<ResourceCache> _resourceCache{};
     const std::weak_ptr<Window> _window{};
     const std::weak_ptr<AssetManager> _assetManager{};
 
@@ -53,9 +54,9 @@ public:
 
     UIManager(
         const std::weak_ptr<AssetManager> &assetManager,
-        const std::weak_ptr<SceneManager> &sceneManager,
+        const std::shared_ptr<ResourceCache> &resourceCache,
         const std::weak_ptr<Window> &window
-        ) : _sceneManager(sceneManager), _window(window) , _assetManager(assetManager),
+        ) : _resourceCache(resourceCache), _window(window) , _assetManager(assetManager),
             _render(std::make_unique<UiOpenGLRenderController>())
     {}
 
@@ -72,29 +73,25 @@ public:
         if (_isPageLoaded)
             return;
 
-        // no support for multiple pages
-        if (const auto &sceneManager = _sceneManager.lock()) {
-            if (const auto window = _window.lock()) {
-                const auto uiPage = sceneManager->GetUiPage(guid);
-                if (!uiPage) {
-                    // No scene loaded yet, skip UI page loading
-                    return;
-                }
-                _isPageLoaded = true;
+        if (const auto window = _window.lock()) {
+            const auto uiPage = _resourceCache->GetUiPage(guid);
+            if (!uiPage) {
+                return;
+            }
+            _isPageLoaded = true;
 
-                // Initialize the render interface with window dimensions and asset path
-                _render->Initialize(_window, uiPage->Material, _assetManager);
-                Rml::LoadFontFace(uiPage->FontPath);
-                const auto css = Rml::Factory::InstanceStyleSheetString(uiPage->Css);
-                // Create context
-                _rmlContext = std::unique_ptr<Rml::Context>(
-                    Rml::CreateContext("main", Rml::Vector2i(window->GetWidth(), window->GetHeight())));
+            // Initialize the render interface with window dimensions and asset path
+            _render->Initialize(_window, uiPage->Material, _assetManager);
+            Rml::LoadFontFace(uiPage->FontPath);
+            const auto css = Rml::Factory::InstanceStyleSheetString(uiPage->Css);
+            // Create context
+            _rmlContext = std::unique_ptr<Rml::Context>(
+                Rml::CreateContext("main", Rml::Vector2i(window->GetWidth(), window->GetHeight())));
 
-                // Load document from memory to properly process templates
-                if (Rml::ElementDocument* document = _rmlContext->LoadDocumentFromMemory(uiPage->Rml)) {
-                    document->SetStyleSheetContainer(css);
-                    document->Show();
-                }
+            // Load document from memory to properly process templates
+            if (Rml::ElementDocument* document = _rmlContext->LoadDocumentFromMemory(uiPage->Rml)) {
+                document->SetStyleSheetContainer(css);
+                document->Show();
             }
         }
     }

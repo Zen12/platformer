@@ -1,5 +1,6 @@
 #include "opengl_render_controller.hpp"
 #include "scene_manager.hpp"
+#include "resource_cache.hpp"
 #include "guid.hpp"
 #include "profiler.hpp"
 #include "../material/shader.hpp"
@@ -131,7 +132,7 @@ void OpenGLRenderController::RenderPostProcess() noexcept {
         InitScreenQuad();
     }
 
-    const auto mat = _sceneManager->GetMaterial(POST_PROCESS_MATERIAL_GUID);
+    const auto mat = _resourceCache->GetMaterial(POST_PROCESS_MATERIAL_GUID);
     if (!mat) {
         return;
     }
@@ -159,7 +160,7 @@ void OpenGLRenderController::RenderSkybox(const glm::mat4& view, const glm::mat4
         InitSkybox();
     }
 
-    const auto mat = _sceneManager->GetMaterial(materialGuid);
+    const auto mat = _resourceCache->GetMaterial(materialGuid);
     if (!mat) {
         return;
     }
@@ -179,7 +180,7 @@ void OpenGLRenderController::RenderSkybox(const glm::mat4& view, const glm::mat4
 void OpenGLRenderController::RenderInstanced(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept {
     if (instances.empty()) return;
 
-    const auto mat = _sceneManager->GetMaterial(renderId.MaterialGuid);
+    const auto mat = _resourceCache->GetMaterial(renderId.MaterialGuid);
     if (!mat) {
         return;
     }
@@ -208,7 +209,7 @@ void OpenGLRenderController::RenderInstanced(const RenderId& renderId, const std
         return;
     }
 
-    const auto meshPtr = _sceneManager->GetMesh(renderId.MeshGuid);
+    const auto meshPtr = _resourceCache->GetMesh(renderId.MeshGuid);
     if (!meshPtr) {
         return;
     }
@@ -255,7 +256,7 @@ void OpenGLRenderController::RenderInstanced(const RenderId& renderId, const std
 }
 
 void OpenGLRenderController::RenderLines(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept {
-    const auto mat = _sceneManager->GetMaterial(renderId.MaterialGuid);
+    const auto mat = _resourceCache->GetMaterial(renderId.MaterialGuid);
     if (!mat) {
         return;
     }
@@ -310,8 +311,8 @@ void OpenGLRenderController::RenderShadowPass(const std::shared_ptr<RenderReposi
     _lightView = lightData.View;
     _lightProjection = lightData.Projection;
 
-    const auto depthMat = _sceneManager->GetMaterial(DEPTH_MATERIAL_GUID);
-    const auto skinnedDepthMat = _sceneManager->GetMaterial(SKINNED_DEPTH_MATERIAL_GUID);
+    const auto depthMat = _resourceCache->GetMaterial(DEPTH_MATERIAL_GUID);
+    const auto skinnedDepthMat = _resourceCache->GetMaterial(SKINNED_DEPTH_MATERIAL_GUID);
     if (!depthMat) {
         return;
     }
@@ -327,7 +328,7 @@ void OpenGLRenderController::RenderShadowPass(const std::shared_ptr<RenderReposi
         }
 
         // Skip shadow casting for transparent/additive materials (particles, etc.)
-        if (const auto mat = _sceneManager->GetMaterial(renderId.MaterialGuid)) {
+        if (const auto mat = _resourceCache->GetMaterial(renderId.MaterialGuid)) {
             const auto blendMode = mat->GetBlendMode();
             if (blendMode == BlendMode::ColorAdditive || blendMode == BlendMode::AlphaAdditive || blendMode == BlendMode::StandardAlpha) {
                 continue;
@@ -357,7 +358,7 @@ void OpenGLRenderController::RenderShadowPass(const std::shared_ptr<RenderReposi
             continue;
         }
 
-        const auto meshPtr = _sceneManager->GetMesh(renderId.MeshGuid);
+        const auto meshPtr = _resourceCache->GetMesh(renderId.MeshGuid);
         if (!meshPtr) {
             continue;
         }

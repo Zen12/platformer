@@ -31,11 +31,12 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
     _projectAsset = AssetLoader<ProjectAsset>::LoadFromPath(projectFilePath);
 
     _assetManager = std::make_shared<AssetManager>(projectPath);
+    _resourceCache = std::make_shared<ResourceCache>(_assetManager);
     _window = std::make_shared<Window>(_projectAsset.Resolution[0], _projectAsset.Resolution[1], _projectAsset.Name);
     _inputSystem = std::make_shared<InputSystem>(_window);
-    _sceneManager = std::make_shared<SceneManager>(_window, _assetManager, _inputSystem);
-    _uiManager = std::make_shared<UIManager>(_assetManager, _sceneManager, _window);
-    _renderController = std::make_shared<OpenGLRenderController>(_sceneManager);
+    _sceneManager = std::make_shared<SceneManager>(_window, _assetManager, _inputSystem, _resourceCache);
+    _uiManager = std::make_shared<UIManager>(_assetManager, _resourceCache, _window);
+    _renderController = std::make_shared<OpenGLRenderController>(_sceneManager, _resourceCache);
     _videoRecorder = std::make_shared<VideoRecorder>();
     _audioManager = std::make_shared<AudioManager>(_assetManager);
     _sceneManager->SetAudioManager(_audioManager);

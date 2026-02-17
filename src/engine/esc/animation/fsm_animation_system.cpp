@@ -244,10 +244,10 @@ void FsmAnimationSystem::OnTick() {
         if (anim.CurrentAnimationGuid.IsEmpty()) continue;
 
         if (skinnedMesh.BoneNames.empty()) {
-            scene->GetMesh(skinnedMesh.MeshGuid);
-            skinnedMesh.BoneNames = scene->GetMeshBoneNames(skinnedMesh.MeshGuid);
-            skinnedMesh.BoneOffsets = scene->GetMeshBoneOffsets(skinnedMesh.MeshGuid);
-            skinnedMesh.BoneParents = scene->GetMeshBoneParents(skinnedMesh.MeshGuid);
+            _resourceCache->GetMesh(skinnedMesh.MeshGuid);
+            skinnedMesh.BoneNames = _resourceCache->GetMeshBoneNames(skinnedMesh.MeshGuid);
+            skinnedMesh.BoneOffsets = _resourceCache->GetMeshBoneOffsets(skinnedMesh.MeshGuid);
+            skinnedMesh.BoneParents = _resourceCache->GetMeshBoneParents(skinnedMesh.MeshGuid);
         }
 
         std::unordered_map<std::string, int> boneNameToIndex;
@@ -262,7 +262,7 @@ void FsmAnimationSystem::OnTick() {
         auto loadAnimation = [&](const Guid& guid) -> std::shared_ptr<AnimationData> {
             if (guid.IsEmpty()) return nullptr;
             if (_loadedAnimations.find(guid) == _loadedAnimations.end()) {
-                auto data = scene->GetAnimation(guid);
+                auto data = _resourceCache->GetAnimation(guid);
                 if (data) _loadedAnimations[guid] = data;
             }
             return _loadedAnimations[guid];

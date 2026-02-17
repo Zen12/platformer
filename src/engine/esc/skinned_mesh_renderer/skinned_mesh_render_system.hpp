@@ -4,7 +4,7 @@
 #include "../esc_core.hpp"
 #include "render_repository.hpp"
 #include "frustum.hpp"
-#include "scene.hpp"
+#include "resource_cache.hpp"
 #include "../camera/camera_component.hpp"
 #include "../transform/transform_component.hpp"
 #include <algorithm>
@@ -51,20 +51,18 @@ private:
 
     const TypeCamera _cameraView;
     const std::shared_ptr<RenderRepository> _repository;
-    const std::weak_ptr<Scene> _scene;
+    const std::shared_ptr<ResourceCache> _resourceCache;
 
 public:
     explicit SkinnedMeshRenderSystem(
         const TypeView &view,
         const TypeCamera &camera,
         const std::shared_ptr<RenderRepository> &repository,
-        const std::weak_ptr<Scene> &scene)
-        : ISystemView(view) , _cameraView(camera), _repository(repository), _scene(scene) {
+        const std::shared_ptr<ResourceCache> &resourceCache)
+        : ISystemView(view) , _cameraView(camera), _repository(repository), _resourceCache(resourceCache) {
     }
 
     void OnTick() override {
-        auto scene = _scene.lock();
-
         for (const auto &[_, camera] : _cameraView.each()) {
             // Extract frustum from view-projection matrix
             Frustum frustum;
@@ -97,10 +95,10 @@ public:
 
                 const auto &model = transform.GetModel();
 
-                // Lazy-load bounds from Scene on first render
-                if (!skinnedMesh.MeshBounds.IsValid() && scene) {
-                    scene->GetMesh(skinnedMesh.MeshGuid);  // Ensure mesh is loaded
-                    skinnedMesh.MeshBounds = scene->GetMeshBounds(skinnedMesh.MeshGuid);
+                // Lazy-load bounds from ResourceCache on first render
+                if (!skinnedMesh.MeshBounds.IsValid()) {
+                    _resourceCache->GetMesh(skinnedMesh.MeshGuid);  // Ensure mesh is loaded
+                    skinnedMesh.MeshBounds = _resourceCache->GetMeshBounds(skinnedMesh.MeshGuid);
                 }
 
                 // Transform bounds to world space and perform AABB frustum culling

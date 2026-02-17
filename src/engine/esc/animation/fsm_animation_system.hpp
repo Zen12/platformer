@@ -8,6 +8,7 @@
 #include "../ik_aim/ik_aim_component.hpp"
 #include "animation/animation_data.hpp"
 #include "scene.hpp"
+#include "resource_cache.hpp"
 #include "bt_component.hpp"
 #include "guid.hpp"
 #include <glm/glm.hpp>
@@ -28,6 +29,7 @@ private:
     using TypeDeltaTime = decltype(std::declval<entt::registry>().view<DeltaTimeComponent>());
     const TypeDeltaTime _deltaTimeView;
     const std::weak_ptr<Scene> _scene;
+    const std::shared_ptr<ResourceCache> _resourceCache;
     entt::registry& _registry;
     std::unordered_map<Guid, std::shared_ptr<AnimationData>> _loadedAnimations;
 
@@ -40,8 +42,8 @@ private:
     }
 
 public:
-    explicit FsmAnimationSystem(const TypeView &view, const TypeDeltaTime &deltaTimeView, const std::weak_ptr<Scene> &scene, entt::registry& registry)
-        : ISystemView(view), _deltaTimeView(deltaTimeView), _scene(scene), _registry(registry) {
+    explicit FsmAnimationSystem(const TypeView &view, const TypeDeltaTime &deltaTimeView, const std::weak_ptr<Scene> &scene, const std::shared_ptr<ResourceCache> &resourceCache, entt::registry& registry)
+        : ISystemView(view), _deltaTimeView(deltaTimeView), _scene(scene), _resourceCache(resourceCache), _registry(registry) {
     }
 
     ~FsmAnimationSystem() override;

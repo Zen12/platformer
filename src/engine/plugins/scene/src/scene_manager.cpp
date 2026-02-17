@@ -17,7 +17,7 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
     PROFILE_SCOPE("LoadScene");
 
     if (const auto assetManager = _assetManager.lock()) {
-        _scene = std::make_shared<Scene> (_window,_assetManager, _inputSystem);
+        _scene = std::make_shared<Scene> (_window,_assetManager, _inputSystem, _resourceCache);
         _scene->SetAudioManager(_audioManager);
 
         if (const auto navigationManager = _scene->GetNavigationManager()) {
@@ -75,7 +75,7 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
 
     _escSystem->LoadEntities(serialization);
 
-    _escSystem->InitSystems(_renderRepository, _audioManager);
+    _escSystem->InitSystems(_renderRepository, _resourceCache, _audioManager);
 }
 
 void SceneManager::UnloadScene() {
@@ -102,17 +102,11 @@ void SceneManager::Update() {
 }
 
 std::shared_ptr<Shader> SceneManager::GetShader(const Guid &vertexGuid, const Guid &fragmentGuid) const {
-    if (_scene) {
-        return _scene->GetShader(vertexGuid, fragmentGuid);
-    }
-    return nullptr;
+    return _resourceCache->GetShader(vertexGuid, fragmentGuid);
 }
 
 std::shared_ptr<Material> SceneManager::GetMaterial(const Guid &guid) const {
-    if (_scene) {
-        return _scene->GetMaterial(guid);
-    }
-    return nullptr;
+    return _resourceCache->GetMaterial(guid);
 }
 
 bool SceneManager::IsRequestToLoadScene() const {
@@ -132,23 +126,14 @@ void SceneManager::LoadRequestedScene() {
 }
 
 std::shared_ptr<Texture> SceneManager::GetTexture(const Guid &guid) const {
-    if (_scene) {
-        return _scene->GetTexture(guid);
-    }
-    return nullptr;
+    return _resourceCache->GetTexture(guid);
 }
 
 std::shared_ptr<Font> SceneManager::GetFont(const Guid &guid) const {
-    if (_scene) {
-        return _scene->GetFont(guid);
-    }
-    return nullptr;
+    return _resourceCache->GetFont(guid);
 }
 
 std::shared_ptr<UiPage> SceneManager::GetUiPage(const Guid &guid) const {
-    if (_scene) {
-        return _scene->GetUiPage(guid);
-    }
-    return nullptr;
+    return _resourceCache->GetUiPage(guid);
 }
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "resource_cache.hpp"
 #include "profiler.hpp"
 #include "animation/simple_animation_component.hpp"
 #include "animation/simple_animation_component_serialization.hpp"
@@ -190,7 +191,7 @@ public:
         }
     }
 
-    void InitSystems(std::shared_ptr<RenderRepository> &renderRepository, const std::weak_ptr<AudioManager>& audioManager = std::weak_ptr<AudioManager>()) {
+    void InitSystems(std::shared_ptr<RenderRepository> &renderRepository, const std::shared_ptr<ResourceCache>& resourceCache, const std::weak_ptr<AudioManager>& audioManager = std::weak_ptr<AudioManager>()) {
         if (const auto &scenePtr = _scene.lock()) {
 
             const auto registry = scenePtr->GetEntityRegistry();
@@ -227,14 +228,14 @@ public:
                 *registry));
 
             _systems.emplace_back(std::make_unique<MeshRenderSystem>(registry->view<MeshRendererComponent, TransformComponentV2>(),
-               registry->view<CameraComponentV2>(), renderRepository, scenePtr));
+               registry->view<CameraComponentV2>(), renderRepository, resourceCache));
 
             // Animation systems must run AFTER navmesh (for velocity) and BEFORE skinned mesh renderer
             _systems.emplace_back(std::make_unique<SimpleAnimationSystem>(registry->view<SimpleAnimationComponent, SkinnedMeshRendererComponent, TransformComponentV2>(),
-               registry->view<DeltaTimeComponent>(), scenePtr));
+               registry->view<DeltaTimeComponent>(), resourceCache));
 
             _systems.emplace_back(std::make_unique<FsmAnimationSystem>(registry->view<FsmAnimationComponent, SkinnedMeshRendererComponent, TransformComponentV2>(),
-               registry->view<DeltaTimeComponent>(), scenePtr, *registry));
+               registry->view<DeltaTimeComponent>(), scenePtr, resourceCache, *registry));
 
             // IK Aim system - runs AFTER animation, BEFORE skinned mesh render
             _systems.emplace_back(std::make_unique<IKAimSystem>(
@@ -246,7 +247,7 @@ public:
                 *registry));
 
             _systems.emplace_back(std::make_unique<SkinnedMeshRenderSystem>(registry->view<SkinnedMeshRendererComponent, TransformComponentV2>(),
-               registry->view<CameraComponentV2>(), renderRepository, scenePtr));
+               registry->view<CameraComponentV2>(), renderRepository, resourceCache));
 #ifndef NDEBUG
             _systems.emplace_back(std::make_unique<NavmeshPathRenderSystem>(registry->view<NavmeshAgentComponent>(),
                registry->view<CameraComponentV2>(), renderRepository, scenePtr->GetNavigationManager()));

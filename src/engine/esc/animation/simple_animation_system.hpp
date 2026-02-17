@@ -5,7 +5,7 @@
 #include "../transform/transform_component.hpp"
 #include "../time/time_component.hpp"
 #include "animation/animation_data.hpp"
-#include "scene.hpp"
+#include "resource_cache.hpp"
 #include "guid.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -27,7 +27,7 @@ class SimpleAnimationSystem final : public ISystemView<SimpleAnimationComponent,
 private:
     using TypeDeltaTime = decltype(std::declval<entt::registry>().view<DeltaTimeComponent>());
     const TypeDeltaTime _deltaTimeView;
-    const std::weak_ptr<Scene> _scene;
+    const std::shared_ptr<ResourceCache> _resourceCache;
     std::unordered_map<Guid, std::shared_ptr<AnimationData>> _loadedAnimations;
 
     static std::string TryMatchBoneName(const std::string& animBoneName, const std::unordered_map<std::string, int>& boneMap) {
@@ -38,8 +38,8 @@ private:
     }
 
 public:
-    explicit SimpleAnimationSystem(const TypeView &view, const TypeDeltaTime &deltaTimeView, const std::weak_ptr<Scene> &scene)
-        : ISystemView(view), _deltaTimeView(deltaTimeView), _scene(scene) {
+    explicit SimpleAnimationSystem(const TypeView &view, const TypeDeltaTime &deltaTimeView, const std::shared_ptr<ResourceCache> &resourceCache)
+        : ISystemView(view), _deltaTimeView(deltaTimeView), _resourceCache(resourceCache) {
     }
 
     template<typename T>
@@ -89,25 +89,22 @@ public:
             deltaTime = dt.Delta;
         }
 
-        auto scene = _scene.lock();
-        if (!scene) return;
-
         for (const auto &[_, anim, skinnedMesh, transform] : View.each()) {
             if (!anim.Enabled || anim.AnimationGuid.IsEmpty()) continue;
 
             if (skinnedMesh.BoneNames.empty()) {
-                scene->GetMesh(skinnedMesh.MeshGuid);
+                _resourceCache->GetMesh(skinnedMesh.MeshGuid);
 
-                skinnedMesh.BoneNames = scene->GetMeshBoneNames(skinnedMesh.MeshGuid);
-                skinnedMesh.BoneOffsets = scene->GetMeshBoneOffsets(skinnedMesh.MeshGuid);
-                skinnedMesh.BoneParents = scene->GetMeshBoneParents(skinnedMesh.MeshGuid);
+                skinnedMesh.BoneNames = _resourceCache->GetMeshBoneNames(skinnedMesh.MeshGuid);
+                skinnedMesh.BoneOffsets = _resourceCache->GetMeshBoneOffsets(skinnedMesh.MeshGuid);
+                skinnedMesh.BoneParents = _resourceCache->GetMeshBoneParents(skinnedMesh.MeshGuid);
                 if (!skinnedMesh.BoneNames.empty()) {
                     ANIM_SYS_LOG << "Loaded " << skinnedMesh.BoneNames.size() << " bones with hierarchy for mesh" << std::endl;
                 }
             }
 
             if (_loadedAnimations.find(anim.AnimationGuid) == _loadedAnimations.end()) {
-                auto animData = scene->GetAnimation(anim.AnimationGuid);
+                auto animData = _resourceCache->GetAnimation(anim.AnimationGuid);
                 if (animData) {
                     _loadedAnimations[anim.AnimationGuid] = animData;
                     ANIM_SYS_LOG << "Loaded animation: " << animData->Name << " (" << animData->Duration << "s)" << std::endl;

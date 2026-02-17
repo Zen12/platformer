@@ -15,12 +15,14 @@
 #include "video/video_recorder.hpp"
 #include "scene_manager.hpp"
 #include "audio_manager.hpp"
+#include "resource_cache.hpp"
 
 class Engine {
 
 private:
     std::shared_ptr<InputSystem> _inputSystem;
     std::shared_ptr<AssetManager> _assetManager;
+    std::shared_ptr<ResourceCache> _resourceCache;
     std::shared_ptr<SceneManager> _sceneManager;
     std::shared_ptr<UIManager> _uiManager;
     std::shared_ptr<Window> _window;
