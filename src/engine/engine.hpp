@@ -59,7 +59,4 @@ public:
     [[nodiscard]] bool IsTickable() const;
 
     [[nodiscard]] bool IsReloadRequested() const;
-
-    [[nodiscard]] std::shared_ptr<VideoRecorder> GetVideoRecorder() const { return _videoRecorder; }
-    [[nodiscard]] std::shared_ptr<AudioManager> GetAudioManager() const { return _audioManager; }
 };
