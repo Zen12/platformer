@@ -1,6 +1,6 @@
 #pragma once
 
-#include "action_registry.hpp"
+#include "../../../core/src/register/fsm_action_registry.hpp"
 #include "engine_context.hpp"
 
 #include "play_sound_action.hpp"
@@ -15,7 +15,7 @@
 #include "mute_audio_action_serialization.hpp"
 #include "mute_audio_action_serialization_yaml.hpp"
 
-inline void RegisterAudioActions(ActionRegistry& registry) {
+inline void RegisterAudioActions(FsmActionRegistry& registry) {
     registry.Register("play_sound",
         [](const YAML::Node& n) -> std::unique_ptr<ActionSerialization> {
             auto s = n.as<PlaySoundActionSerialization>();

@@ -5,16 +5,16 @@
 #include "fsm_builder.hpp"
 #include "fsm_asset.hpp"
 #include "trigger_board.hpp"
-#include "action_registry.hpp"
-#include "condition_registry.hpp"
+#include "../register/fsm_action_registry.hpp"
+#include "../register/fsm_condition_registry.hpp"
 #include "engine_context.hpp"
 
 class FsmFactory final {
 public:
     static std::shared_ptr<FsmController> Create(
         const FsmAsset& fsmAsset,
-        const ActionRegistry& actionRegistry,
-        const ConditionRegistry& conditionRegistry,
+        const FsmActionRegistry& actionRegistry,
+        const FsmConditionRegistry& conditionRegistry,
         EngineContext context
     ) {
         auto triggerBoard = std::make_shared<TriggerBoard>();

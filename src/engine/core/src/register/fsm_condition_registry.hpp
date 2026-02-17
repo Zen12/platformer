@@ -4,12 +4,12 @@
 #include <string>
 #include <unordered_map>
 
-#include "condition/condition_base.hpp"
-#include "condition/condition_serialization.hpp"
-#include "engine_context.hpp"
+#include "../fsm/condition/condition_base.hpp"
+#include "../fsm/condition/condition_serialization.hpp"
+#include "../fsm/engine_context.hpp"
 #include <yaml-cpp/yaml.h>
 
-class ConditionRegistry final {
+class FsmConditionRegistry final {
 public:
     using DeserializerFn = std::function<std::unique_ptr<ConditionSerialization>(const YAML::Node&)>;
     using BuilderFn = std::function<std::unique_ptr<ConditionBase>(const ConditionSerialization*, const EngineContext&)>;

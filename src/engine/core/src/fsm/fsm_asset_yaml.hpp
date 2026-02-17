@@ -3,13 +3,13 @@
 #include "node/node_serialization_yaml.hpp"
 #include "connection/connection_serialization_yaml.hpp"
 #include "condition/condition_serialization.hpp"
-#include "condition_registry.hpp"
+#include "../register/fsm_condition_registry.hpp"
 #include "yaml-cpp/node/node.h"
 
 namespace YAML {
     template <>
     struct convert<FsmAsset> {
-        static const ConditionRegistry* s_conditionRegistry;
+        static const FsmConditionRegistry* s_conditionRegistry;
 
         static std::unique_ptr<ConditionSerialization> DecodeCondition(const YAML::Node& node) {
             if (!s_conditionRegistry) return {};
@@ -43,5 +43,5 @@ namespace YAML {
         }
     };
 
-    inline const ConditionRegistry* convert<FsmAsset>::s_conditionRegistry = nullptr;
+    inline const FsmConditionRegistry* convert<FsmAsset>::s_conditionRegistry = nullptr;
 }

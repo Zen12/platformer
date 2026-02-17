@@ -14,6 +14,7 @@
 #include "register_core_actions.hpp"
 #include "register_audio_actions.hpp"
 #include "register_audio_components.hpp"
+#include "esc/register_core_systems.hpp"
 #include "node/node_serialization_yaml.hpp"
 
 #define DEBUG_ENGINE_PROFILE 0
@@ -54,6 +55,8 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
     // Register audio components
     RegisterAudioComponents(_componentRegistry);
 
+    RegisterCoreSystems(_systemRegistry);
+
     // Build engine context with all managers
     _engineContext.Register<UIManager>("UIManager", _uiManager);
     _engineContext.Register<SceneManager>("SceneManager", _sceneManager);
@@ -77,6 +80,7 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
     _sceneManager->SetConditionRegistry(&_conditionRegistry);
     _sceneManager->SetEngineContext(&_engineContext);
     _sceneManager->SetComponentRegistry(&_componentRegistry);
+    _sceneManager->SetSystemRegistry(&_systemRegistry);
 
     _uiManager->Initialize();
 

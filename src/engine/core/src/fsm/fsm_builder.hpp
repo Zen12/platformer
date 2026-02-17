@@ -5,16 +5,16 @@
 
 #include "fsm_data.hpp"
 #include "fsm_asset.hpp"
-#include "action_registry.hpp"
-#include "condition_registry.hpp"
+#include "../register/fsm_action_registry.hpp"
+#include "../register/fsm_condition_registry.hpp"
 #include "engine_context.hpp"
 
 class FsmBuilder final {
 public:
     static FsmData Build(
         const FsmAsset& fsmAsset,
-        const ActionRegistry& actionRegistry,
-        const ConditionRegistry& conditionRegistry,
+        const FsmActionRegistry& actionRegistry,
+        const FsmConditionRegistry& conditionRegistry,
         const EngineContext& context
     ) {
         std::unordered_map<std::string, StateNode> stateNodes;

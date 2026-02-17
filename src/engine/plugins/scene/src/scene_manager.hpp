@@ -14,9 +14,10 @@
 
 #include <RmlUi/Core.h>
 
-class ActionRegistry;
-class ConditionRegistry;
+class FsmActionRegistry;
+class FsmConditionRegistry;
 class EngineContext;
+class EscSystemRegistry;
 
 class SceneManager {
 
@@ -31,10 +32,11 @@ class SceneManager {
 
     std::unique_ptr<EscSystem> _escSystem{};
 
-    const ActionRegistry* _actionRegistry = nullptr;
-    const ConditionRegistry* _conditionRegistry = nullptr;
+    const FsmActionRegistry* _actionRegistry = nullptr;
+    const FsmConditionRegistry* _conditionRegistry = nullptr;
     const EngineContext* _engineContext = nullptr;
     const ComponentRegistry* _componentRegistry = nullptr;
+    const EscSystemRegistry* _systemRegistry = nullptr;
 
 
 public:
@@ -58,13 +60,15 @@ public:
         return _audioManager;
     }
 
-    void SetActionRegistry(const ActionRegistry* reg) noexcept { _actionRegistry = reg; }
-    void SetConditionRegistry(const ConditionRegistry* reg) noexcept { _conditionRegistry = reg; }
+    void SetActionRegistry(const FsmActionRegistry* reg) noexcept { _actionRegistry = reg; }
+    void SetConditionRegistry(const FsmConditionRegistry* reg) noexcept { _conditionRegistry = reg; }
     void SetEngineContext(const EngineContext* ctx) noexcept { _engineContext = ctx; }
     void SetComponentRegistry(const ComponentRegistry* reg) noexcept { _componentRegistry = reg; }
+    void SetSystemRegistry(const EscSystemRegistry* reg) noexcept { _systemRegistry = reg; }
+    [[nodiscard]] const EscSystemRegistry* GetSystemRegistry() const noexcept { return _systemRegistry; }
 
-    [[nodiscard]] const ActionRegistry* GetActionRegistry() const noexcept { return _actionRegistry; }
-    [[nodiscard]] const ConditionRegistry* GetConditionRegistry() const noexcept { return _conditionRegistry; }
+    [[nodiscard]] const FsmActionRegistry* GetActionRegistry() const noexcept { return _actionRegistry; }
+    [[nodiscard]] const FsmConditionRegistry* GetConditionRegistry() const noexcept { return _conditionRegistry; }
     [[nodiscard]] const EngineContext* GetEngineContext() const noexcept { return _engineContext; }
 
     void LoadScene(const SceneAsset& serialization);

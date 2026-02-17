@@ -59,6 +59,8 @@
 
 #include "entity/component_registry.hpp"
 
+#include "esc_system_context.hpp"
+#include "core/src/register/esc_system_registry.hpp"
 
 class EscSystem {
     const std::weak_ptr<Scene> _scene;
@@ -182,8 +184,21 @@ public:
         }
     }
 
-    void InitSystems(std::shared_ptr<RenderRepository> &renderRepository, const std::shared_ptr<ResourceCache>& resourceCache, const std::weak_ptr<AudioManager>& audioManager = std::weak_ptr<AudioManager>()) {
+    void InitSystems(std::shared_ptr<RenderRepository> &renderRepository, const std::shared_ptr<ResourceCache>& resourceCache, const std::weak_ptr<AudioManager>& audioManager = std::weak_ptr<AudioManager>(), const EscSystemRegistry* systemRegistry = nullptr) {
         if (const auto &scenePtr = _scene.lock()) {
+
+            // If a system registry is provided, use it to build all systems
+            if (systemRegistry) {
+                EscSystemContext ctx;
+                ctx.Registry = scenePtr->GetEntityRegistry();
+                ctx.Scene = _scene;
+                ctx.RenderRepository = renderRepository;
+                ctx.ResourceCache = resourceCache;
+                ctx.AudioManager = audioManager;
+
+                _systems = systemRegistry->BuildAll(ctx);
+                return;
+            }
 
             const auto registry = scenePtr->GetEntityRegistry();
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "action_registry.hpp"
-#include "condition_registry.hpp"
+#include "../register/fsm_action_registry.hpp"
+#include "../register/fsm_condition_registry.hpp"
 #include "engine_context.hpp"
 #include "trigger_board.hpp"
 #include "guid.hpp"
@@ -72,7 +72,7 @@
 #include "condition/core_types/always_true_condition_serialization.hpp"
 #include "condition/core_types/always_true_condition_serialization_yaml.hpp"
 
-inline void RegisterCoreActions(ActionRegistry& registry) {
+inline void RegisterCoreActions(FsmActionRegistry& registry) {
     registry.Register("load_ui_page",
         [](const YAML::Node& n) -> std::unique_ptr<ActionSerialization> {
             auto s = n.as<UIPageActionSerialization>();
@@ -270,7 +270,7 @@ inline void RegisterCoreActions(ActionRegistry& registry) {
     );
 }
 
-inline void RegisterCoreConditions(ConditionRegistry& registry) {
+inline void RegisterCoreConditions(FsmConditionRegistry& registry) {
     registry.Register("trigger_check",
         [](const YAML::Node& n) -> std::unique_ptr<ConditionSerialization> {
             auto s = n.as<TriggerCheckConditionSerialization>();

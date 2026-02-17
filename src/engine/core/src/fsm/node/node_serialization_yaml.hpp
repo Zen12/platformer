@@ -1,12 +1,12 @@
 #pragma once
 #include "node_serialization.hpp"
 #include "yaml-cpp/node/node.h"
-#include "../action_registry.hpp"
+#include "../../register/fsm_action_registry.hpp"
 
 namespace YAML {
     template <>
     struct convert<StateNodeSerialization> {
-        static const ActionRegistry* s_actionRegistry;
+        static const FsmActionRegistry* s_actionRegistry;
 
         static std::unique_ptr<ActionSerialization> DecodeAction(const YAML::Node& node) {
             if (!s_actionRegistry) return {};
@@ -28,5 +28,5 @@ namespace YAML {
         }
     };
 
-    inline const ActionRegistry* convert<StateNodeSerialization>::s_actionRegistry = nullptr;
+    inline const FsmActionRegistry* convert<StateNodeSerialization>::s_actionRegistry = nullptr;
 }

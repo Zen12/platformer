@@ -4,12 +4,12 @@
 #include <string>
 #include <unordered_map>
 
-#include "node/action/action.hpp"
-#include "node/action/action_serialiazion.hpp"
-#include "engine_context.hpp"
+#include "../fsm/node/action/action.hpp"
+#include "../fsm/node/action/action_serialiazion.hpp"
+#include "../fsm/engine_context.hpp"
 #include <yaml-cpp/yaml.h>
 
-class ActionRegistry final {
+class FsmActionRegistry final {
 public:
     using DeserializerFn = std::function<std::unique_ptr<ActionSerialization>(const YAML::Node&)>;
     using BuilderFn = std::function<std::unique_ptr<Action>(const ActionSerialization*, const EngineContext&)>;
