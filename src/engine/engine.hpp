@@ -16,6 +16,10 @@
 #include "scene_manager.hpp"
 #include "audio_manager.hpp"
 #include "resource_cache.hpp"
+#include "action_registry.hpp"
+#include "condition_registry.hpp"
+#include "engine_context.hpp"
+#include "entity/component_registry.hpp"
 
 class Engine {
 
@@ -33,6 +37,11 @@ private:
     std::filesystem::path _projectPath;
     ProjectAsset _projectAsset;
     std::shared_ptr<FsmController> _fsmController;
+
+    ActionRegistry _actionRegistry;
+    ConditionRegistry _conditionRegistry;
+    EngineContext _engineContext;
+    ComponentRegistry _componentRegistry;
 
     Time _frameTimer;
 

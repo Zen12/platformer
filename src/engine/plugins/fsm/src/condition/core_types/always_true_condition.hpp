@@ -1,13 +1,12 @@
 #pragma once
 #include <string>
 
-struct AlwaysTrueCondition final {
-    std::string Type;
-    std::string Guid;
+#include "../condition_base.hpp"
 
+struct AlwaysTrueCondition final : public ConditionBase {
     AlwaysTrueCondition() = default;
 
-    [[nodiscard]] bool IsSuccess() const {
+    [[nodiscard]] bool IsSuccess() const override {
         return true;
     }
 };

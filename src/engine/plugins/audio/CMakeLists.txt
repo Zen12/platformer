@@ -18,6 +18,7 @@ target_link_libraries(engine-audio INTERFACE
     yaml-cpp
     engine-guid
     engine-asset
+    engine-fsm
 )
 
 if(PLATFORM_DESKTOP)

@@ -11,6 +11,11 @@
 #include "animation/animation_asset_loader.hpp"
 #include "profiler.hpp"
 
+#include "register_core_actions.hpp"
+#include "register_audio_actions.hpp"
+#include "register_audio_components.hpp"
+#include "node/node_serialization_yaml.hpp"
+
 #define DEBUG_ENGINE_PROFILE 0
 
 #if DEBUG_ENGINE_PROFILE
@@ -41,12 +46,37 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
     _audioManager = std::make_shared<AudioManager>(_assetManager);
     _sceneManager->SetAudioManager(_audioManager);
 
+    // Register actions and conditions
+    RegisterCoreActions(_actionRegistry);
+    RegisterCoreConditions(_conditionRegistry);
+    RegisterAudioActions(_actionRegistry);
+
+    // Register audio components
+    RegisterAudioComponents(_componentRegistry);
+
+    // Build engine context with all managers
+    _engineContext.Register<UIManager>("UIManager", _uiManager);
+    _engineContext.Register<SceneManager>("SceneManager", _sceneManager);
+    _engineContext.Register<VideoRecorder>("VideoRecorder", _videoRecorder);
+    _engineContext.Register<AudioManager>("AudioManager", _audioManager);
+
+    // Set registry pointers for YAML deserialization
+    YAML::convert<StateNodeSerialization>::s_actionRegistry = &_actionRegistry;
+    YAML::convert<FsmAsset>::s_conditionRegistry = &_conditionRegistry;
+    YAML::convert<EntitySerialization>::s_componentRegistry = &_componentRegistry;
+
     _window->WinInit();
     _audioManager->Initialize();
     _assetManager->Init();
 
     const auto mainFsm = _assetManager->LoadAssetByGuid<FsmAsset>(_projectAsset.MainFsm);
-    _fsmController = FsmFactory::Create(mainFsm, _sceneManager, _uiManager, _videoRecorder, _audioManager);
+    _fsmController = FsmFactory::Create(mainFsm, _actionRegistry, _conditionRegistry, _engineContext);
+
+    // Pass registries to scene manager for per-entity FSM creation
+    _sceneManager->SetActionRegistry(&_actionRegistry);
+    _sceneManager->SetConditionRegistry(&_conditionRegistry);
+    _sceneManager->SetEngineContext(&_engineContext);
+    _sceneManager->SetComponentRegistry(&_componentRegistry);
 
     _uiManager->Initialize();
 
@@ -178,4 +208,3 @@ bool Engine::IsTickable() const {
 bool Engine::IsReloadRequested() const {
     return _isReloadRequested;
 }
-

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "entity_serialization.hpp"
+#include "component_registry.hpp"
 #include "glm_vec_yaml.hpp"
 #include "../esc/transform/transform_component_serialization.hpp"
 #include "../esc/transform/transform_component_serialization_yaml.hpp"
@@ -30,10 +31,6 @@
 #include "../esc/directional_light/directional_light_component_serialization_yaml.hpp"
 #include "../esc/health/health_component_serialization.hpp"
 #include "../esc/health/health_component_serialization_yaml.hpp"
-#include "../esc/audio_source/audio_source_component_serialization.hpp"
-#include "../esc/audio_source/audio_source_component_serialization_yaml.hpp"
-#include "../esc/audio_listener/audio_listener_component_serialization.hpp"
-#include "../esc/audio_listener/audio_listener_component_serialization_yaml.hpp"
 #include "../esc/particle_emitter/particle_emitter_component_serialization.hpp"
 #include "../esc/particle_emitter/particle_emitter_component_serialization_yaml.hpp"
 #include "../esc/ik_aim/ik_aim_component_serialization.hpp"
@@ -43,6 +40,8 @@ namespace YAML {
     template <>
     struct convert<EntitySerialization>
     {
+        static const ComponentRegistry* s_componentRegistry;
+
         template<typename T>
         static std::unique_ptr<T> Parse(const YAML::Node &data) {
             static_assert(std::is_base_of_v<ComponentSerialization, T>,
@@ -80,6 +79,13 @@ namespace YAML {
 
             const auto type = node["type"].as<std::string>();
 
+            // Check plugin registry first
+            if (s_componentRegistry && s_componentRegistry->HasType(type)) {
+                auto result = s_componentRegistry->Deserialize(type, node);
+                if (result) result->ComponentType = type;
+                return result;
+            }
+
             using ComponentSerialization = std::function<std::unique_ptr<ComponentSerialization>(const YAML::Node&)>;
             static const std::unordered_map<std::string, ComponentSerialization> pairs = {
                 { "camera",                [](const YAML::Node& n){ return Parse<CameraComponentSerialization>(n); } },
@@ -96,8 +102,6 @@ namespace YAML {
                 { "behavior_tree",         [](const YAML::Node& n){ return Parse<BehaviorTreeComponentSerialization>(n); } },
                 { "directional_light",     [](const YAML::Node& n){ return Parse<DirectionalLightComponentSerialization>(n); } },
                 { "health",                [](const YAML::Node& n){ return Parse<HealthComponentSerialization>(n); } },
-                { "audio_source",          [](const YAML::Node& n){ return Parse<AudioSourceComponentSerialization>(n); } },
-                { "audio_listener",        [](const YAML::Node& n){ return Parse<AudioListenerComponentSerialization>(n); } },
                 { "particle_emitter",      [](const YAML::Node& n){ return Parse<ParticleEmitterComponentSerialization>(n); } },
                 { "ik_aim",                [](const YAML::Node& n){ return Parse<IKAimComponentSerialization>(n); } },
             };
@@ -110,4 +114,6 @@ namespace YAML {
         }
 
     };
+
+    inline const ComponentRegistry* convert<EntitySerialization>::s_componentRegistry = nullptr;
 }

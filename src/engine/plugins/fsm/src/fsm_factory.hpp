@@ -5,33 +5,26 @@
 #include "fsm_builder.hpp"
 #include "fsm_asset.hpp"
 #include "trigger_board.hpp"
-
-class FsmAnimationComponent;
-class VideoRecorder;
-class AudioManager;
-class UIManager;
-class SceneManager;
+#include "action_registry.hpp"
+#include "condition_registry.hpp"
+#include "engine_context.hpp"
 
 class FsmFactory final {
 public:
     static std::shared_ptr<FsmController> Create(
         const FsmAsset& fsmAsset,
-        const std::shared_ptr<SceneManager>& sceneManager,
-        const std::shared_ptr<UIManager>& uiManager,
-        const std::shared_ptr<VideoRecorder>& videoRecorder = nullptr,
-        const std::shared_ptr<AudioManager>& audioManager = nullptr,
-        const std::weak_ptr<FsmAnimationComponent>& animationComponent = std::weak_ptr<FsmAnimationComponent>()
+        const ActionRegistry& actionRegistry,
+        const ConditionRegistry& conditionRegistry,
+        EngineContext context
     ) {
         auto triggerBoard = std::make_shared<TriggerBoard>();
+        context.Register<TriggerBoard>("TriggerBoard", triggerBoard);
 
         FsmData data = FsmBuilder::Build(
             fsmAsset,
-            triggerBoard,
-            uiManager,
-            sceneManager,
-            videoRecorder,
-            audioManager,
-            animationComponent
+            actionRegistry,
+            conditionRegistry,
+            context
         );
 
         return std::make_shared<FsmController>(std::move(data), triggerBoard);

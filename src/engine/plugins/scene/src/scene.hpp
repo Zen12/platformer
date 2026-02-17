@@ -11,6 +11,9 @@
 #include "guid.hpp"
 
 class AudioManager;
+class ActionRegistry;
+class ConditionRegistry;
+class EngineContext;
 
 class Scene {
 private:
@@ -20,6 +23,10 @@ private:
     std::weak_ptr<AssetManager> _assetManager;
     std::weak_ptr<InputSystem> _inputSystem;
     std::weak_ptr<AudioManager> _audioManager;
+
+    const ActionRegistry* _actionRegistry = nullptr;
+    const ConditionRegistry* _conditionRegistry = nullptr;
+    const EngineContext* _engineContext = nullptr;
 
     std::shared_ptr<entt::registry> _entityRegistry{};
     std::shared_ptr<NavigationManager> _navigationManager{};
@@ -57,6 +64,14 @@ public:
     [[nodiscard]] std::weak_ptr<AudioManager> GetAudioManager() const noexcept {
         return _audioManager;
     }
+
+    void SetActionRegistry(const ActionRegistry* reg) noexcept { _actionRegistry = reg; }
+    void SetConditionRegistry(const ConditionRegistry* reg) noexcept { _conditionRegistry = reg; }
+    void SetEngineContext(const EngineContext* ctx) noexcept { _engineContext = ctx; }
+
+    [[nodiscard]] const ActionRegistry* GetActionRegistry() const noexcept { return _actionRegistry; }
+    [[nodiscard]] const ConditionRegistry* GetConditionRegistry() const noexcept { return _conditionRegistry; }
+    [[nodiscard]] const EngineContext* GetEngineContext() const noexcept { return _engineContext; }
 
     [[nodiscard]] std::shared_ptr<entt::registry> GetEntityRegistry() const noexcept {
         return _entityRegistry;

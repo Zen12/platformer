@@ -1,7 +1,6 @@
 #pragma once
 #include <memory>
 #include <iostream>
-#include <variant>
 
 #define DEBUG_FSM_CONTROLLER 0
 
@@ -16,7 +15,7 @@
 
 class FsmController final {
 private:
-    const FsmData _data;
+    FsmData _data;
     std::shared_ptr<TriggerBoard> _triggerBoard;
 
     std::string _currentState;
@@ -77,15 +76,11 @@ public:
 
             bool conditionsPassed = false;
 
-            auto checkCondition = [](const fsm::AllConditionVariants& cond) {
-                return std::visit([](const auto& c) { return c.IsSuccess(); }, cond);
-            };
-
             if (conn.ConditionType == ConditionType::All) {
                 conditionsPassed = true;
                 for (const auto &conditionGuid: conn.ConditionGuids) {
                     auto condIt = _data.Conditions.find(conditionGuid);
-                    if (condIt == _data.Conditions.end() || !checkCondition(condIt->second)) {
+                    if (condIt == _data.Conditions.end() || !condIt->second->IsSuccess()) {
                         conditionsPassed = false;
                         break;
                     }
@@ -93,7 +88,7 @@ public:
             } else if (conn.ConditionType == ConditionType::AtLeastOne) {
                 for (const auto &conditionGuid: conn.ConditionGuids) {
                     auto condIt = _data.Conditions.find(conditionGuid);
-                    if (condIt != _data.Conditions.end() && checkCondition(condIt->second)) {
+                    if (condIt != _data.Conditions.end() && condIt->second->IsSuccess()) {
                         conditionsPassed = true;
                         break;
                     }

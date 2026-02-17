@@ -47,10 +47,8 @@
 #include "health/health_component_serialization.hpp"
 #include "health/health_system.hpp"
 #include "audio_source/audio_source_component.hpp"
-#include "audio_source/audio_source_component_serialization.hpp"
 #include "audio_source/audio_system.hpp"
 #include "audio_listener/audio_listener_component.hpp"
-#include "audio_listener/audio_listener_component_serialization.hpp"
 #include "particle_emitter/particle_emitter_component.hpp"
 #include "particle_emitter/particle_emitter_component_serialization.hpp"
 #include "particle_emitter/particle_system.hpp"
@@ -59,14 +57,17 @@
 #include "ik_aim/ik_aim_component_serialization.hpp"
 #include "ik_aim/ik_aim_system.hpp"
 
+#include "entity/component_registry.hpp"
+
 
 class EscSystem {
     const std::weak_ptr<Scene> _scene;
     std::vector<std::unique_ptr<ISystem>> _systems;
+    const ComponentRegistry* _componentRegistry = nullptr;
 
 public:
-    explicit EscSystem(const std::weak_ptr<Scene> &scene)
-    : _scene(scene) {
+    explicit EscSystem(const std::weak_ptr<Scene> &scene, const ComponentRegistry* componentRegistry = nullptr)
+    : _scene(scene), _componentRegistry(componentRegistry) {
 
         if (const auto &scenePtr = _scene.lock()) {
 
@@ -90,6 +91,12 @@ public:
                 tagView->emplace(entity, entitySerialization.Tag);
 
                 for (const auto& component : entitySerialization.Components) {
+                    // Check plugin component registry first
+                    if (_componentRegistry && !component->ComponentType.empty() &&
+                        _componentRegistry->Emplace(component->ComponentType, *registry, entity, component.get())) {
+                        continue;
+                    }
+
                     if (const auto &cameraSerialization = dynamic_cast<CameraComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<CameraComponentV2>();
                         view->emplace(entity, *cameraSerialization);
@@ -146,22 +153,6 @@ public:
                         const auto &view = registry->view<HealthComponent>();
                         HealthComponent healthComp(healthSerialization->MaxHealth);
                         view->emplace(entity, healthComp);
-                    } else if (const auto &audioSourceSerialization = dynamic_cast<AudioSourceComponentSerialization*>(component.get())) {
-                        const auto &view = registry->view<AudioSourceComponent>();
-                        AudioSourceComponent audioComp(
-                            audioSourceSerialization->AudioClipGuid,
-                            audioSourceSerialization->Volume,
-                            audioSourceSerialization->Pitch,
-                            audioSourceSerialization->Loop,
-                            audioSourceSerialization->AutoPlay,
-                            audioSourceSerialization->Spatial,
-                            audioSourceSerialization->MinDistance,
-                            audioSourceSerialization->MaxDistance
-                        );
-                        view->emplace(entity, audioComp);
-                    } else if (dynamic_cast<AudioListenerComponentSerialization*>(component.get())) {
-                        const auto &view = registry->view<AudioListenerComponent>();
-                        view->emplace(entity, AudioListenerComponent());
                     } else if (const auto &particleSerialization = dynamic_cast<ParticleEmitterComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<ParticleEmitterComponent>();
                         view->emplace(entity, *particleSerialization);

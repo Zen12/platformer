@@ -3,39 +3,22 @@
 #include "node/node_serialization_yaml.hpp"
 #include "connection/connection_serialization_yaml.hpp"
 #include "condition/condition_serialization.hpp"
-#include "condition/core_types/trigger_check_condition_serialization_yaml.hpp"
-#include "condition/core_types/always_true_condition_serialization_yaml.hpp"
+#include "condition_registry.hpp"
 #include "yaml-cpp/node/node.h"
-
 
 namespace YAML {
     template <>
     struct convert<FsmAsset> {
-        template<typename T>
-        static std::unique_ptr<T> Parse(const YAML::Node &data) {
-            static_assert(std::is_base_of_v<ConditionSerialization, T>,
-                      "T must derive from ConditionSerialization");
-
-            const auto action = data.as<T>();
-            return std::make_unique<T>(action);
-        }
+        static const ConditionRegistry* s_conditionRegistry;
 
         static std::unique_ptr<ConditionSerialization> DecodeCondition(const YAML::Node& node) {
-            using type = std::function<std::unique_ptr<ConditionSerialization>(const YAML::Node&)>;
-            static const std::unordered_map<std::string, type> pairs = {
-                { "trigger_check", [](const YAML::Node& n){ return Parse<TriggerCheckConditionSerialization>(n); } },
-                { "always_true",   [](const YAML::Node& n){ return Parse<AlwaysTrueConditionSerialization>(n); } }
-            };
+            if (!s_conditionRegistry) return {};
 
             const auto nodeType = node["type"].as<std::string>();
-            if (const auto it = pairs.find(nodeType); it != pairs.end()) {
-                return it->second(node);
-            }
-            return {};
+            return s_conditionRegistry->Deserialize(nodeType, node);
         }
 
         static bool decode(const Node &node, FsmAsset &rhs) {
-            // The YAML file format has each top level item as a list element
             if (node["name"]) {
                 rhs.Name = node["name"].as<std::string>();
             }
@@ -59,6 +42,6 @@ namespace YAML {
             return true;
         }
     };
+
+    inline const ConditionRegistry* convert<FsmAsset>::s_conditionRegistry = nullptr;
 }
-
-

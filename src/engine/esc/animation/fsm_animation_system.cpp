@@ -4,6 +4,7 @@
 #include "fsm_factory.hpp"
 #include "fsm_asset.hpp"
 #include "fsm_asset_yaml.hpp"
+#include "engine_context.hpp"
 #include <iomanip>
 
 #define DEBUG_FSM_ANIM_SYSTEM 0
@@ -160,25 +161,27 @@ void FsmAnimationSystem::OnTick() {
 
         if (!anim.FsmGuid.IsEmpty() && !anim.Controller) {
             if (auto assetManager = scene->GetAssetManager().lock()) {
-                try {
-                    auto fsmAsset = assetManager->LoadAssetByGuid<FsmAsset>(anim.FsmGuid);
-                    anim.SelfPtr = std::shared_ptr<FsmAnimationComponent>(&anim, [](FsmAnimationComponent*){});
+                const auto* actionRegistry = scene->GetActionRegistry();
+                const auto* conditionRegistry = scene->GetConditionRegistry();
+                const auto* engineContext = scene->GetEngineContext();
 
-                    std::shared_ptr<AudioManager> audioManager = nullptr;
-                    if (auto am = scene->GetAudioManager().lock()) {
-                        audioManager = am;
+                if (actionRegistry && conditionRegistry && engineContext) {
+                    try {
+                        auto fsmAsset = assetManager->LoadAssetByGuid<FsmAsset>(anim.FsmGuid);
+                        anim.SelfPtr = std::shared_ptr<FsmAnimationComponent>(&anim, [](FsmAnimationComponent*){});
+
+                        EngineContext localContext = *engineContext;
+                        localContext.Register<FsmAnimationComponent>("FsmAnimationComponent", anim.SelfPtr);
+
+                        anim.Controller = FsmFactory::Create(
+                            fsmAsset,
+                            *actionRegistry,
+                            *conditionRegistry,
+                            localContext
+                        );
+                    } catch (const std::exception& e) {
+                        std::cerr << "Failed to load FSM: " << anim.FsmGuid.ToString() << " - " << e.what() << std::endl;
                     }
-
-                    anim.Controller = FsmFactory::Create(
-                        fsmAsset,
-                        nullptr,
-                        nullptr,
-                        nullptr,
-                        audioManager,
-                        anim.SelfPtr
-                    );
-                } catch (const std::exception& e) {
-                    std::cerr << "Failed to load FSM: " << anim.FsmGuid.ToString() << " - " << e.what() << std::endl;
                 }
             }
         }

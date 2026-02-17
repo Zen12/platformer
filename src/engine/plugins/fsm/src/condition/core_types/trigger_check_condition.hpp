@@ -3,12 +3,10 @@
 #include <memory>
 #include <utility>
 
+#include "../condition_base.hpp"
 #include "../../trigger_board.hpp"
 
-struct TriggerCheckCondition final {
-    std::string Type;
-    std::string Guid;
-
+struct TriggerCheckCondition final : public ConditionBase {
 private:
     std::string _triggerName;
     std::shared_ptr<TriggerBoard> _triggerBoard;
@@ -18,7 +16,7 @@ public:
         : _triggerName(std::move(triggerName)), _triggerBoard(std::move(triggerBoard)) {
     }
 
-    [[nodiscard]] bool IsSuccess() const {
+    [[nodiscard]] bool IsSuccess() const override {
         return _triggerBoard->IsTriggerSet(_triggerName);
     }
 };

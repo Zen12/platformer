@@ -14,6 +14,9 @@
 
 #include <RmlUi/Core.h>
 
+class ActionRegistry;
+class ConditionRegistry;
+class EngineContext;
 
 class SceneManager {
 
@@ -27,6 +30,11 @@ class SceneManager {
     std::shared_ptr<RenderRepository> _renderRepository{};
 
     std::unique_ptr<EscSystem> _escSystem{};
+
+    const ActionRegistry* _actionRegistry = nullptr;
+    const ConditionRegistry* _conditionRegistry = nullptr;
+    const EngineContext* _engineContext = nullptr;
+    const ComponentRegistry* _componentRegistry = nullptr;
 
 
 public:
@@ -49,6 +57,15 @@ public:
     [[nodiscard]] std::weak_ptr<AudioManager> GetAudioManager() const noexcept {
         return _audioManager;
     }
+
+    void SetActionRegistry(const ActionRegistry* reg) noexcept { _actionRegistry = reg; }
+    void SetConditionRegistry(const ConditionRegistry* reg) noexcept { _conditionRegistry = reg; }
+    void SetEngineContext(const EngineContext* ctx) noexcept { _engineContext = ctx; }
+    void SetComponentRegistry(const ComponentRegistry* reg) noexcept { _componentRegistry = reg; }
+
+    [[nodiscard]] const ActionRegistry* GetActionRegistry() const noexcept { return _actionRegistry; }
+    [[nodiscard]] const ConditionRegistry* GetConditionRegistry() const noexcept { return _conditionRegistry; }
+    [[nodiscard]] const EngineContext* GetEngineContext() const noexcept { return _engineContext; }
 
     void LoadScene(const SceneAsset& serialization);
     void LoadSceneByGuid(const Guid& sceneGuid);

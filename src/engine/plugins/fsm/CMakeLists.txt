@@ -22,5 +22,4 @@ target_link_libraries(engine-fsm INTERFACE
     engine-system
     engine-renderer
     engine-scene
-    engine-audio
 )
