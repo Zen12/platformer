@@ -37,9 +37,7 @@
 #include "spawner/spawner_component.hpp"
 #include "spawner/spawner_component_serialization.hpp"
 #include "spawner/spawner_system.hpp"
-#include "bt_component.hpp"
-#include "bt_component_serialization.hpp"
-#include "bt_system.hpp"
+#include "combat_state/combat_state_component.hpp"
 #include "directional_light/directional_light_component.hpp"
 #include "directional_light/directional_light_component_serialization.hpp"
 #include "directional_light/directional_light_system.hpp"
@@ -134,9 +132,6 @@ public:
                         const auto &view = registry->view<SpawnerComponent>();
                         SpawnerComponent spawner(spawnerSerialization->PrefabGuid, spawnerSerialization->SpawnCount, spawnerSerialization->SpawnPositions, spawnerSerialization->SpawnOnNavmesh, spawnerSerialization->SpawnOnAllCells, spawnerSerialization->ElevationHeight, spawnerSerialization->YOffset);
                         view->emplace(entity, spawner);
-                    } else if (const auto &btSerialization = dynamic_cast<BehaviorTreeComponentSerialization*>(component.get())) {
-                        const auto &view = registry->view<BehaviorTreeComponent>();
-                        view->emplace(entity, *btSerialization);
                     } else if (const auto &topDownSerialization = dynamic_cast<TopDownCameraComponentSerialization*>(component.get())) {
                         const auto &view = registry->view<TopDownCameraComponent>();
                         TopDownCameraComponent topDown(topDownSerialization->TargetTag,
@@ -263,19 +258,11 @@ public:
 #endif
             _systems.emplace_back(std::make_unique<SpawnerSystem>(registry->view<SpawnerComponent>(), scenePtr));
 
-            // Behavior tree system - runs after navigation for velocity data
-            _systems.emplace_back(std::make_unique<BehaviorTreeSystem>(
-                registry->view<BehaviorTreeComponent>(),
-                *registry,
-                scenePtr,
-                registry->view<DeltaTimeComponent>(),
-                registry->view<CameraComponentV2, TransformComponentV2>()));
-
             // Health system - monitors player health and handles death
             _systems.emplace_back(std::make_unique<HealthSystem>(
                 registry->view<HealthComponent, TransformComponentV2>(),
                 registry->view<DeltaTimeComponent>(),
-                registry->view<BehaviorTreeComponent, TransformComponentV2>()));
+                registry->view<CombatStateComponent, TransformComponentV2>()));
 
             // Audio system - handles spatial audio and auto-play
             _systems.emplace_back(std::make_unique<AudioSystem>(
@@ -289,7 +276,7 @@ public:
                 registry->view<DeltaTimeComponent>(),
                 registry->view<ParticleEmitterComponent, NavmeshAgentComponent>(),
                 registry->view<ParticleEmitterComponent, HealthComponent>(),
-                registry->view<ParticleEmitterComponent, BehaviorTreeComponent>()));
+                registry->view<ParticleEmitterComponent, CombatStateComponent>()));
 
             // Particle render system - renders particles
             _systems.emplace_back(std::make_unique<ParticleRenderSystem>(

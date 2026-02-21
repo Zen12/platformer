@@ -36,6 +36,7 @@ target_include_directories(engine-renderer PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../scene/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../navigation/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../audio/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../ai/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../prefab/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../profiler/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../..

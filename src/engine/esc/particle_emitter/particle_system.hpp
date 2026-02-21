@@ -5,7 +5,7 @@
 #include "../time/time_component.hpp"
 #include "../navmesh_agent/navmesh_agent_component.hpp"
 #include "../health/health_component.hpp"
-#include "bt_component.hpp"
+#include "../combat_state/combat_state_component.hpp"
 #include <glm/glm.hpp>
 #include <unordered_set>
 
@@ -13,7 +13,7 @@ class ParticleSystem final : public ISystemView<ParticleEmitterComponent, Transf
 private:
     using TypeLandingView = decltype(std::declval<entt::registry>().view<ParticleEmitterComponent, NavmeshAgentComponent>());
     using TypeDamageView = decltype(std::declval<entt::registry>().view<ParticleEmitterComponent, HealthComponent>());
-    using TypeAttackView = decltype(std::declval<entt::registry>().view<ParticleEmitterComponent, BehaviorTreeComponent>());
+    using TypeAttackView = decltype(std::declval<entt::registry>().view<ParticleEmitterComponent, CombatStateComponent>());
 
     decltype(std::declval<entt::registry&>().view<DeltaTimeComponent>()) _timeView;
     TypeLandingView _landingView;
@@ -53,13 +53,13 @@ public:
         }
 
         // Check for attack triggers (trigger when attack starts)
-        for (auto [entity, emitter, bt] : _attackView.each()) {
+        for (auto [entity, emitter, combat] : _attackView.each()) {
             if (emitter.GetTriggerOnAttack()) {
                 const bool wasAttacking = _wasAttacking.count(entity) > 0;
-                if (bt.IsAttacking && !wasAttacking) {
+                if (combat.IsAttacking && !wasAttacking) {
                     emitter.TriggerBurst(emitter.GetBurstCount());
                 }
-                if (bt.IsAttacking) {
+                if (combat.IsAttacking) {
                     _wasAttacking.insert(entity);
                 } else {
                     _wasAttacking.erase(entity);

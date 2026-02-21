@@ -25,8 +25,6 @@
 #include "../esc/navmesh_agent/navmesh_agent_component_serialization_yaml.hpp"
 #include "../esc/spawner/spawner_component_serialization.hpp"
 #include "../esc/spawner/spawner_component_serialization_yaml.hpp"
-#include "bt_component_serialization.hpp"
-#include "bt_component_serialization_yaml.hpp"
 #include "../esc/directional_light/directional_light_component_serialization.hpp"
 #include "../esc/directional_light/directional_light_component_serialization_yaml.hpp"
 #include "../esc/health/health_component_serialization.hpp"
@@ -99,7 +97,6 @@ namespace YAML {
                 { "fsm_animation",         [](const YAML::Node& n){ return Parse<FsmAnimationComponentSerialization>(n); } },
                 { "navmesh_agent",         [](const YAML::Node& n){ return Parse<NavmeshAgentComponentSerialization>(n); } },
                 { "spawner",               [](const YAML::Node& n){ return Parse<SpawnerComponentSerialization>(n); } },
-                { "behavior_tree",         [](const YAML::Node& n){ return Parse<BehaviorTreeComponentSerialization>(n); } },
                 { "directional_light",     [](const YAML::Node& n){ return Parse<DirectionalLightComponentSerialization>(n); } },
                 { "health",                [](const YAML::Node& n){ return Parse<HealthComponentSerialization>(n); } },
                 { "particle_emitter",      [](const YAML::Node& n){ return Parse<ParticleEmitterComponentSerialization>(n); } },

@@ -4,7 +4,7 @@
 #include "../time/time_component.hpp"
 #include "../tag/tag_component.hpp"
 #include "../esc_core.hpp"
-#include "bt_component.hpp"
+#include "../combat_state/combat_state_component.hpp"
 #include <glm/glm.hpp>
 #include <iostream>
 #include <unordered_map>
@@ -20,10 +20,10 @@
 class HealthSystem final : public ISystemView<HealthComponent, TransformComponentV2> {
 private:
     using TypeDeltaTime = decltype(std::declval<entt::registry>().view<DeltaTimeComponent>());
-    using TypeBehaviorTree = decltype(std::declval<entt::registry>().view<BehaviorTreeComponent, TransformComponentV2>());
+    using TypeCombatState = decltype(std::declval<entt::registry>().view<CombatStateComponent, TransformComponentV2>());
 
     const TypeDeltaTime _deltaTimeView;
-    const TypeBehaviorTree _btView;
+    const TypeCombatState _btView;
 
     static constexpr float DAMAGE_PER_ATTACK = 10.0f;
     static constexpr float ATTACK_RANGE = 1.5f;
@@ -35,7 +35,7 @@ public:
     HealthSystem(
         const TypeView& view,
         const TypeDeltaTime& deltaTimeView,
-        const TypeBehaviorTree& btView)
+        const TypeCombatState& btView)
         : ISystemView(view), _deltaTimeView(deltaTimeView), _btView(btView) {}
 
     void OnTick() override {

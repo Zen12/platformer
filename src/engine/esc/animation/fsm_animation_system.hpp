@@ -9,7 +9,7 @@
 #include "animation/animation_data.hpp"
 #include "scene.hpp"
 #include "resource_cache.hpp"
-#include "bt_component.hpp"
+#include "../combat_state/combat_state_component.hpp"
 #include "guid.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

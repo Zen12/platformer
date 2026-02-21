@@ -27,6 +27,7 @@
 #include "../tag/tag_component.hpp"
 #include "bt_component.hpp"
 #include "bt_component_serialization.hpp"
+#include "../combat_state/combat_state_component.hpp"
 #include "../particle_emitter/particle_emitter_component.hpp"
 #include "../particle_emitter/particle_emitter_component_serialization.hpp"
 #include <memory>
@@ -80,6 +81,9 @@ private:
             } else if (const auto btSerialization = dynamic_cast<BehaviorTreeComponentSerialization*>(component.get())) {
                 const auto view = registry->view<BehaviorTreeComponent>();
                 view->emplace(entity, *btSerialization);
+                if (!registry->all_of<CombatStateComponent>(entity)) {
+                    registry->emplace<CombatStateComponent>(entity);
+                }
             } else if (const auto topDownSerialization = dynamic_cast<TopDownCameraComponentSerialization*>(component.get())) {
                 const auto view = registry->view<TopDownCameraComponent>();
                 TopDownCameraComponent topDown(topDownSerialization->TargetTag,

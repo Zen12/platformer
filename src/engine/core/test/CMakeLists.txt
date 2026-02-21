@@ -20,6 +20,7 @@ add_executable(engine-ai-test
 
 target_link_libraries(engine-ai-test PRIVATE
     engine-core
+    engine-ai
     doctest::doctest
 )
 

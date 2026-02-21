@@ -12,8 +12,17 @@
 #include "scene.hpp"
 #include "navigation_manager.hpp"
 #include "guid.hpp"
+#include "esc/combat_state/combat_state_component.hpp"
 #include <unordered_map>
+
+#define BT_SYSTEM_DEBUG 0
+
+#if BT_SYSTEM_DEBUG
 #include <iostream>
+#define BT_SYSTEM_LOG(msg) std::cerr << "[BT_SYSTEM] " << msg << std::endl
+#else
+#define BT_SYSTEM_LOG(msg)
+#endif
 
 class BehaviorTreeSystem final : public ISystemView<BehaviorTreeComponent> {
 private:
@@ -90,6 +99,15 @@ public:
             }
 
             BTExecutor::Execute(bt, deltaTime, _registry, entity, navmesh);
+
+            // Sync combat state to CombatStateComponent
+            if (_registry.all_of<CombatStateComponent>(entity)) {
+                auto& combatState = _registry.get<CombatStateComponent>(entity);
+                combatState.IsAttacking = bt.IsAttacking;
+                combatState.AttackTimer = bt.AttackTimer;
+            } else if (bt.IsAttacking) {
+                _registry.emplace<CombatStateComponent>(entity, CombatStateComponent{bt.IsAttacking, bt.AttackTimer});
+            }
         }
     }
 
@@ -112,7 +130,7 @@ private:
             _treeCache[guid] = treeDef;
             return treeDef;
         } catch (const std::exception& e) {
-            std::cerr << "Failed to load behavior tree: " << guid.ToString() << " - " << e.what() << std::endl;
+            BT_SYSTEM_LOG("Failed to load behavior tree: " << guid.ToString() << " - " << e.what());
             return nullptr;
         }
     }

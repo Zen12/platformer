@@ -93,6 +93,7 @@ add_subdirectory(src/engine/plugins/prefab)
 add_subdirectory(src/engine/plugins/project)
 add_subdirectory(src/engine/plugins/navigation)
 add_subdirectory(src/engine/plugins/audio)
+add_subdirectory(src/engine/plugins/ai)
 add_subdirectory(src/engine/plugins/renderer)
 add_subdirectory(src/engine/plugins/scene)
 
@@ -139,6 +140,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     engine-project
     engine-navigation
     engine-audio
+    engine-ai
     engine-renderer
     engine-scene
 )

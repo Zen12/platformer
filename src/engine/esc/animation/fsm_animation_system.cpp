@@ -199,8 +199,8 @@ void FsmAnimationSystem::OnTick() {
 
                 if (navAgent->IsGrounded && !navAgent->IsJumping) {
                     bool isAttacking = false;
-                    if (const auto* btComp = _registry.try_get<BehaviorTreeComponent>(entity)) {
-                        isAttacking = btComp->IsAttacking;
+                    if (const auto* combatComp = _registry.try_get<CombatStateComponent>(entity)) {
+                        isAttacking = combatComp->IsAttacking;
                     }
 
                     constexpr float idleThreshold = 0.5f;

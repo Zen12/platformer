@@ -8,7 +8,14 @@ namespace YAML {
     struct convert<ParticleEmitterComponentSerialization> {
         static bool decode(const Node& node, ParticleEmitterComponentSerialization& rhs) {
             rhs.MaterialGuid = node["material_guid"] ? node["material_guid"].as<Guid>() : Guid{};
-            rhs.MeshGuid = node["mesh_guid"] ? node["mesh_guid"].as<Guid>() : Guid{};
+            if (node["mesh_guid"]) {
+                const auto meshStr = node["mesh_guid"].as<std::string>();
+                if (meshStr == "sprite") {
+                    rhs.MeshGuid = Guid(0, 2);
+                } else {
+                    rhs.MeshGuid = node["mesh_guid"].as<Guid>();
+                }
+            }
             rhs.MaxParticles = node["max_particles"] ? node["max_particles"].as<int>() : 100;
             rhs.EmissionRate = node["emission_rate"] ? node["emission_rate"].as<float>() : 10.0f;
             rhs.ParticleLifetime = node["particle_lifetime"] ? node["particle_lifetime"].as<float>() : 2.0f;

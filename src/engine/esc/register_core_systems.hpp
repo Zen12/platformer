@@ -23,7 +23,7 @@
 #include "navmesh_path_renderer/navmesh_path_render_system.hpp"
 #include "navmesh_debug_renderer/navmesh_debug_render_system.hpp"
 #include "spawner/spawner_system.hpp"
-#include "bt_system.hpp"
+#include "combat_state/combat_state_component.hpp"
 #include "health/health_system.hpp"
 #include "audio_source/audio_system.hpp"
 #include "particle_emitter/particle_system.hpp"
@@ -179,26 +179,13 @@ inline void RegisterCoreSystems(EscSystemRegistry& registry) {
         return std::make_unique<SpawnerSystem>(reg->view<SpawnerComponent>(), scenePtr);
     }, 250);
 
-    // BehaviorTreeSystem: priority 260
-    registry.Register("BehaviorTreeSystem", [](const EscSystemContext& ctx) -> std::unique_ptr<ISystem> {
-        const auto scenePtr = ctx.Scene.lock();
-        if (!scenePtr) return nullptr;
-        const auto reg = ctx.Registry;
-        return std::make_unique<BehaviorTreeSystem>(
-            reg->view<BehaviorTreeComponent>(),
-            *reg,
-            scenePtr,
-            reg->view<DeltaTimeComponent>(),
-            reg->view<CameraComponentV2, TransformComponentV2>());
-    }, 260);
-
     // HealthSystem: priority 270
     registry.Register("HealthSystem", [](const EscSystemContext& ctx) -> std::unique_ptr<ISystem> {
         const auto reg = ctx.Registry;
         return std::make_unique<HealthSystem>(
             reg->view<HealthComponent, TransformComponentV2>(),
             reg->view<DeltaTimeComponent>(),
-            reg->view<BehaviorTreeComponent, TransformComponentV2>());
+            reg->view<CombatStateComponent, TransformComponentV2>());
     }, 270);
 
     // AudioSystem: priority 280
@@ -218,7 +205,7 @@ inline void RegisterCoreSystems(EscSystemRegistry& registry) {
             reg->view<DeltaTimeComponent>(),
             reg->view<ParticleEmitterComponent, NavmeshAgentComponent>(),
             reg->view<ParticleEmitterComponent, HealthComponent>(),
-            reg->view<ParticleEmitterComponent, BehaviorTreeComponent>());
+            reg->view<ParticleEmitterComponent, CombatStateComponent>());
     }, 290);
 
     // ParticleRenderSystem: priority 300
