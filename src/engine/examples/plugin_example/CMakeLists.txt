@@ -17,3 +17,8 @@ target_link_libraries(engine-example-plugin INTERFACE
     yaml-cpp
     engine-core
 )
+
+# Tests
+if(BUILD_TESTING)
+    add_subdirectory(test)
+endif()
