@@ -8,12 +8,12 @@ nodes:
     - type: load_scene
       scene_guid: 6f3c06bc-1eea-4266-af5f-a19d6e8fd06f
     - type: load_ui_page
-      page_guid: 9ee7bdd1-bdbc-49b3-b78a-a45d76a23113
+      page_guid: 5101132d-e92c-461f-bc33-1629c9ca3f7f
     - type: action_trigger_setter_button_listener
-      button_id: start-button
+      button_id: play
       trigger_name: start_game
     - type: action_trigger_setter_button_listener
-      button_id: exit-button
+      button_id: exit
       trigger_name: exit_game
 - name: "Game Node"
   guid: "gameNode"

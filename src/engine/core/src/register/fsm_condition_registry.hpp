@@ -2,6 +2,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <type_traits>
 #include <unordered_map>
 
 #include "../fsm/condition/condition_base.hpp"
@@ -17,6 +18,27 @@ public:
     void Register(const std::string& typeName, DeserializerFn deserializer, BuilderFn builder) {
         _deserializers[typeName] = std::move(deserializer);
         _builders[typeName] = std::move(builder);
+    }
+
+    template<typename TSerialization, typename F>
+    void Register(const std::string& typeName, F&& builder) {
+        static_assert(std::is_base_of_v<ConditionSerialization, TSerialization>);
+        Register(typeName,
+            [](const YAML::Node& n) -> std::unique_ptr<ConditionSerialization> {
+                auto s = n.as<TSerialization>();
+                return std::make_unique<TSerialization>(std::move(s));
+            },
+            [b = std::forward<F>(builder)](const ConditionSerialization* ser, const EngineContext& ctx) -> std::unique_ptr<ConditionBase> {
+                const auto* s = dynamic_cast<const TSerialization*>(ser);
+                if (!s) return nullptr;
+                auto cond = b(*s, ctx);
+                if (cond) {
+                    cond->Type = s->Type;
+                    cond->Guid = s->Guid;
+                }
+                return cond;
+            }
+        );
     }
 
     [[nodiscard]] std::unique_ptr<ConditionSerialization> Deserialize(const std::string& typeName, const YAML::Node& node) const {

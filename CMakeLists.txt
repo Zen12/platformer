@@ -97,6 +97,9 @@ add_subdirectory(src/engine/plugins/ai)
 add_subdirectory(src/engine/plugins/renderer)
 add_subdirectory(src/engine/plugins/scene)
 
+# Examples
+add_subdirectory(src/engine/examples/plugin_example)
+
 # --- Source files ---
 file(GLOB_RECURSE HEADER_FILES "src/*.hpp")
 file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
@@ -143,6 +146,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     engine-ai
     engine-renderer
     engine-scene
+    engine-example-plugin
 )
 
 if (PLATFORM_DESKTOP)

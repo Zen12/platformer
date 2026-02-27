@@ -136,7 +136,7 @@ echo -e "${BLUE}Claude Code Setup & Launch${NC}"
 echo ""
 
 # Check if Python 3 is installed
-if ! command -v python3 &> /dev/null; then
+if ! command -v python &> /dev/null; then
     echo -e "${YELLOW}Warning: Python 3 is not installed. Please install Python 3.7+ to use MCP features.${NC}"
     exit 1
 fi
@@ -144,7 +144,7 @@ fi
 # Create virtual environment if it doesn't exist
 if [ ! -d "${PROJECT_ROOT}/venv" ]; then
     echo -e "${BLUE}Creating Python virtual environment...${NC}"
-    python3 -m venv "${PROJECT_ROOT}/venv"
+    python -m venv "${PROJECT_ROOT}/venv"
     echo -e "${GREEN}Virtual environment created${NC}"
 else
     echo -e "${GREEN}Virtual environment exists${NC}"

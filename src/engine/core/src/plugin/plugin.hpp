@@ -1,8 +1,4 @@
 #pragma once
 
-
-class Plugin {
-    public:
-
-
-};
+#include "plugin_registry.hpp"
+#include "plugin_registrar.hpp"

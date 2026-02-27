@@ -27,6 +27,16 @@
       "env": {
         "GIMP_PATH": "/opt/homebrew/bin/gimp"
       }
+    },
+    "figma": {
+      "type": "stdio",
+      "command": "${PROJECT_ROOT}/venv/bin/python",
+      "args": [
+        "${PROJECT_ROOT}/mcp_tools/server/figma_server.py"
+      ],
+      "env": {
+        "FIGMA_TOKEN": "<your-token-here>"
+      }
     }
   }
 }

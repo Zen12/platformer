@@ -1,0 +1,14 @@
+<rml>
+<head>
+    <style>
+        body {
+            font-family: Arial;
+        }
+    </style>
+</head>
+<body>
+    <button id="play">Main MENU</button>
+    <button id="exit">Exit</button>
+    <h1>The Game test</h1>
+</body>
+</rml>

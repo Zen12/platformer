@@ -2,6 +2,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <type_traits>
 #include <unordered_map>
 
 #include "component_serialization.hpp"
@@ -16,6 +17,38 @@ public:
     void Register(const std::string& typeName, DeserializerFn deserializer, EmplacerFn emplacer) {
         _deserializers[typeName] = std::move(deserializer);
         _emplacers[typeName] = std::move(emplacer);
+    }
+
+    template<typename TSerialization, typename F>
+    void Register(const std::string& typeName, F&& emplacer) {
+        static_assert(std::is_base_of_v<ComponentSerialization, TSerialization>);
+        Register(typeName,
+            [](const YAML::Node& n) -> std::unique_ptr<ComponentSerialization> {
+                auto s = n.as<TSerialization>();
+                return std::make_unique<TSerialization>(std::move(s));
+            },
+            [e = std::forward<F>(emplacer)](entt::registry& reg, entt::entity entity, const ComponentSerialization* ser) {
+                const auto* s = dynamic_cast<const TSerialization*>(ser);
+                if (!s) return;
+                e(reg, entity, *s);
+            }
+        );
+    }
+
+    template<typename TSerialization, typename TComponent, typename F>
+    void Register(const std::string& typeName, F&& converter) {
+        static_assert(std::is_base_of_v<ComponentSerialization, TSerialization>);
+        Register(typeName,
+            [](const YAML::Node& n) -> std::unique_ptr<ComponentSerialization> {
+                auto s = n.as<TSerialization>();
+                return std::make_unique<TSerialization>(std::move(s));
+            },
+            [c = std::forward<F>(converter)](entt::registry& reg, entt::entity entity, const ComponentSerialization* ser) {
+                const auto* s = dynamic_cast<const TSerialization*>(ser);
+                if (!s) return;
+                reg.emplace<TComponent>(entity, c(*s));
+            }
+        );
     }
 
     [[nodiscard]] std::unique_ptr<ComponentSerialization> Deserialize(const std::string& typeName, const YAML::Node& node) const {

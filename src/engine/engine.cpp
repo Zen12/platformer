@@ -11,12 +11,6 @@
 #include "animation/animation_asset_loader.hpp"
 #include "profiler.hpp"
 
-#include "register_core_actions.hpp"
-#include "register_audio_actions.hpp"
-#include "register_audio_components.hpp"
-#include "register_ai_components.hpp"
-#include "register_ai_systems.hpp"
-#include "esc/register_core_systems.hpp"
 #include "node/node_serialization_yaml.hpp"
 
 #define DEBUG_ENGINE_PROFILE 0
@@ -49,19 +43,9 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
     _audioManager = std::make_shared<AudioManager>(_assetManager);
     _sceneManager->SetAudioManager(_audioManager);
 
-    // Register actions and conditions
-    RegisterCoreActions(_actionRegistry);
-    RegisterCoreConditions(_conditionRegistry);
-    RegisterAudioActions(_actionRegistry);
-
-    // Register audio components
-    RegisterAudioComponents(_componentRegistry);
-
-    // Register AI components
-    RegisterAIComponents(_componentRegistry);
-
-    RegisterCoreSystems(_systemRegistry);
-    RegisterAISystems(_systemRegistry);
+    // Auto-register all plugins
+    PluginRegistries registries{_actionRegistry, _conditionRegistry, _componentRegistry, _systemRegistry};
+    PluginRegistry::Instance().RegisterAll(registries);
 
     // Build engine context with all managers
     _engineContext.Register<UIManager>("UIManager", _uiManager);

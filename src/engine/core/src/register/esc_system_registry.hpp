@@ -3,6 +3,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #include "esc/esc_core.hpp"
@@ -16,6 +17,17 @@ public:
     void Register(const std::string& typeName, BuilderFn builder, int priority) {
         _builders[typeName] = std::move(builder);
         _priorities[typeName] = priority;
+    }
+
+    template<typename TSystem, typename F>
+    void Register(const std::string& typeName, F&& factory, int priority) {
+        static_assert(std::is_base_of_v<ISystem, TSystem>);
+        Register(typeName,
+            [f = std::forward<F>(factory)](const EscSystemContext& ctx) -> std::unique_ptr<ISystem> {
+                return f(ctx);
+            },
+            priority
+        );
     }
 
     [[nodiscard]] std::unique_ptr<ISystem> Build(const std::string& typeName, const EscSystemContext& ctx) const {
