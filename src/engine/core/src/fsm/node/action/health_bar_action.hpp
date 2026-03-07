@@ -3,7 +3,7 @@
 #include "action.hpp"
 #include "ui_manager.hpp"
 #include "scene_manager.hpp"
-#include "esc/health/health_component.hpp"
+#include "plugins/core/src/health/health_component.hpp"
 #include <memory>
 #include <string>
 #include <iostream>

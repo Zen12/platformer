@@ -1,6 +1,6 @@
 #pragma once
 #include "action.hpp"
-#include "esc/animation/fsm_animation_component.hpp"
+#include "plugins/animation/src/component/fsm_animation_component.hpp"
 #include "guid.hpp"
 #include <memory>
 #include <string>

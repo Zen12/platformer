@@ -4,15 +4,15 @@
 #include "bt_executor.hpp"
 #include "bt_asset.hpp"
 #include "bt_asset_yaml.hpp"
-#include "esc/navmesh_agent/navmesh_agent_component.hpp"
-#include "esc/transform/transform_component.hpp"
-#include "esc/time/time_component.hpp"
-#include "esc/camera/camera_component.hpp"
+#include "plugins/core/src/navmesh_agent/navmesh_agent_component.hpp"
+#include "plugins/core/src/transform/transform_component.hpp"
+#include "plugins/core/src/time/time_component.hpp"
+#include "plugins/core/src/camera/camera_component.hpp"
 #include "asset_manager.hpp"
 #include "scene.hpp"
 #include "navigation_manager.hpp"
 #include "guid.hpp"
-#include "esc/combat_state/combat_state_component.hpp"
+#include "combat_state/combat_state_component.hpp"
 #include <unordered_map>
 
 #define BT_SYSTEM_DEBUG 0

@@ -2,7 +2,7 @@
 #include "node/action/action.hpp"
 #include "guid.hpp"
 #include "audio_manager.hpp"
-#include "esc/animation/fsm_animation_component.hpp"
+#include "plugins/animation/src/component/fsm_animation_component.hpp"
 #include <memory>
 #include <string>
 #include <chrono>

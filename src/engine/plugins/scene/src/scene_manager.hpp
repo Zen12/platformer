@@ -10,6 +10,7 @@
 #include "guid.hpp"
 
 #include "esc/esc.hpp"
+#include "render_repository.hpp"
 #include "audio_manager.hpp"
 
 #include <RmlUi/Core.h>
