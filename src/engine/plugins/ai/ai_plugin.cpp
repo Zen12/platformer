@@ -1,7 +1,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "core/src/plugin/plugin_registrar.hpp"
-#include "register_ai_components.hpp"
-#include "register_ai_systems.hpp"
+#include "src/register_ai_components.hpp"
+#include "src/register_ai_systems.hpp"
 
 struct AIPlugin {
     static void Register(PluginRegistries& registries) {

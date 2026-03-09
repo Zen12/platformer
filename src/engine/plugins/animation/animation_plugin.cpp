@@ -3,16 +3,16 @@
 #include "esc/esc_system_context.hpp"
 
 // Components
-#include "component/simple_animation_component.hpp"
-#include "component/simple_animation_component_serialization.hpp"
-#include "component/simple_animation_component_serialization_yaml.hpp"
-#include "component/fsm_animation_component.hpp"
-#include "component/fsm_animation_component_serialization.hpp"
-#include "component/fsm_animation_component_serialization_yaml.hpp"
+#include "src/component/simple_animation_component.hpp"
+#include "src/component/simple_animation_component_serialization.hpp"
+#include "src/component/simple_animation_component_serialization_yaml.hpp"
+#include "src/component/fsm_animation_component.hpp"
+#include "src/component/fsm_animation_component_serialization.hpp"
+#include "src/component/fsm_animation_component_serialization_yaml.hpp"
 
 // Systems
-#include "system/simple_animation_system.hpp"
-#include "system/fsm_animation_system.hpp"
+#include "src/system/simple_animation_system.hpp"
+#include "src/system/fsm_animation_system.hpp"
 
 #include "scene.hpp"
 #include "resource_cache.hpp"

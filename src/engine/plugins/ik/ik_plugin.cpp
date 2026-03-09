@@ -3,12 +3,12 @@
 #include "esc/esc_system_context.hpp"
 
 // Components
-#include "component/ik_aim_component.hpp"
-#include "component/ik_aim_component_serialization.hpp"
-#include "component/ik_aim_component_serialization_yaml.hpp"
+#include "src/component/ik_aim_component.hpp"
+#include "src/component/ik_aim_component_serialization.hpp"
+#include "src/component/ik_aim_component_serialization_yaml.hpp"
 
 // Systems
-#include "system/ik_aim_system.hpp"
+#include "src/system/ik_aim_system.hpp"
 
 #include "scene.hpp"
 

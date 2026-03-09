@@ -4,12 +4,31 @@
 
 Plugins register actions, conditions, components, and systems via `PluginRegistries`. Each registry offers **template overloads** that eliminate boilerplate. Always prefer the template APIs over the raw three-argument forms.
 
-Reference implementation: `src/engine/examples/plugin_example/src/example_plugin.cpp`
+Reference implementation: `src/engine/examples/plugin_example/example_plugin.cpp`
 
 ## Plugin Structure
 
+The plugin entry point (the file with the `Register` struct and `REGISTER_PLUGIN` macro) lives at the **plugin root**, not inside `src/`. Internal implementation files stay in `src/`.
+
+```
+my_plugin/
+├── my_plugin.cpp          ← Plugin entry point (Register struct + REGISTER_PLUGIN)
+├── CMakeLists.txt
+├── src/                   ← Internal implementation
+│   ├── component/
+│   ├── system/
+│   └── action/
+└── test/
+```
+
+Local includes from the entry point use the `src/` prefix. External includes (from linked libraries) do not:
+
 ```cpp
-#include "core/src/plugin/plugin_registrar.hpp"
+#include "core/src/plugin/plugin_registrar.hpp"  // external (engine-core)
+
+#include "src/component/my_component.hpp"                    // local
+#include "src/component/my_component_serialization.hpp"      // local
+#include "src/component/my_component_serialization_yaml.hpp" // local
 
 struct MyPlugin {
     static void Register(PluginRegistries& registries) {
@@ -321,5 +340,5 @@ endif()
 - `src/engine/core/src/register/esc_system_registry.hpp`
 - `src/engine/core/src/plugin/plugin_registrar.hpp`
 - `src/engine/core/src/plugin/plugin_registry.hpp`
-- `src/engine/examples/plugin_example/src/example_plugin.cpp`
+- `src/engine/examples/plugin_example/example_plugin.cpp`
 - `src/engine/examples/plugin_example/test/plugin_registration_test.cpp`

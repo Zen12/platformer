@@ -1,26 +1,26 @@
 #include "core/src/plugin/plugin_registrar.hpp"
 
 // Action
-#include "action/example_noop_action.hpp"
-#include "action/example_noop_action_serialization.hpp"
-#include "action/example_noop_action_serialization_yaml.hpp"
+#include "src/action/example_noop_action.hpp"
+#include "src/action/example_noop_action_serialization.hpp"
+#include "src/action/example_noop_action_serialization_yaml.hpp"
 
 // Condition
-#include "condition/example_condition.hpp"
-#include "condition/example_condition_serialization.hpp"
-#include "condition/example_condition_serialization_yaml.hpp"
+#include "src/condition/example_condition.hpp"
+#include "src/condition/example_condition_serialization.hpp"
+#include "src/condition/example_condition_serialization_yaml.hpp"
 
 // Component
-#include "component/example_component.hpp"
-#include "component/example_component_serialization.hpp"
-#include "component/example_component_serialization_yaml.hpp"
+#include "src/component/example_component.hpp"
+#include "src/component/example_component_serialization.hpp"
+#include "src/component/example_component_serialization_yaml.hpp"
 
 // System
-#include "system/example_system.hpp"
+#include "src/system/example_system.hpp"
 #include "esc/esc_system_context.hpp"
 
 // Asset Loader
-#include "asset_loader/example_asset_loader.hpp"
+#include "src/asset_loader/example_asset_loader.hpp"
 
 struct ExamplePlugin {
     static void Register(PluginRegistries& registries) {

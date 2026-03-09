@@ -1,8 +1,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "core/src/plugin/plugin_registrar.hpp"
-#include "register_audio_actions.hpp"
-#include "register_audio_components.hpp"
-#include "register_audio_systems.hpp"
+#include "src/register_audio_actions.hpp"
+#include "src/register_audio_components.hpp"
+#include "src/register_audio_systems.hpp"
 
 struct AudioPlugin {
     static void Register(PluginRegistries& registries) {

@@ -1,8 +1,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "core/src/plugin/plugin_registrar.hpp"
 #include "register_core_actions.hpp"
-#include "register_core_systems.hpp"
-#include "register_core_components.hpp"
+#include "src/register_core_systems.hpp"
+#include "src/register_core_components.hpp"
 
 struct CorePlugin {
     static void Register(PluginRegistries& registries) {
