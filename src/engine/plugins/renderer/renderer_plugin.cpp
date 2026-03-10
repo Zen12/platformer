@@ -4,9 +4,14 @@
 #include "src/action/register_renderer_actions.hpp"
 #include "src/register_renderer_systems.hpp"
 #include "src/register_renderer_components.hpp"
+#include "src/texture/texture_asset_loader.hpp"
+#include "src/mesh/mesh_asset_loader.hpp"
 
 struct RendererPlugin {
     static void Register(PluginRegistries& registries) {
+        AssetLoader<Texture>::Init();
+        AssetLoader<MeshData>::Init();
+
         RegisterCoreActions(registries.Actions);
         RegisterCoreConditions(registries.Conditions);
         RegisterRendererActions(registries.Actions);

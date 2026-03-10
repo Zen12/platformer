@@ -7,8 +7,6 @@
 #include "fsm_asset.hpp"
 #include "fsm_asset_yaml.hpp"
 #include "fsm_factory.hpp"
-#include "mesh/mesh_asset_loader.hpp"
-#include "animation/animation_asset_loader.hpp"
 #include "profiler.hpp"
 
 #include "node/node_serialization_yaml.hpp"
@@ -26,9 +24,6 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
     Profiler::Init();
 
     ENGINE_LOG << "Load project from: " << _projectPath << "\n";
-    AssetLoader<Texture>::Init();
-    AssetLoader<MeshData>::Init();
-    AssetLoader<AnimationData>::Init();
     const std::filesystem::path projectFilePath = _projectPath.append("project.yaml");
     _projectAsset = AssetLoader<ProjectAsset>::LoadFromPath(projectFilePath);
 

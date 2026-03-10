@@ -1,6 +1,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "core/src/plugin/plugin_registrar.hpp"
 #include "esc/esc_system_context.hpp"
+#include "src/animation/animation_asset_loader.hpp"
 
 // Actions
 #include "src/action/register_animation_actions.hpp"
@@ -22,6 +23,7 @@
 
 struct AnimationPlugin {
     static void Register(PluginRegistries& registries) {
+        AssetLoader<AnimationData>::Init();
 
         // -- FSM Actions --
         RegisterAnimationActions(registries.Actions);
