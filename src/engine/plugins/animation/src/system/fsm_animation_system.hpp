@@ -20,6 +20,7 @@
 #include <unordered_map>
 #include <entt/entt.hpp>
 
+class SceneManager;
 // Forward declarations to avoid circular dependency
 class FsmController;
 struct FsmAsset;

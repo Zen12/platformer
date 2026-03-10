@@ -160,29 +160,30 @@ void FsmAnimationSystem::OnTick() {
         }
 
         if (!anim.FsmGuid.IsEmpty() && !anim.Controller) {
-            if (auto assetManager = scene->GetAssetManager().lock()) {
-                const auto* actionRegistry = scene->GetActionRegistry();
-                const auto* conditionRegistry = scene->GetConditionRegistry();
-                const auto* engineContext = scene->GetEngineContext();
+            try {
+                auto fsmAsset = _resourceCache->GetFsmAsset(anim.FsmGuid);
 
-                if (actionRegistry && conditionRegistry && engineContext) {
-                    try {
-                        auto fsmAsset = assetManager->LoadAssetByGuid<FsmAsset>(anim.FsmGuid);
+                if (fsmAsset) {
+                    const auto* actionRegistry = scene->GetActionRegistry();
+                    const auto* conditionRegistry = scene->GetConditionRegistry();
+                    const auto* engineContext = scene->GetEngineContext();
+
+                    if (actionRegistry && conditionRegistry && engineContext) {
                         anim.SelfPtr = std::shared_ptr<FsmAnimationComponent>(&anim, [](FsmAnimationComponent*){});
 
                         EngineContext localContext = *engineContext;
                         localContext.Register<FsmAnimationComponent>("FsmAnimationComponent", anim.SelfPtr);
 
                         anim.Controller = FsmFactory::Create(
-                            fsmAsset,
+                            *fsmAsset,
                             *actionRegistry,
                             *conditionRegistry,
                             localContext
                         );
-                    } catch (const std::exception& e) {
-                        std::cerr << "Failed to load FSM: " << anim.FsmGuid.ToString() << " - " << e.what() << std::endl;
                     }
                 }
+            } catch (const std::exception& e) {
+                std::cerr << "Failed to load FSM: " << anim.FsmGuid.ToString() << " - " << e.what() << std::endl;
             }
         }
 
@@ -247,10 +248,9 @@ void FsmAnimationSystem::OnTick() {
         if (anim.CurrentAnimationGuid.IsEmpty()) continue;
 
         if (skinnedMesh.BoneNames.empty()) {
-            _resourceCache->GetMesh(skinnedMesh.MeshGuid);
-            skinnedMesh.BoneNames = _resourceCache->GetMeshBoneNames(skinnedMesh.MeshGuid);
-            skinnedMesh.BoneOffsets = _resourceCache->GetMeshBoneOffsets(skinnedMesh.MeshGuid);
-            skinnedMesh.BoneParents = _resourceCache->GetMeshBoneParents(skinnedMesh.MeshGuid);
+            skinnedMesh.BoneNames = _resourceCache->GetValue<std::vector<std::string>>(skinnedMesh.MeshGuid);
+            skinnedMesh.BoneOffsets = _resourceCache->GetValue<std::vector<glm::mat4>>(skinnedMesh.MeshGuid);
+            skinnedMesh.BoneParents = _resourceCache->GetValue<std::vector<int>>(skinnedMesh.MeshGuid);
         }
 
         std::unordered_map<std::string, int> boneNameToIndex;

@@ -93,11 +93,9 @@ public:
             if (!anim.Enabled || anim.AnimationGuid.IsEmpty()) continue;
 
             if (skinnedMesh.BoneNames.empty()) {
-                _resourceCache->GetMesh(skinnedMesh.MeshGuid);
-
-                skinnedMesh.BoneNames = _resourceCache->GetMeshBoneNames(skinnedMesh.MeshGuid);
-                skinnedMesh.BoneOffsets = _resourceCache->GetMeshBoneOffsets(skinnedMesh.MeshGuid);
-                skinnedMesh.BoneParents = _resourceCache->GetMeshBoneParents(skinnedMesh.MeshGuid);
+                skinnedMesh.BoneNames = _resourceCache->GetValue<std::vector<std::string>>(skinnedMesh.MeshGuid);
+                skinnedMesh.BoneOffsets = _resourceCache->GetValue<std::vector<glm::mat4>>(skinnedMesh.MeshGuid);
+                skinnedMesh.BoneParents = _resourceCache->GetValue<std::vector<int>>(skinnedMesh.MeshGuid);
                 if (!skinnedMesh.BoneNames.empty()) {
                     ANIM_SYS_LOG << "Loaded " << skinnedMesh.BoneNames.size() << " bones with hierarchy for mesh" << std::endl;
                 }

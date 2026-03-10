@@ -45,8 +45,7 @@ public:
                 const auto &model = transform.GetModel();
 
                 if (!mesh.MeshBounds.IsValid()) {
-                    _resourceCache->GetMesh(mesh.MeshGuid);
-                    mesh.MeshBounds = _resourceCache->GetMeshBounds(mesh.MeshGuid);
+                    mesh.MeshBounds = _resourceCache->GetValue<Bounds>(mesh.MeshGuid);
                 }
 
                 if (mesh.MeshBounds.IsValid()) {

@@ -16,53 +16,50 @@
 void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
     PROFILE_SCOPE("LoadScene");
 
-    if (const auto assetManager = _assetManager.lock()) {
-        _scene = std::make_shared<Scene> (_window,_assetManager, _inputSystem, _resourceCache);
-        _scene->SetAudioManager(_audioManager);
-        _scene->SetActionRegistry(_actionRegistry);
-        _scene->SetConditionRegistry(_conditionRegistry);
-        _scene->SetEngineContext(_engineContext);
+    _scene = std::make_shared<Scene> (_window, _inputSystem, _resourceCache);
+    _scene->SetActionRegistry(_actionRegistry);
+    _scene->SetConditionRegistry(_conditionRegistry);
+    _scene->SetEngineContext(_engineContext);
 
-        if (const auto navigationManager = _scene->GetNavigationManager()) {
-            if (sceneAsset.Navmesh.has_value()) {
-                const auto& navmesh = sceneAsset.Navmesh.value();
-                navigationManager->Initialize(navmesh.Width, navmesh.Height,
-                                            navmesh.CellSize, navmesh.Origin,
-                                            navmesh.WalkabilityGrid, navmesh.MaxAgents);
+    if (const auto navigationManager = _scene->GetNavigationManager()) {
+        if (sceneAsset.Navmesh.has_value()) {
+            const auto& navmesh = sceneAsset.Navmesh.value();
+            navigationManager->Initialize(navmesh.Width, navmesh.Height,
+                                        navmesh.CellSize, navmesh.Origin,
+                                        navmesh.WalkabilityGrid, navmesh.MaxAgents);
 
-                if (const auto gridNavmesh = navigationManager->GetNavmesh()) {
-                    auto navmeshMesh = NavmeshMeshGenerator::Generate(
-                        *gridNavmesh,
-                        navmesh.Origin.y,
-                        navmesh.ElevationHeight
-                    );
+            if (const auto gridNavmesh = navigationManager->GetNavmesh()) {
+                auto navmeshMesh = NavmeshMeshGenerator::Generate(
+                    *gridNavmesh,
+                    navmesh.Origin.y,
+                    navmesh.ElevationHeight
+                );
 
-                    // Create entity for combined navmesh mesh (ground + walls + ramps)
-                    if (navmeshMesh && navmesh.GroundMaterialGuid.has_value()) {
-                        const Guid meshGuid = Guid::Generate();
-                        _scene->RegisterMesh(meshGuid, navmeshMesh);
+                // Create entity for combined navmesh mesh (ground + walls + ramps)
+                if (navmeshMesh && navmesh.GroundMaterialGuid.has_value()) {
+                    const Guid meshGuid = Guid::Generate();
+                    _scene->RegisterMesh(meshGuid, navmeshMesh);
 
-                        if (const auto registry = _scene->GetEntityRegistry()) {
-                            const auto entity = registry->create();
-                            registry->emplace<TransformComponentV2>(entity);
-                            registry->emplace<MeshRendererComponent>(entity,
-                                meshGuid,
-                                navmesh.GroundMaterialGuid.value(),
-                                glm::vec4(0.3f, 0.6f, 0.3f, 1.0f));
-                        }
+                    if (const auto registry = _scene->GetEntityRegistry()) {
+                        const auto entity = registry->create();
+                        registry->emplace<TransformComponentV2>(entity);
+                        registry->emplace<MeshRendererComponent>(entity,
+                            meshGuid,
+                            navmesh.GroundMaterialGuid.value(),
+                            glm::vec4(0.3f, 0.6f, 0.3f, 1.0f));
                     }
                 }
-            } else {
-                navigationManager->Initialize(50, 50, 1.0f, glm::vec3(0.0f, 0.0f, 0.0f));
             }
+        } else {
+            navigationManager->Initialize(50, 50, 1.0f, glm::vec3(0.0f, 0.0f, 0.0f));
         }
-
-        if (sceneAsset.Skybox.has_value()) {
-            _scene->InitializeSkybox(sceneAsset.Skybox->MaterialGuid);
-        }
-
-        LoadEntities(sceneAsset.Entities);
     }
+
+    if (sceneAsset.Skybox.has_value()) {
+        _scene->InitializeSkybox(sceneAsset.Skybox->MaterialGuid);
+    }
+
+    LoadEntities(sceneAsset.Entities);
 }
 
 void SceneManager::LoadSceneByGuid(const Guid& sceneGuid) {

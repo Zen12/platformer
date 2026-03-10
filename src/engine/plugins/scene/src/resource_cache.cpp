@@ -1,4 +1,6 @@
 #include "resource_cache.hpp"
+#include "core/src/fsm/fsm_asset.hpp"
+#include "core/src/fsm/fsm_asset_yaml.hpp"
 #include <iostream>
 
 #define SHADER_LOG_ENABLED 0
@@ -21,7 +23,7 @@ std::shared_ptr<Shader> ResourceCache::GetShader(const Guid &vertexGuid, const G
     if (const auto assetManager = _assetManager.lock()) {
         Guid combinedGuid(vertexGuid.High() ^ fragmentGuid.High(), vertexGuid.Low() ^ fragmentGuid.Low());
 
-        if (auto cached = _shaders.Get(combinedGuid)) {
+        if (auto cached = Cache<Shader>().Get(combinedGuid)) {
             return cached;
         }
 
@@ -30,7 +32,7 @@ std::shared_ptr<Shader> ResourceCache::GetShader(const Guid &vertexGuid, const G
         const auto vertexSource = assetManager->LoadSourceByGuid<std::string>(vertexGuid);
         const auto fragmentSource = assetManager->LoadSourceByGuid<std::string>(fragmentGuid);
         const auto shader = std::make_shared<Shader>(vertexSource, fragmentSource);
-        _shaders.Store(combinedGuid, shader);
+        Cache<Shader>().Store(combinedGuid, shader);
         return shader;
     }
     return {};
@@ -38,7 +40,7 @@ std::shared_ptr<Shader> ResourceCache::GetShader(const Guid &vertexGuid, const G
 
 std::shared_ptr<Material> ResourceCache::GetMaterial(const Guid &guid) {
     if (const auto assetManager = _assetManager.lock()) {
-        if (auto cached = _materials.Get(guid)) {
+        if (auto cached = Cache<Material>().Get(guid)) {
             return cached;
         }
 
@@ -59,7 +61,7 @@ std::shared_ptr<Material> ResourceCache::GetMaterial(const Guid &guid) {
             material->AddSprite(sprite);
         }
 
-        _materials.Store(guid, material);
+        Cache<Material>().Store(guid, material);
         return material;
     }
 
@@ -68,13 +70,13 @@ std::shared_ptr<Material> ResourceCache::GetMaterial(const Guid &guid) {
 
 std::shared_ptr<Mesh> ResourceCache::GetMesh(const Guid &guid) {
     if (const auto assetManager = _assetManager.lock()) {
-        if (auto cached = _meshes.Get(guid)) {
+        if (auto cached = Cache<Mesh>().Get(guid)) {
             return cached;
         }
 
         if (guid == SPRITE_GUID) {
             const auto meshAsset = std::shared_ptr<Mesh>(Mesh::GenerateSpritePtr());
-            _meshes.Store(guid, meshAsset);
+            Cache<Mesh>().Store(guid, meshAsset);
             return meshAsset;
         }
 
@@ -83,14 +85,14 @@ std::shared_ptr<Mesh> ResourceCache::GetMesh(const Guid &guid) {
         if (meshData.HasSkeleton) {
             mesh = std::make_shared<Mesh>(meshData.Vertices, meshData.Indices, meshData.HasTexCoords,
                                           meshData.BoneWeights, meshData.BoneIndices);
-            _meshBoneNames.Store(guid, meshData.BoneNames);
-            _meshBoneOffsets.Store(guid, meshData.BoneOffsets);
-            _meshBoneParents.Store(guid, meshData.BoneParents);
+            VCache<std::vector<std::string>>().Store(guid, meshData.BoneNames);
+            VCache<std::vector<glm::mat4>>().Store(guid, meshData.BoneOffsets);
+            VCache<std::vector<int>>().Store(guid, meshData.BoneParents);
         } else {
             mesh = std::make_shared<Mesh>(meshData.Vertices, meshData.Indices, meshData.HasTexCoords);
         }
-        _meshBounds.Store(guid, meshData.MeshBounds);
-        _meshes.Store(guid, mesh);
+        VCache<Bounds>().Store(guid, meshData.MeshBounds);
+        Cache<Mesh>().Store(guid, mesh);
         return mesh;
     }
 
@@ -99,7 +101,7 @@ std::shared_ptr<Mesh> ResourceCache::GetMesh(const Guid &guid) {
 
 std::shared_ptr<Texture> ResourceCache::GetTexture(const Guid &guid) {
     if (const auto assetManager = _assetManager.lock()) {
-        return _textures.GetOrLoad(guid, [&]() {
+        return Cache<Texture>().GetOrLoad(guid, [&]() {
             return std::make_shared<Texture>(assetManager->LoadSourceByGuid<Texture>(guid));
         });
     }
@@ -110,7 +112,7 @@ std::shared_ptr<Font> ResourceCache::GetFont(const Guid &guid) {
     if (guid.IsEmpty())
         return {};
     if (const auto assetManager = _assetManager.lock()) {
-        return _fonts.GetOrLoad(guid, [&]() {
+        return Cache<Font>().GetOrLoad(guid, [&]() {
             auto fontFile = assetManager->LoadSourceByGuid<Font>(guid);
             return std::make_shared<Font>(std::move(fontFile));
         });
@@ -120,7 +122,7 @@ std::shared_ptr<Font> ResourceCache::GetFont(const Guid &guid) {
 
 std::shared_ptr<UiPage> ResourceCache::GetUiPage(const Guid &guid) {
     if (const auto assetManager = _assetManager.lock()) {
-        if (auto cached = _uiPages.Get(guid)) {
+        if (auto cached = Cache<UiPage>().Get(guid)) {
             return cached;
         }
 
@@ -132,7 +134,7 @@ std::shared_ptr<UiPage> ResourceCache::GetUiPage(const Guid &guid) {
         uiPage->FontPath = assetManager->GetPathFromGuid(uiPageAsset.FontGuid);
         uiPage->Css = assetManager->LoadSourceByGuid<std::string>(uiPageAsset.CssGuid);
 
-        _uiPages.Store(guid, uiPage);
+        Cache<UiPage>().Store(guid, uiPage);
         return uiPage;
     }
 
@@ -143,7 +145,7 @@ std::shared_ptr<AnimationData> ResourceCache::GetAnimation(const Guid &guid) {
     if (guid.IsEmpty())
         return {};
     if (const auto assetManager = _assetManager.lock()) {
-        return _animations.GetOrLoad(guid, [&]() {
+        return Cache<AnimationData>().GetOrLoad(guid, [&]() {
             auto animData = assetManager->LoadSourceByGuid<AnimationData>(guid);
             return std::make_shared<AnimationData>(std::move(animData));
         });
@@ -151,18 +153,13 @@ std::shared_ptr<AnimationData> ResourceCache::GetAnimation(const Guid &guid) {
     return {};
 }
 
-std::vector<std::string> ResourceCache::GetMeshBoneNames(const Guid &guid) const {
-    return _meshBoneNames.Get(guid);
-}
-
-std::vector<glm::mat4> ResourceCache::GetMeshBoneOffsets(const Guid &guid) const noexcept {
-    return _meshBoneOffsets.Get(guid);
-}
-
-std::vector<int> ResourceCache::GetMeshBoneParents(const Guid &guid) const noexcept {
-    return _meshBoneParents.Get(guid);
-}
-
-Bounds ResourceCache::GetMeshBounds(const Guid &guid) const noexcept {
-    return _meshBounds.Get(guid);
+std::shared_ptr<FsmAsset> ResourceCache::GetFsmAsset(const Guid &guid) {
+    if (guid.IsEmpty())
+        return {};
+    if (const auto assetManager = _assetManager.lock()) {
+        return Cache<FsmAsset>().GetOrLoad(guid, [&]() {
+            return std::make_shared<FsmAsset>(assetManager->LoadAssetByGuid<FsmAsset>(guid));
+        });
+    }
+    return {};
 }

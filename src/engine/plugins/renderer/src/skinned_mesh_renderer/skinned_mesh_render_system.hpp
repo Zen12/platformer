@@ -103,8 +103,7 @@ public:
 
                 // Lazy-load bounds from ResourceCache on first render
                 if (!skinnedMesh.MeshBounds.IsValid()) {
-                    _resourceCache->GetMesh(skinnedMesh.MeshGuid);  // Ensure mesh is loaded
-                    skinnedMesh.MeshBounds = _resourceCache->GetMeshBounds(skinnedMesh.MeshGuid);
+                    skinnedMesh.MeshBounds = _resourceCache->GetValue<Bounds>(skinnedMesh.MeshGuid);
                 }
 
                 // Transform bounds to world space and perform AABB frustum culling

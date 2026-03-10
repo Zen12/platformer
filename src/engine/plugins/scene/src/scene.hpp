@@ -20,9 +20,7 @@ private:
     std::shared_ptr<ResourceCache> _resourceCache;
 
     std::weak_ptr<Window> _window;
-    std::weak_ptr<AssetManager> _assetManager;
     std::weak_ptr<InputSystem> _inputSystem;
-    std::weak_ptr<AudioManager> _audioManager;
 
     const FsmActionRegistry* _actionRegistry = nullptr;
     const FsmConditionRegistry* _conditionRegistry = nullptr;
@@ -38,11 +36,10 @@ public:
 
     Scene(
         const std::weak_ptr<Window> &window,
-        const std::weak_ptr<AssetManager> &assetManager,
         const std::weak_ptr<InputSystem> &inputSystem,
         const std::shared_ptr<ResourceCache> &resourceCache)
         :  _resourceCache(resourceCache),
-           _window(window), _assetManager(assetManager),_inputSystem(inputSystem)
+           _window(window), _inputSystem(inputSystem)
 
     {
 
@@ -51,19 +48,9 @@ public:
     }
 
 
-    [[nodiscard]] std::weak_ptr<AssetManager> GetAssetManager() const noexcept;
-
     [[nodiscard]] std::weak_ptr<InputSystem> GetInputSystem() const noexcept;
 
     [[nodiscard]] std::weak_ptr<Window> GetWindow() const noexcept;
-
-    void SetAudioManager(const std::weak_ptr<AudioManager>& audioManager) noexcept {
-        _audioManager = audioManager;
-    }
-
-    [[nodiscard]] std::weak_ptr<AudioManager> GetAudioManager() const noexcept {
-        return _audioManager;
-    }
 
     void SetActionRegistry(const FsmActionRegistry* reg) noexcept { _actionRegistry = reg; }
     void SetConditionRegistry(const FsmConditionRegistry* reg) noexcept { _conditionRegistry = reg; }
@@ -98,50 +85,6 @@ public:
         return _resourceCache;
     }
 
-    [[nodiscard]] std::shared_ptr<Shader> GetShader(const Guid &vertexGuid, const Guid &fragmentGuid) {
-        return _resourceCache->GetShader(vertexGuid, fragmentGuid);
-    }
-
-    [[nodiscard]] std::shared_ptr<Material> GetMaterial(const Guid &guid) {
-        return _resourceCache->GetMaterial(guid);
-    }
-
-    std::shared_ptr<Mesh> GetMesh(const Guid &guid) {
-        return _resourceCache->GetMesh(guid);
-    }
-
-    [[nodiscard]] std::shared_ptr<Texture> GetTexture(const Guid &guid) {
-        return _resourceCache->GetTexture(guid);
-    }
-
-    [[nodiscard]] std::shared_ptr<Font> GetFont(const Guid &guid) {
-        return _resourceCache->GetFont(guid);
-    }
-
-    [[nodiscard]] std::shared_ptr<UiPage> GetUiPage(const Guid &guid) {
-        return _resourceCache->GetUiPage(guid);
-    }
-
-    [[nodiscard]] std::shared_ptr<AnimationData> GetAnimation(const Guid &guid) {
-        return _resourceCache->GetAnimation(guid);
-    }
-
-    [[nodiscard]] std::vector<std::string> GetMeshBoneNames(const Guid &guid) const {
-        return _resourceCache->GetMeshBoneNames(guid);
-    }
-
-    [[nodiscard]] std::vector<glm::mat4> GetMeshBoneOffsets(const Guid &guid) const noexcept {
-        return _resourceCache->GetMeshBoneOffsets(guid);
-    }
-
-    [[nodiscard]] std::vector<int> GetMeshBoneParents(const Guid &guid) const noexcept {
-        return _resourceCache->GetMeshBoneParents(guid);
-    }
-
-    [[nodiscard]] Bounds GetMeshBounds(const Guid &guid) const noexcept {
-        return _resourceCache->GetMeshBounds(guid);
-    }
-
     void RequestToLoadScene(const Guid &sceneGuid) noexcept {
         _requestToLoadScene = sceneGuid;
     }
@@ -151,6 +94,6 @@ public:
     }
 
     void RegisterMesh(const Guid &guid, std::shared_ptr<Mesh> mesh) noexcept {
-        _resourceCache->RegisterMesh(guid, std::move(mesh));
+        _resourceCache->Register<Mesh>(guid, std::move(mesh));
     }
 };

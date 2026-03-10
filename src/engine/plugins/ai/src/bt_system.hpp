@@ -121,7 +121,7 @@ private:
         auto scene = _scene.lock();
         if (!scene) return nullptr;
 
-        auto assetManager = scene->GetAssetManager().lock();
+        auto assetManager = scene->GetResourceCache()->GetAssetManager().lock();
         if (!assetManager) return nullptr;
 
         try {

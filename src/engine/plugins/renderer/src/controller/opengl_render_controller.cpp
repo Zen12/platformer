@@ -210,9 +210,6 @@ void OpenGLRenderController::RenderInstanced(const RenderId& renderId, const std
     }
 
     const auto meshPtr = _resourceCache->GetMesh(renderId.MeshGuid);
-    if (!meshPtr) {
-        return;
-    }
 
     meshPtr->Bind();
     batch->SetupInstanceAttributes();
@@ -359,9 +356,6 @@ void OpenGLRenderController::RenderShadowPass(const std::shared_ptr<RenderBuffer
         }
 
         const auto meshPtr = _resourceCache->GetMesh(renderId.MeshGuid);
-        if (!meshPtr) {
-            continue;
-        }
 
         meshPtr->Bind();
         batch->SetupInstanceAttributes();
