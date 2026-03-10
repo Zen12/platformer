@@ -1,8 +1,8 @@
 #pragma once
 #include "bt_node.hpp"
 #include "bt_component.hpp"
-#include "plugins/core/src/navmesh_agent/navmesh_agent_component.hpp"
-#include "plugins/core/src/transform/transform_component.hpp"
+#include "navmesh_agent/navmesh_agent_component.hpp"
+#include "transform/transform_component.hpp"
 #include "grid_navmesh.hpp"
 #include "type_list.hpp"
 #include <glm/glm.hpp>

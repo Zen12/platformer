@@ -12,6 +12,7 @@ target_sources(engine-scene PRIVATE ${SOURCES})
 
 target_include_directories(engine-scene PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../animation/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../..
 )
 

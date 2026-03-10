@@ -1,39 +1,36 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#include <doctest/doctest.h>
+#include <gtest/gtest.h>
 #include "profiler.hpp"
 #include <string>
 #include <regex>
 
-TEST_CASE("Profiler generates timestamped filename") {
+TEST(Profiler, GeneratesTimestampedFilename) {
     std::string filename = Profiler::GenerateTimestampedFilename();
 
-    CHECK_FALSE(filename.empty());
-    CHECK(filename.find("profile_") == 0);
-    CHECK(filename.find(".json") != std::string::npos);
+    EXPECT_FALSE(filename.empty());
+    EXPECT_EQ(filename.find("profile_"), 0);
+    EXPECT_NE(filename.find(".json"), std::string::npos);
 }
 
-TEST_CASE("Profiler filename format is correct") {
+TEST(Profiler, FilenameFormatIsCorrect) {
     std::string filename = Profiler::GenerateTimestampedFilename();
 
     // Format: profile_YYYYMMDD_HHMMSS_mmm.json
     std::regex pattern(R"(profile_\d{8}_\d{6}_\d{3}\.json)");
-    CHECK(std::regex_match(filename, pattern));
+    EXPECT_TRUE(std::regex_match(filename, pattern));
 }
 
-TEST_CASE("PROFILE_SCOPE macro compiles") {
-    // Just verify the macro compiles without errors
-    // In non-debug builds, it should be a no-op
+TEST(Profiler, ProfileScopeMacroCompiles) {
     {
         PROFILE_SCOPE("test_scope");
         int x = 1 + 1;
-        CHECK(x == 2);
+        EXPECT_EQ(x, 2);
     }
 }
 
-TEST_CASE("PROFILE_SCOPE_CAT macro compiles") {
+TEST(Profiler, ProfileScopeCatMacroCompiles) {
     {
         PROFILE_SCOPE_CAT("TestCategory", "test_scope");
         int x = 2 + 2;
-        CHECK(x == 4);
+        EXPECT_EQ(x, 4);
     }
 }

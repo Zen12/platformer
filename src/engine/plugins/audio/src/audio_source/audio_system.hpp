@@ -1,7 +1,7 @@
 #pragma once
 #include "audio_source_component.hpp"
 #include "../audio_listener/audio_listener_component.hpp"
-#include "plugins/core/src/transform/transform_component.hpp"
+#include "transform/transform_component.hpp"
 #include "esc/esc_core.hpp"
 #include "audio_manager.hpp"
 #include <memory>

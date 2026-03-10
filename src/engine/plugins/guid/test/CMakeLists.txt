@@ -6,7 +6,7 @@ add_executable(engine-guid-test
 
 target_link_libraries(engine-guid-test PRIVATE
     engine-guid
-    doctest::doctest
+    GTest::gtest_main
 )
 
 add_test(NAME engine-guid-test COMMAND engine-guid-test)

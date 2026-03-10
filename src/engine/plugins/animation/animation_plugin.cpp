@@ -2,6 +2,9 @@
 #include "core/src/plugin/plugin_registrar.hpp"
 #include "esc/esc_system_context.hpp"
 
+// Actions
+#include "src/action/register_animation_actions.hpp"
+
 // Components
 #include "src/component/simple_animation_component.hpp"
 #include "src/component/simple_animation_component_serialization.hpp"
@@ -19,6 +22,9 @@
 
 struct AnimationPlugin {
     static void Register(PluginRegistries& registries) {
+
+        // -- FSM Actions --
+        RegisterAnimationActions(registries.Actions);
 
         // -- ECS Components --
 

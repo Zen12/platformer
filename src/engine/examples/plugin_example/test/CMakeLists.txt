@@ -13,7 +13,7 @@ target_link_libraries(engine-plugin-registration-test PRIVATE
     engine-example-plugin
     engine-core
     EnTT::EnTT
-    doctest::doctest
+    GTest::gtest_main
 )
 
 add_test(NAME engine-plugin-registration-test COMMAND engine-plugin-registration-test)

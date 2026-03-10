@@ -5,10 +5,10 @@
 #include <fstream>
 #include <glm/vec4.hpp>
 #include "controller/ui_opengl_render_controller.hpp"
-#include "plugins/core/src/transform/transform_component.hpp"
-#include "plugins/core/src/transform/transform_component_serialization.hpp"
-#include "plugins/core/src/mesh_renderer/mesh_renderer_component.hpp"
-#include "plugins/core/src/mesh_renderer/mesh_renderer_component_serialization.hpp"
+#include "transform/transform_component.hpp"
+#include "transform/transform_component_serialization.hpp"
+#include "mesh_renderer/mesh_renderer_component.hpp"
+#include "mesh_renderer/mesh_renderer_component_serialization.hpp"
 #include "navmesh_mesh_generator.hpp"
 #include "profiler.hpp"
 

@@ -4,9 +4,9 @@
 #include "esc/esc_system_context.hpp"
 
 #include "bt_system.hpp"
-#include "plugins/core/src/time/time_component.hpp"
-#include "plugins/core/src/camera/camera_component.hpp"
-#include "plugins/core/src/transform/transform_component.hpp"
+#include "time/time_component.hpp"
+#include "camera/camera_component.hpp"
+#include "transform/transform_component.hpp"
 
 #include "scene.hpp"
 

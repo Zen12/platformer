@@ -17,11 +17,14 @@ target_include_directories(engine-navigation PUBLIC
 target_link_libraries(engine-navigation PUBLIC
     GLM::GLM
     RVO
+    EnTT::EnTT
+    engine-core
 )
 
 # Cross-module dependencies
 target_include_directories(engine-navigation PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../renderer/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../scene/src
 )
 
 target_compile_features(engine-navigation PUBLIC cxx_std_17)

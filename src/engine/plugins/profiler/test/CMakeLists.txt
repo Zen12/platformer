@@ -6,7 +6,7 @@ add_executable(engine-profiler-test
 
 target_link_libraries(engine-profiler-test PRIVATE
     engine-profiler
-    doctest::doctest
+    GTest::gtest_main
 )
 
 add_test(NAME engine-profiler-test COMMAND engine-profiler-test)

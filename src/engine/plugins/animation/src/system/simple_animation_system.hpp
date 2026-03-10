@@ -1,9 +1,9 @@
 #pragma once
 #include "esc/esc_core.hpp"
 #include "../component/simple_animation_component.hpp"
-#include "plugins/core/src/skinned_mesh_renderer/skinned_mesh_renderer_component.hpp"
-#include "plugins/core/src/transform/transform_component.hpp"
-#include "plugins/core/src/time/time_component.hpp"
+#include "skinned_mesh_renderer/skinned_mesh_renderer_component.hpp"
+#include "transform/transform_component.hpp"
+#include "time/time_component.hpp"
 #include "animation/animation_data.hpp"
 #include "resource_cache.hpp"
 #include "guid.hpp"

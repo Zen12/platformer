@@ -1,7 +1,7 @@
 #pragma once
 #include "bt_node.hpp"
 #include "bt_component.hpp"
-#include "plugins/core/src/navmesh_agent/navmesh_agent_component.hpp"
+#include "navmesh_agent/navmesh_agent_component.hpp"
 #include "type_list.hpp"
 
 struct AttackNode final : IBTNode {

@@ -31,37 +31,9 @@
 #include "node/action/log_action_serialization.hpp"
 #include "node/action/log_action_serialization_yaml.hpp"
 
-#include "node/action/animation_state_action.hpp"
-#include "node/action/animation_state_action_serialization.hpp"
-#include "node/action/animation_state_action_serialization_yaml.hpp"
-
-#include "node/action/animation_state_transition_action.hpp"
-#include "node/action/animation_state_transition_action_serialization.hpp"
-#include "node/action/animation_state_transition_action_serialization_yaml.hpp"
-
-#include "node/action/start_video_recording_action.hpp"
-#include "node/action/start_video_recording_action_serialization.hpp"
-#include "node/action/start_video_recording_action_serialization_yaml.hpp"
-
-#include "node/action/stop_video_recording_action.hpp"
-#include "node/action/stop_video_recording_action_serialization.hpp"
-#include "node/action/stop_video_recording_action_serialization_yaml.hpp"
-
 #include "node/action/fps_display_action.hpp"
 #include "node/action/fps_display_action_serialization.hpp"
 #include "node/action/fps_display_action_serialization_yaml.hpp"
-
-#include "node/action/health_display_action.hpp"
-#include "node/action/health_display_action_serialization.hpp"
-#include "node/action/health_display_action_serialization_yaml.hpp"
-
-#include "node/action/health_bar_action.hpp"
-#include "node/action/health_bar_action_serialization.hpp"
-#include "node/action/health_bar_action_serialization_yaml.hpp"
-
-#include "node/action/health_check_action.hpp"
-#include "node/action/health_check_action_serialization.hpp"
-#include "node/action/health_check_action_serialization_yaml.hpp"
 
 // Condition headers
 #include "condition/core_types/trigger_check_condition.hpp"
@@ -120,71 +92,12 @@ inline void RegisterCoreActions(FsmActionRegistry& registry) {
         }
     );
 
-    registry.Register<AnimationStateActionSerialization>("animation_state",
-        [](const AnimationStateActionSerialization& s, const EngineContext& ctx) {
-            return std::make_unique<AnimationStateAction>(
-                Guid::FromString(s.AnimationGuid),
-                s.OnCompleteTrigger,
-                s.Loop,
-                s.AnimationSpeed,
-                s.DisableVelocitySpeed,
-                s.DisableMovement,
-                s.DisableMovementDuration,
-                s.UseDirectionalBlending,
-                Guid::FromString(s.DirectionalWalkForwardGuid),
-                Guid::FromString(s.DirectionalWalkBackGuid),
-                Guid::FromString(s.DirectionalWalkLeftGuid),
-                Guid::FromString(s.DirectionalWalkRightGuid),
-                ctx.GetWeak<FsmAnimationComponent>("FsmAnimationComponent"));
-        }
-    );
-
-    registry.Register<AnimationStateTransitionActionSerialization>("animation_state_transition",
-        [](const AnimationStateTransitionActionSerialization& s, const EngineContext& ctx) {
-            return std::make_unique<AnimationStateTransitionAction>(
-                Guid::FromString(s.FromAnimationGuid),
-                Guid::FromString(s.ToAnimationGuid),
-                s.TransitionTime,
-                s.OnCompleteTrigger,
-                ctx.GetWeak<FsmAnimationComponent>("FsmAnimationComponent"));
-        }
-    );
-
-    registry.Register<StartVideoRecordingActionSerialization>("start_video_recording",
-        [](const StartVideoRecordingActionSerialization& s, const EngineContext& ctx) {
-            return std::make_unique<StartVideoRecordingAction>(s.OutputFile, s.Fps, ctx.Get<VideoRecorder>("VideoRecorder"));
-        }
-    );
-
-    registry.Register<StopVideoRecordingActionSerialization>("stop_video_recording",
-        []([[maybe_unused]] const StopVideoRecordingActionSerialization& s, const EngineContext& ctx) {
-            return std::make_unique<StopVideoRecordingAction>(ctx.Get<VideoRecorder>("VideoRecorder"));
-        }
-    );
-
     registry.Register<FpsDisplayActionSerialization>("fps_display",
         [](const FpsDisplayActionSerialization& s, const EngineContext& ctx) {
             return std::make_unique<FpsDisplayAction>(s.ElementId, ctx.Get<UIManager>("UIManager"), ctx.Get<SceneManager>("SceneManager"));
         }
     );
 
-    registry.Register<HealthDisplayActionSerialization>("health_display",
-        [](const HealthDisplayActionSerialization& s, const EngineContext& ctx) {
-            return std::make_unique<HealthDisplayAction>(s.ElementId, ctx.Get<UIManager>("UIManager"), ctx.Get<SceneManager>("SceneManager"));
-        }
-    );
-
-    registry.Register<HealthBarActionSerialization>("health_bar",
-        [](const HealthBarActionSerialization& s, const EngineContext& ctx) {
-            return std::make_unique<HealthBarAction>(s.ElementId, ctx.Get<UIManager>("UIManager"), ctx.Get<SceneManager>("SceneManager"));
-        }
-    );
-
-    registry.Register<HealthCheckActionSerialization>("health_check",
-        [](const HealthCheckActionSerialization& s, const EngineContext& ctx) {
-            return std::make_unique<HealthCheckAction>(s.TriggerName, ctx.Get<SceneManager>("SceneManager"), ctx.Get<TriggerBoard>("TriggerBoard"));
-        }
-    );
 }
 
 inline void RegisterCoreConditions(FsmConditionRegistry& registry) {

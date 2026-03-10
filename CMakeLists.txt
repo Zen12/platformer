@@ -77,7 +77,7 @@ endif()
 
 # Testing framework
 if(BUILD_TESTING)
-    find_package(Doctest REQUIRED)
+    find_package(GTest REQUIRED)
     enable_testing()
 endif()
 

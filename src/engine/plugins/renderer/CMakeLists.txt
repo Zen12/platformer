@@ -34,9 +34,11 @@ target_link_libraries(engine-renderer PUBLIC
 # Cross-module dependencies - added separately to handle circular dependencies
 target_include_directories(engine-renderer PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/../scene/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../animation/src  # transitive: scene/resource_cache.hpp includes animation/
     ${CMAKE_CURRENT_SOURCE_DIR}/../navigation/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../audio/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../ai/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../game/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../prefab/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../profiler/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../..

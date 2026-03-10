@@ -1,6 +1,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "fsm_animation_system.hpp"
-#include "plugins/core/src/navmesh_agent/navmesh_agent_component.hpp"
+#include "navmesh_agent/navmesh_agent_component.hpp"
 #include "fsm_factory.hpp"
 #include "fsm_asset.hpp"
 #include "fsm_asset_yaml.hpp"

@@ -195,48 +195,58 @@ Each registry type has a test case that verifies:
 ### Action Test Pattern
 
 ```cpp
-TEST_CASE("FsmActionRegistry Register<TSerialization> template") {
+class FsmActionRegistryTest : public ::testing::Test {
+protected:
     FsmActionRegistry actions;
 
-    actions.Register<MyActionSerialization>("my_action",
-        [](const MyActionSerialization& s, const EngineContext& ctx) {
-            return std::make_unique<MyAction>(s.Label);
-        }
-    );
-
-    CHECK(actions.HasType("my_action"));
-
-    SUBCASE("Deserialize from YAML") {
-        YAML::Node node;
-        node["label"] = "test";
-        auto ser = actions.Deserialize("my_action", node);
-        REQUIRE(ser != nullptr);
+    void SetUp() override {
+        actions.Register<MyActionSerialization>("my_action",
+            [](const MyActionSerialization& s, const EngineContext& ctx) {
+                return std::make_unique<MyAction>(s.Label);
+            }
+        );
     }
+};
 
-    SUBCASE("Build from serialization") {
-        YAML::Node node;
-        node["label"] = "test";
-        auto ser = actions.Deserialize("my_action", node);
-        EngineContext ctx;
-        auto action = actions.Build("my_action", ser.get(), ctx);
-        REQUIRE(action != nullptr);
-    }
+TEST_F(FsmActionRegistryTest, HasType) {
+    EXPECT_TRUE(actions.HasType("my_action"));
+}
+
+TEST_F(FsmActionRegistryTest, DeserializeFromYaml) {
+    YAML::Node node;
+    node["label"] = "test";
+    auto ser = actions.Deserialize("my_action", node);
+    ASSERT_NE(ser, nullptr);
+}
+
+TEST_F(FsmActionRegistryTest, BuildFromSerialization) {
+    YAML::Node node;
+    node["label"] = "test";
+    auto ser = actions.Deserialize("my_action", node);
+    EngineContext ctx;
+    auto action = actions.Build("my_action", ser.get(), ctx);
+    ASSERT_NE(action, nullptr);
 }
 ```
 
 ### Condition Test Pattern (verifies auto-copy of Type/Guid)
 
 ```cpp
-TEST_CASE("FsmConditionRegistry auto-copies Type and Guid") {
+class FsmConditionRegistryTest : public ::testing::Test {
+protected:
     FsmConditionRegistry conditions;
 
-    conditions.Register<MyConditionSerialization>("my_cond",
-        [](const MyConditionSerialization& s, const EngineContext& ctx) {
-            return std::make_unique<MyCondition>();
-            // Type/Guid NOT set here — registry does it automatically
-        }
-    );
+    void SetUp() override {
+        conditions.Register<MyConditionSerialization>("my_cond",
+            [](const MyConditionSerialization& s, const EngineContext& ctx) {
+                return std::make_unique<MyCondition>();
+                // Type/Guid NOT set here — registry does it automatically
+            }
+        );
+    }
+};
 
+TEST_F(FsmConditionRegistryTest, BuildAutoCopiesTypeAndGuid) {
     YAML::Node node;
     auto ser = conditions.Deserialize("my_cond", node);
     auto* typed = dynamic_cast<MyConditionSerialization*>(ser.get());
@@ -245,23 +255,28 @@ TEST_CASE("FsmConditionRegistry auto-copies Type and Guid") {
 
     EngineContext ctx;
     auto cond = conditions.Build("my_cond", ser.get(), ctx);
-    CHECK(cond->Type == "my_cond");
-    CHECK(cond->Guid == "test_guid");
+    EXPECT_EQ(cond->Type, "my_cond");
+    EXPECT_EQ(cond->Guid, "test_guid");
 }
 ```
 
 ### Component Test Pattern (converter API)
 
 ```cpp
-TEST_CASE("ComponentRegistry converter template") {
+class ComponentRegistryConverterTest : public ::testing::Test {
+protected:
     ComponentRegistry components;
 
-    components.Register<MyCompSerialization, MyComponent>("my_comp",
-        [](const MyCompSerialization& s) {
-            return MyComponent{s.Value};
-        }
-    );
+    void SetUp() override {
+        components.Register<MyCompSerialization, MyComponent>("my_comp",
+            [](const MyCompSerialization& s) {
+                return MyComponent{s.Value};
+            }
+        );
+    }
+};
 
+TEST_F(ComponentRegistryConverterTest, EmplaceCreatesComponent) {
     YAML::Node node;
     node["value"] = 42;
     auto ser = components.Deserialize("my_comp", node);
@@ -270,27 +285,34 @@ TEST_CASE("ComponentRegistry converter template") {
     auto entity = reg.create();
     components.Emplace("my_comp", reg, entity, ser.get());
 
-    CHECK(reg.all_of<MyComponent>(entity));
-    CHECK(reg.get<MyComponent>(entity).Value == 42);
+    EXPECT_TRUE(reg.all_of<MyComponent>(entity));
+    EXPECT_EQ(reg.get<MyComponent>(entity).Value, 42);
 }
 ```
 
 ### System Test Pattern
 
 ```cpp
-TEST_CASE("EscSystemRegistry Register<TSystem> template") {
+class EscSystemRegistryTest : public ::testing::Test {
+protected:
     EscSystemRegistry systems;
 
-    systems.Register<MySystem>("MySystem", [](const EscSystemContext& ctx) {
-        return std::make_unique<MySystem>(*ctx.Registry);
-    }, 500);
+    void SetUp() override {
+        systems.Register<MySystem>("MySystem", [](const EscSystemContext& ctx) {
+            return std::make_unique<MySystem>(*ctx.Registry);
+        }, 500);
+    }
+};
 
-    CHECK(systems.HasType("MySystem"));
+TEST_F(EscSystemRegistryTest, HasType) {
+    EXPECT_TRUE(systems.HasType("MySystem"));
+}
 
+TEST_F(EscSystemRegistryTest, BuildCreatesSystem) {
     auto registry = std::make_shared<entt::registry>();
     EscSystemContext ctx{.Registry = registry};
     auto system = systems.Build("MySystem", ctx);
-    REQUIRE(system != nullptr);
+    ASSERT_NE(system, nullptr);
 }
 ```
 
@@ -310,7 +332,7 @@ target_link_libraries(engine-my-plugin-test PRIVATE
     engine-my-plugin
     engine-core
     EnTT::EnTT
-    doctest::doctest
+    GTest::gtest_main
 )
 
 add_test(NAME engine-my-plugin-test COMMAND engine-my-plugin-test)

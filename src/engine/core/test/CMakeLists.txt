@@ -7,7 +7,7 @@ add_executable(engine-asset-test
 
 target_link_libraries(engine-asset-test PRIVATE
     engine-core
-    doctest::doctest
+    GTest::gtest_main
 )
 
 add_test(NAME engine-asset-test COMMAND engine-asset-test)
@@ -21,7 +21,7 @@ add_executable(engine-ai-test
 target_link_libraries(engine-ai-test PRIVATE
     engine-core
     engine-ai
-    doctest::doctest
+    GTest::gtest_main
 )
 
 add_test(NAME engine-ai-test COMMAND engine-ai-test)
