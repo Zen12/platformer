@@ -5,9 +5,10 @@
 
 #include "controller/ui_opengl_render_controller.hpp"
 #include "asset_manager.hpp"
-#include "resource_cache.hpp"
+#include "resource_factory.hpp"
 #include "guid.hpp"
 #include "guid_file_interface.hpp"
+#include "ui/ui_page.hpp"
 #include <RmlUi/Core.h>
 #include "RmlUi/Core/Core.h"
 #include "RmlUi/Core/ElementDocument.h"
@@ -37,7 +38,7 @@ struct ButtonListenerData {
 
 class UIManager final {
 private:
-    const std::shared_ptr<ResourceCache> _resourceCache{};
+    const std::shared_ptr<ResourceFactory> _resourceFactory{};
     const std::weak_ptr<Window> _window{};
     const std::weak_ptr<AssetManager> _assetManager{};
 
@@ -54,9 +55,9 @@ public:
 
     UIManager(
         const std::weak_ptr<AssetManager> &assetManager,
-        const std::shared_ptr<ResourceCache> &resourceCache,
+        const std::shared_ptr<ResourceFactory> &resourceFactory,
         const std::weak_ptr<Window> &window
-        ) : _resourceCache(resourceCache), _window(window) , _assetManager(assetManager),
+        ) : _resourceFactory(resourceFactory), _window(window) , _assetManager(assetManager),
             _render(std::make_unique<UiOpenGLRenderController>())
     {}
 
@@ -74,7 +75,7 @@ public:
             return;
 
         if (const auto window = _window.lock()) {
-            const auto uiPage = _resourceCache->GetUiPage(guid);
+            const auto uiPage = _resourceFactory->Get<UiPage>(guid);
             if (!uiPage) {
                 return;
             }

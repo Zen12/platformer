@@ -19,7 +19,7 @@
 #include "src/system/fsm_animation_system.hpp"
 
 #include "scene.hpp"
-#include "resource_cache.hpp"
+#include "resource_factory.hpp"
 
 struct AnimationPlugin {
     static void Register(PluginRegistries& registries) {
@@ -54,7 +54,7 @@ struct AnimationPlugin {
             const auto reg = ctx.Registry;
             return std::make_unique<SimpleAnimationSystem>(
                 reg->view<SimpleAnimationComponent, SkinnedMeshRendererComponent, TransformComponentV2>(),
-                reg->view<DeltaTimeComponent>(), ctx.ResourceCache);
+                reg->view<DeltaTimeComponent>(), ctx.ResourceFactory);
         }, 190);
 
         // FsmAnimationSystem: priority 200
@@ -64,7 +64,7 @@ struct AnimationPlugin {
             const auto reg = ctx.Registry;
             return std::make_unique<FsmAnimationSystem>(
                 reg->view<FsmAnimationComponent, SkinnedMeshRendererComponent, TransformComponentV2>(),
-                reg->view<DeltaTimeComponent>(), scenePtr, ctx.ResourceCache, *reg);
+                reg->view<DeltaTimeComponent>(), scenePtr, ctx.ResourceFactory, *reg);
         }, 200);
     }
 };

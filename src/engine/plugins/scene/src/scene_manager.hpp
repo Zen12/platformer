@@ -3,8 +3,6 @@
 #include "scene.hpp"
 #include "scene_asset.hpp"
 #include "prefab_asset.hpp"
-#include "material/shader.hpp"
-#include "material/material.hpp"
 #include "asset_manager.hpp"
 #include "input_system.hpp"
 #include "guid.hpp"
@@ -27,7 +25,7 @@ class SceneManager {
     std::weak_ptr<Window> _window;
     std::weak_ptr<InputSystem> _inputSystem;
     std::weak_ptr<AudioManager> _audioManager;
-    std::shared_ptr<ResourceCache> _resourceCache;
+    std::shared_ptr<ResourceFactory> _resourceFactory;
 
     std::shared_ptr<RenderBuffer> _renderBuffer{};
 
@@ -45,11 +43,11 @@ public:
         const std::weak_ptr<Window> &window,
         const std::weak_ptr<AssetManager> &assetManager,
         const std::weak_ptr<InputSystem> &inputSystem,
-        const std::shared_ptr<ResourceCache> &resourceCache) {
+        const std::shared_ptr<ResourceFactory> &resourceFactory) {
         _assetManager = assetManager;
         _window = window;
         _inputSystem = inputSystem;
-        _resourceCache = resourceCache;
+        _resourceFactory = resourceFactory;
         _renderBuffer = std::make_shared<RenderBuffer>();
     }
 
@@ -83,10 +81,6 @@ public:
 
     void LoadRequestedScene();
 
-    [[nodiscard]] std::shared_ptr<Material> GetMaterial(const Guid& guid) const;
-
-    [[nodiscard]] std::shared_ptr<UiPage> GetUiPage(const Guid& guid) const;
-
     [[nodiscard]] std::shared_ptr<RenderBuffer> GetRenderBuffer() const {
         return _renderBuffer;
     }
@@ -95,27 +89,13 @@ public:
         _renderBuffer->Clear();
     }
 
-    [[nodiscard]] std::shared_ptr<Mesh> GetMesh(const Guid& guid) const {
-        return _resourceCache->GetMesh(guid);
-    }
-
-    [[nodiscard]] std::shared_ptr<Shader> GetShader(const Guid &vertexGuid, const Guid &fragmentGuid) const;
-
     [[nodiscard]] std::shared_ptr<Scene> GetScene() const {
         return _scene;
     }
 
-    [[nodiscard]] std::shared_ptr<ResourceCache> GetResourceCache() const {
-        return _resourceCache;
+    [[nodiscard]] std::shared_ptr<ResourceFactory> GetResourceFactory() const {
+        return _resourceFactory;
     }
-
-private:
-
-
-    [[nodiscard]] std::shared_ptr<Texture> GetTexture(const Guid& guid) const;
-
-    [[nodiscard]] std::shared_ptr<Font> GetFont(const Guid& guid) const;
-
 
 };
 

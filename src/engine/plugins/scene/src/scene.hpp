@@ -3,8 +3,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "resource_cache.hpp"
+#include "resource_factory.hpp"
 #include "input_system.hpp"
+#include "mesh/mesh.hpp"
 #include "entt/entity/registry.hpp"
 #include "navigation_manager.hpp"
 #include "skybox/skybox_renderer.hpp"
@@ -17,7 +18,7 @@ class EngineContext;
 
 class Scene {
 private:
-    std::shared_ptr<ResourceCache> _resourceCache;
+    std::shared_ptr<ResourceFactory> _resourceFactory;
 
     std::weak_ptr<Window> _window;
     std::weak_ptr<InputSystem> _inputSystem;
@@ -37,8 +38,8 @@ public:
     Scene(
         const std::weak_ptr<Window> &window,
         const std::weak_ptr<InputSystem> &inputSystem,
-        const std::shared_ptr<ResourceCache> &resourceCache)
-        :  _resourceCache(resourceCache),
+        const std::shared_ptr<ResourceFactory> &resourceFactory)
+        :  _resourceFactory(resourceFactory),
            _window(window), _inputSystem(inputSystem)
 
     {
@@ -81,8 +82,8 @@ public:
         _skyboxRenderer->Initialize(materialGuid);
     }
 
-    [[nodiscard]] std::shared_ptr<ResourceCache> GetResourceCache() const noexcept {
-        return _resourceCache;
+    [[nodiscard]] std::shared_ptr<ResourceFactory> GetResourceFactory() const noexcept {
+        return _resourceFactory;
     }
 
     void RequestToLoadScene(const Guid &sceneGuid) noexcept {
@@ -94,6 +95,6 @@ public:
     }
 
     void RegisterMesh(const Guid &guid, std::shared_ptr<Mesh> mesh) noexcept {
-        _resourceCache->Register<Mesh>(guid, std::move(mesh));
+        _resourceFactory->Register<Mesh>(guid, std::move(mesh));
     }
 };

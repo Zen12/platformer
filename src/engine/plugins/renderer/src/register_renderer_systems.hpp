@@ -3,7 +3,7 @@
 #include "esc/esc_system_context.hpp"
 
 #include "scene.hpp"
-#include "resource_cache.hpp"
+#include "resource_factory.hpp"
 #include "buffer/render_buffer_component.hpp"
 #include "window/window_system.hpp"
 #include "time/time_component.hpp"
@@ -74,7 +74,7 @@ inline void RegisterRendererSystems(EscSystemRegistry& registry) {
         const auto reg = ctx.Registry;
         return std::make_unique<MeshRenderSystem>(
             reg->view<MeshRendererComponent, TransformComponentV2>(),
-            reg->view<CameraComponentV2>(), reg->view<RenderBufferComponent>(), ctx.ResourceCache);
+            reg->view<CameraComponentV2>(), reg->view<RenderBufferComponent>(), ctx.ResourceFactory);
     }, 180);
 
     // SkinnedMeshRenderSystem: priority 220
@@ -82,7 +82,7 @@ inline void RegisterRendererSystems(EscSystemRegistry& registry) {
         const auto reg = ctx.Registry;
         return std::make_unique<SkinnedMeshRenderSystem>(
             reg->view<SkinnedMeshRendererComponent, TransformComponentV2>(),
-            reg->view<CameraComponentV2>(), reg->view<RenderBufferComponent>(), ctx.ResourceCache);
+            reg->view<CameraComponentV2>(), reg->view<RenderBufferComponent>(), ctx.ResourceFactory);
     }, 220);
 
     // ParticleSystem: priority 290

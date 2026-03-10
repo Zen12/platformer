@@ -1,9 +1,11 @@
 #include "opengl_render_controller.hpp"
 #include "scene_manager.hpp"
-#include "resource_cache.hpp"
+#include "resource_factory.hpp"
 #include "guid.hpp"
 #include "profiler.hpp"
 #include "../material/shader.hpp"
+#include "../material/material.hpp"
+#include "../mesh/mesh.hpp"
 #include <glm/gtc/type_ptr.hpp>
 
 namespace {
@@ -132,7 +134,7 @@ void OpenGLRenderController::RenderPostProcess() noexcept {
         InitScreenQuad();
     }
 
-    const auto mat = _resourceCache->GetMaterial(POST_PROCESS_MATERIAL_GUID);
+    const auto mat = _resourceFactory->Get<Material>(POST_PROCESS_MATERIAL_GUID);
     if (!mat) {
         return;
     }
@@ -160,7 +162,7 @@ void OpenGLRenderController::RenderSkybox(const glm::mat4& view, const glm::mat4
         InitSkybox();
     }
 
-    const auto mat = _resourceCache->GetMaterial(materialGuid);
+    const auto mat = _resourceFactory->Get<Material>(materialGuid);
     if (!mat) {
         return;
     }
@@ -180,7 +182,7 @@ void OpenGLRenderController::RenderSkybox(const glm::mat4& view, const glm::mat4
 void OpenGLRenderController::RenderInstanced(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept {
     if (instances.empty()) return;
 
-    const auto mat = _resourceCache->GetMaterial(renderId.MaterialGuid);
+    const auto mat = _resourceFactory->Get<Material>(renderId.MaterialGuid);
     if (!mat) {
         return;
     }
@@ -209,7 +211,7 @@ void OpenGLRenderController::RenderInstanced(const RenderId& renderId, const std
         return;
     }
 
-    const auto meshPtr = _resourceCache->GetMesh(renderId.MeshGuid);
+    const auto meshPtr = _resourceFactory->Get<Mesh>(renderId.MeshGuid);
 
     meshPtr->Bind();
     batch->SetupInstanceAttributes();
@@ -253,7 +255,7 @@ void OpenGLRenderController::RenderInstanced(const RenderId& renderId, const std
 }
 
 void OpenGLRenderController::RenderLines(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept {
-    const auto mat = _resourceCache->GetMaterial(renderId.MaterialGuid);
+    const auto mat = _resourceFactory->Get<Material>(renderId.MaterialGuid);
     if (!mat) {
         return;
     }
@@ -308,8 +310,8 @@ void OpenGLRenderController::RenderShadowPass(const std::shared_ptr<RenderBuffer
     _lightView = lightData.View;
     _lightProjection = lightData.Projection;
 
-    const auto depthMat = _resourceCache->GetMaterial(DEPTH_MATERIAL_GUID);
-    const auto skinnedDepthMat = _resourceCache->GetMaterial(SKINNED_DEPTH_MATERIAL_GUID);
+    const auto depthMat = _resourceFactory->Get<Material>(DEPTH_MATERIAL_GUID);
+    const auto skinnedDepthMat = _resourceFactory->Get<Material>(SKINNED_DEPTH_MATERIAL_GUID);
     if (!depthMat) {
         return;
     }
@@ -325,7 +327,7 @@ void OpenGLRenderController::RenderShadowPass(const std::shared_ptr<RenderBuffer
         }
 
         // Skip shadow casting for transparent/additive materials (particles, etc.)
-        if (const auto mat = _resourceCache->GetMaterial(renderId.MaterialGuid)) {
+        if (const auto mat = _resourceFactory->Get<Material>(renderId.MaterialGuid)) {
             const auto blendMode = mat->GetBlendMode();
             if (blendMode == BlendMode::ColorAdditive || blendMode == BlendMode::AlphaAdditive || blendMode == BlendMode::StandardAlpha) {
                 continue;
@@ -355,7 +357,7 @@ void OpenGLRenderController::RenderShadowPass(const std::shared_ptr<RenderBuffer
             continue;
         }
 
-        const auto meshPtr = _resourceCache->GetMesh(renderId.MeshGuid);
+        const auto meshPtr = _resourceFactory->Get<Mesh>(renderId.MeshGuid);
 
         meshPtr->Bind();
         batch->SetupInstanceAttributes();

@@ -3,12 +3,12 @@
 #include "entt/entt.hpp"
 
 class Scene;
-class ResourceCache;
+class ResourceFactory;
 class AudioManager;
 
 struct EscSystemContext {
     std::shared_ptr<entt::registry> Registry;
     std::weak_ptr<Scene> Scene;
-    std::shared_ptr<ResourceCache> ResourceCache;
+    std::shared_ptr<ResourceFactory> ResourceFactory;
     std::weak_ptr<AudioManager> AudioManager;
 };

@@ -5,7 +5,7 @@
 #include "buffer/render_buffer.hpp"
 #include "buffer/render_buffer_component.hpp"
 #include "frustum.hpp"
-#include "resource_cache.hpp"
+#include "resource_factory.hpp"
 #include "camera/camera_component.hpp"
 #include "transform/transform_component.hpp"
 #include <algorithm>
@@ -53,15 +53,15 @@ private:
 
     const TypeCamera _cameraView;
     const TypeRenderBuffer _renderBufferView;
-    const std::shared_ptr<ResourceCache> _resourceCache;
+    const std::shared_ptr<ResourceFactory> _resourceFactory;
 
 public:
     explicit SkinnedMeshRenderSystem(
         const TypeView &view,
         const TypeCamera &camera,
         const TypeRenderBuffer &renderBufferView,
-        const std::shared_ptr<ResourceCache> &resourceCache)
-        : ISystemView(view) , _cameraView(camera), _renderBufferView(renderBufferView), _resourceCache(resourceCache) {
+        const std::shared_ptr<ResourceFactory> &resourceCache)
+        : ISystemView(view) , _cameraView(camera), _renderBufferView(renderBufferView), _resourceFactory(resourceCache) {
     }
 
     void OnTick() override {
@@ -101,9 +101,9 @@ public:
 
                 const auto &model = transform.GetModel();
 
-                // Lazy-load bounds from ResourceCache on first render
+                // Lazy-load bounds from ResourceFactory on first render
                 if (!skinnedMesh.MeshBounds.IsValid()) {
-                    skinnedMesh.MeshBounds = _resourceCache->GetValue<Bounds>(skinnedMesh.MeshGuid);
+                    skinnedMesh.MeshBounds = _resourceFactory->GetValue<Bounds>(skinnedMesh.MeshGuid);
                 }
 
                 // Transform bounds to world space and perform AABB frustum culling

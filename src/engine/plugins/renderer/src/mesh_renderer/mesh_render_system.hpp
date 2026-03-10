@@ -5,7 +5,7 @@
 #include "buffer/render_buffer.hpp"
 #include "buffer/render_buffer_component.hpp"
 #include "frustum.hpp"
-#include "resource_cache.hpp"
+#include "resource_factory.hpp"
 #include "camera/camera_component.hpp"
 #include "transform/transform_component.hpp"
 
@@ -19,15 +19,15 @@ private:
 
     const TypeCamera _cameraView;
     const TypeRenderBuffer _renderBufferView;
-    const std::shared_ptr<ResourceCache> _resourceCache;
+    const std::shared_ptr<ResourceFactory> _resourceFactory;
 
 public:
     explicit MeshRenderSystem(
         const TypeView &view,
         const TypeCamera &camera,
         const TypeRenderBuffer &renderBufferView,
-        const std::shared_ptr<ResourceCache> &resourceCache)
-        : ISystemView(view) , _cameraView(camera), _renderBufferView(renderBufferView), _resourceCache(resourceCache) {
+        const std::shared_ptr<ResourceFactory> &resourceCache)
+        : ISystemView(view) , _cameraView(camera), _renderBufferView(renderBufferView), _resourceFactory(resourceCache) {
     }
 
     void OnTick() override {
@@ -45,7 +45,7 @@ public:
                 const auto &model = transform.GetModel();
 
                 if (!mesh.MeshBounds.IsValid()) {
-                    mesh.MeshBounds = _resourceCache->GetValue<Bounds>(mesh.MeshGuid);
+                    mesh.MeshBounds = _resourceFactory->GetValue<Bounds>(mesh.MeshGuid);
                 }
 
                 if (mesh.MeshBounds.IsValid()) {

@@ -16,7 +16,7 @@
 void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
     PROFILE_SCOPE("LoadScene");
 
-    _scene = std::make_shared<Scene> (_window, _inputSystem, _resourceCache);
+    _scene = std::make_shared<Scene> (_window, _inputSystem, _resourceFactory);
     _scene->SetActionRegistry(_actionRegistry);
     _scene->SetConditionRegistry(_conditionRegistry);
     _scene->SetEngineContext(_engineContext);
@@ -75,7 +75,7 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
 
     _escSystem->LoadEntities(serialization);
 
-    _escSystem->InitSystems(_renderBuffer, _resourceCache, _audioManager, _systemRegistry);
+    _escSystem->InitSystems(_renderBuffer, _resourceFactory, _audioManager, _systemRegistry);
 }
 
 void SceneManager::UnloadScene() {
@@ -101,14 +101,6 @@ void SceneManager::Update() {
     // here we should do rendering
 }
 
-std::shared_ptr<Shader> SceneManager::GetShader(const Guid &vertexGuid, const Guid &fragmentGuid) const {
-    return _resourceCache->GetShader(vertexGuid, fragmentGuid);
-}
-
-std::shared_ptr<Material> SceneManager::GetMaterial(const Guid &guid) const {
-    return _resourceCache->GetMaterial(guid);
-}
-
 bool SceneManager::IsRequestToLoadScene() const {
     if (_scene) {
         return !_scene->GetLoadSceneRequestGuid().IsEmpty();
@@ -125,15 +117,4 @@ void SceneManager::LoadRequestedScene() {
     }
 }
 
-std::shared_ptr<Texture> SceneManager::GetTexture(const Guid &guid) const {
-    return _resourceCache->GetTexture(guid);
-}
-
-std::shared_ptr<Font> SceneManager::GetFont(const Guid &guid) const {
-    return _resourceCache->GetFont(guid);
-}
-
-std::shared_ptr<UiPage> SceneManager::GetUiPage(const Guid &guid) const {
-    return _resourceCache->GetUiPage(guid);
-}
 

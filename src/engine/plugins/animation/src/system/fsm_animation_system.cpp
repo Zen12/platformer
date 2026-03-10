@@ -161,7 +161,7 @@ void FsmAnimationSystem::OnTick() {
 
         if (!anim.FsmGuid.IsEmpty() && !anim.Controller) {
             try {
-                auto fsmAsset = _resourceCache->GetFsmAsset(anim.FsmGuid);
+                auto fsmAsset = _resourceFactory->Get<FsmAsset>(anim.FsmGuid);
 
                 if (fsmAsset) {
                     const auto* actionRegistry = scene->GetActionRegistry();
@@ -248,9 +248,9 @@ void FsmAnimationSystem::OnTick() {
         if (anim.CurrentAnimationGuid.IsEmpty()) continue;
 
         if (skinnedMesh.BoneNames.empty()) {
-            skinnedMesh.BoneNames = _resourceCache->GetValue<std::vector<std::string>>(skinnedMesh.MeshGuid);
-            skinnedMesh.BoneOffsets = _resourceCache->GetValue<std::vector<glm::mat4>>(skinnedMesh.MeshGuid);
-            skinnedMesh.BoneParents = _resourceCache->GetValue<std::vector<int>>(skinnedMesh.MeshGuid);
+            skinnedMesh.BoneNames = _resourceFactory->GetValue<std::vector<std::string>>(skinnedMesh.MeshGuid);
+            skinnedMesh.BoneOffsets = _resourceFactory->GetValue<std::vector<glm::mat4>>(skinnedMesh.MeshGuid);
+            skinnedMesh.BoneParents = _resourceFactory->GetValue<std::vector<int>>(skinnedMesh.MeshGuid);
         }
 
         std::unordered_map<std::string, int> boneNameToIndex;
@@ -265,7 +265,7 @@ void FsmAnimationSystem::OnTick() {
         auto loadAnimation = [&](const Guid& guid) -> std::shared_ptr<AnimationData> {
             if (guid.IsEmpty()) return nullptr;
             if (_loadedAnimations.find(guid) == _loadedAnimations.end()) {
-                auto data = _resourceCache->GetAnimation(guid);
+                auto data = _resourceFactory->Get<AnimationData>(guid);
                 if (data) _loadedAnimations[guid] = data;
             }
             return _loadedAnimations[guid];

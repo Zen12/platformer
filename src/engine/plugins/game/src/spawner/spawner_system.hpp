@@ -109,7 +109,7 @@ public:
     void OnTick() override {
         if (const auto scenePtr = _scene.lock()) {
             const auto registry = scenePtr->GetEntityRegistry();
-            const auto assetManagerWeak = scenePtr->GetResourceCache()->GetAssetManager();
+            const auto assetManagerWeak = scenePtr->GetResourceFactory()->GetAssetManager();
 
             if (!registry) return;
 

@@ -1,4 +1,17 @@
-#include "resource_cache.hpp"
+#include "resource_factory.hpp"
+#include "material/shader.hpp"
+#include "material/material.hpp"
+#include "mesh/mesh.hpp"
+#include "texture/texture_asset_loader.hpp"
+#include "mesh/mesh_asset_loader.hpp"
+#include "font_loader.hpp"
+#include "ui/ui_page.hpp"
+#include "material/material_asset.hpp"
+#include "material/material_asset_yaml.hpp"
+#include "ui/ui_page_asset.hpp"
+#include "ui/ui_page_asset_yaml.hpp"
+#include "animation/animation_data.hpp"
+#include "animation/animation_asset_loader.hpp"
 #include "core/src/fsm/fsm_asset.hpp"
 #include "core/src/fsm/fsm_asset_yaml.hpp"
 #include <iostream>
@@ -19,11 +32,13 @@
 
 static const Guid SPRITE_GUID = Guid(0, 2);
 
-std::shared_ptr<Shader> ResourceCache::GetShader(const Guid &vertexGuid, const Guid &fragmentGuid) {
+template <>
+std::shared_ptr<Shader> ResourceFactory::Get<Shader>(const std::tuple<Guid, Guid>& key) {
     if (const auto assetManager = _assetManager.lock()) {
+        const auto& [vertexGuid, fragmentGuid] = key;
         Guid combinedGuid(vertexGuid.High() ^ fragmentGuid.High(), vertexGuid.Low() ^ fragmentGuid.Low());
 
-        if (auto cached = Cache<Shader>().Get(combinedGuid)) {
+        if (auto cached = _cache->Get<Shader>(combinedGuid)) {
             return cached;
         }
 
@@ -32,24 +47,25 @@ std::shared_ptr<Shader> ResourceCache::GetShader(const Guid &vertexGuid, const G
         const auto vertexSource = assetManager->LoadSourceByGuid<std::string>(vertexGuid);
         const auto fragmentSource = assetManager->LoadSourceByGuid<std::string>(fragmentGuid);
         const auto shader = std::make_shared<Shader>(vertexSource, fragmentSource);
-        Cache<Shader>().Store(combinedGuid, shader);
+        _cache->Register(combinedGuid, shader);
         return shader;
     }
     return {};
 }
 
-std::shared_ptr<Material> ResourceCache::GetMaterial(const Guid &guid) {
+template <>
+std::shared_ptr<Material> ResourceFactory::Get<Material>(const Guid& guid) {
     if (const auto assetManager = _assetManager.lock()) {
-        if (auto cached = Cache<Material>().Get(guid)) {
+        if (auto cached = _cache->Get<Material>(guid)) {
             return cached;
         }
 
         MATERIAL_LOG << "Loading material: " << assetManager->GetPathFromGuid(guid) << std::endl;
         const auto materialAsset = assetManager->LoadAssetByGuid<MaterialAsset>(guid);
-        const auto shader = GetShader(materialAsset.VertexShaderGuid, materialAsset.FragmentShaderGuid);
+        const auto shader = Get<Shader>({materialAsset.VertexShaderGuid, materialAsset.FragmentShaderGuid});
         const auto material = std::make_shared<Material>(shader);
 
-        const auto font = GetFont(materialAsset.Font);
+        const auto font = Get<Font>(materialAsset.Font);
         material->SetFont(font);
         material->SetBlendMode(static_cast<BlendMode>(materialAsset.BlendMode));
         material->SetCulling(materialAsset.IsCulling);
@@ -57,26 +73,27 @@ std::shared_ptr<Material> ResourceCache::GetMaterial(const Guid &guid) {
         material->SetDepthWrite(materialAsset.IsDepthWrite);
 
         if (!materialAsset.Image.IsEmpty()) {
-            const auto sprite = GetTexture(materialAsset.Image);
+            const auto sprite = Get<Texture>(materialAsset.Image);
             material->AddSprite(sprite);
         }
 
-        Cache<Material>().Store(guid, material);
+        _cache->Register(guid, material);
         return material;
     }
 
     return {};
 }
 
-std::shared_ptr<Mesh> ResourceCache::GetMesh(const Guid &guid) {
+template <>
+std::shared_ptr<Mesh> ResourceFactory::Get<Mesh>(const Guid& guid) {
     if (const auto assetManager = _assetManager.lock()) {
-        if (auto cached = Cache<Mesh>().Get(guid)) {
+        if (auto cached = _cache->Get<Mesh>(guid)) {
             return cached;
         }
 
         if (guid == SPRITE_GUID) {
             const auto meshAsset = std::shared_ptr<Mesh>(Mesh::GenerateSpritePtr());
-            Cache<Mesh>().Store(guid, meshAsset);
+            _cache->Register(guid, meshAsset);
             return meshAsset;
         }
 
@@ -85,34 +102,36 @@ std::shared_ptr<Mesh> ResourceCache::GetMesh(const Guid &guid) {
         if (meshData.HasSkeleton) {
             mesh = std::make_shared<Mesh>(meshData.Vertices, meshData.Indices, meshData.HasTexCoords,
                                           meshData.BoneWeights, meshData.BoneIndices);
-            VCache<std::vector<std::string>>().Store(guid, meshData.BoneNames);
-            VCache<std::vector<glm::mat4>>().Store(guid, meshData.BoneOffsets);
-            VCache<std::vector<int>>().Store(guid, meshData.BoneParents);
+            _cache->RegisterValue(guid, meshData.BoneNames);
+            _cache->RegisterValue(guid, meshData.BoneOffsets);
+            _cache->RegisterValue(guid, meshData.BoneParents);
         } else {
             mesh = std::make_shared<Mesh>(meshData.Vertices, meshData.Indices, meshData.HasTexCoords);
         }
-        VCache<Bounds>().Store(guid, meshData.MeshBounds);
-        Cache<Mesh>().Store(guid, mesh);
+        _cache->RegisterValue(guid, meshData.MeshBounds);
+        _cache->Register(guid, mesh);
         return mesh;
     }
 
     return {};
 }
 
-std::shared_ptr<Texture> ResourceCache::GetTexture(const Guid &guid) {
+template <>
+std::shared_ptr<Texture> ResourceFactory::Get<Texture>(const Guid& guid) {
     if (const auto assetManager = _assetManager.lock()) {
-        return Cache<Texture>().GetOrLoad(guid, [&]() {
+        return _cache->GetOrLoad<Texture>(guid, [&]() {
             return std::make_shared<Texture>(assetManager->LoadSourceByGuid<Texture>(guid));
         });
     }
     return {};
 }
 
-std::shared_ptr<Font> ResourceCache::GetFont(const Guid &guid) {
+template <>
+std::shared_ptr<Font> ResourceFactory::Get<Font>(const Guid& guid) {
     if (guid.IsEmpty())
         return {};
     if (const auto assetManager = _assetManager.lock()) {
-        return Cache<Font>().GetOrLoad(guid, [&]() {
+        return _cache->GetOrLoad<Font>(guid, [&]() {
             auto fontFile = assetManager->LoadSourceByGuid<Font>(guid);
             return std::make_shared<Font>(std::move(fontFile));
         });
@@ -120,9 +139,10 @@ std::shared_ptr<Font> ResourceCache::GetFont(const Guid &guid) {
     return {};
 }
 
-std::shared_ptr<UiPage> ResourceCache::GetUiPage(const Guid &guid) {
+template <>
+std::shared_ptr<UiPage> ResourceFactory::Get<UiPage>(const Guid& guid) {
     if (const auto assetManager = _assetManager.lock()) {
-        if (auto cached = Cache<UiPage>().Get(guid)) {
+        if (auto cached = _cache->Get<UiPage>(guid)) {
             return cached;
         }
 
@@ -130,22 +150,23 @@ std::shared_ptr<UiPage> ResourceCache::GetUiPage(const Guid &guid) {
 
         const auto uiPage = std::make_shared<UiPage>();
         uiPage->Rml = assetManager->LoadSourceByGuid<std::string>(uiPageAsset.RmlGuid);
-        uiPage->Material = GetMaterial(uiPageAsset.MaterialGuid);
+        uiPage->Material = Get<Material>(uiPageAsset.MaterialGuid);
         uiPage->FontPath = assetManager->GetPathFromGuid(uiPageAsset.FontGuid);
         uiPage->Css = assetManager->LoadSourceByGuid<std::string>(uiPageAsset.CssGuid);
 
-        Cache<UiPage>().Store(guid, uiPage);
+        _cache->Register(guid, uiPage);
         return uiPage;
     }
 
     return {};
 }
 
-std::shared_ptr<AnimationData> ResourceCache::GetAnimation(const Guid &guid) {
+template <>
+std::shared_ptr<AnimationData> ResourceFactory::Get<AnimationData>(const Guid& guid) {
     if (guid.IsEmpty())
         return {};
     if (const auto assetManager = _assetManager.lock()) {
-        return Cache<AnimationData>().GetOrLoad(guid, [&]() {
+        return _cache->GetOrLoad<AnimationData>(guid, [&]() {
             auto animData = assetManager->LoadSourceByGuid<AnimationData>(guid);
             return std::make_shared<AnimationData>(std::move(animData));
         });
@@ -153,11 +174,12 @@ std::shared_ptr<AnimationData> ResourceCache::GetAnimation(const Guid &guid) {
     return {};
 }
 
-std::shared_ptr<FsmAsset> ResourceCache::GetFsmAsset(const Guid &guid) {
+template <>
+std::shared_ptr<FsmAsset> ResourceFactory::Get<FsmAsset>(const Guid& guid) {
     if (guid.IsEmpty())
         return {};
     if (const auto assetManager = _assetManager.lock()) {
-        return Cache<FsmAsset>().GetOrLoad(guid, [&]() {
+        return _cache->GetOrLoad<FsmAsset>(guid, [&]() {
             return std::make_shared<FsmAsset>(assetManager->LoadAssetByGuid<FsmAsset>(guid));
         });
     }

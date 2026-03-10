@@ -15,7 +15,7 @@
 #include "video/video_recorder.hpp"
 #include "scene_manager.hpp"
 #include "audio_manager.hpp"
-#include "resource_cache.hpp"
+#include "resource_factory.hpp"
 #include "core/src/register/fsm_action_registry.hpp"
 #include "core/src/register/fsm_condition_registry.hpp"
 #include "engine_context.hpp"
@@ -28,7 +28,7 @@ class Engine {
 private:
     std::shared_ptr<InputSystem> _inputSystem;
     std::shared_ptr<AssetManager> _assetManager;
-    std::shared_ptr<ResourceCache> _resourceCache;
+    std::shared_ptr<ResourceFactory> _resourceFactory;
     std::shared_ptr<SceneManager> _sceneManager;
     std::shared_ptr<UIManager> _uiManager;
     std::shared_ptr<Window> _window;

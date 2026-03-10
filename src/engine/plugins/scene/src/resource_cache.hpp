@@ -1,36 +1,15 @@
 #pragma once
 #include "typed_cache.hpp"
-#include <vector>
 #include <memory>
 #include <any>
 #include <typeindex>
 #include <unordered_map>
-
-#include "material/shader.hpp"
-#include "material/material.hpp"
-#include "mesh/mesh.hpp"
-#include "bounds.hpp"
-#include "asset_manager.hpp"
-#include "texture/texture_asset_loader.hpp"
-#include "mesh/mesh_asset_loader.hpp"
-#include "font_loader.hpp"
-#include "ui/ui_page.hpp"
-#include "material/material_asset.hpp"
-#include "material/material_asset_yaml.hpp"
-#include "ui/ui_page_asset.hpp"
-#include "ui/ui_page_asset_yaml.hpp"
-#include "animation/animation_data.hpp"
-#include "animation/animation_asset_loader.hpp"
 #include "guid.hpp"
-
-struct FsmAsset;
 
 class ResourceCache {
 private:
     std::unordered_map<std::type_index, std::any> _caches;
     std::unordered_map<std::type_index, std::any> _valueCaches;
-
-    std::weak_ptr<AssetManager> _assetManager;
 
     template <typename T>
     TypedCache<T>& Cache() {
@@ -65,13 +44,6 @@ private:
     }
 
 public:
-    explicit ResourceCache(const std::weak_ptr<AssetManager>& assetManager)
-        : _assetManager(assetManager) {}
-
-    [[nodiscard]] std::weak_ptr<AssetManager> GetAssetManager() const noexcept {
-        return _assetManager;
-    }
-
     template <typename T>
     [[nodiscard]] std::shared_ptr<T> Get(const Guid& guid) {
         return Cache<T>().Get(guid);
@@ -80,6 +52,11 @@ public:
     template <typename T>
     void Register(const Guid& guid, std::shared_ptr<T> resource) {
         Cache<T>().Store(guid, std::move(resource));
+    }
+
+    template <typename T, typename Loader>
+    [[nodiscard]] std::shared_ptr<T> GetOrLoad(const Guid& guid, Loader&& loader) {
+        return Cache<T>().GetOrLoad(guid, std::forward<Loader>(loader));
     }
 
     template <typename T>
@@ -94,20 +71,4 @@ public:
     void RegisterValue(const Guid& guid, T value) {
         VCache<T>().Store(guid, std::move(value));
     }
-
-    [[nodiscard]] std::shared_ptr<Shader> GetShader(const Guid& vertexGuid, const Guid& fragmentGuid);
-
-    [[nodiscard]] std::shared_ptr<Material> GetMaterial(const Guid& guid);
-
-    [[nodiscard]] std::shared_ptr<Mesh> GetMesh(const Guid& guid);
-
-    [[nodiscard]] std::shared_ptr<Texture> GetTexture(const Guid& guid);
-
-    [[nodiscard]] std::shared_ptr<Font> GetFont(const Guid& guid);
-
-    [[nodiscard]] std::shared_ptr<UiPage> GetUiPage(const Guid& guid);
-
-    [[nodiscard]] std::shared_ptr<AnimationData> GetAnimation(const Guid& guid);
-
-    [[nodiscard]] std::shared_ptr<FsmAsset> GetFsmAsset(const Guid& guid);
 };
