@@ -7,11 +7,14 @@
 #include "../register/esc_system_registry.hpp"
 #include "entity/component_registry.hpp"
 
+class ResourceFactory;
+
 struct PluginRegistries {
     FsmActionRegistry& Actions;
     FsmConditionRegistry& Conditions;
     ComponentRegistry& Components;
     EscSystemRegistry& Systems;
+    ResourceFactory& Resources;
 };
 
 class PluginRegistry final {

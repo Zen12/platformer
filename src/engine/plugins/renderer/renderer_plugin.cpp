@@ -4,6 +4,7 @@
 #include "src/action/register_renderer_actions.hpp"
 #include "src/register_renderer_systems.hpp"
 #include "src/register_renderer_components.hpp"
+#include "src/register_renderer_resources.hpp"
 #include "src/texture/texture_asset_loader.hpp"
 #include "src/mesh/mesh_asset_loader.hpp"
 
@@ -17,6 +18,7 @@ struct RendererPlugin {
         RegisterRendererActions(registries.Actions);
         RegisterRendererComponents(registries.Components);
         RegisterRendererSystems(registries.Systems);
+        RegisterRendererResources(registries.Resources);
     }
 };
 

@@ -25,6 +25,19 @@ struct AnimationPlugin {
     static void Register(PluginRegistries& registries) {
         AssetLoader<AnimationData>::Init();
 
+        // -- Resource Loaders --
+        registries.Resources.RegisterLoader<AnimationData>([](ResourceFactory& factory, const Guid& guid) -> std::shared_ptr<AnimationData> {
+            if (guid.IsEmpty())
+                return {};
+            if (const auto assetManager = factory.GetAssetManager().lock()) {
+                return factory.GetCache()->GetOrLoad<AnimationData>(guid, [&]() {
+                    auto animData = assetManager->LoadSourceByGuid<AnimationData>(guid);
+                    return std::make_shared<AnimationData>(std::move(animData));
+                });
+            }
+            return {};
+        });
+
         // -- FSM Actions --
         RegisterAnimationActions(registries.Actions);
 

@@ -39,8 +39,20 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
     _sceneManager->SetAudioManager(_audioManager);
 
     // Auto-register all plugins
-    PluginRegistries registries{_actionRegistry, _conditionRegistry, _componentRegistry, _systemRegistry};
+    PluginRegistries registries{_actionRegistry, _conditionRegistry, _componentRegistry, _systemRegistry, *_resourceFactory};
     PluginRegistry::Instance().RegisterAll(registries);
+
+    // Register FsmAsset loader (core type, after plugins)
+    _resourceFactory->RegisterLoader<FsmAsset>([](ResourceFactory& factory, const Guid& guid) -> std::shared_ptr<FsmAsset> {
+        if (guid.IsEmpty())
+            return {};
+        if (const auto assetManager = factory.GetAssetManager().lock()) {
+            return factory.GetCache()->GetOrLoad<FsmAsset>(guid, [&]() {
+                return std::make_shared<FsmAsset>(assetManager->LoadAssetByGuid<FsmAsset>(guid));
+            });
+        }
+        return {};
+    });
 
     // Build engine context with all managers
     _engineContext.Register<UIManager>("UIManager", _uiManager);
