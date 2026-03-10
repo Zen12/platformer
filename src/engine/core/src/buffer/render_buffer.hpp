@@ -105,7 +105,7 @@ struct DirectionalLightData final {
     bool HasLight{false};
 };
 
-class RenderRepository final {
+class RenderBuffer final {
 private:
     std::unordered_map<RenderId, std::vector<InstanceData>> _renderData{};
     DirectionalLightData _directionalLight{};

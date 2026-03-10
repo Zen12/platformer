@@ -1,7 +1,7 @@
 #pragma once
 #include "particle_emitter_component.hpp"
 #include "esc/esc_core.hpp"
-#include "render_repository.hpp"
+#include "buffer/render_buffer.hpp"
 #include "scene.hpp"
 #include "guid.hpp"
 #include "camera/camera_component.hpp"
@@ -13,14 +13,14 @@ private:
     using TypeCamera = decltype(std::declval<entt::registry>().view<CameraComponentV2>());
 
     const TypeCamera _cameraView;
-    const std::shared_ptr<RenderRepository> _repository;
+    const std::shared_ptr<RenderBuffer> _repository;
     const std::weak_ptr<Scene> _scene;
 
 public:
     explicit ParticleRenderSystem(
         const TypeView& view,
         const TypeCamera& camera,
-        const std::shared_ptr<RenderRepository>& repository,
+        const std::shared_ptr<RenderBuffer>& repository,
         const std::weak_ptr<Scene>& scene)
         : ISystemView(view), _cameraView(camera), _repository(repository), _scene(scene) {}
 

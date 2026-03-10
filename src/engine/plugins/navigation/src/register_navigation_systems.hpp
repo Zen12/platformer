@@ -26,7 +26,7 @@ inline void RegisterNavigationSystems(EscSystemRegistry& registry) {
         const auto reg = ctx.Registry;
         return std::make_unique<NavmeshPathRenderSystem>(
             reg->view<NavmeshAgentComponent>(),
-            reg->view<CameraComponentV2>(), ctx.RenderRepository, scenePtr->GetNavigationManager());
+            reg->view<CameraComponentV2>(), ctx.RenderBuffer, scenePtr->GetNavigationManager());
     }, 230);
 
     // NavmeshDebugRenderSystem: priority 240
@@ -35,7 +35,7 @@ inline void RegisterNavigationSystems(EscSystemRegistry& registry) {
         if (!scenePtr) return std::unique_ptr<NavmeshDebugRenderSystem>(nullptr);
         const auto reg = ctx.Registry;
         return std::make_unique<NavmeshDebugRenderSystem>(
-            reg->view<CameraComponentV2>(), ctx.RenderRepository, scenePtr->GetNavigationManager());
+            reg->view<CameraComponentV2>(), ctx.RenderBuffer, scenePtr->GetNavigationManager());
     }, 240);
 #endif
 }

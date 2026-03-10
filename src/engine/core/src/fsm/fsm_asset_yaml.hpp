@@ -36,7 +36,9 @@ namespace YAML {
             }
             if (node["conditions"]) {
                 for (const auto &condition: node["conditions"]) {
-                    rhs.ConditionSerialization.push_back(DecodeCondition(condition));
+                    if (auto condSer = DecodeCondition(condition)) {
+                        rhs.ConditionSerialization.push_back(std::move(condSer));
+                    }
                 }
             }
             return true;

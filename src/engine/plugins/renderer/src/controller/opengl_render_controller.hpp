@@ -1,5 +1,5 @@
 #pragma once
-#include "../render_repository.hpp"
+#include "buffer/render_buffer.hpp"
 #include "../instancing/instance_batch.hpp"
 #include "../framebuffer/framebuffer.hpp"
 #include "../framebuffer/depth_framebuffer.hpp"
@@ -47,7 +47,7 @@ class OpenGLRenderController final {
     void RenderSkybox(const glm::mat4& view, const glm::mat4& projection, const Guid& materialGuid) noexcept;
     void InitScreenQuad();
     void RenderPostProcess() noexcept;
-    void RenderShadowPass(const std::shared_ptr<RenderRepository>& repository) noexcept;
+    void RenderShadowPass(const std::shared_ptr<RenderBuffer>& repository) noexcept;
 
 public:
     explicit OpenGLRenderController(const std::shared_ptr<SceneManager> &sceneManager, const std::shared_ptr<ResourceCache> &resourceCache)
@@ -67,5 +67,5 @@ public:
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    void Render(const std::shared_ptr<RenderRepository>& repository) noexcept;
+    void Render(const std::shared_ptr<RenderBuffer>& repository) noexcept;
 };

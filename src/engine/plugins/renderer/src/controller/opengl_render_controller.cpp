@@ -300,7 +300,7 @@ void OpenGLRenderController::RenderLines(const RenderId& renderId, const std::ve
     }
 }
 
-void OpenGLRenderController::RenderShadowPass(const std::shared_ptr<RenderRepository>& repository) noexcept {
+void OpenGLRenderController::RenderShadowPass(const std::shared_ptr<RenderBuffer>& repository) noexcept {
     PROFILE_SCOPE("RenderShadowPass");
     const auto& lightData = repository->GetDirectionalLight();
     _hasDirectionalLight = lightData.HasLight;
@@ -394,7 +394,7 @@ void OpenGLRenderController::RenderShadowPass(const std::shared_ptr<RenderReposi
     _shadowMap->Unbind();
 }
 
-void OpenGLRenderController::Render(const std::shared_ptr<RenderRepository>& repository) noexcept {
+void OpenGLRenderController::Render(const std::shared_ptr<RenderBuffer>& repository) noexcept {
     PROFILE_SCOPE("RenderController::Render");
     const auto [width, height] = GetViewportSize();
 

@@ -4,7 +4,7 @@
 #include <memory>
 #include "esc/esc_core.hpp"
 #include "camera/camera_component.hpp"
-#include "render_repository.hpp"
+#include "buffer/render_buffer.hpp"
 #include "navigation_manager.hpp"
 #include "guid.hpp"
 
@@ -13,7 +13,7 @@ private:
     using TypeCamera = decltype(std::declval<entt::registry>().view<CameraComponentV2>());
 
     const TypeCamera _cameraView;
-    std::shared_ptr<RenderRepository> _repository;
+    std::shared_ptr<RenderBuffer> _repository;
     std::shared_ptr<NavigationManager> _navigationManager;
     Guid _materialGuid = Guid::FromString("b53dc63c-0c57-46b1-80e5-7570f2445f8a");
 
@@ -75,7 +75,7 @@ private:
 public:
     NavmeshDebugRenderSystem(
         const TypeCamera &cameraView,
-        const std::shared_ptr<RenderRepository> &repository,
+        const std::shared_ptr<RenderBuffer> &repository,
         const std::shared_ptr<NavigationManager> &navigationManager)
         : _cameraView(cameraView),
           _repository(repository), _navigationManager(navigationManager) {}

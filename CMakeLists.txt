@@ -103,12 +103,12 @@ add_subdirectory(src/engine/plugins/scene)
 add_subdirectory(src/engine/examples/plugin_example)
 
 # --- Source files ---
-file(GLOB_RECURSE HEADER_FILES "src/*.hpp")
-file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
+file(GLOB_RECURSE HEADER_FILES "src/path_utils.hpp" "src/engine/engine.hpp")
+file(GLOB_RECURSE SOURCE_FILES "src/main.cpp" "src/engine/engine.cpp")
 
-# Exclude test files from main executable
-list(FILTER HEADER_FILES EXCLUDE REGEX ".*/test/.*")
-list(FILTER SOURCE_FILES EXCLUDE REGEX ".*/test/.*")
+# Plugin entry points (compiled into main executable for static registration)
+file(GLOB PLUGIN_SOURCES "src/engine/plugins/*/*.cpp" "src/engine/examples/*/*.cpp")
+
 
 # --- Application icon ---
 set(APP_ICON_SOURCES "")
@@ -123,14 +123,28 @@ endif()
 
 # --- Create target ---
 if(PLATFORM_DESKTOP_OSX)
-    add_executable(${CMAKE_PROJECT_NAME} MACOSX_BUNDLE ${HEADER_FILES} ${SOURCE_FILES} ${APP_ICON_SOURCES})
+    add_executable(${CMAKE_PROJECT_NAME} MACOSX_BUNDLE ${HEADER_FILES} ${SOURCE_FILES} ${PLUGIN_SOURCES} ${APP_ICON_SOURCES})
 else()
-    add_executable(${CMAKE_PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${APP_ICON_SOURCES})
+    add_executable(${CMAKE_PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${PLUGIN_SOURCES} ${APP_ICON_SOURCES})
 endif()
 
 # --- Link libraries ---
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE GLM::GLM freetype yaml-cpp EnTT::EnTT rmlui_core assimp RVO xsimd)
-target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${stb_SOURCE_DIR} ${RVO2_INCLUDE_DIRS})
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
+    ${stb_SOURCE_DIR}
+    ${RVO2_INCLUDE_DIRS}
+    ${CMAKE_SOURCE_DIR}/src/engine/plugins/game/src
+    ${CMAKE_SOURCE_DIR}/src/engine/plugins/scene/src
+    ${CMAKE_SOURCE_DIR}/src/engine/plugins/renderer/src
+    ${CMAKE_SOURCE_DIR}/src/engine/plugins/navigation/src
+    ${CMAKE_SOURCE_DIR}/src/engine/plugins/animation/src
+    ${CMAKE_SOURCE_DIR}/src/engine/plugins/audio/src
+    ${CMAKE_SOURCE_DIR}/src/engine/plugins/ai/src
+    ${CMAKE_SOURCE_DIR}/src/engine/plugins/ik/src
+    ${CMAKE_SOURCE_DIR}/src/engine/plugins/prefab/src
+    ${CMAKE_SOURCE_DIR}/src/engine/plugins/profiler/src
+    ${CMAKE_SOURCE_DIR}/src/engine
+)
 
 # Engine modules
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
@@ -146,6 +160,8 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     engine-navigation
     engine-audio
     engine-ai
+    engine-animation
+    engine-ik
     engine-renderer
     engine-scene
     engine-example-plugin

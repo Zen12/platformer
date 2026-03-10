@@ -10,7 +10,7 @@
 #include "guid.hpp"
 
 #include "esc/esc.hpp"
-#include "render_repository.hpp"
+#include "buffer/render_buffer.hpp"
 #include "audio_manager.hpp"
 
 #include <RmlUi/Core.h>
@@ -29,7 +29,7 @@ class SceneManager {
     std::weak_ptr<AudioManager> _audioManager;
     std::shared_ptr<ResourceCache> _resourceCache;
 
-    std::shared_ptr<RenderRepository> _renderRepository{};
+    std::shared_ptr<RenderBuffer> _renderBuffer{};
 
     std::unique_ptr<EscSystem> _escSystem{};
 
@@ -50,7 +50,7 @@ public:
         _window = window;
         _inputSystem = inputSystem;
         _resourceCache = resourceCache;
-        _renderRepository = std::make_shared<RenderRepository>();
+        _renderBuffer = std::make_shared<RenderBuffer>();
     }
 
     void SetAudioManager(const std::weak_ptr<AudioManager>& audioManager) {
@@ -87,12 +87,12 @@ public:
 
     [[nodiscard]] std::shared_ptr<UiPage> GetUiPage(const Guid& guid) const;
 
-    [[nodiscard]] std::shared_ptr<RenderRepository> GetRenderRepository() const {
-        return _renderRepository;
+    [[nodiscard]] std::shared_ptr<RenderBuffer> GetRenderBuffer() const {
+        return _renderBuffer;
     }
 
-    void ClearRenderRepository() const {
-        _renderRepository->Clear();
+    void ClearRenderBuffer() const {
+        _renderBuffer->Clear();
     }
 
     [[nodiscard]] std::shared_ptr<Mesh> GetMesh(const Guid& guid) const {

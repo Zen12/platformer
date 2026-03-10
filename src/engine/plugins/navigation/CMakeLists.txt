@@ -22,9 +22,7 @@ target_link_libraries(engine-navigation PUBLIC
 )
 
 # Cross-module dependencies
-target_include_directories(engine-navigation PUBLIC
+target_include_directories(engine-navigation PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../renderer/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../scene/src
 )
-
-target_compile_features(engine-navigation PUBLIC cxx_std_17)

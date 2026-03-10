@@ -31,10 +31,10 @@ target_link_libraries(engine-renderer PUBLIC
     engine-profiler
 )
 
-# Cross-module dependencies - added separately to handle circular dependencies
-target_include_directories(engine-renderer PUBLIC
+# Cross-module dependencies
+target_include_directories(engine-renderer PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../scene/src
-    ${CMAKE_CURRENT_SOURCE_DIR}/../animation/src  # transitive: scene/resource_cache.hpp includes animation/
+    ${CMAKE_CURRENT_SOURCE_DIR}/../animation/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../navigation/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../audio/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../ai/src
@@ -45,14 +45,12 @@ target_include_directories(engine-renderer PUBLIC
 )
 
 if(PLATFORM_DESKTOP)
-    target_link_libraries(engine-renderer PUBLIC GLEW::GLEW OpenGL::GL OpenAL::OpenAL)
+    target_link_libraries(engine-renderer PRIVATE GLEW::GLEW OpenGL::GL OpenAL::OpenAL)
     target_include_directories(engine-renderer PRIVATE ${stb_SOURCE_DIR} ${openal-soft_SOURCE_DIR}/include)
 endif()
 
 if(VIDEO_RECORDING)
-    target_link_libraries(engine-renderer PUBLIC FFMPEG::avcodec FFMPEG::avformat FFMPEG::avutil FFMPEG::swscale)
+    target_link_libraries(engine-renderer PRIVATE FFMPEG::avcodec FFMPEG::avformat FFMPEG::avutil FFMPEG::swscale)
     target_include_directories(engine-renderer PRIVATE ${FFMPEG_INCLUDE_DIRS})
     target_compile_definitions(engine-renderer PRIVATE VIDEO_RECORDING)
 endif()
-
-target_compile_features(engine-renderer PUBLIC cxx_std_17)

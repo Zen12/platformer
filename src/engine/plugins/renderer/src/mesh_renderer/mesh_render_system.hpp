@@ -2,7 +2,7 @@
 #include "GL/glew.h"
 #include "mesh_renderer_component.hpp"
 #include "esc/esc_core.hpp"
-#include "render_repository.hpp"
+#include "buffer/render_buffer.hpp"
 #include "frustum.hpp"
 #include "resource_cache.hpp"
 #include "camera/camera_component.hpp"
@@ -16,14 +16,14 @@ private:
 
 
     const TypeCamera _cameraView;
-    const std::shared_ptr<RenderRepository> _repository;
+    const std::shared_ptr<RenderBuffer> _repository;
     const std::shared_ptr<ResourceCache> _resourceCache;
 
 public:
     explicit MeshRenderSystem(
         const TypeView &view,
         const TypeCamera &camera,
-        const std::shared_ptr<RenderRepository> &repository,
+        const std::shared_ptr<RenderBuffer> &repository,
         const std::shared_ptr<ResourceCache> &resourceCache)
         : ISystemView(view) , _cameraView(camera), _repository(repository), _resourceCache(resourceCache) {
     }

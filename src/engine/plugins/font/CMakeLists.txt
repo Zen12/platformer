@@ -23,5 +23,3 @@ target_link_libraries(engine-font PUBLIC
 if(PLATFORM_DESKTOP)
     target_link_libraries(engine-font PUBLIC GLEW::GLEW)
 endif()
-
-target_compile_features(engine-font PUBLIC cxx_std_17)

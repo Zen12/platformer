@@ -12,8 +12,6 @@ target_sources(engine-scene PRIVATE ${SOURCES})
 
 target_include_directories(engine-scene PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${CMAKE_CURRENT_SOURCE_DIR}/../animation/src
-    ${CMAKE_CURRENT_SOURCE_DIR}/../..
 )
 
 target_link_libraries(engine-scene PUBLIC
@@ -25,6 +23,14 @@ target_link_libraries(engine-scene PUBLIC
     engine-system
     engine-navigation
     engine-renderer
+    engine-audio
 )
 
-target_compile_features(engine-scene PUBLIC cxx_std_17)
+# Cross-module dependencies
+target_include_directories(engine-scene PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/../animation/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../prefab/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../audio/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../profiler/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../..
+)

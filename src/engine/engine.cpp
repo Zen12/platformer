@@ -149,7 +149,7 @@ void Engine::Tick() {
 
     {
         PROFILE_SCOPE("Render");
-        _renderController->Render(_sceneManager->GetRenderRepository());
+        _renderController->Render(_sceneManager->GetRenderBuffer());
     }
 
     {
@@ -167,7 +167,7 @@ void Engine::Tick() {
         _videoRecorder->CaptureFrame();
     }
 
-    _sceneManager->ClearRenderRepository();
+    _sceneManager->ClearRenderBuffer();
     _window->SwapBuffers();
 
     if (_fsmController->IsSystemTriggered(SystemTriggers::Exit)) {

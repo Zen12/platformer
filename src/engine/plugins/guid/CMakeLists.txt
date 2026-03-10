@@ -17,7 +17,6 @@ target_include_directories(engine-guid PUBLIC
 
 # Dependencies
 target_link_libraries(engine-guid PUBLIC yaml-cpp)
-target_compile_features(engine-guid PUBLIC cxx_std_17)
 
 # Tests
 if(BUILD_TESTING)

@@ -48,14 +48,14 @@ public:
         }
     }
 
-    void InitSystems(std::shared_ptr<RenderRepository> &renderRepository, const std::shared_ptr<ResourceCache>& resourceCache, const std::weak_ptr<AudioManager>& audioManager = std::weak_ptr<AudioManager>(), const EscSystemRegistry* systemRegistry = nullptr) {
+    void InitSystems(std::shared_ptr<RenderBuffer> &renderBuffer, const std::shared_ptr<ResourceCache>& resourceCache, const std::weak_ptr<AudioManager>& audioManager = std::weak_ptr<AudioManager>(), const EscSystemRegistry* systemRegistry = nullptr) {
         if (const auto &scenePtr = _scene.lock()) {
 
             if (systemRegistry) {
                 EscSystemContext ctx;
                 ctx.Registry = scenePtr->GetEntityRegistry();
                 ctx.Scene = _scene;
-                ctx.RenderRepository = renderRepository;
+                ctx.RenderBuffer = renderBuffer;
                 ctx.ResourceCache = resourceCache;
                 ctx.AudioManager = audioManager;
 

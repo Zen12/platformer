@@ -4,21 +4,21 @@
 #include "transform/transform_component.hpp"
 #include "tag/tag_component.hpp"
 #include "esc/esc_core.hpp"
-#include "render_repository.hpp"
+#include "buffer/render_buffer.hpp"
 #include "entt/entity/registry.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 
 class DirectionalLightSystem final : public ISystem {
     const decltype(std::declval<entt::registry>().view<DirectionalLightComponent, TransformComponentV2>()) LightView;
     const decltype(std::declval<entt::registry>().view<TagComponent, TransformComponentV2>()) TagView;
-    std::shared_ptr<RenderRepository> _renderRepository;
+    std::shared_ptr<RenderBuffer> _renderBuffer;
 
 public:
     DirectionalLightSystem(
         const decltype(std::declval<entt::registry>().view<DirectionalLightComponent, TransformComponentV2>()) &lightView,
         const decltype(std::declval<entt::registry>().view<TagComponent, TransformComponentV2>()) &tagView,
-        std::shared_ptr<RenderRepository> renderRepository)
-        : LightView(lightView), TagView(tagView), _renderRepository(std::move(renderRepository)) {}
+        std::shared_ptr<RenderBuffer> renderBuffer)
+        : LightView(lightView), TagView(tagView), _renderBuffer(std::move(renderBuffer)) {}
 
     void OnTick() override {
         for (const auto &[_, light, transform] : LightView.each()) {
@@ -52,8 +52,8 @@ public:
                 light.LightData.NearPlane, light.LightData.FarPlane
             );
 
-            if (_renderRepository) {
-                _renderRepository->SetDirectionalLight(light.View, light.Projection);
+            if (_renderBuffer) {
+                _renderBuffer->SetDirectionalLight(light.View, light.Projection);
             }
         }
     }

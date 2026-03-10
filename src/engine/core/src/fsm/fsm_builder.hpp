@@ -43,6 +43,7 @@ public:
         }
 
         for (const auto& condSer : fsmAsset.ConditionSerialization) {
+            if (!condSer) continue;
             if (auto cond = conditionRegistry.Build(condSer->Type, condSer.get(), context)) {
                 conditions[condSer->Guid] = std::move(cond);
             }

@@ -21,5 +21,3 @@ target_link_libraries(engine-system PUBLIC
 if(PLATFORM_DESKTOP)
     target_link_libraries(engine-system PUBLIC glfw GLEW::GLEW)
 endif()
-
-target_compile_features(engine-system PUBLIC cxx_std_17)
