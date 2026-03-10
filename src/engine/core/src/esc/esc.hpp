@@ -4,6 +4,7 @@
 #include "tag/tag_component.hpp"
 #include "time/time_component.hpp"
 #include "window/window_component.hpp"
+#include "buffer/render_buffer_component.hpp"
 
 #include "entity/component_registry.hpp"
 
@@ -14,6 +15,7 @@ class EscSystem {
     const std::weak_ptr<Scene> _scene;
     std::vector<std::unique_ptr<ISystem>> _systems;
     const ComponentRegistry* _componentRegistry = nullptr;
+    entt::entity _systemEntity = entt::null;
 
 public:
     explicit EscSystem(const std::weak_ptr<Scene> &scene, const ComponentRegistry* componentRegistry = nullptr)
@@ -22,10 +24,10 @@ public:
         if (const auto &scenePtr = _scene.lock()) {
 
             const auto registry = scenePtr->GetEntityRegistry();
-             const auto &systemEntity = registry->create();
+            _systemEntity = registry->create();
 
-            registry->view<WindowComponent>()->emplace(systemEntity, WindowComponent());
-            registry->view<DeltaTimeComponent>()->emplace(systemEntity, DeltaTimeComponent());
+            registry->view<WindowComponent>()->emplace(_systemEntity, WindowComponent());
+            registry->view<DeltaTimeComponent>()->emplace(_systemEntity, DeltaTimeComponent());
         }
     }
 
@@ -52,10 +54,12 @@ public:
         if (const auto &scenePtr = _scene.lock()) {
 
             if (systemRegistry) {
+                const auto registry = scenePtr->GetEntityRegistry();
+                registry->emplace<RenderBufferComponent>(_systemEntity, RenderBufferComponent{renderBuffer});
+
                 EscSystemContext ctx;
-                ctx.Registry = scenePtr->GetEntityRegistry();
+                ctx.Registry = registry;
                 ctx.Scene = _scene;
-                ctx.RenderBuffer = renderBuffer;
                 ctx.ResourceCache = resourceCache;
                 ctx.AudioManager = audioManager;
 

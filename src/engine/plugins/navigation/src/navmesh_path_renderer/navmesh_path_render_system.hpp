@@ -6,15 +6,17 @@
 #include "camera/camera_component.hpp"
 #include "navmesh_agent/navmesh_agent_component.hpp"
 #include "buffer/render_buffer.hpp"
+#include "buffer/render_buffer_component.hpp"
 #include "navigation_manager.hpp"
 #include "guid.hpp"
 
 class NavmeshPathRenderSystem final : public ISystemView<NavmeshAgentComponent> {
 private:
     using TypeCamera = decltype(std::declval<entt::registry>().view<CameraComponentV2>());
+    using TypeRenderBuffer = decltype(std::declval<entt::registry>().view<RenderBufferComponent>());
 
     const TypeCamera _cameraView;
-    std::shared_ptr<RenderBuffer> _repository;
+    const TypeRenderBuffer _renderBufferView;
     std::shared_ptr<NavigationManager> _navigationManager;
     Guid _materialGuid = Guid::FromString("b53dc63c-0c57-46b1-80e5-7570f2445f8a");
 
@@ -58,12 +60,16 @@ public:
     NavmeshPathRenderSystem(
         const TypeView &view,
         const TypeCamera &cameraView,
-        const std::shared_ptr<RenderBuffer> &repository,
+        const TypeRenderBuffer &renderBufferView,
         const std::shared_ptr<NavigationManager> &navigationManager)
         : ISystemView(view), _cameraView(cameraView),
-          _repository(repository), _navigationManager(navigationManager) {}
+          _renderBufferView(renderBufferView), _navigationManager(navigationManager) {}
 
     void OnTick() override {
+        std::shared_ptr<RenderBuffer> _repository;
+        for (const auto& [_, rb] : _renderBufferView.each()) { _repository = rb.Buffer; }
+        if (!_repository) return;
+
         const auto positions = CalculatePathPositions();
 
         if (positions.empty()) {

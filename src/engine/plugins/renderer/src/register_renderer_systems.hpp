@@ -4,7 +4,7 @@
 
 #include "scene.hpp"
 #include "resource_cache.hpp"
-#include "buffer/render_buffer.hpp"
+#include "buffer/render_buffer_component.hpp"
 #include "window/window_system.hpp"
 #include "time/time_component.hpp"
 #include "camera/camera_controller_system.hpp"
@@ -56,7 +56,7 @@ inline void RegisterRendererSystems(EscSystemRegistry& registry) {
         return std::make_unique<DirectionalLightSystem>(
             reg->view<DirectionalLightComponent, TransformComponentV2>(),
             reg->view<TagComponent, TransformComponentV2>(),
-            ctx.RenderBuffer);
+            reg->view<RenderBufferComponent>());
     }, 140);
 
     // TopDownCameraSystem: priority 170
@@ -74,7 +74,7 @@ inline void RegisterRendererSystems(EscSystemRegistry& registry) {
         const auto reg = ctx.Registry;
         return std::make_unique<MeshRenderSystem>(
             reg->view<MeshRendererComponent, TransformComponentV2>(),
-            reg->view<CameraComponentV2>(), ctx.RenderBuffer, ctx.ResourceCache);
+            reg->view<CameraComponentV2>(), reg->view<RenderBufferComponent>(), ctx.ResourceCache);
     }, 180);
 
     // SkinnedMeshRenderSystem: priority 220
@@ -82,7 +82,7 @@ inline void RegisterRendererSystems(EscSystemRegistry& registry) {
         const auto reg = ctx.Registry;
         return std::make_unique<SkinnedMeshRenderSystem>(
             reg->view<SkinnedMeshRendererComponent, TransformComponentV2>(),
-            reg->view<CameraComponentV2>(), ctx.RenderBuffer, ctx.ResourceCache);
+            reg->view<CameraComponentV2>(), reg->view<RenderBufferComponent>(), ctx.ResourceCache);
     }, 220);
 
     // ParticleSystem: priority 290
@@ -104,7 +104,7 @@ inline void RegisterRendererSystems(EscSystemRegistry& registry) {
         return std::make_unique<ParticleRenderSystem>(
             reg->view<ParticleEmitterComponent, TransformComponentV2>(),
             reg->view<CameraComponentV2>(),
-            ctx.RenderBuffer,
+            reg->view<RenderBufferComponent>(),
             scenePtr);
     }, 300);
 }

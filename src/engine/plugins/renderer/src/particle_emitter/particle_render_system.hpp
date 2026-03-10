@@ -2,6 +2,7 @@
 #include "particle_emitter_component.hpp"
 #include "esc/esc_core.hpp"
 #include "buffer/render_buffer.hpp"
+#include "buffer/render_buffer_component.hpp"
 #include "scene.hpp"
 #include "guid.hpp"
 #include "camera/camera_component.hpp"
@@ -11,29 +12,34 @@
 class ParticleRenderSystem final : public ISystemView<ParticleEmitterComponent, TransformComponentV2> {
 private:
     using TypeCamera = decltype(std::declval<entt::registry>().view<CameraComponentV2>());
+    using TypeRenderBuffer = decltype(std::declval<entt::registry>().view<RenderBufferComponent>());
 
     const TypeCamera _cameraView;
-    const std::shared_ptr<RenderBuffer> _repository;
+    const TypeRenderBuffer _renderBufferView;
     const std::weak_ptr<Scene> _scene;
 
 public:
     explicit ParticleRenderSystem(
         const TypeView& view,
         const TypeCamera& camera,
-        const std::shared_ptr<RenderBuffer>& repository,
+        const TypeRenderBuffer& renderBufferView,
         const std::weak_ptr<Scene>& scene)
-        : ISystemView(view), _cameraView(camera), _repository(repository), _scene(scene) {}
+        : ISystemView(view), _cameraView(camera), _renderBufferView(renderBufferView), _scene(scene) {}
 
     void OnTick() override {
+        std::shared_ptr<RenderBuffer> repository;
+        for (const auto& [_, rb] : _renderBufferView.each()) { repository = rb.Buffer; }
+        if (!repository) return;
+
         for (const auto& [_, camera] : _cameraView.each()) {
             for (const auto& [__, emitter, transform] : View.each()) {
-                RenderEmitter(emitter, camera);
+                RenderEmitter(emitter, camera, repository);
             }
         }
     }
 
 private:
-    void RenderEmitter(const ParticleEmitterComponent& emitter, const CameraComponentV2& camera) const {
+    void RenderEmitter(const ParticleEmitterComponent& emitter, const CameraComponentV2& camera, const std::shared_ptr<RenderBuffer>& _repository) const {
         const auto& particles = emitter.GetParticles();
         const Guid& materialGuid = emitter.GetMaterialGuid();
         const Guid& meshGuid = emitter.GetMeshGuid();

@@ -5,22 +5,29 @@
 #include "tag/tag_component.hpp"
 #include "esc/esc_core.hpp"
 #include "buffer/render_buffer.hpp"
+#include "buffer/render_buffer_component.hpp"
 #include "entt/entity/registry.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 
 class DirectionalLightSystem final : public ISystem {
     const decltype(std::declval<entt::registry>().view<DirectionalLightComponent, TransformComponentV2>()) LightView;
     const decltype(std::declval<entt::registry>().view<TagComponent, TransformComponentV2>()) TagView;
-    std::shared_ptr<RenderBuffer> _renderBuffer;
+
+    using TypeRenderBuffer = decltype(std::declval<entt::registry>().view<RenderBufferComponent>());
+    const TypeRenderBuffer _renderBufferView;
 
 public:
     DirectionalLightSystem(
         const decltype(std::declval<entt::registry>().view<DirectionalLightComponent, TransformComponentV2>()) &lightView,
         const decltype(std::declval<entt::registry>().view<TagComponent, TransformComponentV2>()) &tagView,
-        std::shared_ptr<RenderBuffer> renderBuffer)
-        : LightView(lightView), TagView(tagView), _renderBuffer(std::move(renderBuffer)) {}
+        const TypeRenderBuffer& renderBufferView)
+        : LightView(lightView), TagView(tagView), _renderBufferView(renderBufferView) {}
 
     void OnTick() override {
+        std::shared_ptr<RenderBuffer> _renderBuffer;
+        for (const auto& [_, rb] : _renderBufferView.each()) { _renderBuffer = rb.Buffer; }
+        if (!_renderBuffer) return;
+
         for (const auto &[_, light, transform] : LightView.each()) {
             glm::vec3 lightPosition = transform.GetPosition();
 
@@ -52,9 +59,7 @@ public:
                 light.LightData.NearPlane, light.LightData.FarPlane
             );
 
-            if (_renderBuffer) {
-                _renderBuffer->SetDirectionalLight(light.View, light.Projection);
-            }
+            _renderBuffer->SetDirectionalLight(light.View, light.Projection);
         }
     }
 };
