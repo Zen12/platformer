@@ -16,6 +16,7 @@ target_sources(engine-core PRIVATE ${SOURCES})
 target_include_directories(engine-core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/asset
     ${CMAKE_CURRENT_SOURCE_DIR}/src/fsm
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/resource
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../..
 )
