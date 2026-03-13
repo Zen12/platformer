@@ -37,6 +37,8 @@ class SceneManager {
     const ComponentRegistry* _componentRegistry = nullptr;
     const EscSystemRegistry* _systemRegistry = nullptr;
 
+    std::string _projectRoot;
+
 
 public:
     SceneManager(
@@ -65,6 +67,8 @@ public:
     void SetComponentRegistry(const ComponentRegistry* reg) noexcept { _componentRegistry = reg; }
     void SetSystemRegistry(const EscSystemRegistry* reg) noexcept { _systemRegistry = reg; }
     [[nodiscard]] const EscSystemRegistry* GetSystemRegistry() const noexcept { return _systemRegistry; }
+
+    void SetProjectRoot(const std::string& projectRoot) { _projectRoot = projectRoot; }
 
     [[nodiscard]] const FsmActionRegistry* GetActionRegistry() const noexcept { return _actionRegistry; }
     [[nodiscard]] const FsmConditionRegistry* GetConditionRegistry() const noexcept { return _conditionRegistry; }

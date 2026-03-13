@@ -32,6 +32,18 @@ void mouse_button_callback(GLFWwindow * window, int button, int action, [[maybe_
     }
 }
 
+void char_callback(GLFWwindow* window, unsigned int codepoint) {
+    if (auto *self = static_cast<Window *>(glfwGetWindowUserPointer(window))) {
+        self->OnChar(static_cast<uint32_t>(codepoint));
+    }
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+    if (auto *self = static_cast<Window *>(glfwGetWindowUserPointer(window))) {
+        self->OnScroll(xoffset, yoffset);
+    }
+}
+
 Window::Window(const uint16_t &width, const uint16_t &height, const std::string &windowName)
 {
     _width = width;
@@ -87,6 +99,8 @@ Window::Window(const uint16_t &width, const uint16_t &height, const std::string 
     // input
     glfwSetKeyCallback(window, key_callback);
     glfwSetMouseButtonCallback(window, mouse_button_callback);
+    glfwSetCharCallback(window, char_callback);
+    glfwSetScrollCallback(window, scroll_callback);
 }
 
 void Window::WinInit() {

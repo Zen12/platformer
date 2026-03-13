@@ -101,4 +101,14 @@ public:
             }
         }
     }
+
+    void RestartCurrentNode() {
+        FSM_LOG << "[FSM] Restarting current state: " << _currentState << std::endl;
+
+        const auto& currentNode = _data.StateNodes.at(_currentState);
+        currentNode.ExitAll();
+
+        _wasEntered = false;
+        _triggerBoard->ClearTriggers();
+    }
 };

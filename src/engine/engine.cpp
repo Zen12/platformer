@@ -3,6 +3,11 @@
 #include "scene_asset_yaml.hpp"
 #include <RmlUi/Core.h>
 
+#ifdef DEBUG_BUILD
+#include "src/mcp_server.hpp"
+#include <cstdlib>
+#endif
+
 #include <utility>
 
 #include "fsm_asset.hpp"
@@ -89,6 +94,7 @@ Engine::Engine(const std::filesystem::path &projectPath, std::vector<PluginCallb
     _sceneManager->SetEngineContext(&_engineContext);
     _sceneManager->SetComponentRegistry(&_componentRegistry);
     _sceneManager->SetSystemRegistry(&_systemRegistry);
+    _sceneManager->SetProjectRoot(projectPath.parent_path().string());
 
     _uiManager->Initialize();
 
@@ -98,6 +104,22 @@ Engine::Engine(const std::filesystem::path &projectPath, std::vector<PluginCallb
         _audioManager->ToggleMute();
 #endif
     _frameTimer.Start();
+
+#ifdef DEBUG_BUILD
+    {
+        uint16_t mcpPort = 18080;
+        if (const char* portEnv = std::getenv("MCP_PORT")) {
+            mcpPort = static_cast<uint16_t>(std::stoi(portEnv));
+        }
+        _mcpServer = std::make_unique<McpServer>(
+            mcpPort,
+            _assetManager,
+            _fsmController,
+            _resourceFactory->GetCache()
+        );
+        _mcpServer->Start();
+    }
+#endif
 }
 
 void Engine::WaitForTargetFrameRate() const {
@@ -117,6 +139,11 @@ void Engine::WaitForTargetFrameRate() const {
 
 Engine::~Engine() {
     ENGINE_LOG << "Destroying gameengine..." << std::endl;
+
+#ifdef DEBUG_BUILD
+    _mcpServer->Stop();
+    _mcpServer.reset();
+#endif
 
     Profiler::Shutdown();
 
@@ -140,6 +167,10 @@ void Engine::Tick() {
     PROFILE_SCOPE("Engine::Tick");
 
     _frameTimer.Reset();
+
+#ifdef DEBUG_BUILD
+    _mcpServer->DrainCommands();
+#endif
 
     {
         PROFILE_SCOPE("Input");
@@ -180,6 +211,8 @@ void Engine::Tick() {
         _audioManager->Update();
     }
 
+    _window->RenderOverlay();
+
     // Capture frame for video recording if active
     if (_videoRecorder->IsRecording()) {
         _videoRecorder->CaptureFrame();
@@ -199,17 +232,18 @@ void Engine::Tick() {
         return;
     }
 
-    // maybe #if debug?
-    if (_inputSystem->IsKeyUp(InputKey::Escape)) {
-        _window->Destroy();
-    }
+    if (!_window->IsTerminalActive()) {
+        if (_inputSystem->IsKeyUp(InputKey::Escape)) {
+            _window->Destroy();
+        }
 
-    if (_inputSystem->IsKeyUp(InputKey::R)) {
-        _isReloadRequested = true;
-        _window->Destroy();
-    }
-    if (_inputSystem->IsKeyUp(InputKey::M)) {
-        _audioManager->ToggleMute();
+        if (_inputSystem->IsKeyUp(InputKey::R)) {
+            _isReloadRequested = true;
+            _window->Destroy();
+        }
+        if (_inputSystem->IsKeyUp(InputKey::M)) {
+            _audioManager->ToggleMute();
+        }
     }
 }
 

@@ -50,7 +50,7 @@ public:
         }
     }
 
-    void InitSystems(std::shared_ptr<RenderBuffer> &renderBuffer, const std::shared_ptr<ResourceFactory>& resourceFactory, const std::weak_ptr<AudioManager>& audioManager = std::weak_ptr<AudioManager>(), const EscSystemRegistry* systemRegistry = nullptr) {
+    void InitSystems(std::shared_ptr<RenderBuffer> &renderBuffer, const std::shared_ptr<ResourceFactory>& resourceFactory, const std::weak_ptr<AudioManager>& audioManager = std::weak_ptr<AudioManager>(), const EscSystemRegistry* systemRegistry = nullptr, const std::string& projectRoot = "") {
         if (const auto &scenePtr = _scene.lock()) {
 
             if (systemRegistry) {
@@ -62,6 +62,7 @@ public:
                 ctx.Scene = _scene;
                 ctx.ResourceFactory = resourceFactory;
                 ctx.AudioManager = audioManager;
+                ctx.ProjectRoot = projectRoot;
 
                 _systems = systemRegistry->BuildAll(ctx);
             }

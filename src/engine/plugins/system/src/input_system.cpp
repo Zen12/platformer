@@ -5,8 +5,14 @@ void InputSystem::Update() {
         window->SwapWithValue(INPUT_PRESS, INPUT_REPEAT);
         window->ClearWithValue(INPUT_RELEASE);
         window->PullEvent();
-        _keyCodes = window->GetKeyboardCodes();
-        _mouseCodes = window->GetMouseCodes();
+
+        if (window->IsTerminalActive()) {
+            _keyCodes.clear();
+            _mouseCodes.clear();
+        } else {
+            _keyCodes = window->GetKeyboardCodes();
+            _mouseCodes = window->GetMouseCodes();
+        }
     }
 }
 

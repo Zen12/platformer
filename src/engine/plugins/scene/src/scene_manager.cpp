@@ -81,7 +81,7 @@ void SceneManager::LoadEntities(const std::vector<EntitySerialization> &serializ
 
     _escSystem->LoadEntities(serialization);
 
-    _escSystem->InitSystems(_renderBuffer, _resourceFactory, _audioManager, _systemRegistry);
+    _escSystem->InitSystems(_renderBuffer, _resourceFactory, _audioManager, _systemRegistry, _projectRoot);
 }
 
 void SceneManager::UnloadScene() {

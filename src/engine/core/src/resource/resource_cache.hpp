@@ -71,4 +71,9 @@ public:
     void RegisterValue(const Guid& guid, T value) {
         VCache<T>().Store(guid, std::move(value));
     }
+
+    void Clear() {
+        _caches.clear();
+        _valueCaches.clear();
+    }
 };

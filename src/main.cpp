@@ -9,6 +9,9 @@
 #include "engine/plugins/ik/ik_plugin.hpp"
 #include "engine/plugins/navigation/navigation_plugin.hpp"
 #include "engine/examples/plugin_example/example_plugin.hpp"
+#ifndef __EMSCRIPTEN__
+#include "engine/plugins/terminal/terminal_plugin.hpp"
+#endif
 
 std::vector<PluginCallback> GetGamePlugins() {
     return {
@@ -21,6 +24,9 @@ std::vector<PluginCallback> GetGamePlugins() {
         IKPlugin::Register,
         NavigationPlugin::Register,
         ExamplePlugin::Register,
+#ifndef __EMSCRIPTEN__
+        TerminalPlugin::Register,
+#endif
     };
 }
 

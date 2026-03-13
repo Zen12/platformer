@@ -27,10 +27,9 @@
 - 📀 Asset management
   - [x] Lazy load 
   - [x] .Meta file support
-  - [ ] Ref count (0.2+)
+  - [x] Cache system
 - 🚀 ESC
   - [x] Single-thread support
-  - [ ] Multi-thread support (0.3+)
 - 🔦 Basic mesh 3d rendering
   - [x] Material abstraction
   - [x] Instance rendering (per mesh+material)
@@ -39,7 +38,7 @@
 - 💃 Skinned mesh rendering 
   - [x] Bones support
   - [x] Animation via state (FSM)
-  - [ ] IK (0.2+)
+  - [x] IK 
   - [x] Instance rendering
 - 🧠 Nav mesh
   - [x] 2d builder
@@ -57,17 +56,16 @@
   - [x] Import/export systems for .blend and .glb
   - [x] Hooks to blender and gimp mcp
   - [x] Scene awareness (fast scene builder)
-  - [ ] File lock system for multiple agents (0.3+)
+  - [ ] Runtime MCP + terminal (per plugin)
 - 🔊Sound
   - [x] One shot clip
   - [x] Loop clip
   - [ ] Mixer (0.2+)
 - 💠Prefab 
-  - [x] Entity prefab
+  - [ ] Entity prefab (0.2+)
   - [ ] Nested prefab (0.2+)
 - ▶️Editor (0.2+)
   - [x] Gameplayer recorder
-  - [ ] Scene visualize 
 - 💥Particle System
   - [x] Lifetime 
   - [x] Color

@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <string>
 #include "entt/entt.hpp"
 
 class Scene;
@@ -11,4 +12,5 @@ struct EscSystemContext {
     std::weak_ptr<Scene> Scene;
     std::shared_ptr<ResourceFactory> ResourceFactory;
     std::weak_ptr<AudioManager> AudioManager;
+    std::string ProjectRoot;
 };

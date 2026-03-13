@@ -7,7 +7,7 @@
     </style>
 </head>
 <body>
-    <button id="play">Main MENU</button>
+    <button id="play">Play</button>
     <button id="exit">Exit</button>
     <h1>The Game test</h1>
 </body>

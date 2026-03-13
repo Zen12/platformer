@@ -23,6 +23,10 @@
 #include "core/src/register/esc_system_registry.hpp"
 #include "core/src/plugin/plugin_registry.hpp"
 
+#ifdef DEBUG_BUILD
+class McpServer;
+#endif
+
 using PluginCallback = std::function<void(PluginRegistries&)>;
 
 class Engine {
@@ -52,6 +56,10 @@ private:
 
     bool _isReloadRequested = false;
     float _targetFrameTime = 0.02f;
+
+#ifdef DEBUG_BUILD
+    std::unique_ptr<McpServer> _mcpServer;
+#endif
 
 public:
     explicit Engine(const std::filesystem::path &projectPath, std::vector<PluginCallback> plugins);

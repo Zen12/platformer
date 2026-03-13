@@ -64,6 +64,7 @@ find_package(RVO2 REQUIRED)
 find_package(OpenAL REQUIRED)
 find_package(Minitrace REQUIRED)
 find_package(XSIMD REQUIRED)
+find_package(NlohmannJson REQUIRED)
 
 if (PLATFORM_DESKTOP)
     find_package(OpenGL REQUIRED)
@@ -97,6 +98,12 @@ add_subdirectory(src/engine/plugins/ik)
 add_subdirectory(src/engine/plugins/ai)
 add_subdirectory(src/engine/plugins/renderer)
 add_subdirectory(src/engine/plugins/scene)
+
+# Terminal and MCP server (desktop debug only)
+if(PLATFORM_DESKTOP AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_subdirectory(src/engine/plugins/terminal)
+    add_subdirectory(src/engine/plugins/mcp)
+endif()
 
 # Examples
 add_subdirectory(src/engine/examples/plugin_example)
@@ -142,6 +149,8 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/src/engine/plugins/prefab/src
     ${CMAKE_SOURCE_DIR}/src/engine/plugins/profiler/src
     ${CMAKE_SOURCE_DIR}/src/engine
+    ${CMAKE_SOURCE_DIR}/src/engine/plugins/terminal
+    ${CMAKE_SOURCE_DIR}/src/engine/plugins/mcp
 )
 
 # Engine modules
@@ -163,12 +172,17 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     engine-scene
     engine-game
     engine-example-plugin
+    $<$<AND:$<BOOL:${PLATFORM_DESKTOP}>,$<CONFIG:Debug>>:engine-terminal>
+    $<$<AND:$<BOOL:${PLATFORM_DESKTOP}>,$<CONFIG:Debug>>:engine-mcp>
 )
 
 if (PLATFORM_DESKTOP)
     target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE OpenGL::GL GLEW::GLEW glfw OpenAL::OpenAL)
     target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE ${openal-soft_SOURCE_DIR}/include)
     target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE PLATFORM_DESKTOP)
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE DEBUG_BUILD)
+    endif()
 endif()
 
 if (VIDEO_RECORDING)
