@@ -1,5 +1,6 @@
+#pragma once
 #define GLM_ENABLE_EXPERIMENTAL
-#include "core/src/plugin/plugin_registrar.hpp"
+#include "core/src/plugin/plugin_registry.hpp"
 #include "src/register_ai_components.hpp"
 #include "src/register_ai_systems.hpp"
 
@@ -9,5 +10,3 @@ struct AIPlugin {
         RegisterAISystems(registries.Systems);
     }
 };
-
-REGISTER_PLUGIN(AIPlugin)

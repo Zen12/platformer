@@ -9,6 +9,7 @@ file(GLOB_RECURSE SOURCES
 )
 
 target_sources(engine-ik PRIVATE ${SOURCES})
+target_sources(engine-ik PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ik_plugin.hpp)
 
 target_include_directories(engine-ik PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src

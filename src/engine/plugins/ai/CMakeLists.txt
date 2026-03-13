@@ -8,6 +8,7 @@ file(GLOB_RECURSE SOURCES
 )
 
 target_sources(engine-ai INTERFACE ${SOURCES})
+target_sources(engine-ai INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/ai_plugin.hpp)
 
 target_include_directories(engine-ai INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/src

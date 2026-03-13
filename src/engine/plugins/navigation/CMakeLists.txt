@@ -9,6 +9,7 @@ file(GLOB_RECURSE SOURCES
 )
 
 target_sources(engine-navigation PRIVATE ${SOURCES})
+target_sources(engine-navigation PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/navigation_plugin.hpp)
 
 target_include_directories(engine-navigation PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src

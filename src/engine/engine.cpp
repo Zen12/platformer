@@ -1,4 +1,5 @@
 #include "engine.hpp"
+#include "register_all_plugins.hpp"
 #include "scene_asset_yaml.hpp"
 #include <RmlUi/Core.h>
 
@@ -40,7 +41,7 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
 
     // Auto-register all plugins
     PluginRegistries registries{_actionRegistry, _conditionRegistry, _componentRegistry, _systemRegistry, *_resourceFactory};
-    PluginRegistry::Instance().RegisterAll(registries);
+    RegisterAllPlugins(registries);
 
     // Register FsmAsset loader (core type, after plugins)
     _resourceFactory->RegisterLoader<FsmAsset>([](ResourceFactory& factory, const Guid& guid) -> std::shared_ptr<FsmAsset> {

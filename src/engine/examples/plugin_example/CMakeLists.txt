@@ -8,6 +8,7 @@ file(GLOB_RECURSE SOURCES
 )
 
 target_sources(engine-example-plugin INTERFACE ${SOURCES})
+target_sources(engine-example-plugin INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/example_plugin.hpp)
 
 target_include_directories(engine-example-plugin INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/src

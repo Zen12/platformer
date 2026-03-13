@@ -1,5 +1,6 @@
+#pragma once
 #define GLM_ENABLE_EXPERIMENTAL
-#include "core/src/plugin/plugin_registrar.hpp"
+#include "core/src/plugin/plugin_registry.hpp"
 #include "src/register_audio_actions.hpp"
 #include "src/register_audio_components.hpp"
 #include "src/register_audio_systems.hpp"
@@ -11,5 +12,3 @@ struct AudioPlugin {
         RegisterAudioSystems(registries.Systems);
     }
 };
-
-REGISTER_PLUGIN(AudioPlugin)

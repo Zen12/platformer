@@ -1,8 +1,7 @@
-#include "core/src/plugin/plugin_registrar.hpp"
+#pragma once
+#include "core/src/plugin/plugin_registry.hpp"
 
 struct ScenePlugin {
     static void Register([[maybe_unused]] PluginRegistries& registries) {
     }
 };
-
-REGISTER_PLUGIN(ScenePlugin)

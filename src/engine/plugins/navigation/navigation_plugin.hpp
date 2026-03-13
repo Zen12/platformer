@@ -1,5 +1,6 @@
+#pragma once
 #define GLM_ENABLE_EXPERIMENTAL
-#include "core/src/plugin/plugin_registrar.hpp"
+#include "core/src/plugin/plugin_registry.hpp"
 #include "src/register_navigation_systems.hpp"
 #include "src/register_navigation_components.hpp"
 
@@ -9,5 +10,3 @@ struct NavigationPlugin {
         RegisterNavigationSystems(registries.Systems);
     }
 };
-
-REGISTER_PLUGIN(NavigationPlugin)

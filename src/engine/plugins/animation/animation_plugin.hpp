@@ -1,5 +1,6 @@
+#pragma once
 #define GLM_ENABLE_EXPERIMENTAL
-#include "core/src/plugin/plugin_registrar.hpp"
+#include "core/src/plugin/plugin_registry.hpp"
 #include "esc/esc_system_context.hpp"
 #include "src/animation/animation_asset_loader.hpp"
 
@@ -81,5 +82,3 @@ struct AnimationPlugin {
         }, 200);
     }
 };
-
-REGISTER_PLUGIN(AnimationPlugin)

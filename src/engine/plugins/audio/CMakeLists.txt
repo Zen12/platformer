@@ -8,6 +8,7 @@ file(GLOB_RECURSE SOURCES
 )
 
 target_sources(engine-audio INTERFACE ${SOURCES})
+target_sources(engine-audio INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/audio_plugin.hpp)
 
 target_include_directories(engine-audio INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/src

@@ -9,6 +9,7 @@ file(GLOB_RECURSE SOURCES
 )
 
 target_sources(engine-renderer PRIVATE ${SOURCES})
+target_sources(engine-renderer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/renderer_plugin.hpp)
 
 target_include_directories(engine-renderer PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src

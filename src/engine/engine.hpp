@@ -21,7 +21,6 @@
 #include "engine_context.hpp"
 #include "entity/component_registry.hpp"
 #include "core/src/register/esc_system_registry.hpp"
-#include "core/src/plugin/plugin_registry.hpp"
 
 class Engine {
 

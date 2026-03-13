@@ -1,6 +1,6 @@
+#pragma once
 #define GLM_ENABLE_EXPERIMENTAL
-#include "core/src/plugin/plugin_registrar.hpp"
-#include "register_core_actions.hpp"
+#include "core/src/plugin/plugin_registry.hpp"
 #include "src/action/register_renderer_actions.hpp"
 #include "src/register_renderer_systems.hpp"
 #include "src/register_renderer_components.hpp"
@@ -13,13 +13,9 @@ struct RendererPlugin {
         AssetLoader<Texture>::Init();
         AssetLoader<MeshData>::Init();
 
-        RegisterCoreActions(registries.Actions);
-        RegisterCoreConditions(registries.Conditions);
         RegisterRendererActions(registries.Actions);
         RegisterRendererComponents(registries.Components);
         RegisterRendererSystems(registries.Systems);
         RegisterRendererResources(registries.Resources);
     }
 };
-
-REGISTER_PLUGIN(RendererPlugin)

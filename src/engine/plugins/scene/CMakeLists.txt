@@ -9,6 +9,7 @@ file(GLOB_RECURSE SOURCES
 )
 
 target_sources(engine-scene PRIVATE ${SOURCES})
+target_sources(engine-scene PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/scene_plugin.hpp)
 
 target_include_directories(engine-scene PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src

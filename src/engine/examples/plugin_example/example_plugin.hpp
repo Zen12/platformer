@@ -1,4 +1,5 @@
-#include "core/src/plugin/plugin_registrar.hpp"
+#pragma once
+#include "core/src/plugin/plugin_registry.hpp"
 
 // Action
 #include "src/action/example_noop_action.hpp"
@@ -62,5 +63,3 @@ struct ExamplePlugin {
         }, 900);
     }
 };
-
-REGISTER_PLUGIN(ExamplePlugin)

@@ -103,11 +103,8 @@ add_subdirectory(src/engine/plugins/scene)
 add_subdirectory(src/engine/examples/plugin_example)
 
 # --- Source files ---
-file(GLOB_RECURSE HEADER_FILES "src/path_utils.hpp" "src/engine/engine.hpp")
+file(GLOB_RECURSE HEADER_FILES "src/path_utils.hpp" "src/engine/engine.hpp" "src/engine/plugins/game/game_plugin.hpp")
 file(GLOB_RECURSE SOURCE_FILES "src/main.cpp" "src/engine/engine.cpp")
-
-# Plugin entry points (compiled into main executable for static registration)
-file(GLOB PLUGIN_SOURCES "src/engine/plugins/*/*.cpp" "src/engine/examples/*/*.cpp")
 
 
 # --- Application icon ---
@@ -123,9 +120,9 @@ endif()
 
 # --- Create target ---
 if(PLATFORM_DESKTOP_OSX)
-    add_executable(${CMAKE_PROJECT_NAME} MACOSX_BUNDLE ${HEADER_FILES} ${SOURCE_FILES} ${PLUGIN_SOURCES} ${APP_ICON_SOURCES})
+    add_executable(${CMAKE_PROJECT_NAME} MACOSX_BUNDLE ${HEADER_FILES} ${SOURCE_FILES} ${APP_ICON_SOURCES})
 else()
-    add_executable(${CMAKE_PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${PLUGIN_SOURCES} ${APP_ICON_SOURCES})
+    add_executable(${CMAKE_PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES} ${APP_ICON_SOURCES})
 endif()
 
 # --- Link libraries ---

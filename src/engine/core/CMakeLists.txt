@@ -10,6 +10,7 @@ file(GLOB_RECURSE SOURCES
 )
 
 target_sources(engine-core PRIVATE ${SOURCES})
+target_sources(engine-core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/core_plugin.hpp)
 
 # Include directories - one per submodule for backward compatibility
 # This ensures existing #include directives continue to work unchanged

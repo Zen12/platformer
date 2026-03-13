@@ -9,6 +9,7 @@ file(GLOB_RECURSE SOURCES
 )
 
 target_sources(engine-animation PRIVATE ${SOURCES})
+target_sources(engine-animation PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/animation_plugin.hpp)
 
 target_include_directories(engine-animation PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src
