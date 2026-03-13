@@ -8,18 +8,14 @@
 #include "camera/camera_component.hpp"
 #include "transform/transform_component.hpp"
 
-#include "scene.hpp"
-
 inline void RegisterAISystems(EscSystemRegistry& registry) {
     // BehaviorTreeSystem: priority 260
     registry.Register<BehaviorTreeSystem>("BehaviorTreeSystem", [](const EscSystemContext& ctx) {
-        const auto scenePtr = ctx.Scene.lock();
-        if (!scenePtr) return std::unique_ptr<BehaviorTreeSystem>(nullptr);
         const auto reg = ctx.Registry;
         return std::make_unique<BehaviorTreeSystem>(
             reg->view<BehaviorTreeComponent>(),
             *reg,
-            scenePtr,
+            ctx.ResourceFactory,
             reg->view<DeltaTimeComponent>(),
             reg->view<CameraComponentV2, TransformComponentV2>());
     }, 260);

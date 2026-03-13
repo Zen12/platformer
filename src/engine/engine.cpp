@@ -11,6 +11,7 @@
 #include "profiler.hpp"
 
 #include "node/node_serialization_yaml.hpp"
+#include "project_config.hpp"
 
 #define DEBUG_ENGINE_PROFILE 0
 
@@ -63,6 +64,12 @@ Engine::Engine(const std::filesystem::path &projectPath, std::vector<PluginCallb
     _engineContext.Register<SceneManager>("SceneManager", _sceneManager);
     _engineContext.Register<VideoRecorder>("VideoRecorder", _videoRecorder);
     _engineContext.Register<AudioManager>("AudioManager", _audioManager);
+
+    auto projectConfig = std::make_shared<ProjectConfig>();
+    projectConfig->Name = _projectAsset.Name;
+    projectConfig->Resolution = _projectAsset.Resolution;
+    projectConfig->TargetFps = _projectAsset.TargetFps;
+    _engineContext.Register<ProjectConfig>("ProjectConfig", projectConfig);
 
     // Set registry pointers for YAML deserialization
     YAML::convert<StateNodeSerialization>::s_actionRegistry = &_actionRegistry;

@@ -2,19 +2,16 @@
 #include "esc/esc_core.hpp"
 #include "bt_component.hpp"
 #include "bt_executor.hpp"
-#include "bt_asset.hpp"
-#include "bt_asset_yaml.hpp"
+#include "bt_def.hpp"
 #include "navmesh_agent/navmesh_agent_component.hpp"
 #include "transform/transform_component.hpp"
 #include "time/time_component.hpp"
 #include "camera/camera_component.hpp"
-#include "asset_manager.hpp"
-#include "scene.hpp"
+#include "resource_factory.hpp"
 #include "navigation_manager.hpp"
 #include "navigation_manager_component.hpp"
 #include "guid.hpp"
 #include "combat_state/combat_state_component.hpp"
-#include <unordered_map>
 
 #define BT_SYSTEM_DEBUG 0
 
@@ -28,22 +25,20 @@
 class BehaviorTreeSystem final : public ISystemView<BehaviorTreeComponent> {
 private:
     entt::registry& _registry;
-    std::weak_ptr<Scene> _scene;
+    std::shared_ptr<ResourceFactory> _resourceFactory;
     decltype(std::declval<entt::registry&>().view<DeltaTimeComponent>()) _timeView;
     decltype(std::declval<entt::registry&>().view<CameraComponentV2, TransformComponentV2>()) _cameraView;
     uint32_t _frameCount = 0;
-
-    std::unordered_map<Guid, std::shared_ptr<BehaviorTreeDef>> _treeCache;
 
 public:
     BehaviorTreeSystem(
         TypeView view,
         entt::registry& registry,
-        std::weak_ptr<Scene> scene,
+        std::shared_ptr<ResourceFactory> resourceFactory,
         decltype(std::declval<entt::registry&>().view<DeltaTimeComponent>()) timeView,
         decltype(std::declval<entt::registry&>().view<CameraComponentV2, TransformComponentV2>()) cameraView
     )
-        : ISystemView(view), _registry(registry), _scene(std::move(scene)), _timeView(timeView), _cameraView(cameraView) {}
+        : ISystemView(view), _registry(registry), _resourceFactory(std::move(resourceFactory)), _timeView(timeView), _cameraView(cameraView) {}
 
     void OnTick() override {
         _frameCount++;
@@ -71,7 +66,7 @@ public:
 
         for (auto [entity, bt] : View.each()) {
             if (!bt.TreeDef && !bt.TreeGuid.IsEmpty()) {
-                bt.TreeDef = LoadTree(bt.TreeGuid);
+                bt.TreeDef = _resourceFactory->Get<BehaviorTreeDef>(bt.TreeGuid);
                 if (bt.TreeDef) {
                     bt.State.Reset();
                     bt.FrameOffset = static_cast<uint8_t>(static_cast<uint32_t>(entity) % 8);
@@ -113,27 +108,4 @@ public:
         }
     }
 
-private:
-    std::shared_ptr<BehaviorTreeDef> LoadTree(const Guid& guid) {
-        auto it = _treeCache.find(guid);
-        if (it != _treeCache.end()) {
-            return it->second;
-        }
-
-        auto scene = _scene.lock();
-        if (!scene) return nullptr;
-
-        auto assetManager = scene->GetResourceFactory()->GetAssetManager().lock();
-        if (!assetManager) return nullptr;
-
-        try {
-            auto btAsset = assetManager->LoadAssetByGuid<BehaviorTreeAsset>(guid);
-            auto treeDef = std::make_shared<BehaviorTreeDef>(std::move(btAsset.Tree));
-            _treeCache[guid] = treeDef;
-            return treeDef;
-        } catch (const std::exception& e) {
-            BT_SYSTEM_LOG("Failed to load behavior tree: " << guid.ToString() << " - " << e.what());
-            return nullptr;
-        }
-    }
 };
