@@ -7,7 +7,6 @@
 #include "input_system.hpp"
 #include "mesh/mesh.hpp"
 #include "entt/entity/registry.hpp"
-#include "navigation_manager.hpp"
 #include "skybox/skybox_renderer.hpp"
 #include "guid.hpp"
 
@@ -28,7 +27,6 @@ private:
     const EngineContext* _engineContext = nullptr;
 
     std::shared_ptr<entt::registry> _entityRegistry{};
-    std::shared_ptr<NavigationManager> _navigationManager{};
     std::unique_ptr<SkyboxRenderer> _skyboxRenderer{};
 
     Guid _requestToLoadScene{};
@@ -45,7 +43,6 @@ public:
     {
 
         _entityRegistry = std::make_shared<entt::registry>();
-        _navigationManager = std::make_shared<NavigationManager>();
     }
 
 
@@ -63,10 +60,6 @@ public:
 
     [[nodiscard]] std::shared_ptr<entt::registry> GetEntityRegistry() const noexcept {
         return _entityRegistry;
-    }
-
-    [[nodiscard]] std::shared_ptr<NavigationManager> GetNavigationManager() const noexcept {
-        return _navigationManager;
     }
 
     [[nodiscard]] SkyboxRenderer* GetSkyboxRenderer() const noexcept {

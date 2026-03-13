@@ -20,7 +20,6 @@ target_link_libraries(engine-animation PRIVATE
     yaml-cpp
     EnTT::EnTT
     assimp
-    engine-guid
     engine-core
     engine-system
     engine-font

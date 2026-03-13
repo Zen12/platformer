@@ -5,7 +5,7 @@
 #include "loaders/asset_loader.hpp"
 #include "project_asset_loader.hpp"
 #include <thread>
-
+#include <functional>
 
 #include "time.hpp"
 #include "asset_manager.hpp"
@@ -21,6 +21,9 @@
 #include "engine_context.hpp"
 #include "entity/component_registry.hpp"
 #include "core/src/register/esc_system_registry.hpp"
+#include "core/src/plugin/plugin_registry.hpp"
+
+using PluginCallback = std::function<void(PluginRegistries&)>;
 
 class Engine {
 
@@ -51,7 +54,7 @@ private:
     float _targetFrameTime = 0.02f;
 
 public:
-    explicit Engine(const std::filesystem::path &projectPath);
+    explicit Engine(const std::filesystem::path &projectPath, std::vector<PluginCallback> plugins);
 
     void WaitForTargetFrameRate() const;
 

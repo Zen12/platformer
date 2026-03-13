@@ -1,5 +1,5 @@
 #include "engine.hpp"
-#include "register_all_plugins.hpp"
+#include "core/core_plugin.hpp"
 #include "scene_asset_yaml.hpp"
 #include <RmlUi/Core.h>
 
@@ -21,7 +21,7 @@
 #define ENGINE_LOG if(0) std::cout
 #endif
 
-Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectPath) {
+Engine::Engine(const std::filesystem::path &projectPath, std::vector<PluginCallback> plugins) : _projectPath(projectPath) {
     Profiler::Init();
 
     ENGINE_LOG << "Load project from: " << _projectPath << "\n";
@@ -39,9 +39,12 @@ Engine::Engine(const std::filesystem::path &projectPath) : _projectPath(projectP
     _audioManager = std::make_shared<AudioManager>(_assetManager);
     _sceneManager->SetAudioManager(_audioManager);
 
-    // Auto-register all plugins
+    // Register core plugin (engine-internal)
     PluginRegistries registries{_actionRegistry, _conditionRegistry, _componentRegistry, _systemRegistry, *_resourceFactory};
-    RegisterAllPlugins(registries);
+    CorePlugin::Register(registries);
+    for (const auto& plugin : plugins) {
+        plugin(registries);
+    }
 
     // Register FsmAsset loader (core type, after plugins)
     _resourceFactory->RegisterLoader<FsmAsset>([](ResourceFactory& factory, const Guid& guid) -> std::shared_ptr<FsmAsset> {

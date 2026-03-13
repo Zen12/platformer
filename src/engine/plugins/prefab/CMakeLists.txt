@@ -16,5 +16,5 @@ target_include_directories(engine-prefab INTERFACE
 
 target_link_libraries(engine-prefab INTERFACE
     yaml-cpp
-    engine-guid
+    engine-core
 )

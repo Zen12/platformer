@@ -17,7 +17,6 @@ target_include_directories(engine-audio INTERFACE
 target_link_libraries(engine-audio INTERFACE
     GLM::GLM
     yaml-cpp
-    engine-guid
     engine-core
 )
 

@@ -15,6 +15,5 @@ target_include_directories(engine-project INTERFACE
 
 target_link_libraries(engine-project INTERFACE
     yaml-cpp
-    engine-guid
     engine-core
 )

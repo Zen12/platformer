@@ -17,6 +17,7 @@ target_sources(engine-core PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/core_plugin.hpp)
 target_include_directories(engine-core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/src/asset
     ${CMAKE_CURRENT_SOURCE_DIR}/src/fsm
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/guid
     ${CMAKE_CURRENT_SOURCE_DIR}/src/resource
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../..
@@ -25,7 +26,6 @@ target_include_directories(engine-core PUBLIC
 # Dependencies (union of all three, minus engine-renderer/engine-scene/engine-system to avoid circular deps)
 target_link_libraries(engine-core PUBLIC
     yaml-cpp
-    engine-guid
     GLM::GLM
     EnTT::EnTT
 )

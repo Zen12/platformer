@@ -15,7 +15,7 @@
 #include "../material/material.hpp"
 #include "../texture/texture.hpp"
 #include "window.hpp"
-#include "loaders/asset_texture_loader.h"
+#include "../texture/asset_texture_loader.hpp"
 #include "asset_manager.hpp"
 #include "guid.hpp"
 

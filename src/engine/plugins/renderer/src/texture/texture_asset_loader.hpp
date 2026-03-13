@@ -2,7 +2,7 @@
 
 #include "texture.hpp"
 #include "loaders/asset_loader.hpp"
-#include "loaders/asset_texture_loader.h"
+#include "asset_texture_loader.hpp"
 #include <memory>
 #include <functional>
 

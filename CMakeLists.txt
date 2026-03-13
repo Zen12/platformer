@@ -82,7 +82,6 @@ if(BUILD_TESTING)
 endif()
 
 # --- Engine Modules (order matters for dependencies) ---
-add_subdirectory(src/engine/plugins/guid)
 add_subdirectory(src/engine/plugins/profiler)
 add_subdirectory(src/engine/plugins/math)
 add_subdirectory(src/engine/plugins/utlis)
@@ -103,7 +102,7 @@ add_subdirectory(src/engine/plugins/scene)
 add_subdirectory(src/engine/examples/plugin_example)
 
 # --- Source files ---
-file(GLOB_RECURSE HEADER_FILES "src/path_utils.hpp" "src/engine/engine.hpp" "src/engine/plugins/game/game_plugin.hpp")
+file(GLOB_RECURSE HEADER_FILES "src/path_utils.hpp" "src/engine/engine.hpp" "src/game/game_plugin.hpp")
 file(GLOB_RECURSE SOURCE_FILES "src/main.cpp" "src/engine/engine.cpp")
 
 
@@ -130,7 +129,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE GLM::GLM freetype yaml-cpp E
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${stb_SOURCE_DIR}
     ${RVO2_INCLUDE_DIRS}
-    ${CMAKE_SOURCE_DIR}/src/engine/plugins/game/src
+    ${CMAKE_SOURCE_DIR}/src/game/src
     ${CMAKE_SOURCE_DIR}/src/engine/plugins/scene/src
     ${CMAKE_SOURCE_DIR}/src/engine/plugins/renderer/src
     ${CMAKE_SOURCE_DIR}/src/engine/plugins/navigation/src
@@ -145,7 +144,6 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Engine modules
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
-    engine-guid
     engine-profiler
     engine-math
     engine-utils

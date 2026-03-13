@@ -1,6 +1,28 @@
 #include "path_utils.hpp"
 #include "engine/engine.hpp"
+#include "engine/plugins/scene/scene_plugin.hpp"
+#include "engine/plugins/renderer/renderer_plugin.hpp"
+#include "engine/plugins/animation/animation_plugin.hpp"
+#include "engine/plugins/audio/audio_plugin.hpp"
+#include "game/game_plugin.hpp"
+#include "engine/plugins/ai/ai_plugin.hpp"
+#include "engine/plugins/ik/ik_plugin.hpp"
+#include "engine/plugins/navigation/navigation_plugin.hpp"
+#include "engine/examples/plugin_example/example_plugin.hpp"
 
+std::vector<PluginCallback> GetGamePlugins() {
+    return {
+        ScenePlugin::Register,
+        RendererPlugin::Register,
+        AnimationPlugin::Register,
+        AudioPlugin::Register,
+        GamePlugin::Register,
+        AIPlugin::Register,
+        IKPlugin::Register,
+        NavigationPlugin::Register,
+        ExamplePlugin::Register,
+    };
+}
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
@@ -10,7 +32,7 @@ static std::unique_ptr<Engine> g_engine;
 
 void RunEngineWebGl() {
     if (!g_engine) {
-        g_engine = std::make_unique<Engine>(GetProjectRootPath());
+        g_engine = std::make_unique<Engine>(GetProjectRootPath(), GetGamePlugins());
     }
 
     if (g_engine->IsTickable()) {
@@ -34,7 +56,7 @@ void LoadEngineWebGL() {
 
 bool RunEngineDesktop() {
 
-    Engine engine(GetProjectRootPath());
+    Engine engine(GetProjectRootPath(), GetGamePlugins());
 
     while (engine.IsTickable())
     {

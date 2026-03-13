@@ -10,6 +10,8 @@
 #include "mesh_renderer/mesh_renderer_component.hpp"
 #include "mesh_renderer/mesh_renderer_component_serialization.hpp"
 #include "navmesh_mesh_generator.hpp"
+#include "navigation_manager.hpp"
+#include "navigation_manager_component.hpp"
 #include "profiler.hpp"
 
 
@@ -21,38 +23,42 @@ void SceneManager::LoadScene(const SceneAsset &sceneAsset) {
     _scene->SetConditionRegistry(_conditionRegistry);
     _scene->SetEngineContext(_engineContext);
 
-    if (const auto navigationManager = _scene->GetNavigationManager()) {
-        if (sceneAsset.Navmesh.has_value()) {
-            const auto& navmesh = sceneAsset.Navmesh.value();
-            navigationManager->Initialize(navmesh.Width, navmesh.Height,
-                                        navmesh.CellSize, navmesh.Origin,
-                                        navmesh.WalkabilityGrid, navmesh.MaxAgents);
+    auto navigationManager = std::make_shared<NavigationManager>();
+    if (sceneAsset.Navmesh.has_value()) {
+        const auto& navmesh = sceneAsset.Navmesh.value();
+        navigationManager->Initialize(navmesh.Width, navmesh.Height,
+                                    navmesh.CellSize, navmesh.Origin,
+                                    navmesh.WalkabilityGrid, navmesh.MaxAgents);
 
-            if (const auto gridNavmesh = navigationManager->GetNavmesh()) {
-                auto navmeshMesh = NavmeshMeshGenerator::Generate(
-                    *gridNavmesh,
-                    navmesh.Origin.y,
-                    navmesh.ElevationHeight
-                );
+        if (const auto gridNavmesh = navigationManager->GetNavmesh()) {
+            auto navmeshMesh = NavmeshMeshGenerator::Generate(
+                *gridNavmesh,
+                navmesh.Origin.y,
+                navmesh.ElevationHeight
+            );
 
-                // Create entity for combined navmesh mesh (ground + walls + ramps)
-                if (navmeshMesh && navmesh.GroundMaterialGuid.has_value()) {
-                    const Guid meshGuid = Guid::Generate();
-                    _scene->RegisterMesh(meshGuid, navmeshMesh);
+            // Create entity for combined navmesh mesh (ground + walls + ramps)
+            if (navmeshMesh && navmesh.GroundMaterialGuid.has_value()) {
+                const Guid meshGuid = Guid::Generate();
+                _scene->RegisterMesh(meshGuid, navmeshMesh);
 
-                    if (const auto registry = _scene->GetEntityRegistry()) {
-                        const auto entity = registry->create();
-                        registry->emplace<TransformComponentV2>(entity);
-                        registry->emplace<MeshRendererComponent>(entity,
-                            meshGuid,
-                            navmesh.GroundMaterialGuid.value(),
-                            glm::vec4(0.3f, 0.6f, 0.3f, 1.0f));
-                    }
+                if (const auto registry = _scene->GetEntityRegistry()) {
+                    const auto entity = registry->create();
+                    registry->emplace<TransformComponentV2>(entity);
+                    registry->emplace<MeshRendererComponent>(entity,
+                        meshGuid,
+                        navmesh.GroundMaterialGuid.value(),
+                        glm::vec4(0.3f, 0.6f, 0.3f, 1.0f));
                 }
             }
-        } else {
-            navigationManager->Initialize(50, 50, 1.0f, glm::vec3(0.0f, 0.0f, 0.0f));
         }
+    } else {
+        navigationManager->Initialize(50, 50, 1.0f, glm::vec3(0.0f, 0.0f, 0.0f));
+    }
+
+    if (const auto registry = _scene->GetEntityRegistry()) {
+        const auto navEntity = registry->create();
+        registry->emplace<NavigationManagerComponent>(navEntity, NavigationManagerComponent{navigationManager});
     }
 
     if (sceneAsset.Skybox.has_value()) {

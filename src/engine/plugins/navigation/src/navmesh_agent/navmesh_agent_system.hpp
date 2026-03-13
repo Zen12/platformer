@@ -4,7 +4,6 @@
 #include "transform/transform_component.hpp"
 #include "time/time_component.hpp"
 #include "navigation_manager.hpp"
-#include "scene.hpp"
 #include <memory>
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
@@ -14,15 +13,13 @@ class NavmeshAgentSystem final : public ISystemView<NavmeshAgentComponent, Trans
 private:
     decltype(std::declval<entt::registry&>().view<DeltaTimeComponent>()) _timeView;
     std::shared_ptr<NavigationManager> _navigationManager;
-    std::weak_ptr<Scene> _scene;
 
 public:
     NavmeshAgentSystem(
         TypeView view,
         decltype(std::declval<entt::registry&>().view<DeltaTimeComponent>()) timeView,
-        std::shared_ptr<NavigationManager> navigationManager,
-        const std::weak_ptr<Scene>& scene)
-        : ISystemView(view), _timeView(timeView), _navigationManager(std::move(navigationManager)), _scene(scene) {}
+        std::shared_ptr<NavigationManager> navigationManager)
+        : ISystemView(view), _timeView(timeView), _navigationManager(std::move(navigationManager)) {}
 
     void OnTick() override {
         if (!_navigationManager) {

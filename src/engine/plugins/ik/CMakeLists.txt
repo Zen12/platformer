@@ -19,7 +19,6 @@ target_link_libraries(engine-ik PRIVATE
     GLM::GLM
     yaml-cpp
     EnTT::EnTT
-    engine-guid
     engine-core
     engine-system
     engine-font

@@ -19,7 +19,6 @@ target_link_libraries(engine-scene PUBLIC
     GLM::GLM
     yaml-cpp
     EnTT::EnTT
-    engine-guid
     engine-core
     engine-system
     engine-navigation

@@ -11,6 +11,7 @@
 #include "asset_manager.hpp"
 #include "scene.hpp"
 #include "navigation_manager.hpp"
+#include "navigation_manager_component.hpp"
 #include "guid.hpp"
 #include "combat_state/combat_state_component.hpp"
 #include <unordered_map>
@@ -59,12 +60,13 @@ public:
         }
 
         GridNavmesh* navmesh = nullptr;
-        if (auto scene = _scene.lock()) {
-            if (auto navManager = scene->GetNavigationManager()) {
-                if (auto navmeshPtr = navManager->GetNavmesh()) {
+        for (const auto& [_, comp] : _registry.view<NavigationManagerComponent>().each()) {
+            if (comp.Manager) {
+                if (auto navmeshPtr = comp.Manager->GetNavmesh()) {
                     navmesh = navmeshPtr.get();
                 }
             }
+            break;
         }
 
         for (auto [entity, bt] : View.each()) {

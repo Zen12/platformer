@@ -2,6 +2,7 @@
 #include "esc/esc_core.hpp"
 #include "spawner_component.hpp"
 #include "scene.hpp"
+#include "navigation_manager_component.hpp"
 #include "asset_manager.hpp"
 #include "prefab_asset.hpp"
 #include "prefab_asset_yaml.hpp"
@@ -135,7 +136,11 @@ public:
                         SpawnEntity(registry, prefabData, pos);
                     }
                 } else if (spawnOnAllCells) {
-                    const auto navManager = scenePtr->GetNavigationManager();
+                    std::shared_ptr<NavigationManager> navManager;
+                    for (const auto& [_, comp] : registry->view<NavigationManagerComponent>().each()) {
+                        navManager = comp.Manager;
+                        break;
+                    }
                     if (navManager) {
                         const auto navmesh = navManager->GetNavmesh();
                         if (navmesh) {
@@ -167,7 +172,11 @@ public:
                         }
                     }
                 } else if (spawnOnNavmesh) {
-                    const auto navManager = scenePtr->GetNavigationManager();
+                    std::shared_ptr<NavigationManager> navManager;
+                    for (const auto& [_, comp] : registry->view<NavigationManagerComponent>().each()) {
+                        navManager = comp.Manager;
+                        break;
+                    }
                     if (navManager) {
                         const auto navmesh = navManager->GetNavmesh();
                         if (navmesh) {

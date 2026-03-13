@@ -25,3 +25,15 @@ target_link_libraries(engine-ai-test PRIVATE
 )
 
 add_test(NAME engine-ai-test COMMAND engine-ai-test)
+
+# GUID tests
+add_executable(engine-guid-test
+    guid_test.cpp
+)
+
+target_link_libraries(engine-guid-test PRIVATE
+    engine-core
+    GTest::gtest_main
+)
+
+add_test(NAME engine-guid-test COMMAND engine-guid-test)

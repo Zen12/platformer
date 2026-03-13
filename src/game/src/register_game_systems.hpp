@@ -3,7 +3,6 @@
 #include "esc/esc_system_context.hpp"
 
 #include "scene.hpp"
-#include "navigation_manager.hpp"
 
 #include "player_controller/player_controller_system.hpp"
 #include "spawner/spawner_system.hpp"

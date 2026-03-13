@@ -1,4 +1,4 @@
-#include "asset_texture_loader.h"
+#include "asset_texture_loader.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"

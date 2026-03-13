@@ -24,7 +24,6 @@ target_link_libraries(engine-renderer PUBLIC
     assimp
     RVO
     minitrace_lib
-    engine-guid
     engine-core
     engine-system
     engine-font
@@ -39,7 +38,7 @@ target_include_directories(engine-renderer PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../navigation/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../audio/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../ai/src
-    ${CMAKE_CURRENT_SOURCE_DIR}/../game/src
+    ${CMAKE_SOURCE_DIR}/src/game/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../prefab/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../profiler/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../..

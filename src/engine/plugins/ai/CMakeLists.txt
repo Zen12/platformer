@@ -18,7 +18,6 @@ target_link_libraries(engine-ai INTERFACE
     GLM::GLM
     yaml-cpp
     EnTT::EnTT
-    engine-guid
     engine-core
     engine-navigation
 )
