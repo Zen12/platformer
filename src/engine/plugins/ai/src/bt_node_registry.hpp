@@ -7,23 +7,7 @@
 
 class BTNodeRegistry {
 public:
-    static BTNodeRegistry& Instance() {
-        static BTNodeRegistry instance;
-        return instance;
-    }
-
-    IBTNode* GetNode(const std::string& type) {
-        auto it = _nodes.find(type);
-        if (it != _nodes.end()) {
-            return it->second.get();
-        }
-        return nullptr;
-    }
-
-private:
     BTNodeRegistry() {
-        Register<SequenceNode>("sequence");
-        Register<SelectorNode>("selector");
         Register<WaitNode>("wait");
         Register<HasTargetNode>("has_target");
         Register<ClearTargetNode>("clear_target");
@@ -40,10 +24,19 @@ private:
         Register<AttackNode>("attack");
     }
 
+    IBTNode* GetNode(const std::string& type) const {
+        auto it = _nodes.find(type);
+        if (it != _nodes.end()) {
+            return it->second.get();
+        }
+        return nullptr;
+    }
+
     template<typename T>
     void Register(const std::string& type) {
         _nodes[type] = std::make_unique<T>();
     }
 
+private:
     std::unordered_map<std::string, std::unique_ptr<IBTNode>> _nodes;
 };

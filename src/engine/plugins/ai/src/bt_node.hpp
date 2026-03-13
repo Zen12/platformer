@@ -1,8 +1,8 @@
 #pragma once
 #include "bt_status.hpp"
 #include "bt_def.hpp"
+#include "bt_blackboard.hpp"
 #include <entt/entt.hpp>
-#include <string_view>
 
 class BehaviorTreeComponent;
 class GridNavmesh;
@@ -14,7 +14,19 @@ struct BTContext {
     float DeltaTime;
     BTNodeState& State;
     const BTNodeDef& Def;
-    GridNavmesh* Navmesh = nullptr;
+    GridNavmesh* Navmesh;
+    const BTBlackboard& Blackboard;
+
+    BTContext(BehaviorTreeComponent& bt, entt::entity entity,
+             BTNodeState& state, const BTNodeDef& def, const BTBlackboard& blackboard)
+        : BT(bt),
+          Registry(*blackboard.Get<entt::registry*>()),
+          Entity(entity),
+          DeltaTime(blackboard.Get<float>()),
+          State(state),
+          Def(def),
+          Navmesh(blackboard.Get<GridNavmesh*>()),
+          Blackboard(blackboard) {}
 };
 
 struct IBTNode {

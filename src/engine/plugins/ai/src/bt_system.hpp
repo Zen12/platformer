@@ -2,6 +2,7 @@
 #include "esc/esc_core.hpp"
 #include "bt_component.hpp"
 #include "bt_executor.hpp"
+#include "bt_node_registry.hpp"
 #include "bt_def.hpp"
 #include "navmesh_agent/navmesh_agent_component.hpp"
 #include "transform/transform_component.hpp"
@@ -26,6 +27,8 @@ class BehaviorTreeSystem final : public ISystemView<BehaviorTreeComponent> {
 private:
     entt::registry& _registry;
     std::shared_ptr<ResourceFactory> _resourceFactory;
+    BTNodeRegistry _nodeRegistry;
+    BTExecutor _executor;
     decltype(std::declval<entt::registry&>().view<DeltaTimeComponent>()) _timeView;
     decltype(std::declval<entt::registry&>().view<CameraComponentV2, TransformComponentV2>()) _cameraView;
     uint32_t _frameCount = 0;
@@ -64,6 +67,10 @@ public:
             break;
         }
 
+        _executor.Set<float>(deltaTime);
+        _executor.Set<entt::registry*>(&_registry);
+        _executor.Set<GridNavmesh*>(navmesh);
+
         for (auto [entity, bt] : View.each()) {
             if (!bt.TreeDef && !bt.TreeGuid.IsEmpty()) {
                 bt.TreeDef = _resourceFactory->Get<BehaviorTreeDef>(bt.TreeGuid);
@@ -95,7 +102,7 @@ public:
                 }
             }
 
-            BTExecutor::Execute(bt, deltaTime, _registry, entity, navmesh);
+            _executor.Execute(bt, _nodeRegistry, entity);
 
             // Sync combat state to CombatStateComponent
             if (_registry.all_of<CombatStateComponent>(entity)) {

@@ -13,7 +13,7 @@ struct FindTargetByTagNode final : IBTNode {
         if (!transform) return BTStatus::Failure;
 
         const auto myPos = transform->GetPosition();
-        float searchRadius = ctx.Def.Param1;
+        float searchRadius = ctx.Def.GetFloat("radius");
         float bestDist = searchRadius > 0 ? searchRadius : std::numeric_limits<float>::max();
         entt::entity bestTarget = entt::null;
         glm::vec3 bestPos{0};
@@ -23,7 +23,7 @@ struct FindTargetByTagNode final : IBTNode {
             if (entity == ctx.Entity) continue;
 
             const auto& tagComp = view.get<TagComponent>(entity);
-            if (tagComp.GetTag() != ctx.Def.StringParam) continue;
+            if (tagComp.GetTag() != ctx.Def.GetString("tag")) continue;
 
             const auto& targetTransform = view.get<TransformComponentV2>(entity);
             const auto targetPos = targetTransform.GetPosition();
@@ -40,7 +40,7 @@ struct FindTargetByTagNode final : IBTNode {
             ctx.BT.TargetEntity = bestTarget;
             ctx.BT.TargetPosition = bestPos;
             ctx.BT.HasTarget = true;
-            ctx.BT.TargetTag = ctx.Def.StringParam;
+            ctx.BT.TargetTag = ctx.Def.GetString("tag");
             return BTStatus::Success;
         }
 
@@ -62,7 +62,7 @@ struct HasTargetInRangeNode final : IBTNode {
         if (!targetTransform) return BTStatus::Failure;
 
         float dist = glm::distance(transform->GetPosition(), targetTransform->GetPosition());
-        return (dist <= ctx.Def.Param1) ? BTStatus::Success : BTStatus::Failure;
+        return (dist <= ctx.Def.GetFloat("range")) ? BTStatus::Success : BTStatus::Failure;
     }
 };
 
@@ -74,7 +74,7 @@ struct CheckDistanceNode final : IBTNode {
         if (!transform) return BTStatus::Failure;
 
         float dist = glm::distance(transform->GetPosition(), ctx.BT.TargetPosition);
-        return (dist <= ctx.Def.Param1) ? BTStatus::Success : BTStatus::Failure;
+        return (dist <= ctx.Def.GetFloat("range")) ? BTStatus::Success : BTStatus::Failure;
     }
 };
 

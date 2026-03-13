@@ -1,40 +1,31 @@
 #pragma once
 #include "bt_def.hpp"
 #include <yaml-cpp/yaml.h>
-#include <unordered_set>
-#include <string>
 
 namespace YAML {
 
-inline float ReadParam1(const Node& node, const std::string& type) {
-    static const std::unordered_set<std::string> durationTypes = {"wait", "attack"};
-    static const std::unordered_set<std::string> radiusTypes = {"random_wander", "find_target_by_tag", "idle"};
-    static const std::unordered_set<std::string> rangeTypes = {"check_distance", "has_target_in_range"};
+static const std::vector<std::string> BT_FLOAT_KEYS = {
+    "duration", "time", "radius", "range", "distance",
+    "threshold", "count", "times", "param", "param2"
+};
 
-    if (durationTypes.count(type)) {
-        if (node["duration"]) return node["duration"].as<float>();
-        if (node["time"]) return node["time"].as<float>();
-    } else if (radiusTypes.count(type)) {
-        if (node["radius"]) return node["radius"].as<float>();
-    } else if (rangeTypes.count(type)) {
-        if (node["range"]) return node["range"].as<float>();
-        if (node["distance"]) return node["distance"].as<float>();
-    } else if (type == "check_health") {
-        if (node["threshold"]) return node["threshold"].as<float>();
-    } else if (type == "repeater") {
-        if (node["count"]) return node["count"].as<float>();
-        if (node["times"]) return node["times"].as<float>();
-    }
-
-    return node["param"] ? node["param"].as<float>() : 0.0f;
-}
+static const std::vector<std::string> BT_STRING_KEYS = {
+    "tag"
+};
 
 inline void ParseNode(const Node& node, BehaviorTreeDef& tree, std::vector<uint16_t>& parentStack) {
     BTNodeDef nodeDef{};
-    nodeDef.Type = node["type"].as<std::string>();
-    nodeDef.Param1 = ReadParam1(node, nodeDef.Type);
-    nodeDef.Param2 = node["param2"] ? node["param2"].as<float>() : 0.0f;
-    nodeDef.StringParam = node["tag"] ? node["tag"].as<std::string>() : "";
+    auto typeStr = node["type"].as<std::string>();
+    nodeDef.Composite = BTCompositeFromString(typeStr);
+    nodeDef.Type = (nodeDef.Composite == BTCompositeType::NONE) ? typeStr : "";
+
+    for (const auto& key : BT_FLOAT_KEYS) {
+        if (node[key]) nodeDef.Floats[key] = node[key].as<float>();
+    }
+    for (const auto& key : BT_STRING_KEYS) {
+        if (node[key]) nodeDef.Strings[key] = node[key].as<std::string>();
+    }
+
     nodeDef.ChildCount = 0;
     nodeDef.FirstChildIndex = 0;
 

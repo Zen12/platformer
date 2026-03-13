@@ -1,5 +1,6 @@
 #pragma once
 #include "bt_def.hpp"
+#include "bt_blackboard.hpp"
 #include "bt_component.hpp"
 #include "bt_node.hpp"
 #include "bt_node_registry.hpp"
@@ -25,13 +26,16 @@ inline const char* StatusToString(BTStatus status) {
 }
 
 class BTExecutor {
+    BTBlackboard _blackboard;
+
 public:
-    static BTStatus Execute(
+    template<typename T>
+    void Set(T value) { _blackboard.Set(std::move(value)); }
+
+    BTStatus Execute(
         BehaviorTreeComponent& bt,
-        float deltaTime,
-        entt::registry& registry,
-        entt::entity selfEntity,
-        GridNavmesh* navmesh = nullptr
+        const BTNodeRegistry& nodeRegistry,
+        entt::entity entity
     ) {
         if (!bt.TreeDef || bt.TreeDef->Nodes.empty()) {
             BT_LOG("No tree definition");
@@ -46,8 +50,13 @@ public:
 
             BT_LOG("Processing node[" << current.NodeIndex << "]: " << node.Type);
 
-            BTContext ctx{bt, registry, selfEntity, deltaTime, current, node, navmesh};
-            BTStatus result = ExecuteNode(ctx);
+            BTStatus result;
+            if (node.Composite != BTCompositeType::NONE) {
+                result = ExecuteComposite(bt, node, current);
+            } else {
+                BTContext ctx(bt, entity, current, node, _blackboard);
+                result = ExecuteNode(ctx, nodeRegistry);
+            }
 
             BT_LOG_NODE(node.Type, result);
 
@@ -61,17 +70,19 @@ public:
                 auto& parent = bt.State.Current();
                 const auto& parentNode = bt.TreeDef->GetNode(parent.NodeIndex);
 
-                if (!HandleChildResult(bt, parentNode, parent, result)) {
+                if (!HandleChildResult(parentNode, parent, result)) {
                     break;
                 }
 
-                if (parentNode.Type == "sequence") {
+                if (parentNode.Composite == BTCompositeType::SEQUENCE) {
                     result = BTStatus::Failure;
-                } else if (parentNode.Type == "selector") {
+                } else if (parentNode.Composite == BTCompositeType::SELECTOR) {
                     result = (result == BTStatus::Success) ? BTStatus::Success : BTStatus::Failure;
+                } else if (parentNode.Composite == BTCompositeType::REPEATER) {
+                    result = BTStatus::Failure;
                 }
 
-                BT_LOG("Propagating " << StatusToString(result) << " from " << parentNode.Type);
+                BT_LOG("Propagating " << StatusToString(result) << " from composite " << static_cast<int>(parentNode.Composite));
                 bt.State.Pop();
             }
         }
@@ -82,8 +93,26 @@ public:
     }
 
 private:
-    static BTStatus ExecuteNode(BTContext& ctx) {
-        auto* node = BTNodeRegistry::Instance().GetNode(ctx.Def.Type);
+    static BTStatus ExecuteComposite(
+        BehaviorTreeComponent& bt,
+        const BTNodeDef& node,
+        BTNodeState& state
+    ) {
+        if (state.ChildProgress < node.ChildIndices.size()) {
+            uint16_t childIndex = node.ChildIndices[state.ChildProgress];
+            bt.State.Push(childIndex);
+            return BTStatus::Running;
+        }
+        switch (node.Composite) {
+            case BTCompositeType::SEQUENCE: return BTStatus::Success;
+            case BTCompositeType::SELECTOR: return BTStatus::Failure;
+            case BTCompositeType::REPEATER: return BTStatus::Success;
+            default: return BTStatus::Failure;
+        }
+    }
+
+    static BTStatus ExecuteNode(BTContext& ctx, const BTNodeRegistry& nodeRegistry) {
+        auto* node = nodeRegistry.GetNode(ctx.Def.Type);
         if (node) {
             return node->Execute(ctx);
         }
@@ -91,25 +120,25 @@ private:
     }
 
     static bool HandleChildResult(
-        [[maybe_unused]] BehaviorTreeComponent& bt,
         const BTNodeDef& parentNode,
         BTNodeState& parentState,
         BTStatus childResult
     ) {
-        if (parentNode.Type == "sequence") {
-            if (childResult == BTStatus::Failure) {
+        switch (parentNode.Composite) {
+            case BTCompositeType::SEQUENCE:
+                if (childResult == BTStatus::Failure) return true;
+                parentState.ChildProgress++;
+                return false;
+            case BTCompositeType::SELECTOR:
+                if (childResult == BTStatus::Success) return true;
+                parentState.ChildProgress++;
+                return false;
+            case BTCompositeType::REPEATER:
+                if (childResult == BTStatus::Failure) return true;
+                parentState.ChildProgress = 0;
+                return false;
+            default:
                 return true;
-            }
-            parentState.ChildProgress++;
-            return false;
         }
-        else if (parentNode.Type == "selector") {
-            if (childResult == BTStatus::Success) {
-                return true;
-            }
-            parentState.ChildProgress++;
-            return false;
-        }
-        return true;
     }
 };

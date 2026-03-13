@@ -4,15 +4,44 @@
 #include <vector>
 #include <string>
 #include <cstdint>
+#include <unordered_map>
+
+enum class BTCompositeType : uint8_t {
+    NONE = 0,
+    SEQUENCE,
+    SELECTOR,
+    REPEATER,
+};
+
+inline BTCompositeType BTCompositeFromString(const std::string& str) {
+    static const std::unordered_map<std::string, BTCompositeType> map = {
+        {"sequence", BTCompositeType::SEQUENCE},
+        {"selector", BTCompositeType::SELECTOR},
+        {"repeater", BTCompositeType::REPEATER},
+    };
+    auto it = map.find(str);
+    return it != map.end() ? it->second : BTCompositeType::NONE;
+}
 
 struct BTNodeDef {
+    BTCompositeType Composite;
     std::string Type;
     uint8_t ChildCount;
     uint16_t FirstChildIndex;
     std::vector<uint16_t> ChildIndices;
-    float Param1;
-    float Param2;
-    std::string StringParam;
+    std::unordered_map<std::string, float> Floats;
+    std::unordered_map<std::string, std::string> Strings;
+
+    [[nodiscard]] float GetFloat(const std::string& key, float fallback = 0.0f) const {
+        auto it = Floats.find(key);
+        return it != Floats.end() ? it->second : fallback;
+    }
+
+    [[nodiscard]] const std::string& GetString(const std::string& key) const {
+        static const std::string empty;
+        auto it = Strings.find(key);
+        return it != Strings.end() ? it->second : empty;
+    }
 };
 
 struct BehaviorTreeDef {
@@ -29,10 +58,28 @@ struct BehaviorTreeDef {
 struct BTNodeState {
     uint16_t NodeIndex;
     uint8_t ChildProgress;
-    float Timer;
     BTStatus LastStatus;
-    glm::vec3 CustomTarget{0};
-    bool HasCustomTarget = false;
+    std::unordered_map<std::string, float> Floats;
+    std::unordered_map<std::string, glm::vec3> Vectors;
+    std::unordered_map<std::string, bool> Bools;
+
+    float& Float(const std::string& key) { return Floats[key]; }
+    [[nodiscard]] float GetFloat(const std::string& key, float fallback = 0.0f) const {
+        auto it = Floats.find(key);
+        return it != Floats.end() ? it->second : fallback;
+    }
+
+    glm::vec3& Vec3(const std::string& key) { return Vectors[key]; }
+    [[nodiscard]] glm::vec3 GetVec3(const std::string& key) const {
+        auto it = Vectors.find(key);
+        return it != Vectors.end() ? it->second : glm::vec3{0};
+    }
+
+    bool& Bool(const std::string& key) { return Bools[key]; }
+    [[nodiscard]] bool GetBool(const std::string& key) const {
+        auto it = Bools.find(key);
+        return it != Bools.end() && it->second;
+    }
 };
 
 struct BTExecutionState {
@@ -42,12 +89,12 @@ struct BTExecutionState {
 
     void Reset() {
         StackDepth = 1;
-        Stack[0] = {0, 0, 0.0f, BTStatus::Running, glm::vec3{0}, false};
+        Stack[0] = {0, 0, BTStatus::Running, {}, {}, {}};
     }
 
     void Push(uint16_t nodeIndex) {
         if (StackDepth < MaxDepth) {
-            Stack[StackDepth++] = {nodeIndex, 0, 0.0f, BTStatus::Running, glm::vec3{0}, false};
+            Stack[StackDepth++] = {nodeIndex, 0, BTStatus::Running, {}, {}, {}};
         }
     }
 

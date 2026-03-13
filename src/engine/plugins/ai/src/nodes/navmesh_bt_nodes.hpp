@@ -70,7 +70,7 @@ struct RandomWanderNode final : IBTNode {
         if (!navAgent->HasDestination || navAgent->CurrentSpeed < 0.1f) {
             static std::random_device rd;
             static std::mt19937 gen(rd());
-            float radius = ctx.Def.Param1;
+            float radius = ctx.Def.GetFloat("radius");
             std::uniform_real_distribution<float> dist(-radius, radius);
 
             glm::vec3 currentPos = transform->GetPosition();
@@ -117,30 +117,29 @@ struct IdleNode final : IBTNode {
         auto* transform = ctx.Registry.try_get<TransformComponentV2>(ctx.Entity);
         if (!navAgent || !transform) return BTStatus::Failure;
 
-        float radius = ctx.Def.Param1;
-        if (radius <= 0) radius = 3.0f;
+        float radius = ctx.Def.GetFloat("radius", 3.0f);
 
         glm::vec3 currentPos = transform->GetPosition();
 
-        bool needNewDestination = !ctx.State.HasCustomTarget;
+        bool needNewDestination = !ctx.State.GetBool("has_target");
 
-        if (ctx.State.HasCustomTarget) {
-            float distToTarget = glm::distance(currentPos, ctx.State.CustomTarget);
+        if (ctx.State.GetBool("has_target")) {
+            float distToTarget = glm::distance(currentPos, ctx.State.GetVec3("target"));
             constexpr float arrivalThreshold = 0.5f;
             if (distToTarget <= arrivalThreshold) {
-                ctx.State.HasCustomTarget = false;
+                ctx.State.Bool("has_target") = false;
                 navAgent->HasDestination = false;
                 return BTStatus::Success;
             }
 
             if (navAgent->CurrentSpeed < 0.05f) {
-                ctx.State.Timer += ctx.DeltaTime;
-                if (ctx.State.Timer > 2.0f) {
+                ctx.State.Float("timer") += ctx.DeltaTime;
+                if (ctx.State.GetFloat("timer") > 2.0f) {
                     needNewDestination = true;
-                    ctx.State.Timer = 0.0f;
+                    ctx.State.Float("timer") = 0.0f;
                 }
             } else {
-                ctx.State.Timer = 0.0f;
+                ctx.State.Float("timer") = 0.0f;
             }
         }
 
@@ -174,8 +173,8 @@ struct IdleNode final : IBTNode {
                 return BTStatus::Success;
             }
 
-            ctx.State.CustomTarget = targetPos;
-            ctx.State.HasCustomTarget = true;
+            ctx.State.Vec3("target") = targetPos;
+            ctx.State.Bool("has_target") = true;
 
             navAgent->Destination = targetPos;
             navAgent->HasDestination = true;

@@ -14,9 +14,9 @@ struct AttackNode final : IBTNode {
 
         ctx.BT.IsAttacking = true;
 
-        ctx.State.Timer += ctx.DeltaTime;
-        if (ctx.State.Timer >= ctx.Def.Param1) {
-            ctx.State.Timer = 0.0f;
+        ctx.State.Float("timer") += ctx.DeltaTime;
+        if (ctx.State.GetFloat("timer") >= ctx.Def.GetFloat("duration")) {
+            ctx.State.Float("timer") = 0.0f;
             ctx.BT.IsAttacking = false;
             return BTStatus::Success;
         }

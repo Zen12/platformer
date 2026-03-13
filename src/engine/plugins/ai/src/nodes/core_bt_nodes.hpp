@@ -3,33 +3,11 @@
 #include "bt_component.hpp"
 #include "type_list.hpp"
 
-struct SequenceNode final : IBTNode {
-    BTStatus Execute(BTContext& ctx) override {
-        if (ctx.State.ChildProgress < ctx.Def.ChildIndices.size()) {
-            uint16_t childIndex = ctx.Def.ChildIndices[ctx.State.ChildProgress];
-            ctx.BT.State.Push(childIndex);
-            return BTStatus::Running;
-        }
-        return BTStatus::Success;
-    }
-};
-
-struct SelectorNode final : IBTNode {
-    BTStatus Execute(BTContext& ctx) override {
-        if (ctx.State.ChildProgress < ctx.Def.ChildIndices.size()) {
-            uint16_t childIndex = ctx.Def.ChildIndices[ctx.State.ChildProgress];
-            ctx.BT.State.Push(childIndex);
-            return BTStatus::Running;
-        }
-        return BTStatus::Failure;
-    }
-};
-
 struct WaitNode final : IBTNode {
     BTStatus Execute(BTContext& ctx) override {
-        ctx.State.Timer += ctx.DeltaTime;
-        if (ctx.State.Timer >= ctx.Def.Param1) {
-            ctx.State.Timer = 0.0f;
+        ctx.State.Float("timer") += ctx.DeltaTime;
+        if (ctx.State.GetFloat("timer") >= ctx.Def.GetFloat("duration")) {
+            ctx.State.Float("timer") = 0.0f;
             return BTStatus::Success;
         }
         return BTStatus::Running;
@@ -51,8 +29,6 @@ struct ClearTargetNode final : IBTNode {
 };
 
 using CoreBTNodeTypes = fsm::TypeList<
-    SequenceNode,
-    SelectorNode,
     WaitNode,
     HasTargetNode,
     ClearTargetNode
