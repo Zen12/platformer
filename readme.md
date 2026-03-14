@@ -81,7 +81,7 @@ mcp_tools/                     # Python MCP servers (asset, blender, gimp, figma
 
 - **Lighting** — Fog, dynamic light meshes with shadows, decal system
 - **Gameplay** — IK-driven shooting, particle effects for combat
-- **Engine** — Sub-FSM support, prefab system with nesting, audio mixer
+- **Engine** — Sub-FSM support, prefab system with nesting, audio mixer, Navmesh raycasting
 - **Platforms** — Windows and Linux support
 
 🇲🇩
