@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 #include "../fsm/node/action/action.hpp"
-#include "../fsm/node/action/action_serialiazion.hpp"
+#include "../fsm/node/action/action_serialization.hpp"
 #include "../fsm/engine_context.hpp"
 #include <yaml-cpp/yaml.h>
 

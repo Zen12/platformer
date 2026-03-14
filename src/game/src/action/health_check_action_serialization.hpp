@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "node/action/action_serialiazion.hpp"
+#include "node/action/action_serialization.hpp"
 
 class HealthCheckActionSerialization final : public ActionSerialization {
 public:

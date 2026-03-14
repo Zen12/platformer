@@ -27,13 +27,13 @@ public:
     void Init();
 
     template <typename T>
-    [[nodiscard]] T LoadAssetByGuid(const Guid& guid) const noexcept {
+    [[nodiscard]] T LoadAssetByGuid(const Guid& guid) const {
         const auto path = GetPathFromGuid(guid);
         return YAML::LoadFile(path).as<T>();
     }
 
 
-    [[nodiscard]] std::string GetPathFromGuid(const Guid& guid) const noexcept {
+    [[nodiscard]] std::string GetPathFromGuid(const Guid& guid) const {
 #ifndef NDEBUG
         if (_assetMap.find(guid) == _assetMap.end()) {
             std::cerr << "Asset " << guid.ToString() << " not found" << std::endl;
@@ -45,7 +45,7 @@ public:
     }
 
     template<typename T>
-    [[nodiscard]] T LoadSourceByGuid(const Guid& guid) const noexcept {
+    [[nodiscard]] T LoadSourceByGuid(const Guid& guid) const {
         const auto path = GetPathFromGuid(guid);
         return AssetLoader<T>::LoadFromPath(path);
     }

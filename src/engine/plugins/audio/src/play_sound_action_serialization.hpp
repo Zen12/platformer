@@ -1,5 +1,5 @@
 #pragma once
-#include "node/action/action_serialiazion.hpp"
+#include "node/action/action_serialization.hpp"
 #include "guid.hpp"
 
 class PlaySoundActionSerialization final : public ActionSerialization {

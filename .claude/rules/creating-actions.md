@@ -41,7 +41,7 @@ Each action requires **three files**:
 ```cpp
 #pragma once
 #include <string>
-#include "action_serialiazion.hpp"
+#include "action_serialization.hpp"
 
 class MyActionSerialization final : public ActionSerialization {
 public:
@@ -52,8 +52,6 @@ public:
     ~MyActionSerialization() override = default;
 };
 ```
-
-**Note:** Use the existing misspelled filename `action_serialiazion.hpp` for consistency.
 
 ### 2. Create YAML Serialization Header
 

@@ -1,0 +1,50 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: brew install cmake
+
+      - name: Configure
+        run: |
+          cmake -H. -Bbuild \
+            -DPLATFORM_DESKTOP_OSX=ON \
+            -DPLATFORM_DESKTOP=ON \
+            -DIS_PLATFORM_DEFINED=ON \
+            -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build/ -j$(sysctl -n hw.ncpu)
+
+  test-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: brew install cmake
+
+      - name: Configure
+        run: |
+          cmake -H. -Bbuild \
+            -DPLATFORM_DESKTOP_OSX=ON \
+            -DPLATFORM_DESKTOP=ON \
+            -DIS_PLATFORM_DEFINED=ON \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DBUILD_TESTING=ON
+
+      - name: Build
+        run: cmake --build build/ -j$(sysctl -n hw.ncpu)
+
+      - name: Test
+        run: cd build && ctest --output-on-failure -R "engine-"

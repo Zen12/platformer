@@ -85,7 +85,7 @@ endif()
 # --- Engine Modules (order matters for dependencies) ---
 add_subdirectory(src/engine/plugins/profiler)
 add_subdirectory(src/engine/plugins/math)
-add_subdirectory(src/engine/plugins/utlis)
+add_subdirectory(src/engine/plugins/utils)
 add_subdirectory(src/engine/plugins/system)
 add_subdirectory(src/engine/core)
 add_subdirectory(src/engine/plugins/font)

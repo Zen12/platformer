@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "action_serialiazion.hpp"
+#include "action_serialization.hpp"
 
 class FpsDisplayActionSerialization final : public ActionSerialization {
 public:

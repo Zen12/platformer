@@ -6,7 +6,7 @@
 
 class StateNode final {
 private:
-    mutable std::vector<std::unique_ptr<Action>> _actions{};
+    std::vector<std::unique_ptr<Action>> _actions{};
 public:
     const std::string Guid;
 

@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include "action/action_serialiazion.hpp"
+#include "action/action_serialization.hpp"
 
 class StateNodeSerialization final {
 public:
