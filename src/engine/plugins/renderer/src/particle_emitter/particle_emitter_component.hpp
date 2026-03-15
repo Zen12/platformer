@@ -31,6 +31,8 @@ private:
     float _emissionAccumulator = 0.0f;
     std::mt19937 _rng;
     int _pendingBurst = 0;
+    glm::vec3 _burstWorldPosition{0.0f};
+    bool _useBurstWorldPosition = false;
 
 public:
     ParticleEmitterComponent() : _rng(std::random_device{}()) {
@@ -91,6 +93,13 @@ public:
     }
 
     void TriggerBurst(int count) noexcept { _pendingBurst += count; }
+    void TriggerBurstAt(int count, const glm::vec3& worldPos) noexcept {
+        _pendingBurst += count;
+        _burstWorldPosition = worldPos;
+        _useBurstWorldPosition = true;
+    }
     [[nodiscard]] int GetPendingBurst() const noexcept { return _pendingBurst; }
-    void ClearPendingBurst() noexcept { _pendingBurst = 0; }
+    [[nodiscard]] bool GetUseBurstWorldPosition() const noexcept { return _useBurstWorldPosition; }
+    [[nodiscard]] const glm::vec3& GetBurstWorldPosition() const noexcept { return _burstWorldPosition; }
+    void ClearPendingBurst() noexcept { _pendingBurst = 0; _useBurstWorldPosition = false; }
 };

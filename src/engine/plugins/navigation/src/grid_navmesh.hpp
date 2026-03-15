@@ -6,6 +6,16 @@
 #include <cmath>
 #include <algorithm>
 
+struct NavmeshRaycastHit {
+    glm::vec3 Point{0.0f};
+    float Distance = 0.0f;
+    int CellX = 0;
+    int CellZ = 0;
+    int Elevation = 0;
+    int RayElevation = 0;
+    bool Hit = false;
+};
+
 class GridNavmesh {
 private:
     std::vector<std::vector<int>> _grid;
@@ -317,6 +327,67 @@ public:
         WorldToGrid(from, fromX, fromZ);
         WorldToGrid(to, toX, toZ);
         return CanMoveTo(fromX, fromZ, toX, toZ);
+    }
+
+    [[nodiscard]] NavmeshRaycastHit Raycast(const glm::vec3& from, const glm::vec3& to) const {
+        NavmeshRaycastHit result;
+
+        int x0, z0, x1, z1;
+        WorldToGrid(from, x0, z0);
+        WorldToGrid(to, x1, z1);
+
+        // If start cell is not walkable, return immediate hit at distance 0
+        if (!IsWalkableCell(x0, z0)) {
+            result.Hit = true;
+            result.Point = from;
+            result.Distance = 0.0f;
+            result.CellX = x0;
+            result.CellZ = z0;
+            result.Elevation = GetElevation(x0, z0);
+            result.RayElevation = result.Elevation;
+            return result;
+        }
+
+        int rayElevation = GetElevation(x0, z0);
+
+        const int dx = std::abs(x1 - x0);
+        const int dz = std::abs(z1 - z0);
+        const int sx = x0 < x1 ? 1 : -1;
+        const int sz = z0 < z1 ? 1 : -1;
+        int err = dx - dz;
+
+        while (true) {
+            if (x0 == x1 && z0 == z1) break;
+
+            const int e2 = 2 * err;
+            if (e2 > -dz) {
+                err -= dz;
+                x0 += sx;
+            }
+            if (e2 < dx) {
+                err += dx;
+                z0 += sz;
+            }
+
+            const int cellElevation = GetElevation(x0, z0);
+
+            if (!IsWalkableCell(x0, z0) || !CanTraverse(rayElevation, cellElevation)) {
+                result.Hit = true;
+                result.Point = GridToWorld(x0, z0);
+                result.Distance = glm::length(glm::vec2(result.Point.x - from.x, result.Point.z - from.z));
+                result.CellX = x0;
+                result.CellZ = z0;
+                result.Elevation = cellElevation;
+                result.RayElevation = rayElevation;
+                return result;
+            }
+
+            rayElevation = cellElevation;
+        }
+
+        // Ray reached destination without obstruction
+        result.Hit = false;
+        return result;
     }
 
     // Calculate visual Y position with blending for transition elevations

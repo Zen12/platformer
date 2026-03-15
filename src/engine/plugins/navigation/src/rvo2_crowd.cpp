@@ -418,28 +418,31 @@ RaycastHit RVO2Crowd::Raycast(const glm::vec3& origin, const glm::vec3& directio
     std::unordered_set<int> checkedAgents;
 
     while (true) {
-        // Check agents in current cell
-        if (IsValidCell(x, z)) {
-            for (int agentId : _agentGrid[z][x]) {
-                // Skip already checked agents
-                if (checkedAgents.count(agentId)) continue;
-                checkedAgents.insert(agentId);
+        // Check agents in current cell and neighboring cells (10x10 area)
+        for (int nz = z - 5; nz <= z + 5; ++nz) {
+            for (int nx = x - 5; nx <= x + 5; ++nx) {
+                if (!IsValidCell(nx, nz)) continue;
+                for (int agentId : _agentGrid[nz][nx]) {
+                    // Skip already checked agents
+                    if (checkedAgents.count(agentId)) continue;
+                    checkedAgents.insert(agentId);
 
-                const auto& data = _agentData.at(agentId);
-                if (!data.Active) continue;
+                    const auto& data = _agentData.at(agentId);
+                    if (!data.Active) continue;
 
-                // Use agent position at ray height for 2D-style hit detection
-                glm::vec3 agentPos = data.Position;
-                agentPos.y = origin.y;  // Project to same Y plane as ray
+                    // Use agent position at ray height for 2D-style hit detection
+                    glm::vec3 agentPos = data.Position;
+                    agentPos.y = origin.y;  // Project to same Y plane as ray
 
-                // Ray-sphere intersection
-                float t = RaySphereIntersect(origin, dir, agentPos, data.Radius);
+                    // Ray-sphere intersection
+                    float t = RaySphereIntersect(origin, dir, agentPos, data.Radius);
 
-                // Skip hits too close (self-hit) - minimum distance is 1.0
-                if (t > 1.0f && t < closestDist && t <= maxDistance) {
-                    closestDist = t;
-                    closestAgent = agentId;
-                    closestHitPoint = origin + dir * t;
+                    // Skip hits too close (self-hit) - minimum distance is 1.0
+                    if (t > 1.0f && t < closestDist && t <= maxDistance) {
+                        closestDist = t;
+                        closestAgent = agentId;
+                        closestHitPoint = origin + dir * t;
+                    }
                 }
             }
         }

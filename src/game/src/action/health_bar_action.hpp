@@ -4,6 +4,7 @@
 #include "ui_manager.hpp"
 #include "scene_manager.hpp"
 #include "health/health_component.hpp"
+#include "player_controller/player_controller_component.hpp"
 #include <memory>
 #include <string>
 #include <iostream>
@@ -32,7 +33,7 @@ public:
         auto registry = scene->GetEntityRegistry();
         if (!registry) return;
 
-        auto view = registry->view<HealthComponent>();
+        auto view = registry->view<HealthComponent, PlayerControllerComponent>();
         for (auto entity : view) {
             auto& health = view.get<HealthComponent>(entity);
             float current = health.GetCurrentHealth();

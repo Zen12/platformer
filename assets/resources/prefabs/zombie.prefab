@@ -23,6 +23,8 @@ components:
   - type: behavior_tree
     tree: d962d92b-72f1-4f84-b151-125cdbd76e2d  # zombie_chase.bt
     tick_priority: 0
+  - type: health
+    max_health: 50
   - type: particle_emitter
     material_guid: 26232f01-48b5-4b43-8bd2-d6fc30c7c127
     mesh_guid: sprite
@@ -38,4 +40,5 @@ components:
     end_color: [0.8, 0.0, 0.0, 0.0]
     particle_size: 2.0
     trigger_on_attack: true
+    trigger_on_damage: true
     burst_count: 10

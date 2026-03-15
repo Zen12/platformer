@@ -8,6 +8,8 @@
 #include "spawner/spawner_system.hpp"
 #include "plugins/ai/src/combat_state/combat_state_component.hpp"
 #include "health/health_system.hpp"
+#include "shooting/shooting_system.hpp"
+#include "navigation_manager_component.hpp"
 
 inline void RegisterGameSystems(EscSystemRegistry& registry) {
     // PlayerControllerSystem: priority 150
@@ -19,6 +21,22 @@ inline void RegisterGameSystems(EscSystemRegistry& registry) {
             reg->view<PlayerControllerComponent, NavmeshAgentComponent, TransformComponentV2>(),
             reg->view<DeltaTimeComponent>(), scenePtr, *reg);
     }, 150);
+
+    // ShootingSystem: priority 210
+    registry.Register<ShootingSystem>("ShootingSystem", [](const EscSystemContext& ctx) {
+        const auto scenePtr = ctx.Scene.lock();
+        if (!scenePtr) return std::unique_ptr<ShootingSystem>(nullptr);
+        const auto reg = ctx.Registry;
+        std::shared_ptr<NavigationManager> navManager;
+        for (const auto& [_, comp] : reg->view<NavigationManagerComponent>().each()) {
+            navManager = comp.Manager;
+            break;
+        }
+        if (!navManager) return std::unique_ptr<ShootingSystem>(nullptr);
+        return std::make_unique<ShootingSystem>(
+            reg->view<PlayerControllerComponent, TransformComponentV2, IKAimComponent, NavmeshAgentComponent>(),
+            reg->view<DeltaTimeComponent>(), scenePtr, *reg, navManager);
+    }, 210);
 
     // SpawnerSystem: priority 250
     registry.Register<SpawnerSystem>("SpawnerSystem", [](const EscSystemContext& ctx) {

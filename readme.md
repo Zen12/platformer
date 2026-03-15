@@ -80,8 +80,8 @@ mcp_tools/                     # Python MCP servers (asset, blender, gimp, figma
 ## Roadmap
 
 - **Lighting** — decal system
-- **Gameplay** — IK-driven shooting, particle effects for combat
-- **Engine** — Sub-FSM support, prefab system with nesting, audio mixer, Navmesh raycasting
+- **Gameplay** — IK-driven shooting
+- **Engine** — Sub-FSM support, prefab system with nesting, audio mixer
 - **Platforms** — Windows and Linux support
 
 🇲🇩

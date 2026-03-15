@@ -80,8 +80,11 @@ private:
         // Handle burst spawning
         const int burstCount = emitter.GetPendingBurst();
         if (burstCount > 0) {
+            const glm::vec3 burstPos = emitter.GetUseBurstWorldPosition()
+                ? emitter.GetBurstWorldPosition()
+                : emitterPos;
             for (int i = 0; i < burstCount; ++i) {
-                SpawnParticle(emitter, emitterPos);
+                SpawnParticle(emitter, burstPos);
             }
             emitter.ClearPendingBurst();
         }

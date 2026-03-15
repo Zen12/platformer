@@ -2,6 +2,18 @@
 #include "grid_navmesh.hpp"
 #include "rvo2_crowd.hpp"
 #include <memory>
+#include <cmath>
+#include <algorithm>
+
+struct ShootRaycastHit {
+    glm::vec3 Point{0.0f};
+    float Distance = 0.0f;
+    int AgentId = -1;
+    int Elevation = 0;
+    bool Hit = false;
+    bool HitAgent = false;
+    bool HitTerrain = false;
+};
 
 class NavigationManager {
 private:
@@ -19,6 +31,18 @@ public:
 
     [[nodiscard]] std::shared_ptr<GridNavmesh> GetNavmesh() const noexcept { return _navmesh; }
     [[nodiscard]] std::shared_ptr<RVO2Crowd> GetCrowd() const noexcept { return _crowd; }
+
+    [[nodiscard]] NavmeshRaycastHit NavmeshRaycast(const glm::vec3& from, const glm::vec3& to) const {
+        if (_navmesh) {
+            return _navmesh->Raycast(from, to);
+        }
+        return {};
+    }
+
+    // Shoot raycast: traverses navmesh grid with elevation, checks for agents in each cell.
+    // Stops at non-walkable cells, elevation barriers, or when hitting an agent on compatible elevation.
+    // excludeAgentId: agent to skip (the shooter's own agent)
+    [[nodiscard]] ShootRaycastHit ShootRaycast(const glm::vec3& from, const glm::vec3& to, int sourceElevation, int excludeAgentId = -1) const;
 
     void Clear();
 };
