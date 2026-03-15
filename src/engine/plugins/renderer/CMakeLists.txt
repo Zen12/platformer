@@ -42,11 +42,12 @@ target_include_directories(engine-renderer PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/../prefab/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../profiler/src
     ${CMAKE_CURRENT_SOURCE_DIR}/../..
+    ${stb_SOURCE_DIR}
 )
 
 if(PLATFORM_DESKTOP)
     target_link_libraries(engine-renderer PRIVATE GLEW::GLEW OpenGL::GL OpenAL::OpenAL)
-    target_include_directories(engine-renderer PRIVATE ${stb_SOURCE_DIR} ${openal-soft_SOURCE_DIR}/include)
+    target_include_directories(engine-renderer PRIVATE ${openal-soft_SOURCE_DIR}/include)
 endif()
 
 if(VIDEO_RECORDING)
