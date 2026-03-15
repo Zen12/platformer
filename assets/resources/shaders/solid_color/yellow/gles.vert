@@ -7,6 +7,7 @@ layout (location = 6) in vec4 aModelCol2;
 layout (location = 7) in vec4 aModelCol3;
 
 out vec4 FragPosLightSpace;
+out vec3 WorldPos;
 
 uniform mat4 projection;
 uniform mat4 view;
@@ -17,6 +18,7 @@ void main()
 {
     mat4 model = mat4(aModelCol0, aModelCol1, aModelCol2, aModelCol3);
     vec4 worldPos = model * vec4(aPos, 1.0);
+    WorldPos = worldPos.xyz;
     gl_Position = projection * view * worldPos;
     FragPosLightSpace = lightProjection * lightView * worldPos;
 }

@@ -30,6 +30,10 @@
 #include "directional_light/directional_light_component_serialization.hpp"
 #include "directional_light/directional_light_component_serialization_yaml.hpp"
 
+#include "spot_light/spot_light_component.hpp"
+#include "spot_light/spot_light_component_serialization.hpp"
+#include "spot_light/spot_light_component_serialization_yaml.hpp"
+
 #include "particle_emitter/particle_emitter_component.hpp"
 #include "particle_emitter/particle_emitter_component_serialization.hpp"
 #include "particle_emitter/particle_emitter_component_serialization_yaml.hpp"
@@ -87,6 +91,13 @@ inline void RegisterRendererComponents(ComponentRegistry& registry) {
     registry.Register<DirectionalLightComponentSerialization, DirectionalLightComponent>("directional_light",
         [](const DirectionalLightComponentSerialization& s) {
             return DirectionalLightComponent(s);
+        }
+    );
+
+    // spot_light
+    registry.Register<SpotLightComponentSerialization, SpotLightComponent>("spot_light",
+        [](const SpotLightComponentSerialization& s) {
+            return SpotLightComponent(s);
         }
     );
 

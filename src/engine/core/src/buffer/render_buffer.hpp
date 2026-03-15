@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -105,10 +106,27 @@ struct DirectionalLightData final {
     bool HasLight{false};
 };
 
+struct SpotLightData final {
+    glm::vec3 Position{0.0f};
+    glm::vec3 Direction{0.0f, -1.0f, 0.0f};
+    glm::vec3 Color{1.0f};
+    float InnerCutoff{0.9f};
+    float OuterCutoff{0.8f};
+    float Range{50.0f};
+    float Intensity{1.0f};
+    glm::mat4 View{1.0f};
+    glm::mat4 Projection{1.0f};
+    bool HasLight{false};
+};
+
+static constexpr int MAX_SPOT_LIGHTS = 4;
+
 class RenderBuffer final {
 private:
     std::unordered_map<RenderId, std::vector<InstanceData>> _renderData{};
     DirectionalLightData _directionalLight{};
+    std::array<SpotLightData, MAX_SPOT_LIGHTS> _spotLights{};
+    int _numSpotLights{0};
 
 public:
     void SetDirectionalLight(const glm::mat4& view, const glm::mat4& projection) noexcept {
@@ -119,6 +137,32 @@ public:
 
     [[nodiscard]] const DirectionalLightData& GetDirectionalLight() const noexcept {
         return _directionalLight;
+    }
+
+    void AddSpotLight(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& color,
+                      float innerCutoff, float outerCutoff, float range, float intensity,
+                      const glm::mat4& view, const glm::mat4& projection) noexcept {
+        if (_numSpotLights >= MAX_SPOT_LIGHTS) return;
+        auto& sl = _spotLights[_numSpotLights];
+        sl.Position = position;
+        sl.Direction = direction;
+        sl.Color = color;
+        sl.InnerCutoff = innerCutoff;
+        sl.OuterCutoff = outerCutoff;
+        sl.Range = range;
+        sl.Intensity = intensity;
+        sl.View = view;
+        sl.Projection = projection;
+        sl.HasLight = true;
+        _numSpotLights++;
+    }
+
+    [[nodiscard]] const std::array<SpotLightData, MAX_SPOT_LIGHTS>& GetSpotLights() const noexcept {
+        return _spotLights;
+    }
+
+    [[nodiscard]] int GetNumSpotLights() const noexcept {
+        return _numSpotLights;
     }
 
     void Add(const RenderData &renderData) noexcept {
@@ -138,6 +182,8 @@ public:
     void Clear() {
         _renderData.clear();
         _directionalLight = DirectionalLightData{};
+        _spotLights = {};
+        _numSpotLights = 0;
     }
 
 };

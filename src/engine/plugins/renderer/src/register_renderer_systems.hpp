@@ -7,9 +7,11 @@
 #include "buffer/render_buffer_component.hpp"
 #include "window/window_system.hpp"
 #include "time/time_component.hpp"
+#include "camera/camera_component.hpp"
 #include "camera/camera_controller_system.hpp"
 #include "camera/camera_system.hpp"
 #include "directional_light/directional_light_system.hpp"
+#include "spot_light/spot_light_system.hpp"
 #include "camera/top_down_camera_system.hpp"
 #include "mesh_renderer/mesh_render_system.hpp"
 #include "skinned_mesh_renderer/skinned_mesh_render_system.hpp"
@@ -58,6 +60,15 @@ inline void RegisterRendererSystems(EscSystemRegistry& registry) {
             reg->view<TagComponent, TransformComponentV2>(),
             reg->view<RenderBufferComponent>());
     }, 140);
+
+    // SpotLightSystem: priority 145
+    registry.Register<SpotLightSystem>("SpotLightSystem", [](const EscSystemContext& ctx) {
+        const auto reg = ctx.Registry;
+        return std::make_unique<SpotLightSystem>(
+            reg->view<SpotLightComponent, TransformComponentV2>(),
+            reg->view<CameraComponentV2>(),
+            reg->view<RenderBufferComponent>());
+    }, 145);
 
     // TopDownCameraSystem: priority 170
     registry.Register<TopDownCameraSystem>("TopDownCameraSystem", [](const EscSystemContext& ctx) {

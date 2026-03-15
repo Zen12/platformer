@@ -251,6 +251,26 @@ void OpenGLRenderController::RenderInstanced(const RenderId& renderId, const std
         mat->SetMat4("lightProjection", _lightProjection);
     }
 
+    mat->SetInt("numSpotLights", _numSpotLights);
+    for (int i = 0; i < _numSpotLights; i++) {
+        const std::string idx = "[" + std::to_string(i) + "]";
+
+        constexpr GLuint SPOT_SHADOW_BASE_UNIT = 4;
+        _spotShadowMaps[i]->BindDepthTexture(SPOT_SHADOW_BASE_UNIT + i);
+        mat->SetInt("spotShadowMaps" + idx, static_cast<int>(SPOT_SHADOW_BASE_UNIT + i));
+
+        const glm::mat4 spotVP = _spotLights[i].Projection * _spotLights[i].View;
+        mat->SetMat4("spotLightVP" + idx, spotVP);
+
+        mat->SetVec3("spotLightPos" + idx, _spotLights[i].Position.x, _spotLights[i].Position.y, _spotLights[i].Position.z);
+        mat->SetVec3("spotLightDir" + idx, _spotLights[i].Direction.x, _spotLights[i].Direction.y, _spotLights[i].Direction.z);
+        mat->SetVec3("spotLightColor" + idx, _spotLights[i].Color.x, _spotLights[i].Color.y, _spotLights[i].Color.z);
+        mat->SetFloat("spotInnerCutoff" + idx, _spotLights[i].InnerCutoff);
+        mat->SetFloat("spotOuterCutoff" + idx, _spotLights[i].OuterCutoff);
+        mat->SetFloat("spotLightRange" + idx, _spotLights[i].Range);
+        mat->SetFloat("spotLightIntensity" + idx, _spotLights[i].Intensity);
+    }
+
     constexpr GLuint SCENE_DEPTH_TEXTURE_UNIT = 3;
     glActiveTexture(GL_TEXTURE0 + SCENE_DEPTH_TEXTURE_UNIT);
     glBindTexture(GL_TEXTURE_2D, _depthCopyTexture);
@@ -406,6 +426,100 @@ void OpenGLRenderController::RenderShadowPass(const std::shared_ptr<RenderBuffer
     _shadowMap->Unbind();
 }
 
+void OpenGLRenderController::RenderSpotShadowPass(const std::shared_ptr<RenderBuffer>& repository) noexcept {
+    PROFILE_SCOPE("RenderSpotShadowPass");
+    _numSpotLights = repository->GetNumSpotLights();
+    const auto& spotLights = repository->GetSpotLights();
+
+    for (int li = 0; li < _numSpotLights; li++) {
+        _spotLights[li] = spotLights[li];
+    }
+
+    if (_numSpotLights == 0) {
+        return;
+    }
+
+    const auto depthMat = _resourceFactory->Get<Material>(DEPTH_MATERIAL_GUID);
+    const auto skinnedDepthMat = _resourceFactory->Get<Material>(SKINNED_DEPTH_MATERIAL_GUID);
+    if (!depthMat) {
+        return;
+    }
+
+    const auto renderData = repository->GetData();
+
+    for (int li = 0; li < _numSpotLights; li++) {
+        _spotShadowMaps[li]->Bind();
+        glClear(GL_DEPTH_BUFFER_BIT);
+
+        for (const auto &[renderId, instances] : renderData) {
+            if (renderId.Primitive != PrimitiveType::Triangles) {
+                continue;
+            }
+
+            if (const auto mat = _resourceFactory->Get<Material>(renderId.MaterialGuid)) {
+                const auto blendMode = mat->GetBlendMode();
+                if (blendMode == BlendMode::ColorAdditive || blendMode == BlendMode::AlphaAdditive || blendMode == BlendMode::StandardAlpha) {
+                    continue;
+                }
+            }
+
+            const std::string batchKey = std::string("spot_shadow_") + std::to_string(li) + "_" + renderId.MeshGuid.ToString() + (renderId.IsSkinned ? "_skinned" : "");
+
+            if (_batches.find(batchKey) == _batches.end()) {
+                _batches[batchKey] = std::make_unique<InstanceBatch>();
+            }
+
+            auto& batch = _batches[batchKey];
+            batch->Clear();
+
+            for (const auto& inst : instances) {
+                if (renderId.IsSkinned && inst.BoneTransforms.has_value() && !inst.BoneTransforms.value().empty()) {
+                    batch->AddInstance(inst.ModelMatrix, inst.BoneTransforms.value(), glm::vec4(1.0f));
+                } else {
+                    batch->AddInstance(inst.ModelMatrix, glm::vec4(1.0f));
+                }
+            }
+
+            batch->Finalize();
+
+            if (batch->GetInstanceCount() == 0) {
+                continue;
+            }
+
+            const auto meshPtr = _resourceFactory->Get<Mesh>(renderId.MeshGuid);
+
+            meshPtr->Bind();
+            batch->SetupInstanceAttributes();
+
+            if (renderId.IsSkinned && skinnedDepthMat && batch->HasBones()) {
+                skinnedDepthMat->UseShader();
+                skinnedDepthMat->ApplyRenderState();
+                skinnedDepthMat->SetMat4("lightView", _spotLights[li].View);
+                skinnedDepthMat->SetMat4("lightProjection", _spotLights[li].Projection);
+
+                constexpr GLuint BONE_TEXTURE_UNIT = 0;
+                batch->BindBoneTexture(BONE_TEXTURE_UNIT);
+                skinnedDepthMat->SetInt("boneMatrices", BONE_TEXTURE_UNIT);
+            } else {
+                depthMat->UseShader();
+                depthMat->ApplyRenderState();
+                depthMat->SetMat4("lightView", _spotLights[li].View);
+                depthMat->SetMat4("lightProjection", _spotLights[li].Projection);
+            }
+
+            glDrawElementsInstanced(
+                GL_TRIANGLES,
+                static_cast<GLsizei>(meshPtr->GetIndicesCount()),
+                GL_UNSIGNED_INT,
+                nullptr,
+                static_cast<GLsizei>(batch->GetInstanceCount())
+            );
+        }
+
+        _spotShadowMaps[li]->Unbind();
+    }
+}
+
 void OpenGLRenderController::CopySceneDepth() noexcept {
     const auto w = _framebuffer->GetWidth();
     const auto h = _framebuffer->GetHeight();
@@ -460,6 +574,7 @@ void OpenGLRenderController::Render(const std::shared_ptr<RenderBuffer>& reposit
     const auto [width, height] = GetViewportSize();
 
     RenderShadowPass(repository);
+    RenderSpotShadowPass(repository);
 
     _framebuffer->Resize(width, height);
     _framebuffer->Bind();

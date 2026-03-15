@@ -6,6 +6,7 @@
 #include "guid.hpp"
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include <array>
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -40,6 +41,12 @@ class OpenGLRenderController final {
     glm::mat4 _lightView{1.0f};
     glm::mat4 _lightProjection{1.0f};
 
+    // Spot light shadow mapping
+    std::array<std::unique_ptr<DepthFramebuffer>, MAX_SPOT_LIGHTS> _spotShadowMaps{};
+    static constexpr uint16_t SPOT_SHADOW_MAP_SIZE = 1024;
+    std::array<SpotLightData, MAX_SPOT_LIGHTS> _spotLights{};
+    int _numSpotLights{0};
+
     // Scene depth copy (for sampling depth in transparent shaders)
     GLuint _depthCopyFbo{0};
     GLuint _depthCopyTexture{0};
@@ -54,6 +61,7 @@ class OpenGLRenderController final {
     void InitScreenQuad();
     void RenderPostProcess() noexcept;
     void RenderShadowPass(const std::shared_ptr<RenderBuffer>& repository) noexcept;
+    void RenderSpotShadowPass(const std::shared_ptr<RenderBuffer>& repository) noexcept;
     void CopySceneDepth() noexcept;
 
 public:
@@ -64,6 +72,10 @@ public:
         const auto [width, height] = GetViewportSize();
         _framebuffer->Init(width, height);
         _shadowMap->Init(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
+        for (auto& sm : _spotShadowMaps) {
+            sm = std::make_unique<DepthFramebuffer>();
+            sm->Init(SPOT_SHADOW_MAP_SIZE, SPOT_SHADOW_MAP_SIZE);
+        }
     }
 
     ~OpenGLRenderController();

@@ -149,6 +149,62 @@ entities:
         ortho_size: 44.0
         follow_tag: "male"
         follow_offset: [0.0, 20.0, 0.0]
+  - tag: "spot_light"
+    components:
+      - type: transform
+        position: [10.0, 6.0, 5.0]
+        rotation: [-90.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: spot_light
+        inner_angle: 20.0
+        outer_angle: 35.0
+        range: 30.0
+        intensity: 1.5
+        color: [1.0, 0.9, 0.8]
+        near_plane: 0.1
+        far_plane: 30.0
+  - tag: "spot_light_blue"
+    components:
+      - type: transform
+        position: [10.0, 6.0, 10.0]
+        rotation: [-90.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: spot_light
+        inner_angle: 15.0
+        outer_angle: 30.0
+        range: 35.0
+        intensity: 2.0
+        color: [0.4, 0.6, 1.0]
+        near_plane: 0.1
+        far_plane: 35.0
+  - tag: "spot_light_red"
+    components:
+      - type: transform
+        position: [15.0, 6.0, 10.0]
+        rotation: [-90.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: spot_light
+        inner_angle: 25.0
+        outer_angle: 40.0
+        range: 25.0
+        intensity: 1.8
+        color: [1.0, 0.4, 0.3]
+        near_plane: 0.1
+        far_plane: 25.0
+  - tag: "spot_light_green"
+    components:
+      - type: transform
+        position: [20.0, 6.0, 10.0]
+        rotation: [-90.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: spot_light
+        inner_angle: 18.0
+        outer_angle: 32.0
+        range: 40.0
+        intensity: 1.2
+        color: [0.3, 1.0, 0.5]
+        near_plane: 0.1
+        far_plane: 40.0
   - tag: "fog_plane"
     components:
       - type: transform

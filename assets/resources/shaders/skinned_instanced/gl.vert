@@ -13,6 +13,7 @@ layout (location = 9) in int aBoneOffset;
 
 out vec2 TexCoord;
 out vec4 FragPosLightSpace;
+out vec3 WorldPos;
 out vec4 InstanceColor;
 
 uniform mat4 projection;
@@ -50,6 +51,7 @@ void main()
 
     vec4 skinnedPos = boneTransform * vec4(aPos, 1.0);
     vec4 worldPos = model * skinnedPos;
+    WorldPos = worldPos.xyz;
     gl_Position = projection * view * worldPos;
     gl_Position.z += worldPos.y * yDepthFactor * gl_Position.w;
 
