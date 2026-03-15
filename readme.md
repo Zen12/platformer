@@ -79,9 +79,9 @@ mcp_tools/                     # Python MCP servers (asset, blender, gimp, figma
 
 ## Roadmap
 
-- **Lighting** — decal system
-- **Gameplay** — IK-driven shooting
-- **Engine** — Sub-FSM support, prefab system with nesting, audio mixer
+- **Gameplay** — Procedural generation of map
+- **Animation** - Procedural generation of animations
+- **Mesh** - Procedural generation of mesh (boolean logic)
 - **Platforms** — Windows and Linux support
 
 🇲🇩
