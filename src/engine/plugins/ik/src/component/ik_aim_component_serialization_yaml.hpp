@@ -52,6 +52,15 @@ namespace YAML {
             if (node["character_rotation_speed"]) {
                 rhs.CharacterRotationSpeed = node["character_rotation_speed"].as<float>();
             }
+            if (node["recoil_duration"]) {
+                rhs.RecoilDuration = node["recoil_duration"].as<float>();
+            }
+            if (node["recoil_offset_right"]) {
+                rhs.RecoilOffsetRight = node["recoil_offset_right"].as<glm::vec3>();
+            }
+            if (node["recoil_offset_left"]) {
+                rhs.RecoilOffsetLeft = node["recoil_offset_left"].as<glm::vec3>();
+            }
             return true;
         }
     };

@@ -1,0 +1,11 @@
+name: gun
+is_culling: False
+is_depth_test: True
+blend_mode: 0
+shader_opengl:
+  vertex: 27501e67-25ef-4d36-a0d7-e7478679c311
+  fragment: 494667a0-6950-4940-a7a1-72ea7743580f
+shader_gles:
+  vertex: 3e5b9d35-ee6e-4fd1-9fb2-3ee69540a7dd
+  fragment: 7cf6d018-2a37-4344-af60-78bd68e9ea16
+image: e9577dcc-6d5d-4359-985e-7ba0ab5a950b

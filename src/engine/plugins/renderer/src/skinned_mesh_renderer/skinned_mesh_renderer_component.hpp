@@ -18,6 +18,7 @@ public:
     std::vector<std::string> BoneNames;
     std::vector<glm::mat4> BoneOffsets;
     std::vector<int> BoneParents;
+    std::vector<glm::mat4> WorldBoneTransforms;
     Bounds MeshBounds;
 
     explicit SkinnedMeshRendererComponent(const SkinnedMeshRendererComponentSerialization &serialization)

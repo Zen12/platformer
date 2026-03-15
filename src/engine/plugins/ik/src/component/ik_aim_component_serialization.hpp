@@ -24,4 +24,8 @@ struct IKAimComponentSerialization final : public ComponentSerialization {
 
     bool RotateCharacterToAim = true;
     float CharacterRotationSpeed = 15.0f;
+
+    float RecoilDuration = 0.3f;
+    glm::vec3 RecoilOffsetRight = glm::vec3(0.0f, 0.3f, 0.0f);
+    glm::vec3 RecoilOffsetLeft = glm::vec3(0.0f, 0.3f, 0.0f);
 };

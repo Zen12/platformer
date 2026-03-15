@@ -14,6 +14,10 @@
 #include "health/health_component_serialization.hpp"
 #include "health/health_component_serialization_yaml.hpp"
 
+#include "bone_attachment/bone_attachment_component.hpp"
+#include "bone_attachment/bone_attachment_component_serialization.hpp"
+#include "bone_attachment/bone_attachment_component_serialization_yaml.hpp"
+
 inline void RegisterGameComponents(ComponentRegistry& registry) {
     // player_controller
     registry.Register<PlayerControllerComponentSerialization, PlayerControllerComponent>("player_controller",
@@ -33,6 +37,18 @@ inline void RegisterGameComponents(ComponentRegistry& registry) {
     registry.Register<HealthComponentSerialization, HealthComponent>("health",
         [](const HealthComponentSerialization& s) {
             return HealthComponent(s.MaxHealth);
+        }
+    );
+
+    // bone_attachment
+    registry.Register<BoneAttachmentComponentSerialization, BoneAttachmentComponent>("bone_attachment",
+        [](const BoneAttachmentComponentSerialization& s) {
+            BoneAttachmentComponent comp;
+            comp.ParentTag = s.ParentTag;
+            comp.BoneName = s.BoneName;
+            comp.PositionOffset = s.PositionOffset;
+            comp.RotationOffset = s.RotationOffset;
+            return comp;
         }
     );
 }

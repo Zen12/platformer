@@ -10,6 +10,7 @@
 #include "health/health_system.hpp"
 #include "shooting/shooting_system.hpp"
 #include "navigation_manager_component.hpp"
+#include "bone_attachment/bone_attachment_system.hpp"
 
 inline void RegisterGameSystems(EscSystemRegistry& registry) {
     // PlayerControllerSystem: priority 150
@@ -35,7 +36,9 @@ inline void RegisterGameSystems(EscSystemRegistry& registry) {
         if (!navManager) return std::unique_ptr<ShootingSystem>(nullptr);
         return std::make_unique<ShootingSystem>(
             reg->view<PlayerControllerComponent, TransformComponentV2, IKAimComponent, NavmeshAgentComponent>(),
-            reg->view<DeltaTimeComponent>(), scenePtr, *reg, navManager);
+            reg->view<DeltaTimeComponent>(),
+            reg->view<TagComponent, ParticleEmitterComponent>(),
+            scenePtr, *reg, navManager);
     }, 210);
 
     // SpawnerSystem: priority 250
@@ -45,6 +48,13 @@ inline void RegisterGameSystems(EscSystemRegistry& registry) {
         const auto reg = ctx.Registry;
         return std::make_unique<SpawnerSystem>(reg->view<SpawnerComponent>(), scenePtr);
     }, 250);
+
+    // BoneAttachmentSystem: priority 215 (after IK at 210, before SkinnedMeshRender at 220)
+    registry.Register<BoneAttachmentSystem>("BoneAttachmentSystem", [](const EscSystemContext& ctx) {
+        const auto reg = ctx.Registry;
+        return std::make_unique<BoneAttachmentSystem>(
+            reg->view<BoneAttachmentComponent, TransformComponentV2>(), *reg);
+    }, 215);
 
     // HealthSystem: priority 270
     registry.Register<HealthSystem>("HealthSystem", [](const EscSystemContext& ctx) {

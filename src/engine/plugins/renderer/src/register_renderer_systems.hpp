@@ -80,13 +80,13 @@ inline void RegisterRendererSystems(EscSystemRegistry& registry) {
             *reg);
     }, 170);
 
-    // MeshRenderSystem: priority 180
+    // MeshRenderSystem: priority 216 (after BoneAttachment at 215, before SkinnedMeshRender at 220)
     registry.Register<MeshRenderSystem>("MeshRenderSystem", [](const EscSystemContext& ctx) {
         const auto reg = ctx.Registry;
         return std::make_unique<MeshRenderSystem>(
             reg->view<MeshRendererComponent, TransformComponentV2>(),
             reg->view<CameraComponentV2>(), reg->view<RenderBufferComponent>(), ctx.ResourceFactory);
-    }, 180);
+    }, 216);
 
     // SkinnedMeshRenderSystem: priority 220
     registry.Register<SkinnedMeshRenderSystem>("SkinnedMeshRenderSystem", [](const EscSystemContext& ctx) {

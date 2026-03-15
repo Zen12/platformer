@@ -54,7 +54,7 @@ entities:
     components:
       - type: spawner
         prefab_guid: ee9e7ec4-779d-4d44-a4f6-99f048412b61  # zombie.prefab
-        spawn_count: 0
+        spawn_count: 20
         spawn_on_navmesh: true
   - tag: "male"
     components:
@@ -85,6 +85,9 @@ entities:
         left_hand_grip_point: [0.3, 0.0, 0.2]
         right_elbow_hint: [0.0, 0.0, -1.0]
         left_elbow_hint: [0.0, 0.0, -1.0]
+        recoil_duration: 0.2
+        recoil_offset_right: [0.0, 2.0, -4.0]
+        recoil_offset_left: [0.0, 2.0, 4.0]
       - type: navmesh_agent
         gravity: -20.0
         jump_force: 10.0
@@ -116,6 +119,68 @@ entities:
         trigger_on_land: true
         trigger_on_damage: false
         burst_count: 8
+  - tag: "player_gun_R"
+    components:
+      - type: transform
+        position: [0.0, 0.0, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: mesh_renderer
+        material: 9e22c04b-8588-4bab-8db1-f78e6831d380
+        mesh: 9b8afbc7-1004-4f7a-b3ba-bf5ccd8a511b
+      - type: bone_attachment
+        parent_tag: "male"
+        bone_name: "hand_R"
+        position_offset: [0.03, 0.14, -0.01]
+        rotation_offset: [0.0, 90.0, 80.0]
+      - type: particle_emitter
+        material_guid: 26232f01-48b5-4b43-8bd2-d6fc30c7c127
+        mesh_guid: sprite
+        max_particles: 10
+        emission_rate: 0.0
+        particle_lifetime: 0.15
+        lifetime_variance: 0.05
+        position_offset: [0.0, 0.15, 0.0]
+        initial_velocity: [0.0, 2.0, 0.0]
+        velocity_variance: [1.0, 1.0, 1.0]
+        gravity: [0.0, 0.0, 0.0]
+        start_color: [0.1, 0.1, 0.1, 1.0]
+        end_color: [0.0, 0.0, 0.0, 0.0]
+        particle_size: 0.15
+        trigger_on_land: false
+        trigger_on_damage: false
+        burst_count: 5
+  - tag: "player_gun_L"
+    components:
+      - type: transform
+        position: [0.0, 0.0, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: mesh_renderer
+        material: 9e22c04b-8588-4bab-8db1-f78e6831d380
+        mesh: 9b8afbc7-1004-4f7a-b3ba-bf5ccd8a511b
+      - type: bone_attachment
+        parent_tag: "male"
+        bone_name: "hand_L"
+        position_offset: [-0.03, 0.14, -0.01]
+        rotation_offset: [0.0, -90.0, -90.0]
+      - type: particle_emitter
+        material_guid: 26232f01-48b5-4b43-8bd2-d6fc30c7c127
+        mesh_guid: sprite
+        max_particles: 10
+        emission_rate: 0.0
+        particle_lifetime: 0.15
+        lifetime_variance: 0.05
+        position_offset: [0.0, 0.15, 0.0]
+        initial_velocity: [0.0, 2.0, 0.0]
+        velocity_variance: [1.0, 1.0, 1.0]
+        gravity: [0.0, 0.0, 0.0]
+        start_color: [0.1, 0.1, 0.1, 1.0]
+        end_color: [0.0, 0.0, 0.0, 0.0]
+        particle_size: 0.15
+        trigger_on_land: false
+        trigger_on_damage: false
+        burst_count: 5
   - guid: main-camera
     tag: main_camera
     components:

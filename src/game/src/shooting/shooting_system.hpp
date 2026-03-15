@@ -17,26 +17,29 @@
 class ShootingSystem final : public ISystemView<PlayerControllerComponent, TransformComponentV2, IKAimComponent, NavmeshAgentComponent> {
 private:
     using TypeDeltaTime = decltype(std::declval<entt::registry>().view<DeltaTimeComponent>());
+    using TypeGunView = decltype(std::declval<entt::registry>().view<TagComponent, ParticleEmitterComponent>());
 
     const TypeDeltaTime _deltaTimeView;
+    const TypeGunView _gunView;
     const std::weak_ptr<Scene> _scene;
     entt::registry& _registry;
     const std::shared_ptr<NavigationManager> _navigationManager;
 
     float _shootCooldown = 0.0f;
+    bool _lastShotRight = false;
 
     static constexpr float DAMAGE_PER_SHOT = 25.0f;
-    static constexpr float SHOOT_COOLDOWN = 0.2f;
 
 public:
     ShootingSystem(
         const TypeView& view,
         const TypeDeltaTime& deltaTimeView,
+        const TypeGunView& gunView,
         const std::weak_ptr<Scene>& scene,
         entt::registry& registry,
         const std::shared_ptr<NavigationManager>& navigationManager)
-        : ISystemView(view), _deltaTimeView(deltaTimeView), _scene(scene),
-          _registry(registry), _navigationManager(navigationManager) {}
+        : ISystemView(view), _deltaTimeView(deltaTimeView), _gunView(gunView),
+          _scene(scene), _registry(registry), _navigationManager(navigationManager) {}
 
     void OnTick() override {
         const auto scene = _scene.lock();
@@ -62,7 +65,19 @@ public:
             if (_shootCooldown > 0.0f) continue;
             if (!ikAim.HasAimTarget) continue;
 
-            _shootCooldown = SHOOT_COOLDOWN;
+            _shootCooldown = ikAim.RecoilDuration;
+
+            // Muzzle flash alternating guns
+            _lastShotRight = !_lastShotRight;
+            const std::string targetTag = _lastShotRight ? "player_gun_R" : "player_gun_L";
+            for (auto [gunEntity, gunTag, gunEmitter] : _gunView.each()) {
+                if (gunTag.GetTag() == targetTag) {
+                    gunEmitter.TriggerBurst(gunEmitter.GetBurstCount());
+                    break;
+                }
+            }
+            ikAim.RecoilTimer = ikAim.RecoilDuration;
+            ikAim.RecoilHand = _lastShotRight ? 0 : 1;
 
             const glm::vec3 origin = transform.GetPosition();
             const glm::vec3& target = ikAim.AimTarget;

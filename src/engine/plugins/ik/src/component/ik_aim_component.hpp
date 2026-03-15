@@ -36,6 +36,13 @@ public:
     glm::vec3 RightElbowHint = glm::vec3(0.0f, 0.0f, -1.0f);
     glm::vec3 LeftElbowHint = glm::vec3(0.0f, 0.0f, -1.0f);
 
+    // Recoil (0 = right hand, 1 = left hand)
+    float RecoilTimer = 0.0f;
+    float RecoilDuration = 0.3f;
+    glm::vec3 RecoilOffsetRight = glm::vec3(0.0f, 0.3f, 0.0f);
+    glm::vec3 RecoilOffsetLeft = glm::vec3(0.0f, 0.3f, 0.0f);
+    int RecoilHand = 0;
+
     // Character rotation to face aim target
     bool RotateCharacterToAim = true;
     float CharacterRotationSpeed = 15.0f;

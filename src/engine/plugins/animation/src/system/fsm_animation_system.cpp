@@ -381,6 +381,8 @@ void FsmAnimationSystem::OnTick() {
             computeWorldTransform(static_cast<int>(i));
         }
 
+        skinnedMesh.WorldBoneTransforms = worldTransforms;
+
         for (size_t i = 0; i < skinnedMesh.BoneTransforms.size(); i++) {
             if (i < worldTransforms.size() && i < skinnedMesh.BoneOffsets.size()) {
                 skinnedMesh.BoneTransforms[i] = worldTransforms[i] * skinnedMesh.BoneOffsets[i];

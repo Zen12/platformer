@@ -37,6 +37,9 @@ struct IKPlugin {
                 ikComp.LeftElbowHint = s.LeftElbowHint;
                 ikComp.RotateCharacterToAim = s.RotateCharacterToAim;
                 ikComp.CharacterRotationSpeed = s.CharacterRotationSpeed;
+                ikComp.RecoilDuration = s.RecoilDuration;
+                ikComp.RecoilOffsetRight = s.RecoilOffsetRight;
+                ikComp.RecoilOffsetLeft = s.RecoilOffsetLeft;
                 reg.emplace<IKAimComponent>(entity, ikComp);
             }
         );

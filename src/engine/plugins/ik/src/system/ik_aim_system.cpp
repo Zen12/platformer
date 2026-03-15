@@ -398,6 +398,13 @@ void IKAimSystem::OnTick() {
         glm::mat4 invEntityWorld = glm::inverse(entityWorldMatrix);
         glm::vec3 localAimTarget = glm::vec3(invEntityWorld * glm::vec4(ikAim.AimTarget, 1.0f));
 
+        // Compute recoil (applied per-hand below)
+        float recoilT = 0.0f;
+        if (ikAim.RecoilTimer > 0.0f) {
+            ikAim.RecoilTimer -= deltaTime;
+            recoilT = glm::clamp(ikAim.RecoilTimer / ikAim.RecoilDuration, 0.0f, 1.0f);
+        }
+
         std::vector<glm::mat4> worldTransforms;
         RecomputeWorldTransforms(skinnedMesh.LocalBoneTransforms, worldTransforms, skinnedMesh.BoneParents);
 
@@ -444,7 +451,9 @@ void IKAimSystem::OnTick() {
                 float lowerLength = glm::length(handPos - lowerPos);
                 float totalLength = upperLength + lowerLength;
 
-                glm::vec3 targetPos = localAimTarget + ikAim.RightHandOffset;
+                glm::vec3 rightArmBaseTarget = localAimTarget + ikAim.RightHandOffset;
+                glm::vec3 targetPos = rightArmBaseTarget
+                    + (ikAim.RecoilHand == 0 ? recoilT * ikAim.RecoilOffsetRight : glm::vec3(0.0f));
                 glm::vec3 toTarget = targetPos - upperPos;
                 float targetDist = glm::length(toTarget);
 
@@ -554,6 +563,39 @@ void IKAimSystem::OnTick() {
 
         RecomputeWorldTransforms(skinnedMesh.LocalBoneTransforms, worldTransforms, skinnedMesh.BoneParents);
 
+        // When right hand is recoiling, save the non-recoiled hand position for the left arm grip.
+        // We do this by temporarily solving right arm without recoil, recording the hand pos,
+        // then the actual recoiled solve above is already baked into the bone transforms.
+        glm::vec3 rightHandGripPos = glm::vec3(worldTransforms[ikAim.HandRIndex][3]);
+        if (ikAim.RecoilHand == 0 && recoilT > 0.0f) {
+            // Re-solve right arm without recoil to find where hand would be
+            int rUpperIdx = ikAim.UpperArmRIndex;
+            int rLowerIdx = ikAim.LowerArmRIndex;
+            int rHandIdx = ikAim.HandRIndex;
+            // Save current (recoiled) bone transforms
+            glm::mat4 savedUpper = skinnedMesh.LocalBoneTransforms[rUpperIdx];
+            glm::mat4 savedLower = skinnedMesh.LocalBoneTransforms[rLowerIdx];
+            // Restore original and re-solve without recoil
+            skinnedMesh.LocalBoneTransforms[rUpperIdx] = originalLocalTransforms[rUpperIdx];
+            skinnedMesh.LocalBoneTransforms[rLowerIdx] = originalLocalTransforms[rLowerIdx];
+            // Recompute with torso rotation but original arm pose
+            std::vector<glm::mat4> tempWorld;
+            RecomputeWorldTransforms(skinnedMesh.LocalBoneTransforms, tempWorld, skinnedMesh.BoneParents);
+            glm::vec3 upperPos = glm::vec3(tempWorld[rUpperIdx][3]);
+            glm::vec3 lowerPos = glm::vec3(tempWorld[rLowerIdx][3]);
+            glm::vec3 handPos = glm::vec3(tempWorld[rHandIdx][3]);
+            float upperLen = glm::length(lowerPos - upperPos);
+            float lowerLen = glm::length(handPos - lowerPos);
+            float totalLen = upperLen + lowerLen;
+            glm::vec3 baseTarget = localAimTarget + ikAim.RightHandOffset;
+            glm::vec3 toBase = baseTarget - upperPos;
+            float baseDist = glm::clamp(glm::length(toBase), 0.01f, totalLen * 0.999f);
+            rightHandGripPos = upperPos + glm::normalize(toBase) * baseDist;
+            // Restore the recoiled bone transforms
+            skinnedMesh.LocalBoneTransforms[rUpperIdx] = savedUpper;
+            skinnedMesh.LocalBoneTransforms[rLowerIdx] = savedLower;
+        }
+
         // Apply left arm IK (reaches toward right hand grip point)
         {
             int upperIndex = ikAim.UpperArmLIndex;
@@ -561,8 +603,8 @@ void IKAimSystem::OnTick() {
             int handIndex = ikAim.HandLIndex;
             int parentIndex = skinnedMesh.BoneParents[upperIndex];
 
-            glm::vec3 rightHandPos = glm::vec3(worldTransforms[ikAim.HandRIndex][3]);
-            glm::vec3 leftArmTarget = rightHandPos + ikAim.LeftHandGripPoint;
+            glm::vec3 leftArmTarget = rightHandGripPos + ikAim.LeftHandGripPoint
+                + (ikAim.RecoilHand == 1 ? recoilT * ikAim.RecoilOffsetLeft : glm::vec3(0.0f));
 
             if (upperIndex >= 0 && lowerIndex >= 0 && handIndex >= 0) {
                 glm::vec3 upperPos = glm::vec3(worldTransforms[upperIndex][3]);
@@ -666,6 +708,8 @@ void IKAimSystem::OnTick() {
         }
 
         RecomputeWorldTransforms(skinnedMesh.LocalBoneTransforms, worldTransforms, skinnedMesh.BoneParents);
+
+        skinnedMesh.WorldBoneTransforms = worldTransforms;
 
         for (size_t i = 0; i < skinnedMesh.BoneTransforms.size(); i++) {
             if (i < worldTransforms.size() && i < skinnedMesh.BoneOffsets.size()) {
