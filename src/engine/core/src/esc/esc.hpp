@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+#define GLM_ENABLE_EXPERIMENTAL
 #include "profiler.hpp"
 #include "tag/tag_component.hpp"
 #include "time/time_component.hpp"
@@ -7,6 +9,7 @@
 #include "buffer/render_buffer_component.hpp"
 
 #include "entity/component_registry.hpp"
+#include "transform/transform_component.hpp"
 
 #include "esc_system_context.hpp"
 #include "core/src/register/esc_system_registry.hpp"

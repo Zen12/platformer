@@ -40,6 +40,12 @@ class OpenGLRenderController final {
     glm::mat4 _lightView{1.0f};
     glm::mat4 _lightProjection{1.0f};
 
+    // Scene depth copy (for sampling depth in transparent shaders)
+    GLuint _depthCopyFbo{0};
+    GLuint _depthCopyTexture{0};
+    uint16_t _depthCopyWidth{0};
+    uint16_t _depthCopyHeight{0};
+
     static std::pair<uint16_t, uint16_t> GetViewportSize() noexcept;
     void RenderInstanced(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept;
     void RenderLines(const RenderId& renderId, const std::vector<InstanceData>& instances) noexcept;
@@ -48,6 +54,7 @@ class OpenGLRenderController final {
     void InitScreenQuad();
     void RenderPostProcess() noexcept;
     void RenderShadowPass(const std::shared_ptr<RenderBuffer>& repository) noexcept;
+    void CopySceneDepth() noexcept;
 
 public:
     explicit OpenGLRenderController(const std::shared_ptr<SceneManager> &sceneManager, const std::shared_ptr<ResourceFactory> &resourceFactory)

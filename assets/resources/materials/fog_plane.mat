@@ -1,0 +1,11 @@
+name: fog_plane
+is_culling: false
+is_depth_test: true
+is_depth_write: false
+blend_mode: 3
+shader_opengl:
+  vertex: ad0bad18-49ea-4aa0-a2ad-36e5007c293f
+  fragment: dd761ffe-5e25-4b5c-a9cd-01ab8e89b74b
+shader_gles:
+  vertex: acfc3c07-736d-41fa-a298-354f713737ea
+  fragment: 26ee0d23-cf7a-4620-8348-33180a6fba48

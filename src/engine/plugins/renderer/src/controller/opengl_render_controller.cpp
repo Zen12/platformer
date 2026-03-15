@@ -81,6 +81,12 @@ OpenGLRenderController::~OpenGLRenderController() {
         glDeleteVertexArrays(1, &_screenQuadVao);
         glDeleteBuffers(1, &_screenQuadVbo);
     }
+    if (_depthCopyFbo != 0) {
+        glDeleteFramebuffers(1, &_depthCopyFbo);
+    }
+    if (_depthCopyTexture != 0) {
+        glDeleteTextures(1, &_depthCopyTexture);
+    }
 }
 
 std::pair<uint16_t, uint16_t> OpenGLRenderController::GetViewportSize() noexcept {
@@ -245,6 +251,16 @@ void OpenGLRenderController::RenderInstanced(const RenderId& renderId, const std
         mat->SetMat4("lightProjection", _lightProjection);
     }
 
+    constexpr GLuint SCENE_DEPTH_TEXTURE_UNIT = 3;
+    glActiveTexture(GL_TEXTURE0 + SCENE_DEPTH_TEXTURE_UNIT);
+    glBindTexture(GL_TEXTURE_2D, _depthCopyTexture);
+    mat->SetInt("sceneDepth", SCENE_DEPTH_TEXTURE_UNIT);
+
+    const glm::mat4 vp = renderId.CameraProjection * renderId.CameraView;
+    const glm::mat4 invVP = glm::inverse(vp);
+    mat->SetMat4("inverseVP", invVP);
+    mat->SetVec2("screenSize", static_cast<float>(_framebuffer->GetWidth()), static_cast<float>(_framebuffer->GetHeight()));
+
     glDrawElementsInstanced(
         GL_TRIANGLES,
         static_cast<GLsizei>(meshPtr->GetIndicesCount()),
@@ -390,6 +406,55 @@ void OpenGLRenderController::RenderShadowPass(const std::shared_ptr<RenderBuffer
     _shadowMap->Unbind();
 }
 
+void OpenGLRenderController::CopySceneDepth() noexcept {
+    const auto w = _framebuffer->GetWidth();
+    const auto h = _framebuffer->GetHeight();
+
+    if (_depthCopyFbo == 0) {
+        glGenFramebuffers(1, &_depthCopyFbo);
+        glGenTextures(1, &_depthCopyTexture);
+
+        glBindTexture(GL_TEXTURE_2D, _depthCopyTexture);
+#ifdef __EMSCRIPTEN__
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, w, h, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, nullptr);
+#else
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, w, h, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
+#endif
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, _depthCopyFbo);
+#ifdef __EMSCRIPTEN__
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _depthCopyTexture, 0);
+#else
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, _depthCopyTexture, 0);
+#endif
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        _depthCopyWidth = w;
+        _depthCopyHeight = h;
+    }
+
+    if (_depthCopyWidth != w || _depthCopyHeight != h) {
+        glBindTexture(GL_TEXTURE_2D, _depthCopyTexture);
+#ifdef __EMSCRIPTEN__
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, w, h, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, nullptr);
+#else
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, w, h, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
+#endif
+        _depthCopyWidth = w;
+        _depthCopyHeight = h;
+    }
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, _framebuffer->GetFbo());
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, _depthCopyFbo);
+    glBlitFramebuffer(0, 0, w, h, 0, 0, w, h, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+    _framebuffer->Bind();
+}
+
 void OpenGLRenderController::Render(const std::shared_ptr<RenderBuffer>& repository) noexcept {
     PROFILE_SCOPE("RenderController::Render");
     const auto [width, height] = GetViewportSize();
@@ -413,11 +478,28 @@ void OpenGLRenderController::Render(const std::shared_ptr<RenderBuffer>& reposit
         }
     }
 
+    // Pass 1: Opaque objects
     for (const auto &[renderId, instance] : renderData) {
         if (renderId.Primitive == PrimitiveType::Triangles) {
-            RenderInstanced(renderId, instance);
+            const auto mat = _resourceFactory->Get<Material>(renderId.MaterialGuid);
+            if (mat && mat->GetBlendMode() == BlendMode::None) {
+                RenderInstanced(renderId, instance);
+            }
         } else {
             RenderLines(renderId, instance);
+        }
+    }
+
+    // Copy depth buffer so transparent shaders can sample it
+    CopySceneDepth();
+
+    // Pass 2: Transparent objects (depth buffer is now fully populated)
+    for (const auto &[renderId, instance] : renderData) {
+        if (renderId.Primitive == PrimitiveType::Triangles) {
+            const auto mat = _resourceFactory->Get<Material>(renderId.MaterialGuid);
+            if (mat && mat->GetBlendMode() != BlendMode::None) {
+                RenderInstanced(renderId, instance);
+            }
         }
     }
 

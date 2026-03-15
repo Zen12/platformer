@@ -54,7 +54,7 @@ entities:
     components:
       - type: spawner
         prefab_guid: ee9e7ec4-779d-4d44-a4f6-99f048412b61  # zombie.prefab
-        spawn_count: 10
+        spawn_count: 0
         spawn_on_navmesh: true
   - tag: "male"
     components:
@@ -149,3 +149,12 @@ entities:
         ortho_size: 44.0
         follow_tag: "male"
         follow_offset: [0.0, 20.0, 0.0]
+  - tag: "fog_plane"
+    components:
+      - type: transform
+        position: [0.0, 1.0, 0.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [20.0, 1.0, 20.0]
+      - type: mesh_renderer
+        material: 86201d7d-182e-4bba-b512-70fdc80d99ce
+        mesh: d7a6cd6a-6b45-4039-afc8-d6db4f089d24

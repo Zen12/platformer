@@ -1,0 +1,4 @@
+name: gles_
+guid: 26ee0d23-cf7a-4620-8348-33180a6fba48
+extension: .frag
+type: fragment_shader
