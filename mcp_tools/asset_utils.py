@@ -20,6 +20,8 @@ ASSET_TYPE_MAPPING = {
     ".rml": "rml",
     ".upage": "ui_page",
     ".fsm": "fsm",
+    ".bezier": "bezier",
+    ".meshgen": "meshgen",
 }
 
 # Asset types that can contain GUID references to other assets
@@ -31,6 +33,7 @@ ASSET_TYPES_WITH_REFERENCES = {
     "fsm",
     "rml",
     "css",
+    "meshgen",
 }
 
 

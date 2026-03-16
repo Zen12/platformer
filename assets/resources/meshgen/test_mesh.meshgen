@@ -1,0 +1,11 @@
+name: test_generated_mesh
+operations:
+  - type: bezier_extrude
+    bezier_guid: eebf54c2-4cc6-46ac-8884-d18c91e8477e
+    height: 0.4
+    segments: 24
+  - type: cube
+    size: [0.5, 0.5, 0.5]
+    translate: [1.0, 1.3, 0.0]
+  - type: difference
+    operands: [0, 1]

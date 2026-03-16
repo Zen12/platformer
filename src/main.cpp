@@ -8,6 +8,8 @@
 #include "engine/plugins/ai/ai_plugin.hpp"
 #include "engine/plugins/ik/ik_plugin.hpp"
 #include "engine/plugins/navigation/navigation_plugin.hpp"
+#include "engine/plugins/bezier/bezier_plugin.hpp"
+#include "engine/plugins/mesh_generator/mesh_generator_plugin.hpp"
 #include "engine/examples/plugin_example/example_plugin.hpp"
 #ifdef DEBUG_BUILD
 #include "engine/plugins/terminal/terminal_plugin.hpp"
@@ -23,6 +25,8 @@ std::vector<PluginCallback> GetGamePlugins() {
         AIPlugin::Register,
         IKPlugin::Register,
         NavigationPlugin::Register,
+        BezierPlugin::Register,
+        MeshGeneratorPlugin::Register,
         ExamplePlugin::Register,
 #ifdef DEBUG_BUILD
         TerminalPlugin::Register,

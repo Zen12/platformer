@@ -270,6 +270,15 @@ entities:
         color: [0.3, 1.0, 0.5]
         near_plane: 0.1
         far_plane: 40.0
+  - tag: "generated_mesh"
+    components:
+      - type: transform
+        position: [5.0, 2.0, 5.0]
+        rotation: [0.0, 0.0, 0.0]
+        scale: [1.0, 1.0, 1.0]
+      - type: gen_mesh_renderer
+        material: 7fab9e70-62e6-46fc-91fe-2064b5046938
+        mesh: 664236f0-8be0-49eb-8a9f-c39cedbff61c
   - tag: "fog_plane"
     components:
       - type: transform

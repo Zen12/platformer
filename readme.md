@@ -53,6 +53,7 @@ Custom C++17 game engine with plugin-based architecture, ECS, finite state machi
 - [MCP Setup](docs/mcp.md) — Model Context Protocol and asset tools
 - [Instancing System](docs/instancing-system.md) — Instanced rendering architecture
 - [Skinned Mesh Workflow](docs/skinned-mesh-workflow.md) — Character animation pipeline
+- [Mesh Generation](docs/mesh-generation.md) — Procedural mesh generation with CSG and bezier extrusion
 
 ## Project Structure
 
@@ -81,7 +82,6 @@ mcp_tools/                     # Python MCP servers (asset, blender, gimp, figma
 
 - **Gameplay** — Procedural generation of map
 - **Animation** - Procedural generation of animations
-- **Mesh** - Procedural generation of mesh (boolean logic)
 - **Platforms** — Windows and Linux support
 
 🇲🇩

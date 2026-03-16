@@ -65,6 +65,7 @@ find_package(OpenAL REQUIRED)
 find_package(Minitrace REQUIRED)
 find_package(XSIMD REQUIRED)
 find_package(NlohmannJson REQUIRED)
+find_package(Manifold REQUIRED)
 
 if (PLATFORM_DESKTOP)
     find_package(OpenGL REQUIRED)
@@ -97,6 +98,8 @@ add_subdirectory(src/engine/plugins/animation)
 add_subdirectory(src/engine/plugins/ik)
 add_subdirectory(src/engine/plugins/ai)
 add_subdirectory(src/engine/plugins/renderer)
+add_subdirectory(src/engine/plugins/bezier)
+add_subdirectory(src/engine/plugins/mesh_generator)
 add_subdirectory(src/engine/plugins/scene)
 
 # Terminal and MCP server (desktop debug only)
@@ -148,6 +151,8 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_SOURCE_DIR}/src/engine/plugins/ik/src
     ${CMAKE_SOURCE_DIR}/src/engine/plugins/prefab/src
     ${CMAKE_SOURCE_DIR}/src/engine/plugins/profiler/src
+    ${CMAKE_SOURCE_DIR}/src/engine/plugins/bezier
+    ${CMAKE_SOURCE_DIR}/src/engine/plugins/mesh_generator
     ${CMAKE_SOURCE_DIR}/src/engine
     ${CMAKE_SOURCE_DIR}/src/engine/plugins/terminal
     ${CMAKE_SOURCE_DIR}/src/engine/plugins/mcp
@@ -169,6 +174,8 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     engine-animation
     engine-ik
     engine-renderer
+    engine-bezier
+    engine-mesh-generator
     engine-scene
     engine-game
     engine-example-plugin

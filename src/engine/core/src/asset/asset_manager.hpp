@@ -50,6 +50,10 @@ public:
         return AssetLoader<T>::LoadFromPath(path);
     }
 
+    [[nodiscard]] const MetaAsset& GetMetaAsset(const Guid& guid) const {
+        return _assetMap.at(guid);
+    }
+
     void UnLoadAll() {
         _assetMap.clear();
     }

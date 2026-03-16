@@ -13,6 +13,7 @@ private:
     std::shared_ptr<ResourceCache> _cache;
     std::weak_ptr<AssetManager> _assetManager;
     std::unordered_map<std::type_index, std::any> _loaders;
+    std::unordered_map<std::string, std::function<void(ResourceFactory&, const Guid&)>> _resourceGenerators;
 
 public:
     explicit ResourceFactory(const std::weak_ptr<AssetManager>& assetManager)
@@ -53,4 +54,16 @@ public:
 
     template <typename T>
     void RegisterValue(const Guid& guid, T value) { _cache->RegisterValue(guid, std::move(value)); }
+
+    void RegisterResourceGenerator(const std::string& assetType,
+        std::function<void(ResourceFactory&, const Guid&)> generator) {
+        _resourceGenerators[assetType] = std::move(generator);
+    }
+
+    bool TryGenerateResource(const std::string& assetType, const Guid& guid) {
+        auto it = _resourceGenerators.find(assetType);
+        if (it == _resourceGenerators.end()) return false;
+        it->second(*this, guid);
+        return true;
+    }
 };

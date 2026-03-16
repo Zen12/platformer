@@ -95,6 +95,11 @@ inline void RegisterRendererResources(ResourceFactory& resources) {
                 return meshAsset;
             }
 
+            const auto& meta = assetManager->GetMetaAsset(guid);
+            if (factory.TryGenerateResource(meta.Type, guid)) {
+                return factory.GetCache()->Get<Mesh>(guid);
+            }
+
             const auto meshData = assetManager->LoadSourceByGuid<MeshData>(guid);
             std::shared_ptr<Mesh> mesh;
             if (meshData.HasSkeleton) {
