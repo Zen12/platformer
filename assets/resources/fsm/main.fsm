@@ -1,5 +1,5 @@
 name: main_fsm
-start_node: "gameNode"
+start_node: "mainMenuNode"
 nodes:
 - name: "Main Menu"
   guid: "mainMenuNode"

@@ -13,13 +13,6 @@ nodes:
   actions:
     - type: animation_state
       animation_guid: 511ca21d-91a9-4650-8296-18f72d2f5431
-    - type: play_sound_repeated
-      audio_guid: 651c6f8a-a2eb-4cfc-b80a-11b81d04b732
-      volume: 0.9
-      delay_seconds: 0.5
-      spatial: true
-      min_distance: 0.0
-      max_distance: 30.0
 - name: "Zombie Attack"
   guid: "attackState"
   actions:

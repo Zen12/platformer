@@ -38,7 +38,7 @@ inline void RegisterGameSystems(EscSystemRegistry& registry) {
             reg->view<PlayerControllerComponent, TransformComponentV2, IKAimComponent, NavmeshAgentComponent>(),
             reg->view<DeltaTimeComponent>(),
             reg->view<TagComponent, ParticleEmitterComponent>(),
-            scenePtr, *reg, navManager);
+            scenePtr, *reg, navManager, ctx.AudioManager);
     }, 210);
 
     // SpawnerSystem: priority 250

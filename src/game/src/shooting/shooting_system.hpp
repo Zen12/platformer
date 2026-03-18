@@ -11,6 +11,8 @@
 #include "input_system.hpp"
 #include "navigation_manager.hpp"
 #include "particle_emitter/particle_emitter_component.hpp"
+#include "audio_manager.hpp"
+#include "guid.hpp"
 #include <glm/glm.hpp>
 #include <memory>
 
@@ -24,6 +26,8 @@ private:
     const std::weak_ptr<Scene> _scene;
     entt::registry& _registry;
     const std::shared_ptr<NavigationManager> _navigationManager;
+    const std::weak_ptr<AudioManager> _audioManager;
+    const Guid _shootSoundGuid = Guid::FromString("651c6f8a-a2eb-4cfc-b80a-11b81d04b732");
 
     float _shootCooldown = 0.0f;
     bool _lastShotRight = false;
@@ -37,9 +41,11 @@ public:
         const TypeGunView& gunView,
         const std::weak_ptr<Scene>& scene,
         entt::registry& registry,
-        const std::shared_ptr<NavigationManager>& navigationManager)
+        const std::shared_ptr<NavigationManager>& navigationManager,
+        const std::weak_ptr<AudioManager>& audioManager)
         : ISystemView(view), _deltaTimeView(deltaTimeView), _gunView(gunView),
-          _scene(scene), _registry(registry), _navigationManager(navigationManager) {}
+          _scene(scene), _registry(registry), _navigationManager(navigationManager),
+          _audioManager(audioManager) {}
 
     void OnTick() override {
         const auto scene = _scene.lock();
@@ -66,6 +72,10 @@ public:
             if (!ikAim.HasAimTarget) continue;
 
             _shootCooldown = ikAim.RecoilDuration;
+
+            if (const auto audio = _audioManager.lock()) {
+                audio->PlaySoundSpatial(_shootSoundGuid, transform.GetPosition(), 0.9f, false, 0.0f, 30.0f);
+            }
 
             // Muzzle flash alternating guns
             _lastShotRight = !_lastShotRight;
