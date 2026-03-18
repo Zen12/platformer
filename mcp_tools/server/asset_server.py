@@ -11,7 +11,7 @@ import logging
 import uuid
 
 # Add parent directory (mcp_tools/) to path so we can import shared modules
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
 # Setup logging to stderr (NEVER use stdout with stdio transport)
 logging.basicConfig(

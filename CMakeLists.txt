@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.11...3.30)
 project(Engine-Demo)
 
+option(ENGINE_BUILD_DEMO "Build the platformer demo game and executable" ON)
+
 include(FetchContent)
 
 # Testing option (must be before include(CTest))
@@ -111,6 +113,30 @@ endif()
 # Examples
 add_subdirectory(src/engine/examples/plugin_example)
 
+# --- Umbrella target for consumers ---
+add_library(engine-all INTERFACE)
+target_link_libraries(engine-all INTERFACE
+    engine-profiler
+    engine-math
+    engine-utils
+    engine-system
+    engine-core
+    engine-font
+    engine-prefab
+    engine-project
+    engine-navigation
+    engine-audio
+    engine-ai
+    engine-animation
+    engine-ik
+    engine-renderer
+    engine-bezier
+    engine-mesh-generator
+    engine-scene
+)
+
+if(ENGINE_BUILD_DEMO)
+
 # Game
 add_subdirectory(src/game)
 
@@ -160,23 +186,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 
 # Engine modules
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
-    engine-profiler
-    engine-math
-    engine-utils
-    engine-system
-    engine-core
-    engine-font
-    engine-prefab
-    engine-project
-    engine-navigation
-    engine-audio
-    engine-ai
-    engine-animation
-    engine-ik
-    engine-renderer
-    engine-bezier
-    engine-mesh-generator
-    engine-scene
+    engine-all
     engine-game
     engine-example-plugin
     $<$<AND:$<BOOL:${PLATFORM_DESKTOP}>,$<CONFIG:Debug>>:engine-terminal>
@@ -294,3 +304,5 @@ if (PLATFORM_DESKTOP)
         )
     endif()
 endif()
+
+endif() # ENGINE_BUILD_DEMO
