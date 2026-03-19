@@ -18,6 +18,7 @@
 #include "camera/top_down_camera_component_serialization.hpp"
 #include "camera/top_down_camera_component_serialization_yaml.hpp"
 
+
 #include "mesh_renderer/mesh_renderer_component.hpp"
 #include "mesh_renderer/mesh_renderer_component_serialization.hpp"
 #include "mesh_renderer/mesh_renderer_component_serialization_yaml.hpp"

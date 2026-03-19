@@ -9,6 +9,12 @@
 #include "RmlUi/Core/Span.h"
 #include "RmlUi/Core/Vertex.h"
 
+enum class VertexFormat {
+    PositionOnly,
+    PositionTexture,
+    PositionColor
+};
+
 class Mesh
 {
 public:
@@ -37,6 +43,11 @@ public:
     Mesh(
     const Rml::Span<const Rml::Vertex> &vertices,
     const Rml::Span<const int> &indices);
+
+    Mesh(
+        const std::vector<float> &vertices,
+        const std::vector<uint32_t> &indices,
+        VertexFormat format);
 
     Mesh(const Mesh&) = delete;
     Mesh& operator=(const Mesh&) = delete;

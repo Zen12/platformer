@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 #include <manifold/manifold.h>
 #include "meshgen_asset.hpp"
+#include "meshgen_asset_yaml.hpp"
 #include "bezier_asset.hpp"
 #include "bezier_asset_yaml.hpp"
 #include "bezier_curve.hpp"
@@ -17,6 +18,7 @@ struct GeneratedMeshData {
     std::vector<float> Vertices;
     std::vector<uint32_t> Indices;
     Bounds MeshBounds;
+    bool HasVertexColor = false;
 };
 
 namespace MeshGenerator {
@@ -37,6 +39,34 @@ namespace MeshGenerator {
                 static_cast<double>(op.Radius),
                 static_cast<double>(op.Radius),
                 op.Segments, true);
+        }
+        return result;
+    }
+
+    inline manifold::Manifold EnrichWithColor(const manifold::Manifold& m, const glm::vec3& color) {
+        auto srcGL = m.GetMeshGL();
+        const int srcNumProp = srcGL.numProp;
+        const int numVerts = static_cast<int>(srcGL.vertProperties.size()) / srcNumProp;
+
+        manifold::MeshGL dstGL;
+        dstGL.numProp = 6;
+        dstGL.vertProperties.resize(numVerts * 6);
+
+        for (int i = 0; i < numVerts; ++i) {
+            dstGL.vertProperties[i * 6 + 0] = srcGL.vertProperties[i * srcNumProp + 0];
+            dstGL.vertProperties[i * 6 + 1] = srcGL.vertProperties[i * srcNumProp + 1];
+            dstGL.vertProperties[i * 6 + 2] = srcGL.vertProperties[i * srcNumProp + 2];
+            dstGL.vertProperties[i * 6 + 3] = color.r;
+            dstGL.vertProperties[i * 6 + 4] = color.g;
+            dstGL.vertProperties[i * 6 + 5] = color.b;
+        }
+
+        dstGL.triVerts = srcGL.triVerts;
+
+        auto result = manifold::Manifold(dstGL);
+        if (result.Status() != manifold::Manifold::Error::NoError) {
+            std::cerr << "[MeshGen] EnrichWithColor manifold error: "
+                      << static_cast<int>(result.Status()) << std::endl;
         }
         return result;
     }
@@ -72,10 +102,13 @@ namespace MeshGenerator {
         int circleSeg = std::max(op.Segments / 2, 6);
         int numPath = static_cast<int>(pathPoints.size());
 
+        const float r = op.Color.r;
+        const float g = op.Color.g;
+        const float b = op.Color.b;
+
         std::vector<float> verts;
         std::vector<uint32_t> tris;
 
-        // Ring vertices
         for (int i = 0; i < numPath; ++i) {
             glm::vec3 T = pathTangents[i];
             if (glm::length(T) < 1e-6f) T = glm::vec3(0.0f, 0.0f, 1.0f);
@@ -93,10 +126,12 @@ namespace MeshGenerator {
                 verts.push_back(pos.x);
                 verts.push_back(pos.y);
                 verts.push_back(pos.z);
+                verts.push_back(r);
+                verts.push_back(g);
+                verts.push_back(b);
             }
         }
 
-        // Wall triangles — outward-facing CCW winding
         for (int i = 0; i < numPath - 1; ++i) {
             for (int j = 0; j < circleSeg; ++j) {
                 uint32_t c  = static_cast<uint32_t>(i * circleSeg + j);
@@ -109,24 +144,22 @@ namespace MeshGenerator {
             }
         }
 
-        // Start cap — normal faces backward along path
-        // Wall edge on ring 0 goes j→j+1, so cap must use j+1→j (reversed)
-        uint32_t startC = static_cast<uint32_t>(verts.size() / 3);
+        uint32_t startC = static_cast<uint32_t>(verts.size() / 6);
         verts.push_back(pathPoints[0].x);
         verts.push_back(pathPoints[0].y);
         verts.push_back(pathPoints[0].z);
+        verts.push_back(r); verts.push_back(g); verts.push_back(b);
         for (int j = 0; j < circleSeg; ++j) {
             uint32_t j0 = static_cast<uint32_t>(j);
             uint32_t j1 = static_cast<uint32_t>((j + 1) % circleSeg);
             tris.push_back(startC); tris.push_back(j1); tris.push_back(j0);
         }
 
-        // End cap — normal faces forward along path
-        // Wall edge on last ring goes j+1→j, so cap must use j→j+1 (reversed)
-        uint32_t endC = static_cast<uint32_t>(verts.size() / 3);
+        uint32_t endC = static_cast<uint32_t>(verts.size() / 6);
         verts.push_back(pathPoints[numPath - 1].x);
         verts.push_back(pathPoints[numPath - 1].y);
         verts.push_back(pathPoints[numPath - 1].z);
+        verts.push_back(r); verts.push_back(g); verts.push_back(b);
         uint32_t endRing = static_cast<uint32_t>((numPath - 1) * circleSeg);
         for (int j = 0; j < circleSeg; ++j) {
             uint32_t j0 = endRing + static_cast<uint32_t>(j);
@@ -135,7 +168,7 @@ namespace MeshGenerator {
         }
 
         manifold::MeshGL meshGL;
-        meshGL.numProp = 3;
+        meshGL.numProp = 6;
         meshGL.vertProperties = std::move(verts);
         meshGL.triVerts = std::move(tris);
 
@@ -147,20 +180,28 @@ namespace MeshGenerator {
         return result;
     }
 
-    inline GeneratedMeshData Generate(const MeshGenAsset& asset,
-                                       const std::weak_ptr<AssetManager>& assetManager) {
+    inline manifold::Manifold BuildResultManifold(const MeshGenAsset& asset,
+                                                    const std::weak_ptr<AssetManager>& assetManager) {
         std::vector<manifold::Manifold> results;
         results.reserve(asset.Operations.size());
 
         for (const auto& op : asset.Operations) {
             if (op.Type == "cube" || op.Type == "sphere" || op.Type == "cylinder") {
                 auto prim = CreatePrimitive(op);
+                prim = EnrichWithColor(prim, op.Color);
                 prim = ApplyTransform(std::move(prim), op);
                 results.push_back(std::move(prim));
             } else if (op.Type == "bezier_extrude") {
                 auto tube = BuildBezierTube(op, assetManager);
                 tube = ApplyTransform(std::move(tube), op);
                 results.push_back(std::move(tube));
+            } else if (op.Type == "custom" || op.Type == "custome") {
+                auto am = assetManager.lock();
+                if (!am) continue;
+                const auto customAsset = am->LoadAssetByGuid<MeshGenAsset>(op.MeshGuid);
+                auto customManifold = BuildResultManifold(customAsset, assetManager);
+                customManifold = ApplyTransform(std::move(customManifold), op);
+                results.push_back(std::move(customManifold));
             } else if ((op.Type == "union" || op.Type == "difference" || op.Type == "intersection")
                        && op.Operands.size() >= 2) {
                 auto combined = results[op.Operands[0]];
@@ -173,27 +214,45 @@ namespace MeshGenerator {
             }
         }
 
-        if (results.empty()) return {};
+        return results.empty() ? manifold::Manifold{} : results.back();
+    }
 
-        const auto& finalManifold = results.back();
+    inline GeneratedMeshData Generate(const MeshGenAsset& asset,
+                                       const std::weak_ptr<AssetManager>& assetManager) {
+        const auto finalManifold = BuildResultManifold(asset, assetManager);
+
+        if (finalManifold.IsEmpty()) return {};
+
         auto meshGL = finalManifold.GetMeshGL();
 
         std::vector<float> vertices;
         std::vector<uint32_t> indices;
 
-        int numVerts = static_cast<int>(meshGL.vertProperties.size()) / meshGL.numProp;
-        vertices.reserve(numVerts * 3);
+        const int numVerts = static_cast<int>(meshGL.vertProperties.size()) / meshGL.numProp;
+        vertices.reserve(numVerts * 6);
 
         glm::vec3 minBounds(std::numeric_limits<float>::max());
         glm::vec3 maxBounds(std::numeric_limits<float>::lowest());
 
         for (int i = 0; i < numVerts; ++i) {
-            float x = meshGL.vertProperties[i * meshGL.numProp + 0];
-            float y = meshGL.vertProperties[i * meshGL.numProp + 1];
-            float z = meshGL.vertProperties[i * meshGL.numProp + 2];
+            const float x = meshGL.vertProperties[i * meshGL.numProp + 0];
+            const float y = meshGL.vertProperties[i * meshGL.numProp + 1];
+            const float z = meshGL.vertProperties[i * meshGL.numProp + 2];
+
+            float r = 1.0f, g = 1.0f, b = 1.0f;
+            if (meshGL.numProp >= 6) {
+                r = meshGL.vertProperties[i * meshGL.numProp + 3];
+                g = meshGL.vertProperties[i * meshGL.numProp + 4];
+                b = meshGL.vertProperties[i * meshGL.numProp + 5];
+            }
+
             vertices.push_back(x);
             vertices.push_back(y);
             vertices.push_back(z);
+            vertices.push_back(r);
+            vertices.push_back(g);
+            vertices.push_back(b);
+
             minBounds = glm::min(minBounds, glm::vec3(x, y, z));
             maxBounds = glm::max(maxBounds, glm::vec3(x, y, z));
         }
@@ -203,7 +262,7 @@ namespace MeshGenerator {
             indices.push_back(static_cast<uint32_t>(idx));
         }
 
-        return {std::move(vertices), std::move(indices), Bounds::FromMinMax(minBounds, maxBounds)};
+        return {std::move(vertices), std::move(indices), Bounds::FromMinMax(minBounds, maxBounds), true};
     }
 
 }

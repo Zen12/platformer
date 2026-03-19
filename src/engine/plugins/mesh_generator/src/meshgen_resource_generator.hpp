@@ -18,7 +18,8 @@ inline void RegisterMeshGenResourceGenerator(ResourceFactory& resources) {
                     return;
                 }
 
-                auto mesh = std::make_shared<Mesh>(generated.Vertices, generated.Indices, false);
+                auto format = generated.HasVertexColor ? VertexFormat::PositionColor : VertexFormat::PositionOnly;
+                auto mesh = std::make_shared<Mesh>(generated.Vertices, generated.Indices, format);
                 factory.GetCache()->RegisterValue(guid, generated.MeshBounds);
                 factory.Register(guid, mesh);
             }

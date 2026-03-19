@@ -20,7 +20,10 @@ namespace YAML {
             if (node["rotate"]) rhs.Rotate = node["rotate"].as<glm::vec3>();
             if (node["scale"]) rhs.Scale = node["scale"].as<glm::vec3>();
 
+            if (node["color"]) rhs.Color = node["color"].as<glm::vec3>();
+
             if (node["bezier_guid"]) rhs.BezierGuid = node["bezier_guid"].as<Guid>();
+            if (node["guid"]) rhs.MeshGuid = node["guid"].as<Guid>();
 
             if (node["operands"]) {
                 for (const auto& op : node["operands"]) {

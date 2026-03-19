@@ -16,7 +16,10 @@ struct MeshGenOperation {
     glm::vec3 Rotate{0.0f};
     glm::vec3 Scale{1.0f};
 
+    glm::vec3 Color{1.0f, 1.0f, 1.0f};
+
     Guid BezierGuid;
+    Guid MeshGuid;
     std::vector<int> Operands;
 };
 

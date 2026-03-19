@@ -137,6 +137,10 @@ target_link_libraries(engine-all INTERFACE
 
 if(ENGINE_BUILD_DEMO)
 
+if(NOT DEFINED ENGINE_DEMO_ASSETS_DIR)
+    set(ENGINE_DEMO_ASSETS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/assets")
+endif()
+
 # Game
 add_subdirectory(src/game)
 
@@ -292,7 +296,7 @@ if (PLATFORM_DESKTOP)
 
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_custom_target(run
-                COMMAND "${APP_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+                COMMAND "${APP_EXECUTABLE}" "${ENGINE_DEMO_ASSETS_DIR}"
                 DEPENDS ${CMAKE_PROJECT_NAME}
                 WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/output"
         )
