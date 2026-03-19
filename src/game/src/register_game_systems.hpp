@@ -21,7 +21,7 @@ inline void RegisterGameSystems(EscSystemRegistry& registry) {
         return std::make_unique<PlayerControllerSystem>(
             reg->view<PlayerControllerComponent, NavmeshAgentComponent, TransformComponentV2>(),
             reg->view<DeltaTimeComponent>(), scenePtr, *reg);
-    }, 150);
+    }, 150, SystemPhase::FIXED);
 
     // ShootingSystem: priority 210
     registry.Register<ShootingSystem>("ShootingSystem", [](const EscSystemContext& ctx) {
@@ -39,7 +39,7 @@ inline void RegisterGameSystems(EscSystemRegistry& registry) {
             reg->view<DeltaTimeComponent>(),
             reg->view<TagComponent, ParticleEmitterComponent>(),
             scenePtr, *reg, navManager, ctx.AudioManager);
-    }, 210);
+    }, 210, SystemPhase::FIXED);
 
     // SpawnerSystem: priority 250
     registry.Register<SpawnerSystem>("SpawnerSystem", [](const EscSystemContext& ctx) {
@@ -47,14 +47,14 @@ inline void RegisterGameSystems(EscSystemRegistry& registry) {
         if (!scenePtr) return std::unique_ptr<SpawnerSystem>(nullptr);
         const auto reg = ctx.Registry;
         return std::make_unique<SpawnerSystem>(reg->view<SpawnerComponent>(), scenePtr);
-    }, 250);
+    }, 250, SystemPhase::FIXED);
 
     // BoneAttachmentSystem: priority 215 (after IK at 210, before SkinnedMeshRender at 220)
     registry.Register<BoneAttachmentSystem>("BoneAttachmentSystem", [](const EscSystemContext& ctx) {
         const auto reg = ctx.Registry;
         return std::make_unique<BoneAttachmentSystem>(
             reg->view<BoneAttachmentComponent, TransformComponentV2>(), *reg);
-    }, 215);
+    }, 215, SystemPhase::RENDER);
 
     // HealthSystem: priority 270
     registry.Register<HealthSystem>("HealthSystem", [](const EscSystemContext& ctx) {
@@ -63,5 +63,5 @@ inline void RegisterGameSystems(EscSystemRegistry& registry) {
             reg->view<HealthComponent, TransformComponentV2>(),
             reg->view<DeltaTimeComponent>(),
             reg->view<CombatStateComponent, TransformComponentV2>());
-    }, 270);
+    }, 270, SystemPhase::FIXED);
 }

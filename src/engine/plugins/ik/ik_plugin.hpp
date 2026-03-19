@@ -58,6 +58,6 @@ struct IKPlugin {
                 reg->view<WindowComponent>(),
                 scenePtr,
                 *reg);
-        }, 210);
+        }, 210, SystemPhase::RENDER);
     }
 };

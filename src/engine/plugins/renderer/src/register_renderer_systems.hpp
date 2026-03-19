@@ -26,13 +26,13 @@ inline void RegisterRendererSystems(EscSystemRegistry& registry) {
         const auto reg = ctx.Registry;
         const auto& windowView = reg->view<WindowComponent>();
         return std::make_unique<WindowSystem>(windowView, scenePtr->GetWindow());
-    }, 100);
+    }, 100, SystemPhase::RENDER);
 
     // DeltaTimeSystem: priority 110
     registry.Register<DeltaTimeSystem>("DeltaTimeSystem", [](const EscSystemContext& ctx) {
         const auto reg = ctx.Registry;
         return std::make_unique<DeltaTimeSystem>(reg->view<DeltaTimeComponent>());
-    }, 110);
+    }, 110, SystemPhase::RENDER);
 
     // CameraControllerSystem: priority 120
     registry.Register<CameraControllerSystem>("CameraControllerSystem", [](const EscSystemContext& ctx) {
@@ -42,7 +42,7 @@ inline void RegisterRendererSystems(EscSystemRegistry& registry) {
         return std::make_unique<CameraControllerSystem>(
             reg->view<CameraControllerComponent, TransformComponentV2>(),
             reg->view<DeltaTimeComponent>(), scenePtr);
-    }, 120);
+    }, 120, SystemPhase::RENDER);
 
     // CameraSystem: priority 130
     registry.Register<CameraSystem>("CameraSystem", [](const EscSystemContext& ctx) {
@@ -50,7 +50,7 @@ inline void RegisterRendererSystems(EscSystemRegistry& registry) {
         return std::make_unique<CameraSystem>(
             reg->view<WindowComponent>(),
             reg->view<CameraComponentV2, TransformComponentV2>());
-    }, 130);
+    }, 130, SystemPhase::RENDER);
 
     // DirectionalLightSystem: priority 140
     registry.Register<DirectionalLightSystem>("DirectionalLightSystem", [](const EscSystemContext& ctx) {
@@ -59,7 +59,7 @@ inline void RegisterRendererSystems(EscSystemRegistry& registry) {
             reg->view<DirectionalLightComponent, TransformComponentV2>(),
             reg->view<TagComponent, TransformComponentV2>(),
             reg->view<RenderBufferComponent>());
-    }, 140);
+    }, 140, SystemPhase::RENDER);
 
     // SpotLightSystem: priority 145
     registry.Register<SpotLightSystem>("SpotLightSystem", [](const EscSystemContext& ctx) {
@@ -68,7 +68,7 @@ inline void RegisterRendererSystems(EscSystemRegistry& registry) {
             reg->view<SpotLightComponent, TransformComponentV2>(),
             reg->view<CameraComponentV2>(),
             reg->view<RenderBufferComponent>());
-    }, 145);
+    }, 145, SystemPhase::RENDER);
 
     // TopDownCameraSystem: priority 170
     registry.Register<TopDownCameraSystem>("TopDownCameraSystem", [](const EscSystemContext& ctx) {
@@ -78,7 +78,7 @@ inline void RegisterRendererSystems(EscSystemRegistry& registry) {
             reg->view<TagComponent, TransformComponentV2>(),
             reg->view<DeltaTimeComponent>(),
             *reg);
-    }, 170);
+    }, 170, SystemPhase::RENDER);
 
     // MeshRenderSystem: priority 216 (after BoneAttachment at 215, before SkinnedMeshRender at 220)
     registry.Register<MeshRenderSystem>("MeshRenderSystem", [](const EscSystemContext& ctx) {
@@ -86,7 +86,7 @@ inline void RegisterRendererSystems(EscSystemRegistry& registry) {
         return std::make_unique<MeshRenderSystem>(
             reg->view<MeshRendererComponent, TransformComponentV2>(),
             reg->view<CameraComponentV2>(), reg->view<RenderBufferComponent>(), ctx.ResourceFactory);
-    }, 216);
+    }, 216, SystemPhase::RENDER);
 
     // SkinnedMeshRenderSystem: priority 220
     registry.Register<SkinnedMeshRenderSystem>("SkinnedMeshRenderSystem", [](const EscSystemContext& ctx) {
@@ -94,7 +94,7 @@ inline void RegisterRendererSystems(EscSystemRegistry& registry) {
         return std::make_unique<SkinnedMeshRenderSystem>(
             reg->view<SkinnedMeshRendererComponent, TransformComponentV2>(),
             reg->view<CameraComponentV2>(), reg->view<RenderBufferComponent>(), ctx.ResourceFactory);
-    }, 220);
+    }, 220, SystemPhase::RENDER);
 
     // ParticleSystem: priority 290
     registry.Register<ParticleSystem>("ParticleSystem", [](const EscSystemContext& ctx) {
@@ -105,7 +105,7 @@ inline void RegisterRendererSystems(EscSystemRegistry& registry) {
             reg->view<ParticleEmitterComponent, NavmeshAgentComponent>(),
             reg->view<ParticleEmitterComponent, HealthComponent>(),
             reg->view<ParticleEmitterComponent, CombatStateComponent>());
-    }, 290);
+    }, 290, SystemPhase::RENDER);
 
     // ParticleRenderSystem: priority 300
     registry.Register<ParticleRenderSystem>("ParticleRenderSystem", [](const EscSystemContext& ctx) {
@@ -117,5 +117,5 @@ inline void RegisterRendererSystems(EscSystemRegistry& registry) {
             reg->view<CameraComponentV2>(),
             reg->view<RenderBufferComponent>(),
             scenePtr);
-    }, 300);
+    }, 300, SystemPhase::RENDER);
 }

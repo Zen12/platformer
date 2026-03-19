@@ -18,5 +18,5 @@ inline void RegisterAISystems(EscSystemRegistry& registry) {
             ctx.ResourceFactory,
             reg->view<DeltaTimeComponent>(),
             reg->view<CameraComponentV2, TransformComponentV2>());
-    }, 260);
+    }, 260, SystemPhase::FIXED);
 }

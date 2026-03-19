@@ -28,7 +28,7 @@ public:
 
         float deltaTime = 0.0f;
         for (auto [entity, time] : _timeView.each()) {
-            deltaTime = time.Delta;
+            deltaTime = time.FixedDelta;
         }
 
         auto navmesh = _navigationManager->GetNavmesh();

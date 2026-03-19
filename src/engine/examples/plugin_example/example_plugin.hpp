@@ -60,6 +60,6 @@ struct ExamplePlugin {
         // Priority 900 = runs after most systems
         registries.Systems.Register<ExampleSystem>("ExampleSystem", [](const EscSystemContext& ctx) {
             return std::make_unique<ExampleSystem>(*ctx.Registry);
-        }, 900);
+        }, 900, SystemPhase::RENDER);
     }
 };

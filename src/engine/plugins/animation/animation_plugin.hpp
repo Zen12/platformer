@@ -69,7 +69,7 @@ struct AnimationPlugin {
             return std::make_unique<SimpleAnimationSystem>(
                 reg->view<SimpleAnimationComponent, SkinnedMeshRendererComponent, TransformComponentV2>(),
                 reg->view<DeltaTimeComponent>(), ctx.ResourceFactory);
-        }, 190);
+        }, 190, SystemPhase::RENDER);
 
         // FsmAnimationSystem: priority 200
         registries.Systems.Register<FsmAnimationSystem>("FsmAnimationSystem", [](const EscSystemContext& ctx) {
@@ -79,6 +79,6 @@ struct AnimationPlugin {
             return std::make_unique<FsmAnimationSystem>(
                 reg->view<FsmAnimationComponent, SkinnedMeshRendererComponent, TransformComponentV2>(),
                 reg->view<DeltaTimeComponent>(), scenePtr, ctx.ResourceFactory, *reg);
-        }, 200);
+        }, 200, SystemPhase::RENDER);
     }
 };

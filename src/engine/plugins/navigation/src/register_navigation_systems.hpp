@@ -21,7 +21,7 @@ inline void RegisterNavigationSystems(EscSystemRegistry& registry) {
         return std::make_unique<NavmeshAgentSystem>(
             reg->view<NavmeshAgentComponent, TransformComponentV2>(),
             reg->view<DeltaTimeComponent>(), navManager);
-    }, 160);
+    }, 160, SystemPhase::FIXED);
 
 #ifndef NDEBUG
     // NavmeshPathRenderSystem: priority 230
@@ -36,7 +36,7 @@ inline void RegisterNavigationSystems(EscSystemRegistry& registry) {
         return std::make_unique<NavmeshPathRenderSystem>(
             reg->view<NavmeshAgentComponent>(),
             reg->view<CameraComponentV2>(), reg->view<RenderBufferComponent>(), navManager);
-    }, 230);
+    }, 230, SystemPhase::RENDER);
 
     // NavmeshDebugRenderSystem: priority 240
     registry.Register<NavmeshDebugRenderSystem>("NavmeshDebugRenderSystem", [](const EscSystemContext& ctx) {
@@ -49,6 +49,6 @@ inline void RegisterNavigationSystems(EscSystemRegistry& registry) {
         if (!navManager) return std::unique_ptr<NavmeshDebugRenderSystem>(nullptr);
         return std::make_unique<NavmeshDebugRenderSystem>(
             reg->view<CameraComponentV2>(), reg->view<RenderBufferComponent>(), navManager);
-    }, 240);
+    }, 240, SystemPhase::RENDER);
 #endif
 }

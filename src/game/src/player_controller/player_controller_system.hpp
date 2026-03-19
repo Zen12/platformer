@@ -36,7 +36,7 @@ public:
 
         float deltaTime = 0.0f;
         for (auto [entity, time] : _deltaTimeView.each()) {
-            deltaTime = time.Delta;
+            deltaTime = time.FixedDelta;
         }
 
         for (auto [entity, controller, navAgent, transform] : View.each()) {

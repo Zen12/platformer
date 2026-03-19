@@ -41,7 +41,7 @@ public:
     void OnTick() override {
         float deltaTime = 0.0f;
         for (auto [entity, time] : _deltaTimeView.each()) {
-            deltaTime = time.Delta;
+            deltaTime = time.FixedDelta;
         }
 
         for (auto& [entity, cooldown] : _damageCooldowns) {

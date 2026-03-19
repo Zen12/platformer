@@ -13,5 +13,5 @@ inline void RegisterAudioSystems(EscSystemRegistry& registry) {
             reg->view<AudioSourceComponent, TransformComponentV2>(),
             reg->view<AudioListenerComponent, TransformComponentV2>(),
             ctx.AudioManager);
-    }, 280);
+    }, 280, SystemPhase::RENDER);
 }

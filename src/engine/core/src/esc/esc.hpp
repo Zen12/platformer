@@ -16,7 +16,11 @@
 
 class EscSystem {
     const std::weak_ptr<Scene> _scene;
-    std::vector<std::unique_ptr<ISystem>> _systems;
+    std::vector<std::unique_ptr<ISystem>> _fixedSystems;
+    std::vector<std::unique_ptr<ISystem>> _renderSystems;
+    mutable float _accumulator = 0.0f;
+    static constexpr float FIXED_TIMESTEP = 0.02f;
+    static constexpr float MAX_ACCUMULATOR = 0.1f;
     const ComponentRegistry* _componentRegistry = nullptr;
     entt::entity _systemEntity = entt::null;
 
@@ -67,7 +71,8 @@ public:
                 ctx.AudioManager = audioManager;
                 ctx.ProjectRoot = projectRoot;
 
-                _systems = systemRegistry->BuildAll(ctx);
+                _fixedSystems = systemRegistry->BuildByPhase(ctx, SystemPhase::FIXED);
+                _renderSystems = systemRegistry->BuildByPhase(ctx, SystemPhase::RENDER);
             }
         }
     }
@@ -75,7 +80,28 @@ public:
 
     void Update() const {
         PROFILE_SCOPE("ECS::Update");
-        for (const auto &system : _systems) {
+        if (const auto &scenePtr = _scene.lock()) {
+            const auto registry = scenePtr->GetEntityRegistry();
+
+            float frameDelta = 0.0f;
+            for (auto [entity, time] : registry->view<DeltaTimeComponent>().each()) {
+                frameDelta = time.Delta;
+            }
+
+            _accumulator += frameDelta;
+            if (_accumulator > MAX_ACCUMULATOR) {
+                _accumulator = MAX_ACCUMULATOR;
+            }
+
+            while (_accumulator >= FIXED_TIMESTEP) {
+                for (const auto &system : _fixedSystems) {
+                    system->OnTick();
+                }
+                _accumulator -= FIXED_TIMESTEP;
+            }
+        }
+
+        for (const auto &system : _renderSystems) {
             system->OnTick();
         }
     }

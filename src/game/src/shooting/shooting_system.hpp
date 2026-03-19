@@ -58,7 +58,7 @@ public:
 
         float deltaTime = 0.0f;
         for (auto [entity, time] : _deltaTimeView.each()) {
-            deltaTime = time.Delta;
+            deltaTime = time.FixedDelta;
         }
 
         if (_shootCooldown > 0.0f) {

@@ -13,7 +13,7 @@ struct TerminalPlugin {
                 auto scene = ctx.Scene.lock();
                 if (!scene) return std::unique_ptr<TerminalSystem>(nullptr);
                 return std::make_unique<TerminalSystem>(ctx.Scene, ctx.ProjectRoot);
-            }, 950);
+            }, 950, SystemPhase::RENDER);
     }
 };
 

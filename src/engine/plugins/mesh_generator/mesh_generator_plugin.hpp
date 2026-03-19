@@ -24,6 +24,6 @@ struct MeshGeneratorPlugin {
                 reg->view<CameraComponentV2>(),
                 reg->view<RenderBufferComponent>(),
                 ctx.ResourceFactory);
-        }, 217);
+        }, 217, SystemPhase::RENDER);
     }
 };

@@ -7,6 +7,7 @@
 class DeltaTimeComponent {
 public:
     float Delta = 0.02f;
+    float FixedDelta = 0.02f;
 };
 
 class DeltaTimeSystem final : public ISystemView<DeltaTimeComponent> {
@@ -18,9 +19,10 @@ public:
     }
 
     void OnTick() override {
-        const auto deltaTimeValue = _deltaTime.GetResetDelta();  // Get actual delta time in seconds, not FPS
+        const auto deltaTimeValue = _deltaTime.GetResetDelta();
         for (const auto &[_, deltaTime]: View.each()) {
             deltaTime.Delta = deltaTimeValue;
+            deltaTime.FixedDelta = 0.02f;
         }
         _deltaTime.Reset();
     }
