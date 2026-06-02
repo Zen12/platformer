@@ -1,3 +1,6 @@
+
+# Moved here: https://github.com/Zen12/gameengine
+
 # Platformer Engine
 
 Custom C++17 game engine with plugin-based architecture, ECS, finite state machines, skeletal animation, navmesh pathfinding, and AI-assisted development via MCP.
